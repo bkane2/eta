@@ -128,7 +128,7 @@
 )
 
 
-:event-relations (
+:episode-relations (
   ; Not included yet
 )
 
