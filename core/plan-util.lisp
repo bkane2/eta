@@ -35,12 +35,15 @@
 ; ep-name   : episode name of step (gist-clauses, etc. are implicitly attached to ep-name)
 ; wff       : action formula corresponding to episode name
 ; subplan   : subplan of step (if any)
+; patience  : how long the system should wait to match the current step to an observation (in
+;             the case of a non-agent step); proportional to the certainty of that step in schema
 ;
   step-of
   prev-step
   next-step
   ep-name
   wff
+  (patience -1) ; defaults to -1 for indefinite patience
   subplan
 ) ; END defstruct plan-step
 
@@ -90,9 +93,16 @@
     (setq sections (get-schema-sections schema))
 
     ; Process each part of the schema separately
-    (process-schema-types       plan (gethash :types sections))
-    (process-schema-rigid-conds plan (gethash :rigid-conds sections))
-    (process-schema-episodes    plan (gethash :episodes sections))
+    (process-schema-types             plan (gethash :types sections))
+    (process-schema-var-roles         plan (gethash :var-roles sections))
+    (process-schema-rigid-conds       plan (gethash :rigid-conds sections))
+    (process-schema-static-conds      plan (gethash :static-conds sections))
+    (process-schema-preconds          plan (gethash :preconds sections))
+    (process-schema-goals             plan (gethash :goals sections))
+    (process-schema-episodes          plan (gethash :episodes sections))
+    (process-schema-episode-relations plan (gethash :episode-relations sections))
+    (process-schema-necessities       plan (gethash :necessities sections))
+    (process-schema-certainties       plan (gethash :certainties sections))
 
   plan)
 ) ; END init-plan-from-schema
@@ -147,6 +157,16 @@
 
 
 
+(defun process-schema-var-roles (plan var-roles)
+;```````````````````````````````````````````````````
+; TBC
+; e.g., !r9 (?ka1 (kind1-of.n action1.n))
+;
+  nil
+) ; END process-schema-var-roles
+
+
+
 (defun process-schema-rigid-conds (plan rigid-conds) ;[*]
 ;`````````````````````````````````````````````````````
 ; Add all rigid-conds to context.
@@ -162,13 +182,46 @@
 
 
 
+(defun process-schema-static-conds (plan static-conds)
+;````````````````````````````````````````````````````````
+; TBC
+; e.g., ?s2 (^you at-loc.p |Table|)
+;
+  nil
+) ; END process-schema-static-conds
+
+
+
+(defun process-schema-preconds (plan preconds)
+;```````````````````````````````````````````````
+; TBC
+; e.g., ?p1 (some ?c ((?c member-of.p ?cc) and (not (^you understand.v ?c))))
+;
+  nil
+) ; END process-schema-preconds
+
+
+
+(defun process-schema-goals (plan goals)
+;`````````````````````````````````````````
+; TBC
+; e.g., ?g1 (^me want1.v (that (^you understand1.v ?c)))
+;
+  nil
+) ; END process-schema-goals
+
+
+
 (defun process-schema-episodes (plan episodes) ;[*]
 ;```````````````````````````````````````````````
 ; Converts episodes contents of schema to a linked list
 ; representing the steps in a plan. Returns the first
 ; plan step.
+; TODO: eventually, it seems like we should allow for steps
+; to be added to the plan non-sequentially, based on the
+; episode-relations defined in the schema.
 ;
-  (let ((steps (form-step-pairs episodes)) first-step prev-step curr-step)
+  (let ((steps (form-name-wff-pairs episodes)) first-step prev-step curr-step)
 
     ; Give error if first element of first pair isn't episode variable starting with '?'
     (when (not (variable? (caar steps)))
@@ -204,15 +257,49 @@
 
 
 
-(defun form-step-pairs (episodes) ;[*]
-;`````````````````````````````````
-; Groups episodes into a list of (ep-name wff) pairs.
+(defun process-schema-episode-relations (plan episode-relations)
+;``````````````````````````````````````````````````````````````````
+; TBC
+; e.g., !w8 (?e8 before1.p ?e9)
+;
+  nil
+) ; END process-schema-episode-relations
+
+
+
+(defun process-schema-necessities (plan necessities)
+;``````````````````````````````````````````````````````
+; TBC
+; e.g., !n1 (!bb .99)
+;
+  nil
+) ; END process-schema-necessities
+
+
+
+(defun process-schema-certainties (plan certainties)
+;``````````````````````````````````````````````````````
+; TBC
+; e.g., !c1 (!e1 .8)
+;
+  nil
+) ; END process-schema-certainties
+
+
+
+(defun form-name-wff-pairs (contents) ;[*]
+;````````````````````````````````````````
+; Groups contents of a schema section, assumed to be a series of
+; declarations of the following form:
+; <name> <wff>
+; into a list of (name wff) pairs. Here, name is assumed to be
+; a variable of the form ?x or !x.
 ;
   (cond
-    ((null episodes) nil)
-    (t (cons (list (first episodes) (second episodes))
-             (form-step-pairs (cddr episodes)))))
-) ; END form-step-pairs
+    ((null contents) nil)
+    (t (cons (list (first contents) (second contents))
+             (form-name-wff-pairs (cddr contents)))))
+) ; END form-name-wff-pairs
 
 
 
