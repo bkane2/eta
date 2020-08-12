@@ -55,6 +55,8 @@
 ;```````````````````````````````
 ; contains the following fields:
 ; curr-plan        : points to the currently active dialogue plan
+; task-queue       : a list of tasks (currently 'perform-next-step', 'collect-observations', and
+;                    'infer-facts') to repeatedly execute in cycles
 ; dialogue-history : should be three lists: surface form, gist clauses, and ULF interpretations
 ; reference-list   : contains a list of discourse entities to be used in ULF coref
 ; equality-sets    : hash table containing a list of aliases, keyed by canonical name
@@ -70,6 +72,7 @@
 ; propositions, versus the current module built over the ULF interpretation.
 ;
   curr-plan
+  task-queue
   dialogue-history
   reference-list
   equality-sets
@@ -110,26 +113,7 @@
 
   ; Global variable for dialogue record structure
   (defvar *ds* (make-ds))
-
-  ; Dialogue record keeps track of three kinds of history - surface words,
-  ; gist clauses, and semantic interpretations
-  (let ((dialogue-history (make-hash-table :test #'equal)))
-    (setf (gethash 'words dialogue-history) nil)
-    (setf (gethash 'gist-clauses dialogue-history) nil)
-    (setf (gethash 'semantics dialogue-history) nil)
-    (setf (ds-dialogue-history *ds*) dialogue-history))
-
-  ; Initialize hash table for aliases/equality sets
-  (setf (ds-equality-sets *ds*) (make-hash-table :test #'equal))
-
-  ; Initialize hash tables for User and Eta topic keys/gist clauses
-  (setf (ds-gist-kb-user *ds*) (make-hash-table :test #'equal))
-  (setf (ds-gist-kb-eta *ds*) (make-hash-table :test #'equal))
-
-  ; Initialize fact hash tables
-  (setf (ds-context *ds*) (make-hash-table :test #'equal))
-  (setf (ds-memory *ds*) (make-hash-table :test #'equal))
-  (setf (ds-kb *ds*) (make-hash-table :test #'equal))
+  (init-ds)
 
   ; Load object schemas
   (load-obj-schemas)
@@ -229,6 +213,39 @@
 
 
 
+(defun init-ds ()
+;``````````````````````
+; Initializes a dialogue state record structure with any special
+; properties of the dialogue state (e.g. hash tables, task queues, etc.)
+;
+  ; Initialize task queue
+  (setf (ds-task-queue *ds*) '(perform-next-step collect-observations infer-facts))
+
+  ; Dialogue record keeps track of three kinds of history - surface words,
+  ; gist clauses, and semantic interpretations
+  (let ((dialogue-history (make-hash-table :test #'equal)))
+    (setf (gethash 'words dialogue-history) nil)
+    (setf (gethash 'gist-clauses dialogue-history) nil)
+    (setf (gethash 'semantics dialogue-history) nil)
+    (setf (ds-dialogue-history *ds*) dialogue-history))
+
+  ; Initialize hash table for aliases/equality sets
+  (setf (ds-equality-sets *ds*) (make-hash-table :test #'equal))
+
+  ; Initialize hash tables for User and Eta topic keys/gist clauses
+  (setf (ds-gist-kb-user *ds*) (make-hash-table :test #'equal))
+  (setf (ds-gist-kb-eta *ds*) (make-hash-table :test #'equal))
+
+  ; Initialize fact hash tables
+  (setf (ds-context *ds*) (make-hash-table :test #'equal))
+  (setf (ds-memory *ds*) (make-hash-table :test #'equal))
+  (setf (ds-kb *ds*) (make-hash-table :test #'equal))
+) ; END init-ds
+
+
+
+
+
 (defun eta (read-log live perceptive responsive)
 ;`````````````````````````````````````````````````
 ; live = t: avatar mode; live = nil: terminal mode
@@ -259,26 +276,97 @@
 
   ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
-  ; Execution of the plan continues so long as
-  ; the dialogue plan has another step
+  ; The interaction continues so long as the dialogue plan has another step
   (loop while (has-next-step? (ds-curr-plan *ds*)) do
-
-    ; Process next action of dialogue plan
-    (process-next-action (ds-curr-plan *ds*))
-
-    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
-    ;; (format t " here is after the print-current-plan-status -----------~%")
-
-    ;; (error-check :caller 'eta)
-
-    ; Update plan state after processing the previous step
-    (update-plan-state (ds-curr-plan *ds*))
-
-    ;; (format t " here is after the plan state has been updated -----------~%")
-    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
-  )
+    (do-task (select-and-remove-task)))
   
 ) ; END eta
+
+
+
+
+
+(defun select-and-remove-task ()
+;```````````````````````````````````
+; Select the task at the front of the task queue. Return the
+; task and update the queue, placing the task at the end of the list.
+;
+  (let ((curr-task (car (ds-task-queue *ds*))))
+    (setf (ds-task-queue *ds*) (append (cdr (ds-task-queue *ds*))
+                                       (list curr-task)))
+    curr-task)
+) ; END select-and-remove-task
+
+
+
+
+
+(defun do-task (task)
+;````````````````````````
+; Given a symbol denoting a task, call the top-level function
+; implementing that task.
+; NOTE: this can be made a bit more space-efficient just by using
+; (funcall task), but I didn't want to assume that all tasks will
+; necessarily share the same format.
+;
+  (case task
+    (perform-next-step (perform-next-step))
+    (collect-observations (collect-observations))
+    (infer-facts (infer-facts)))
+) ; END do-task
+
+
+
+
+
+(defun perform-next-step ()
+;````````````````````````````````````
+; Performs the next step of the current dialogue plan, and
+; updates the plan state, removing any completed subplans.
+; TODO: add code for matching observations, counter for
+; determining when to move on from a non-Eta step based
+; on certainty.
+;
+  ; Process next action of dialogue plan
+  (process-next-action (ds-curr-plan *ds*))
+
+  ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+  ;; (format t " here is after the print-current-plan-status -----------~%")
+
+  ;; (error-check :caller 'eta)
+
+  ; Update plan state after processing the previous step
+  (update-plan-state (ds-curr-plan *ds*))
+
+  ;; (format t " here is after the plan state has been updated -----------~%")
+  ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+
+) ; END perform-next-step
+
+
+
+
+
+(defun collect-observations ()
+;````````````````````````````````````
+; TBC
+;
+  ; cycle through all registered input sources
+  ; for each observation, instantiate an episode and
+  ; any relevant temporal relations
+  nil
+) ; END collect-observations
+
+
+
+
+
+(defun infer-facts ()
+;````````````````````````````````````
+; TBC
+; 
+  nil
+) ; END infer-facts
 
 
 
