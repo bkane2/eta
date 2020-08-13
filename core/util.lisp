@@ -1701,6 +1701,19 @@
 
 
 
+(defun dual-var (ep-var)
+;`````````````````````````
+; Given an episode variable like ?e1, return the non-fluent dual
+; of that variable, e.g., !e1 (and vice-versa if !e1 is given).
+;
+  (when (variable? ep-var)
+    (if (equal #\? (car (explode ep-var)))
+      (implode (cons #\! (cdr (explode ep-var))))
+      (implode (cons #\? (cdr (explode ep-var))))))
+) ; END dual-var
+
+
+
 (defun episode-and-proposition-name (dual-var)
 ;````````````````````````````````````````````````
 ; NOTE: function deprecated as of 6/9/2020, after it was decided that we
@@ -1741,7 +1754,8 @@
 ; contents of that section as the value.
 ;
   (let ((schema-ht (make-hash-table :test #'equal)))
-    (dolist (section '(:types :rigid-conds :episodes))
+    (dolist (section '(:header :types :var-roles :rigid-conds :static-conds :preconds
+                       :goals :episodes :episode-relations :necessities :certainties))
       (let ((contents (car (get-keyword-contents schema (list section)))))
         (when contents
           (setf (gethash section schema-ht) contents))))
@@ -1767,6 +1781,33 @@
 ; IO UTIL
 ;
 ;``````````````````````````````````````````````````````
+
+
+
+(defun read-input-timeout (n)
+;``````````````````````````````
+; Reads terminal input for n seconds and returns accumulated string.
+;
+  (finish-output)
+  (let ((i 0) result)
+    (loop while (< i n) do
+      (sleep 1)
+      (if (listen) (setq result (cons " " (cons (read-line) result))))
+      (setq i (+ 1 i)))
+    (if (listen) (setq result (cons (read-line) result)))
+    (eval (append '(concatenate 'string) (reverse result))))
+) ; END read-input-timeout
+
+
+
+(defun process-buffer ()
+;``````````````````````````
+; Processes and clears input buffer.
+;
+  (let ((buffer *input-buffer*))
+    (setq *input-buffer* nil)
+    (parse-chars (coerce buffer 'list)))
+) ; END process-buffer
 
 
 

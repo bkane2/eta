@@ -175,6 +175,9 @@
   ; system) with file IO. If *live* = nil, operates in terminal mode.
   (defparameter *live* nil)
 
+  ; Used for reading terminal input when *live* = nil.
+  (defparameter *input-buffer* nil)
+
   ; If *perceptive* = T, is capable of perceiving the world during the
   ; perceive-world.v episode in the scema (in terminal mode, the user enters
   ; a list of facts, otherwise they're provided in perceptions.lisp)
@@ -185,6 +188,12 @@
   ; the BW system. If *responsive* = nil, the system can only form responses/reactions
   ; at the level of gist clauses, and will refrain from fully answering spatial questions.
   (defparameter *responsive* nil)
+
+  ; A list of any registered subsystems that Eta needs to listen to.
+  ; Currently only supports '|Blocks-World-System| and '|Audio|.
+  ; The former is added if *responsive* = t, and the latter is added if
+  ; *live* = t.
+  (defparameter *registered-systems* nil)
 
   ; If terminal mode and perceptive, keep list of block coordinates mimicking actual BW system.
   (defparameter *block-coordinates* '(

@@ -35,15 +35,15 @@
 ; ep-name   : episode name of step (gist-clauses, etc. are implicitly attached to ep-name)
 ; wff       : action formula corresponding to episode name
 ; subplan   : subplan of step (if any)
-; patience  : how long the system should wait to match the current step to an observation (in
-;             the case of a non-agent step); proportional to the certainty of that step in schema
+; certainty : how certain the step is (if the step is an expected step). The patience of the
+;             system in waiting to observe the step is proportional to this
 ;
   step-of
   prev-step
   next-step
   ep-name
   wff
-  (patience -1) ; defaults to -1 for indefinite patience
+  (certainty 1.0) ; defaults to 1, i.e. a certain step
   subplan
 ) ; END defstruct plan-step
 
@@ -99,10 +99,11 @@
     (process-schema-static-conds      plan (gethash :static-conds sections))
     (process-schema-preconds          plan (gethash :preconds sections))
     (process-schema-goals             plan (gethash :goals sections))
-    (process-schema-episodes          plan (gethash :episodes sections))
     (process-schema-episode-relations plan (gethash :episode-relations sections))
     (process-schema-necessities       plan (gethash :necessities sections))
     (process-schema-certainties       plan (gethash :certainties sections))
+    ; Process episodes last so things like certainties can be used
+    (process-schema-episodes          plan (gethash :episodes sections))
 
   plan)
 ) ; END init-plan-from-schema
@@ -140,18 +141,22 @@
 ; if I'm requiring all variables "local" to a schema to be included in
 ; the :types section. For now, I've kept this the same as before though.
 ;
-  (dolist (type types)
-    (when (not (variable? type))
+  (let ((type-pairs (form-name-wff-pairs types)) type-name type-wff var)
+    (dolist (type-pair type-pairs)
+      (setq type-name (first type-pair))
+      (setq type-wff (second type-pair))
       ; If typed variable, find value for variable through observation and
       ; substitute in both type and in contents of each schema section.
-      (when (variable? (car type))
-        (push (car type) (plan-vars plan))
+      (when (variable? (car type-wff))
+        (setq var (car type-wff))
+        (push var (plan-vars plan))
         ; Get skolem name and replace in schema.
-        (setq sk-name (observe-variable-type (car type) (second type)))
-        (nsubst sk-name (car type) (plan-schema-contents plan))
-        (setq type (subst sk-name (car type) type)))
+        (setq sk-name (observe-variable-type var (second type-wff)))
+        (nsubst sk-name var (plan-schema-contents plan))
+        (setq type-wff (subst sk-name var type-wff)))
       ; Store type as fact in context.
-      (store-in-context type)))
+      (store-in-context type-wff))
+  )
 ) ; END process-schema-types
 
 
@@ -161,12 +166,17 @@
 ; TBC
 ; e.g., !r9 (?ka1 (kind1-of.n action1.n))
 ;
-  nil
+  (let ((var-role-pairs (form-name-wff-pairs var-roles)) var-role-name var-role-wff)
+    (dolist (var-role-pair var-role-pairs)
+      (setq var-role-name (first var-role-pair))
+      (setq var-role-wff (second var-role-pair))
+    )
+  )
 ) ; END process-schema-var-roles
 
 
 
-(defun process-schema-rigid-conds (plan rigid-conds) ;[*]
+(defun process-schema-rigid-conds (plan rigid-conds)
 ;`````````````````````````````````````````````````````
 ; Add all rigid-conds to context.
 ; TODO: This is incomplete and needs to be updated in the future.
@@ -174,9 +184,13 @@
 ; rigid-cond like (?b1 red.a)), or do anything with the proposition
 ; variables e.g. !r1
 ;
-  (mapcar (lambda (cond) (if (not (variable? cond))
-      (store-in-context cond)))
-    rigid-conds)
+  (let ((rigid-cond-pairs (form-name-wff-pairs rigid-conds)) rigid-cond-name rigid-cond-wff)
+    (dolist (rigid-cond-pair rigid-cond-pairs)
+      (setq rigid-cond-name (first rigid-cond-pair))
+      (setq rigid-cond-wff (second rigid-cond-pair))
+      (store-in-context rigid-cond-wff)
+    )
+  )
 ) ; END process-schema-rigid-conds
 
 
@@ -186,7 +200,12 @@
 ; TBC
 ; e.g., ?s2 (^you at-loc.p |Table|)
 ;
-  nil
+  (let ((static-cond-pairs (form-name-wff-pairs static-conds)) static-cond-name static-cond-wff)
+    (dolist (static-cond-pair static-cond-pairs)
+      (setq static-cond-name (first static-cond-pair))
+      (setq static-cond-wff (second static-cond-pair))
+    )
+  )
 ) ; END process-schema-static-conds
 
 
@@ -196,7 +215,12 @@
 ; TBC
 ; e.g., ?p1 (some ?c ((?c member-of.p ?cc) and (not (^you understand.v ?c))))
 ;
-  nil
+  (let ((precond-pairs (form-name-wff-pairs preconds)) precond-name precond-wff)
+    (dolist (precond-pair precond-pairs)
+      (setq precond-name (first precond-pair))
+      (setq precond-wff (second precond-pair))
+    )
+  )
 ) ; END process-schema-preconds
 
 
@@ -206,12 +230,17 @@
 ; TBC
 ; e.g., ?g1 (^me want1.v (that (^you understand1.v ?c)))
 ;
-  nil
+  (let ((goal-pairs (form-name-wff-pairs goals)) goal-name goal-wff)
+    (dolist (goal-pair goal-pairs)
+      (setq goal-name (first goal-pair))
+      (setq goal-wff (second goal-pair))
+    )
+  )
 ) ; END process-schema-goals
 
 
 
-(defun process-schema-episodes (plan episodes) ;[*]
+(defun process-schema-episodes (plan episodes)
 ;```````````````````````````````````````````````
 ; Converts episodes contents of schema to a linked list
 ; representing the steps in a plan. Returns the first
@@ -237,6 +266,9 @@
       (if (null first-step) (setq first-step curr-step))
       (setf (plan-step-ep-name curr-step) (first step))
       (setf (plan-step-wff curr-step) (second step))
+      ; When episode name has certainty associated, add to step
+      (when (get (first step) 'certainty)
+        (setf (plan-step-certainty curr-step) (get (first step) 'certainty)))
       ; When previous step exists, set bidirectional pointers
       (when prev-step
         (setf (plan-step-prev-step curr-step) prev-step)
@@ -261,7 +293,12 @@
 ; TBC
 ; e.g., !w8 (?e8 before1.p ?e9)
 ;
-  nil
+  (let ((episode-relation-pairs (form-name-wff-pairs episode-relations)) episode-relation-name episode-relation-wff)
+    (dolist (episode-relation-pair episode-relation-pairs)
+      (setq episode-relation-name (first episode-relation-pair))
+      (setq episode-relation-wff (second episode-relation-pair))
+    )
+  )
 ) ; END process-schema-episode-relations
 
 
@@ -271,7 +308,12 @@
 ; TBC
 ; e.g., !n1 (!bb .99)
 ;
-  nil
+  (let ((necessity-pairs (form-name-wff-pairs necessities)) necessity-name necessity-wff)
+    (dolist (necessity-pair necessity-pairs)
+      (setq necessity-name (first necessity-pair))
+      (setq necessity-wff (second necessity-pair))
+    )
+  )
 ) ; END process-schema-necessities
 
 
@@ -281,13 +323,23 @@
 ; TBC
 ; e.g., !c1 (!e1 .8)
 ;
-  nil
+  (let ((certainty-pairs (form-name-wff-pairs certainties)) certainty-name certainty-wff
+        episode-name certainty)
+    (dolist (certainty-pair certainty-pairs)
+      (setq certainty-name (first certainty-pair))
+      (setq certainty-wff (second certainty-pair))
+      (setq episode-name (first certainty-wff))
+      (setq certainty (second certainty-wff))
+      ; ((that ,episode-name) is-necessary-to-degree ,certainty)
+      (setf (get (dual-var episode-name) 'certainty) certainty)
+    )
+  )
 ) ; END process-schema-certainties
 
 
 
-(defun form-name-wff-pairs (contents) ;[*]
-;````````````````````````````````````````
+(defun form-name-wff-pairs (contents)
+;`````````````````````````````````````
 ; Groups contents of a schema section, assumed to be a series of
 ; declarations of the following form:
 ; <name> <wff>
@@ -407,6 +459,7 @@
 
     ; Attach wff to episode name (likely not used, but for convenience's sake)
     ; TODO: should (wff ** ep-name) be stored in context at this point?
+    ;       as well as instantiating the non-fluent variable, e.g. '!e1'?
     (setf (get ep-name 'wff) (plan-step-wff curr-step))
     
     ; In the case of an Eta action, transfer properties from ep-var hash tables
