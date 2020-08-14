@@ -191,7 +191,7 @@
 
   ; A list of any registered subsystems that Eta needs to listen to.
   ; Currently only supports '|Blocks-World-System| and '|Audio|.
-  ; The former is added if *responsive* = t, and the latter is added if
+  ; The former is added if *perceptive* = t, and the latter is added if
   ; *live* = t.
   (defparameter *registered-systems* nil)
 
@@ -208,6 +208,7 @@
   ))
 
   ; Global variables used for IO
+  (defparameter *input* nil)
   (defparameter *next-answer* nil)
   (defparameter *next-input* nil)
   (defparameter *next-perceptions* nil)
@@ -278,6 +279,12 @@
     (setq *log-contents* (read-log-contents *read-log*))
     (setq *log-answer* nil)
     (setq *log-ptr* -1))
+
+  ; Register subsystems based on the configuration parameters
+  (when *live*
+    (push '|Audio| *registered-systems*))
+  (when *perceptive*
+    (push '|Blocks-World-System| *registered-systems*))
 
   ; Initiate the dialogue plan. The schema named
   ; *eta-schema* is used to create the top-level plan

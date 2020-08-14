@@ -17,6 +17,12 @@
     (ensure-directories-exist "./logs/logs/")
     (ensure-directories-exist "./logs/logs_out/"))
 
+  ; Delete the content of the Audio.lisp file after reading
+  (with-open-file (outfile "./io/Audio.lisp" :direction :output :if-exists
+                                             :supersede :if-does-not-exist :create))
+  ; Delete the content of the Blocks-World-System.lisp file after reading
+  (with-open-file (outfile "./io/Blocks-World-System.lisp" :direction :output :if-exists
+                                                           :supersede :if-does-not-exist :create))
   ; Delete the content of the sessionInfo.lisp file after reading
   (with-open-file (outfile "./io/sessionInfo.lisp" :direction :output :if-exists
                                                    :supersede :if-does-not-exist :create))
