@@ -960,16 +960,87 @@
 
 ;``````````````````````````````````````````````````````
 ;
+; MEMORY UTIL
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun print-memory (&key verbose key)
+;````````````````````````````````````````
+; Prints facts in the memory. When verbose is given as true,
+; print all keys and associated facts as well. If key is given,
+; print only the list of facts stored under that key.
+;
+  (let (l1 l2)
+    (maphash (lambda (k v)
+      (if (equal v t) (setq l1 (cons k l1))
+        (setq l2 (cons (list k v) l2)))) (ds-memory *ds*))
+    (mapcar (lambda (f)
+      (format t "~a~%" f)) l1)
+    (when (or verbose key)
+      (format t "------------------------------------ ~%")
+      (mapcar (lambda (f)
+        (if (or (null key) (equal (first f) key))
+          (format t "~a: ~a~%~%" (first f) (second f)))) l2)))
+) ; END print-memory
+
+
+
+(defun store-in-memory (wff)
+;```````````````````````````````
+; Stores a wff in memory.
+; 
+  (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)))
+    (store-fact wff (ds-memory *ds*)))
+) ; END store-in-memory
+
+
+
+(defun get-from-memory (pred-patt)
+;````````````````````````````````````
+; Retrieves a fact from memory.
+;
+  (get-matching-facts pred-patt (ds-memory *ds*))
+) ; END get-from-memory
+
+
+
+(defun remove-from-memory (pred-patt)
+;```````````````````````````````````````
+; Removes a fact from memory.
+;
+  (let ((facts (get-from-memory pred-patt)))
+    (if (and facts (not (listp facts)))
+      (remove-fact pred-patt (ds-memory *ds*))
+      (remove-facts facts (ds-memory *ds*))))
+) ; END remove-from-memory
+
+
+
+(defun find-all-instances-memory (descr)
+;```````````````````````````````````````````
+; Given a lambda description, find all instances
+; from memory (see 'find-all-instances').
+;
+  (find-all-instances descr (ds-memory *ds*))
+) ; END find-all-instances-memory
+
+
+
+;``````````````````````````````````````````````````````
+;
 ; CONTEXT UTIL
 ;
 ;``````````````````````````````````````````````````````
 
 
 
-(defun print-context ()
-;```````````````````````
-; Prints the context (dividing between full propositions, and ones that
-; are stored under some specific key)
+(defun print-context (&key verbose key)
+;```````````````````````````````````````
+; Prints facts in the memory. When verbose is given as true,
+; print all keys and associated facts as well. If key is given,
+; print only the list of facts stored under that key.
 ;
   (let (l1 l2)
     (maphash (lambda (k v)
@@ -977,29 +1048,30 @@
         (setq l2 (cons (list k v) l2)))) (ds-context *ds*))
     (mapcar (lambda (f)
       (format t "~a~%" f)) l1)
-    (format t "~%")
-    (mapcar (lambda (f)
-      (format t "~a: ~a~%~%" (first f) (second f))) l2))
+    (when (or verbose key)
+      (format t "------------------------------------ ~%")
+      (mapcar (lambda (f)
+        (if (or (null key) (equal (first f) key))
+          (format t "~a: ~a~%~%" (first f) (second f)))) l2)))
 ) ; END print-context
 
 
 
 (defun store-in-context (wff)
 ;```````````````````````````````
-; Stores a wff in context. Fact may be quoted, e.g., '(E2 finished.a), in
-; which case the unquoted predicate is stored (although this format is unused
-; in the current schema syntax). Otherwise, evaluate all functions in fact and
-; store in context.
-;
-  (let ((fact (if (equal (car wff) 'quote) (eval wff) wff)))
-    (store-fact fact (ds-context *ds*)))
+; Stores a wff in context.
+; 
+  (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)))
+    (store-fact wff (ds-context *ds*)))
 ) ; END store-in-context
 
 
 
 (defun get-from-context (pred-patt)
 ;````````````````````````````````````
-; Retrieves a fact from context
+; Retrieves a fact from context, by checking whether something matching
+; pred-patt is in the context hash table (i.e., the table containing
+; facts true at NOW*).
 ;
   (get-matching-facts pred-patt (ds-context *ds*))
 ) ; END get-from-context
@@ -1008,9 +1080,12 @@
 
 (defun remove-from-context (pred-patt)
 ;```````````````````````````````````````
-; Removes a fact from context
+; Removes a fact from context.
 ;
-  (remove-facts (get-from-context pred-patt) (ds-context *ds*))
+  (let ((facts (get-from-context pred-patt)))
+    (if (and facts (not (listp facts)))
+      (remove-fact pred-patt (ds-context *ds*))
+      (remove-facts facts (ds-context *ds*))))
 ) ; END remove-from-context
 
 
@@ -1019,8 +1094,69 @@
 ;```````````````````````````````````````````
 ; Given a lambda description, find all instances
 ; from context (see 'find-all-instances').
+;
   (find-all-instances descr (ds-context *ds*))
 ) ; END find-all-instances-context
+
+
+
+(defun store-new-contextual-fact (wff)
+;```````````````````````````````````````
+; Stores a new contextual fact, i.e., something found to be "true now". An episode
+; name is instantiated for the fact, e.g., E1. We store the following facts in memory:
+;
+; 1. (wff ** E1)
+; 2. (NOW* during E1)
+; 3. (<timestamp> during E1)
+; 
+; where <timestamp> is a record structure of the current system time.
+; Note that we don't necessarily know that <timestamp> is the beginning of E1, but
+; rather just that it marks a point where we know that wff is true.
+;
+; In addition, we store wff in a special context hash table, containing
+; all wffs which are true at NOW*.
+; 
+  (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)) ep-name timestamp)
+    (setq ep-name (episode-name))
+    (setq timestamp (get-time))
+    ; Store episodic facts in memory
+    (store-in-memory `(,wff1 ** ,ep-name))
+    (store-in-memory `(NOW* during ,ep-name))
+    (store-in-memory `(,timestamp during ,ep-name))
+    ; Store wff in context
+    (store-in-context wff1))
+) ; END store-new-contextual-fact
+
+
+
+(defun remove-old-contextual-fact (pred-patt)
+;``````````````````````````````````````````````
+; Removes a fact (or any number of matching facts) from context when that
+; fact is found to be no longer true. To do this, we retrieve the episode
+; name characterized by the wff (generally, a list of episode names), say,
+; E1. We have to remove the fact (NOW* during E1) from memory, and add
+; (<timestamp> during E1), where <timestamp> is a record structure of the
+; current system time. The wff is then removed from context (i.e., the NOW*
+; hash table).
+;
+; TODO: should we add (<timestamp> during E1), or (<timestamp> ends E1)?
+;
+  (let ((facts (get-from-context pred-patt)) ep-wffs ep-names timestamp)
+    (if (and facts (not (listp facts)))
+      (setq facts (list pred-patt)))
+    ; Remove each matching fact from context
+    (dolist (fact facts)
+      (setq timestamp (get-time))
+      ; Get all formulas with fact and ** operator, and extract ep-names
+      (setq ep-wffs (get-from-memory `(,fact ** ?e)))
+      (setq ep-names (mapcan #'last ep-wffs))
+      ; For each ep-name, remove NOW* fact from memory and add ending timestamp
+      (dolist (ep-name ep-names)
+        (remove-from-memory `(NOW* during ,ep-name))
+        (store-in-memory `(,timestamp during ,ep-name)))
+      ; Remove fact from context
+      (remove-from-context fact)))
+) ; END remove-old-contextual-fact
 
 
 
@@ -1688,15 +1824,11 @@
 
 
 
-(defun episode-name (ep-var)
-;``````````````````````````````````
-; Given an episode variable (e.g., '?e1'), generate and return a unique
-; episode name to be substituted in for the variable (e.g., 'EP38').
+(defun episode-name ()
+;`````````````````````````````
+; Return a unique episode name, e.g., E38
 ;
-  (when (not (variable? ep-var))
-    (format t "~%***Attempt to form episode name from ~%   non-question-mark variable ~a~%" ep-var)
-    (return-from episode-name nil))
-  (gensym "EP")
+  (gensym "E")
 ) ; END episode-name
 
 
@@ -1738,7 +1870,7 @@
       (format t "~%***Attempt to form episode and proposition name from~%   non-question-mark variable ~a" dual-var)
       (return-from episode-and-proposition-name nil))
     (setq ep-var dual-var) ; will be used if there's no final period
-    (setq ep-name (gensym "EP"))
+    (setq ep-name (episode-name))
     (when (char-equal #\. (car (last chars))) ; form proposition name
       (setq ep-var (implode (butlast chars))) ; implicit ep-var
       (setq prop-name (implode (append (explode ep-name) '(#\.))))
