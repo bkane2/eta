@@ -451,7 +451,7 @@
     (if (not (variable? ep-var)) (return-from instantiate-curr-step nil))
 
     ; Generate a constant for the episode and destructively substitute in plan
-    (setq ep-name (episode-name ep-var))
+    (setq ep-name (episode-name))
     (nsubst-variable plan ep-name ep-var)
 
     ;; (format t "action list after substituting ~a for ~a:~%" ep-name ep-var)
