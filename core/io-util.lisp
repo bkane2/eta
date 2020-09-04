@@ -12,15 +12,26 @@
 ;
   (case system
     (|Audio| (read-audio))
+    (|Terminal| (read-terminal))
     (|Blocks-World-System| (read-blocks-world-system)))
 ) ; END read-from-system
 
 
 
+(defun read-terminal ()
+;```````````````````````
+; Scans input from the terminal. If the user presses enter, read the
+; input, create and return a (^you say-to.v ^me '(...)) proposition.
+;
+  (if (listen) `(^you say-to.v ^me ',(parse-chars (coerce (read-line) 'list))))
+) ; END read-terminal
+
+
+
 (defun read-audio ()
 ;`````````````````````
-; Reads input from |Audio| subsystem (i.e., (^you say.v '(...)), or
-; possibly (^you say.v "...")) propositions from io/Audio.lisp.
+; Reads input from |Audio| subsystem (i.e., (^you say-to.v ^me '(...)), or
+; possibly (^you say-to.v ^me "...")) propositions from io/Audio.lisp.
 ; 
   (setq *input* nil)
   (load "./io/Audio.lisp")
@@ -29,9 +40,9 @@
                                                :if-exists :supersede
                                                :if-does-not-exist :create)))
   (mapcar (lambda (wff)
-      ; If say.v argument given in string form, parse it into list form
-      (if (and (equal (second wff) 'say.v) (stringp (third wff)))
-        (list (first wff) (second wff) (parse-chars (coerce (third wff) 'list)))
+      ; If say-to.v argument given in string form, parse it into list form
+      (if (and (equal (butlast wff) '(^you say-to.v ^me)) (stringp (car (last wff))))
+        (append (butlast wff) `(',(parse-chars (coerce (car (last wff)) 'list))))
         wff))
     *input*)
 ) ; END read-audio
@@ -55,6 +66,18 @@
 
 
 
+(defun process-buffer ()
+;``````````````````````````
+; Processes and clears input buffer.
+; TODO: currently unused.
+;
+  (let ((buffer *input-buffer*))
+    (setq *input-buffer* nil)
+    (parse-chars (coerce buffer 'list)))
+) ; END process-buffer
+
+
+
 (defun read-input-timeout (n)
 ;``````````````````````````````
 ; Reads terminal input for n seconds and returns accumulated string.
@@ -68,17 +91,6 @@
     (if (listen) (setq result (cons (read-line) result)))
     (eval (append '(concatenate 'string) (reverse result))))
 ) ; END read-input-timeout
-
-
-
-(defun process-buffer ()
-;``````````````````````````
-; Processes and clears input buffer.
-;
-  (let ((buffer *input-buffer*))
-    (setq *input-buffer* nil)
-    (parse-chars (coerce buffer 'list)))
-) ; END process-buffer
 
 
 
