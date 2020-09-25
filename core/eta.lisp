@@ -281,8 +281,9 @@
     (setq *log-ptr* -1))
 
   ; Register subsystems based on the configuration parameters
-  (when *live*
-    (push '|Audio| *registered-systems*))
+  (if *live*
+    (push '|Audio| *registered-systems*)
+    (push '|Terminal| *registered-systems*))
   (when *perceptive*
     (push '|Blocks-World-System| *registered-systems*))
 
@@ -328,7 +329,8 @@
   (case task
     (perform-next-step (perform-next-step))
     (collect-observations (collect-observations))
-    (infer-facts (infer-facts)))
+    (infer-facts-top-down (infer-facts-top-down))
+    (infer-facts-bottom-up (infer-facts-bottom-up)))
 ) ; END do-task
 
 
@@ -367,22 +369,60 @@
 ;````````````````````````````````````
 ; TBC
 ;
-  ; cycle through all registered input sources
+  (let (inputs)
+  ; Cycle through all registered input sources
   ; for each observation, instantiate an episode and
-  ; any relevant temporal relations
-  nil
+  ; any relevant temporal relations.
+    (dolist (system *registered-systems*)
+      (setq inputs (read-from-system system))
+      (mapcar (lambda (input)
+        ; If observed that fact is no longer true, remove from
+        ; context; otherwise add it to context.
+        ; TODO: some facts imply the negation of other ones,
+        ; e.g., (A smiling.a) => (not (A frowning.a))
+        ; Also, some types of "instantaneous" facts we might want to
+        ; restrict to only having one active one in context, e.g.,
+        ; (^you say-to.v ^me '(...))
+        (if (equal 'not (car input))
+          (remove-old-contextual-fact (second input))
+          (store-new-contextual-fact input)))
+      inputs)))
 ) ; END collect-observations
 
 
 
 
 
-(defun infer-facts ()
+(defun infer-facts-top-down ()
+;```````````````````````````````
+; TBC
+;
+; For inferring facts in a top-down way, using the expectation of the
+; next user action in the current dialogue plan.
+;
+  nil
+) ; END infer-facts-top-down
+
+
+
+
+
+(defun infer-facts-bottom-up ()
 ;````````````````````````````````````
 ; TBC
 ; 
+; For inferring facts in a bottom-up, "data-driven" way from existing
+; facts in context, and gist clauses obtained during interpretation.
+;
+; Facts like (^you say-bye.v) can be inferred from gist clauses using
+; pattern transduction trees. Does this necessitate adding a :context
+; directive to the pattern transduction trees, or something similar, or
+; should the :ulf directive be used in conjunction with a special function
+; for calling this tree and adding the chosen result to context? What about
+; more complicated formulas or EL-formulas, such as ((^you ask-question.v) ** E3)?
+; 
   nil
-) ; END infer-facts
+) ; END infer-facts-bottom-up
 
 
 
@@ -791,7 +831,7 @@
       ((setq bindings (bindings-from-ttt-match '(^me commit-to-STM.v (that _!)) wff))
         (setq expr (get-single-binding bindings))
         ; Store each formula in context
-        (store-in-context expr))
+        (store-new-contextual-fact expr))
 
       ;````````````````````````````
       ; Eta: Trying

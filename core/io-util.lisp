@@ -23,7 +23,7 @@
 ; Scans input from the terminal. If the user presses enter, read the
 ; input, create and return a (^you say-to.v ^me '(...)) proposition.
 ;
-  (if (listen) `(^you say-to.v ^me ',(parse-chars (coerce (read-line) 'list))))
+  (if (listen) `((^you say-to.v ^me ',(parse-chars (coerce (read-line) 'list)))))
 ) ; END read-terminal
 
 
