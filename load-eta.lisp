@@ -6,7 +6,7 @@
     ; Quickload packages
     ;```````````````````
     (load (truename "packages/quickload-dependencies.lisp"))
-    (quickload-packages '("ttt" "ulf-lib" "ulf2english" "ulf-pragmatics")))
+    (quickload-packages '("ttt" "ulf-lib" "ulf2english" "ulf-pragmatics" "timegraph")))
 
 ((not *responsive-mode*)
 
@@ -24,7 +24,13 @@
 
     ; Load local ulf-pragmatics
     ;```````````````````````````
-    (load (truename "packages/local/ulf-pragmatics/load.lisp"))))
+    (load (truename "packages/local/ulf-pragmatics/load.lisp"))
+
+    ; Load local timegraph
+    ;```````````````````````````
+    (load (truename "packages/local/timegraph/load.lisp"))
+    
+))
 
 
 ; Load core code
