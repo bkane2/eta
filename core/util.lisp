@@ -2214,8 +2214,8 @@
   (cond
     ((> *error-check* 500)
       (if caller
-        (error-message (format nil "An error caused Eta to fall into an infinite loop in '~a'. Check if the plan is being updated correctly." caller) *live*)
-        (error-message "An error caused Eta to fall into an infinite loop. Check if the plan is being updated correctly." *live*))
+        (error-message (format nil "An error caused Eta to fall into an infinite loop in '~a'. Check if the plan is being updated correctly." caller))
+        (error-message "An error caused Eta to fall into an infinite loop. Check if the plan is being updated correctly."))
       (error))
     (t (setq *error-check* (1+ *error-check*))))
 ) ; END error-check

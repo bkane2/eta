@@ -454,7 +454,9 @@
 ;`````````````````````````````
 ; Applies the sub macro to a ULF.
 ;
-  (nth-value 1 (ulf-lib:apply-sub-macro ulf :calling-package *package*))
+  (if *dependencies*
+    (nth-value 1 (ulf-lib:apply-sub-macro ulf :calling-package *package*))
+    ulf)
 ) ; END apply-sub-macro
 
 

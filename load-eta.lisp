@@ -1,14 +1,14 @@
 ; If *responsive-mode* is enabled, we need various dependencies such as ulf2english and ulf-pragmatics.
 ; Otherwise, we can just use local ttt.
 (cond
-(*responsive-mode*
+(*dependencies*
 
     ; Quickload packages
     ;```````````````````
     (load (truename "packages/quickload-dependencies.lisp"))
     (quickload-packages '("ttt" "ulf-lib" "ulf2english" "ulf-pragmatics" "timegraph")))
 
-((not *responsive-mode*)
+((not *dependencies*)
 
     ; Load local ttt
     ;``````````````````

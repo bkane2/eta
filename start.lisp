@@ -88,7 +88,7 @@
 ; Otherwise, manually set *user-id* (or prompt user for input).
 ;````````````````````````````````````````````````````````````````
 (defparameter *user-id* nil)
-(if (and *live-mode* (probe-file "./io/sessionInfo.lisp"))
+(if (probe-file "./io/sessionInfo.lisp")
   (load "./io/sessionInfo.lisp"))
 (when (not *user-id*)
   (defparameter *user-id* "_test")
@@ -110,9 +110,9 @@
   ; Run Eta (safe mode)
   ;`````````````````````````
   (*safe-mode*
-    (handler-case (eta nil *live-mode* *perceptive-mode* *responsive-mode*)
+    (handler-case (eta nil *subsystems* *dependencies*)
       (error (c)
-        (error-message "Execution of Eta failed due to an internal error." *live-mode*)
+        (error-message "Execution of Eta failed due to an internal error.")
         (values 0 c))))
 
   ; Run Eta (read-log mode)
@@ -130,11 +130,11 @@
         (format t "==:: READING LOG ~a ::==~%" log)
         (load "load-eta.lisp")
         (load-avatar-files *avatar*)
-        (eta log nil t t)) logs)))
+        (eta log *subsystems* *dependencies*)) logs)))
 
   ; Run Eta
   ;`````````````````````````
-  (t (eta nil *live-mode* *perceptive-mode* *responsive-mode*)))
+  (t (eta nil *subsystems* *dependencies*)))
 
 
 ; Write user gist clauses to file

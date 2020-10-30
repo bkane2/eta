@@ -65,6 +65,7 @@
 ; context          : hash table of facts that are true at Now*, e.g., <wff3>
 ; memory           : hash table of atemporal/"long-term" facts, e.g., (<wff3> ** E3) and (Now* during E3)
 ; kb               : hash table of Eta's knowledge base, containing general facts
+; tg               : timegraph of all episodes
 ;
 ; TODO: currently reference-list and equality-sets are separate things, though they serve a similar
 ; purpose, namely keeping track of which entities co-refer (e.g. skolem variable and noun phrase).
@@ -81,6 +82,7 @@
   context
   memory
   kb
+  tg
 ) ; END defstruct ds
 
 
@@ -171,28 +173,8 @@
   (defparameter *log-answer* nil)
   (defparameter *log-ptr* 0)
 
-  ; If *live* = T, operates in "live mode" (intended for avatar
-  ; system) with file IO. If *live* = nil, operates in terminal mode.
-  (defparameter *live* nil)
-
-  ; Used for reading terminal input when *live* = nil.
-  (defparameter *input-buffer* nil)
-
-  ; If *perceptive* = T, is capable of perceiving the world during the
-  ; perceive-world.v episode in the scema (in terminal mode, the user enters
-  ; a list of facts, otherwise they're provided in perceptions.lisp)
-  (defparameter *perceptive* nil)
-
-  ; If *responsive* = T, is capable of constructing natural language responses
-  ; from any ULF, including generating responses from spatial relation answers in
-  ; the BW system. If *responsive* = nil, the system can only form responses/reactions
-  ; at the level of gist clauses, and will refrain from fully answering spatial questions.
-  (defparameter *responsive* nil)
-
   ; A list of any registered subsystems that Eta needs to listen to.
-  ; Currently only supports '|Blocks-World-System| and '|Audio|.
-  ; The former is added if *perceptive* = t, and the latter is added if
-  ; *live* = t.
+  ; Currently only supports '|Blocks-World-System|, '|Terminal|, and '|Audio|.
   (defparameter *registered-systems* nil)
 
   ; If terminal mode and perceptive, keep list of block coordinates mimicking actual BW system.
@@ -250,42 +232,35 @@
   (setf (ds-context *ds*) (make-hash-table :test #'equal))
   (setf (ds-memory *ds*) (make-hash-table :test #'equal))
   (setf (ds-kb *ds*) (make-hash-table :test #'equal))
+
+  ; Initialize timegraph
+  (if *dependencies*
+    (setf (ds-tg *ds*) (timegraph:make-timegraph)))
 ) ; END init-ds
 
 
 
 
 
-(defun eta (read-log live perceptive responsive)
-;`````````````````````````````````````````````````
-; live = t: avatar mode; live = nil: terminal mode
-; perceptive = t: system awaits information during perceive-world.v action
-;                      (from command line if in terminal mode)
-;
+(defun eta (read-log subsystems &optional (dependencies t))
+;````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
 ; (now largely commented out) and controls the loop for producing,
 ; managing, and executing the dialog plan (mostly, reading & feature-
 ; annotating inputs & producing outputs, but with some subplan
 ; formation, gist clause formation, etc.).
 ;
+  (setq *dependencies* dependencies)
+
   (init)
   (setq *read-log* read-log)
-  (setq *live* live)
-  (setq *perceptive* perceptive)
-  (setq *responsive* responsive)
+  (setq *registered-systems* subsystems)
   (setq *count* 0) ; Number of outputs so far
 
   (when *read-log*
     (setq *log-contents* (read-log-contents *read-log*))
     (setq *log-answer* nil)
     (setq *log-ptr* -1))
-
-  ; Register subsystems based on the configuration parameters
-  (if *live*
-    (push '|Audio| *registered-systems*)
-    (push '|Terminal| *registered-systems*))
-  (when *perceptive*
-    (push '|Blocks-World-System| *registered-systems*))
 
   ; Initiate the dialogue plan. The schema named
   ; *eta-schema* is used to create the top-level plan
@@ -591,7 +566,9 @@
           ((eq (car expr) 'quote)
             (setq expr (flatten (second expr)))
             (setq *count* (1+ *count*))
-            (if *live* (say-words expr) (print-words expr))
+            (if (member '|Audio| *registered-systems*)
+              (say-words expr)
+              (print-words expr))
             (store-turn '^me expr (get ep-name 'gist-clauses) (list (get ep-name 'semantics))
               (ds-dialogue-history *ds*)))
           ; Nonprimitive say-to.v act (e.g. (^me say-to.v ^you (that (?e be.v finished.a)))):
@@ -706,7 +683,7 @@
         ; Output ULF if in live mode, along with indicator that the ULF is not intended as a query.
         (write-ulf `(quote ,(list 'non-query (eval user-ulf))))
         ; Determine answers by recalling from history
-        (if *responsive*
+        (if *dependencies*
           (setq ans `(quote ,(recall-answer object-locations (eval user-ulf))))
           (setq ans '()))
         (format t "recalled answer: ~a~%" ans) ; DEBUGGING
@@ -720,11 +697,7 @@
         (setq system (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq user-ulf (get-single-binding bindings))
-        ; Leaving this open in case we want different procedures for different systems
-        (cond
-          ((null *live*) (write-ulf user-ulf))
-          ((eq system '|Blocks-World-System|) (write-ulf user-ulf))
-          (t (write-ulf user-ulf))))
+        (if (member '|Blocks-World-System| *registered-systems*) (write-ulf user-ulf)))
 
       ;``````````````````````````````````````````
       ; Eta: Recieve answer from external source
@@ -736,9 +709,7 @@
         ; Leaving this open in case we want different procedures for different systems
         (cond
           (*read-log* (setq ans '()))
-          ((null *responsive*) (setq ans '()))
-          ((null *live*) (setq ans `(quote ,(get-answer-offline))))
-          ((eq system '|Blocks-World-System|) (setq ans `(quote ,(get-answer))))
+          ((not (member '|Blocks-World-System| *registered-systems*)) (setq ans '()))
           (t (setq ans `(quote ,(get-answer)))))
         (if (not (answer-list? (eval ans)))
           (setq ans '()))
@@ -755,7 +726,8 @@
         (setq expr (get-single-binding bindings))
         ; Generate response based on list of relations
         (cond
-          ((null *responsive*) (setq ans '(Could not form final answer \: not in responsive mode \.)))
+          ((not (member '|Blocks-World-System| *registered-systems*))
+            (setq ans '(Could not form final answer \: |Blocks-World-System| not registered \.)))
           (t (setq ans (generate-response (eval user-ulf) (eval expr)))))
         (format t "answer to output: ~a~%" ans) ; DEBUGGING
         ; If in read-log mode, append answer to list of new log answers
@@ -772,7 +744,8 @@
       ((setq bindings (bindings-from-ttt-match '(^me propose1-to.v ^you _!) wff))
         (setq expr (get-single-binding bindings))
         (cond
-          ((null *responsive*) (setq proposal-gist '(Could not create proposal \: not in responsive mode \.)))
+          ((null (member '|Blocks-World-System| *registered-systems*))
+            (setq proposal-gist '(Could not create proposal \: '|Blocks-World-System| not registered \.)))
           (t (setq proposal-gist (generate-proposal expr))))
         (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
         (setf (get ep-name 'gist-clauses) (list proposal-gist))
@@ -786,7 +759,8 @@
       ((setq bindings (bindings-from-ttt-match '(^me issue-correction-to.v ^you _!) wff))
         (setq expr (get-single-binding bindings))
         (cond
-          ((null *responsive*) (setq proposal-gist '(Could not create proposal \: not in responsive mode \.)))
+          ((null (member '|Blocks-World-System| *registered-systems*))
+            (setq proposal-gist '(Could not create proposal \: |Blocks-World-System| not registered \.)))
           (t (setq proposal-gist (generate-proposal expr))))
         ;; (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
         (setf (get ep-name 'gist-clauses) (list proposal-gist))
@@ -804,17 +778,16 @@
         ; Get perceptions
         (cond
           (*read-log* (setq perceptions (second (nth *log-ptr* *log-contents*))))
-          ((null *perceptive*) (setq perceptions nil))
-          ((null *live*) (setq perceptions (get-perceptions-offline)))
-          ((eq system '|Blocks-World-System|) (setq perceptions (get-perceptions)))
+          ((not (member '|Blocks-World-System| *registered-systems*)) (setq perceptions nil))
           (t (setq perceptions (get-perceptions))))
 
         ; Ensure perceptions are in correct format, i.e. a list of lists, otherwise set to nil
         (if (or (not perceptions) (not (listp perceptions)) (not (every #'listp perceptions)))
           (setq perceptions nil))
-        ; When in terminal mode and perceptive mode, update block coordinates after user gives move and add to perceptions
-        (when (or *read-log* (and (null *live*) *perceptive*))
-          (setq perceptions (update-block-coordinates (remove-if-not #'verb-phrase? perceptions))))
+        ; When in terminal mode w/ blocks world subsystem, update block coordinates after user gives move and add to perceptions
+        ; TODO: re-implement this to be compatible with changes
+        ;; (when (or *read-log* (and (not (member '|Audio| *registered-systems*)) (member '|Blocks-World-System| *registered-systems*)))
+        ;;   (setq perceptions (update-block-coordinates (remove-if-not #'verb-phrase? perceptions))))
  
         (format t "received perceptions: ~a~% (for variable ~a)~%" perceptions expr) ; DEBUGGING
 
@@ -1061,7 +1034,7 @@
                 (*read-log* (if (>= *log-ptr* (length *log-contents*))
                   (read-words "bye")
                   (read-words (first (nth *log-ptr* *log-contents*)))))
-                (*live* (hear-words *delay-say-to.v*))
+                ((member '|Audio| *registered-systems*) (hear-words *delay-say-to.v*))
                 (t (read-words)))))
             (setq words (decompress input))
             ; Bind input words to variable in plan
@@ -1185,7 +1158,7 @@
             (*read-log* (if (>= *log-ptr* (length *log-contents*))
               (read-words "bye")
               (read-words (first (nth *log-ptr* *log-contents*)))))
-            (*live* (hear-words))
+            ((member '|Audio| *registered-systems*) (hear-words))
             (t (read-words)))))
 
         ;; (format t "~% input is equal to ~a ~%" input) ; DEBUGGING
@@ -1216,7 +1189,9 @@
       ; distinction between replying and responding is somewhat arbitrary currently...
       ((setq bindings (bindings-from-ttt-match '(^you respond-to.v _!) wff))
         ; Read user input (within some secs if live mode)
-        (setq input (if *live* (hear-words :delay *delay-respond-to.v*) (read-words)))
+        (setq input (if (member '|Audio| *registered-systems*)
+                          (hear-words :delay *delay-respond-to.v*)
+                          (read-words)))
         (format t "~% input is equal to ~a ~%" input) ; DEBUGGING
 
         (cond
@@ -1239,7 +1214,9 @@
       ; Same as replying, but allows for "tacit approval" (some secs of silence) as well.
       ((setq bindings (bindings-from-ttt-match '(^you acknowledge.v _!) wff))
         ; Read user input (within some secs if live mode)
-        (setq input (if *live* (hear-words :delay *delay-acknowledge.v*) (read-words)))
+        (setq input (if (member '|Audio| *registered-systems*)
+                          (hear-words :delay *delay-acknowledge.v*)
+                          (read-words)))
         (format t "~% input is equal to ~a ~%" input) ; DEBUGGING
 
         (cond
@@ -1264,8 +1241,9 @@
       ; TODO: needs to be made more general in the future.
       ((setq bindings (bindings-from-ttt-match '(^you try1.v _!) wff))
         (setq expr (get-single-binding bindings))
-        (setq user-try-ka-success (if *live* (get-user-try-ka-success)
-                                             (get-user-try-ka-success-offline)))
+        (setq user-try-ka-success (if (member '|Blocks-World-System| *registered-systems*)
+                                        (get-user-try-ka-success)
+                                        (get-user-try-ka-success-offline)))
         (format t "~% user-try-ka-success is equal to ~a ~%" user-try-ka-success) ; DEBUGGING
         (when user-try-ka-success
           (store-in-context `((pair ^you ,ep-name) successful.a))
@@ -1694,8 +1672,9 @@
 ; in the find4.v action), which it shouldn't be.
 ;
   (let (step)
-    (setq step (if *live* (get-planner-input)
-                          (get-planner-input-offline)))
+    (setq step (if (member '|Blocks-World-System| *registered-systems*)
+                    (get-planner-input)
+                    (get-planner-input-offline)))
     (remove-from-context `(?x step1-toward.p ,goal-rep))
     (if step
       (store-in-context `(,step step1-toward.p ,goal-rep))))

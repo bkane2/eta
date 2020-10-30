@@ -66,18 +66,6 @@
 
 
 
-(defun process-buffer ()
-;``````````````````````````
-; Processes and clears input buffer.
-; TODO: currently unused.
-;
-  (let ((buffer *input-buffer*))
-    (setq *input-buffer* nil)
-    (parse-chars (coerce buffer 'list)))
-) ; END process-buffer
-
-
-
 (defun read-input-timeout (n)
 ;``````````````````````````````
 ; Reads terminal input for n seconds and returns accumulated string.
