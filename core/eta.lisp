@@ -345,6 +345,10 @@
 ; determining when to move on from a non-Eta step based
 ; on certainty.
 ;
+; TODO: certain facts (e.g. say-to.v, reply-to.v) need to be removed
+; from context when appropriate when a user step is matched to
+; something in context.
+;
   ; Process next action of dialogue plan
   (process-next-action (ds-curr-plan *ds*))
 
