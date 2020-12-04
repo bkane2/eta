@@ -22,6 +22,10 @@
 ;```````````````````````
 ; Scans input from the terminal. If the user presses enter, read the
 ; input, create and return a (^you say-to.v ^me '(...)) proposition.
+; NOTE: previously in eta.lisp, it would call detach-final-punctuation
+; after reading input from hear-words or read-words. However, I suspect
+; we want punctuation since Google ASR is capable of it. The pattern-
+; matching files therefore need to take punctuation into account.
 ;
   (if (listen) `((^you say-to.v ^me ',(parse-chars (coerce (read-line) 'list)))))
 ) ; END read-terminal
@@ -32,6 +36,10 @@
 ;`````````````````````
 ; Reads input from |Audio| subsystem (i.e., (^you say-to.v ^me '(...)), or
 ; possibly (^you say-to.v ^me "...")) propositions from io/Audio.lisp.
+; NOTE: previously in eta.lisp, it would call detach-final-punctuation
+; after reading input from hear-words or read-words. However, I suspect
+; we want punctuation since Google ASR is capable of it. The pattern-
+; matching files therefore need to take punctuation into account.
 ; 
   (setq *input* nil)
   (load "./io/Audio.lisp")
