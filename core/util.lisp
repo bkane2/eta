@@ -1115,6 +1115,8 @@
 ;
 ; In addition, we store wff in a special context hash table, containing
 ; all wffs which are true at NOW*.
+;
+; Returns the ep-name that was created.
 ; 
   (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)) ep-name timestamp)
     (setq ep-name (episode-name))
@@ -1124,7 +1126,8 @@
     (store-in-memory `(NOW* during ,ep-name))
     (store-in-memory `(,timestamp during ,ep-name))
     ; Store wff in context
-    (store-in-context wff1))
+    (store-in-context wff1)
+    ep-name)
 ) ; END store-new-contextual-fact
 
 
