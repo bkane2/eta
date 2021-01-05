@@ -12,10 +12,26 @@
 ; Overwrites all io files used by Eta with blank files
 ;
   (ensure-directories-exist "./io/")
+  (ensure-directories-exist "./io/in/")
+  (ensure-directories-exist "./io/out/")
   (when *read-log-mode*
     (ensure-directories-exist "./logs/")
     (ensure-directories-exist "./logs/logs/")
     (ensure-directories-exist "./logs/logs_out/"))
+
+  ; Ensure all standard input & output files for registered subsystems exist and are empty
+  ; Note: input files only created for non-terminal systems,
+  ;       output files are only created for non-terminal and non-audio systems
+  (mapcar (lambda (system)
+  (let ((fname-in (concatenate 'string "./io/in/" (string system) ".lisp"))
+        (fname-out (if (not (member system '(|Terminal| |Audio|)))
+                  (concatenate 'string "./io/out/" (string system) ".lisp"))))
+    (with-open-file (outfile fname-in :direction :output :if-exists
+                                      :supersede :if-does-not-exist :create))
+    (if fname-out
+    (with-open-file (outfile fname-out :direction :output :if-exists
+                                      :supersede :if-does-not-exist :create)))))
+  *subsystems*)
 
   ; Delete the content of the Audio.lisp file after reading
   (with-open-file (outfile "./io/Audio.lisp" :direction :output :if-exists

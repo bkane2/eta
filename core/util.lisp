@@ -298,6 +298,86 @@
 
 
 
+(defun parse-chars (chars) 
+;```````````````````````````
+; Parses a list of chars by forming a list of character sublists,
+; where each sublist is made into an atom (taking into account
+; special characters)
+;
+; Takes a character list as input. Then tokenize into a list of
+; upper-case atoms, treating (i) any nonblank character following a
+; blank, (ii) any non-blank nonalphanumeric character other than
+; #\', #\-, #\_ following an alphanumeric character, and (iii) any
+; alphanumeric character following a nonalphanumeric character other
+; than #\', #\-, #\_, as the start of a new atom.
+;
+  (let (prevch chlist chlists)
+    (if (null chars) (return-from parse-chars nil))
+    ; Form a list of character sublists, each sublist to be made
+    ; into an atom; (the list & sublists will at first be backward,
+    ; and so have to be reversed before interning & output)
+    (setq prevch #\Space)
+    (dolist (ch chars)
+      ; Do we have the start of a new word?
+      (if
+        (or
+          (and
+            (char-equal prevch #\Space) 
+            (not (char-equal ch #\Space)))
+          (and
+            (alphanumericp prevch)
+            (not (alphanumericp ch))
+            (not (member ch '(#\Space #\' #\- #\_) :test #'char-equal)))
+          (and
+            (not (alphanumericp prevch))
+            (not (member prevch '(#\' #\- #\_) :test #'char-equal))
+            (alphanumericp ch)))
+        ; If so, push the current chlist (if nonempty) onto 
+        ; chlists, and start a new chlist containing ch
+        (progn (if chlist (push (reverse chlist) chlists))
+          (setq chlist (list (char-upcase ch))))
+        ; If not, push ch (if nonblank) onto the current chlist
+        (if (not (char-equal ch #\Space))
+          (push (char-upcase ch) chlist)))
+      (setq prevch ch))
+        
+    ; Push the final chlist (if nonempty) onto chlists (in reverse)
+    (if chlist (push (reverse chlist) chlists))
+    ; Return the reverse of chlists, where each sublist has been
+    ; interned into an atom
+    (reverse (mapcar (lambda (x) (intern (coerce x 'string))) chlists))
+)) ; END parse-chars
+
+
+
+(defun str-to-output (str)
+; ``````````````````````````
+; Converts a string to a list of words/punctuation to output
+; TEST: "The next step be putting the Twitter block on the Texaco block."
+; 
+  (let ((char-list (coerce str 'list)) word words)
+    (dolist (c char-list)
+      (cond
+        ; If space, add accumulated word to word list and clear word
+        ((member c '(#\ ) :test #'char-equal)
+          (if word (setq words (cons (reverse word) words)))
+          (setq word nil))
+        ; If punctuation, add accumulated word to word list, clear word,
+        ; and add punctuation to word list
+        ((member c '(#\. #\, #\' #\") :test #'char-equal)
+          (if word (setq words (cons (reverse word) words)))
+          (setq word nil)
+          (setq words (cons (intern (coerce (list c) 'string)) words)))
+        ; Otherwise, add current character to accumulated word
+        (t
+          (setq word (cons c word)))))
+    ; Read list of word symbols from list of strings.
+    (reverse (mapcar (lambda (w)
+      (if (listp w) (read-from-string (coerce w 'string)) w)) words)))
+) ; END str-to-output
+
+
+
 ;``````````````````````````````````````````````````````
 ;
 ; TYPE-CHECKING PREDICATES

@@ -8,12 +8,11 @@
 (defun read-from-system (system)
 ;``````````````````````````````````
 ; Reads input (as a list of propositions) from given subsystem.
-; Currently supports |Audio| and |Blocks-World-System|.
 ;
   (case system
     (|Audio| (read-audio))
     (|Terminal| (read-terminal))
-    (|Blocks-World-System| (read-blocks-world-system)))
+    (otherwise (read-subsystem system)))
 ) ; END read-from-system
 
 
@@ -57,20 +56,94 @@
 
 
 
-(defun read-blocks-world-system ()
+(defun read-subsystem (system)
 ;```````````````````````````````````
-; Reads input from |Blocks-World-System| subsystem (i.e., (^you ((past move.v) ...)),
-; or ((the.d (|Twitter| block.n)) ((past move.v) ...))) propositions
-; from io/Blocks-World-System.lisp.
+; Reads input ULF propositions from io/in/<system>.lisp.
 ;
+  (let ((fname (concatenate 'string "./io/in/" (string system) ".lisp")))
   (setq *input* nil)
-  (load "./io/Blocks-World-System.lisp")
+  (load fname)
   (if *input*
-    (with-open-file (outfile "./io/Blocks-World-System.lisp" :direction :output
-                                                             :if-exists :supersede
-                                                             :if-does-not-exist :create)))
+    (with-open-file (outfile fname :direction :output
+                                   :if-exists :supersede
+                                   :if-does-not-exist :create)))
   *input*
-) ; END read-blocks-world-system
+)) ; END read-subsystem
+
+
+
+(defun write-subsystem (output system)
+;`````````````````````````````````````````
+; Writes output/"query" ULF propositions to io/out/<system>.lisp.
+;
+  (let ((fname (concatenate 'string "./io/out/" (string system) ".lisp")))
+    (with-open-file (outfile fname :direction :output
+                                   :if-exists :supersede
+                                   :if-does-not-exist :create)
+      (format outfile "(setq *output* ~a)" output))
+)) ; END write-subsystem
+
+
+
+(defun print-words (wordlist)
+;``````````````````````````````
+; This is intended for the keyboard-based mode of interaction,
+; i.e., with *live* = nil.
+;
+  (format t "~%...")
+  (dolist (word wordlist)
+    (princ " ")
+    (princ word)
+    (if (or (member word '(? ! \.))
+            (member (car (last (explode word))) '(#\? #\! #\.)))
+      (format t "~%")))
+) ; END print-words
+
+
+
+(defun say-words (wordlist)
+;````````````````````````````
+; This is intended for th *live* = T mode of operation, i.e., I/O
+; is via the virtual agent; (but the output is printed as well).
+; For terminal mode only, we use 'print-words'.
+;
+  (let (wordstring)
+    ; Write ETA's words to "./io/output.txt" as a continuous string
+    ; (preceded by the output count and a colon)
+    (dolist (word wordlist)
+      (push (string word) wordstring)
+      (push " " wordstring))
+    (setq wordstring (reverse (cdr wordstring)))
+    (setq wordstring (eval (cons 'concatenate (cons ''string wordstring))))
+
+    ; Increment output number
+    (setq *output-count* (1+ *output-count*))
+	  
+    ; Output words
+    (with-open-file (outfile "./io/output.txt" :direction :output
+                                               :if-exists :append
+                                               :if-does-not-exist :create)
+      (format outfile "~%#~D: ~a" *output-count* wordstring))
+
+    ; Also write ETA's words to standard output:
+    (format t "~% ... ")
+    (dolist (word wordlist)
+      (format t "~a " word)
+      (if (or (member word '(? ! \.))
+              (member (car (last (explode word))) '(#\? #\! #\.)))
+        (format t "~%")))
+    (format t "~%")
+)) ; END say-words
+
+
+
+
+
+;; --------------------------------------------------
+;; The functions after this point need to be vetted.
+;; --------------------------------------------------
+
+
 
 
 
@@ -114,58 +187,6 @@
                                         :if-does-not-exist :create)
     (format outfile "(setq *next-ulf* ~a)" ulf))
 ) ; END write-ulf
-
-
-
-(defun print-words (wordlist)
-;``````````````````````````````
-; This is intended for the keyboard-based mode of interaction,
-; i.e., with *live* = nil.
-;
-  (format t "~%...")
-  (dolist (word wordlist)
-    (princ " ")
-    (princ word)
-    (if (or (member word '(? ! \.))
-            (member (car (last (explode word))) '(#\? #\! #\.)))
-      (format t "~%")))
-) ; END print-words
-
-
-
-(defun say-words (wordlist)
-;````````````````````````````
-; This is intended for th *live* = T mode of operation, i.e., I/O
-; is via the virtual agent; (but the output is printed as well).
-; For terminal mode only, we use 'print-words'.
-;
-  (let (wordstring)
-    ; Write ETA's words to "./io/output.txt" as a continuous string
-    ; (preceded by the output count and a colon)
-    (dolist (word wordlist)
-      (push (string word) wordstring)
-      (push " " wordstring))
-    (setq wordstring (reverse (cdr wordstring)))
-    (setq wordstring (eval (cons 'concatenate (cons ''string wordstring))))
-
-    ; Increment output number
-    (setq *output-count* (1+ *output-count*))
-	  
-    ; Output words
-    (with-open-file (outfile "./io/output.txt" :direction :output
-                                            :if-exists :append
-                                            :if-does-not-exist :create)
-      (format outfile "~%#~D: ~a" *output-count* wordstring))
-
-    ; Also write ETA's words to standard output:
-    (format t "~% ... ")
-    (dolist (word wordlist)
-      (format t "~a " word)
-      (if (or (member word '(? ! \.))
-              (member (car (last (explode word))) '(#\? #\! #\.)))
-        (format t "~%")))
-    (format t "~%")
-)) ; END say-words
 
 
 
@@ -524,83 +545,3 @@
           (format outfile "(\"~a\" ~S \"~a\" ~a)~%"
             (first turn-tuple) (second turn-tuple) (format nil "~{~a~^ ~}" answer-new) feedback-new)))))
 ) ; END verify-log
-
-
-
-(defun parse-chars (chars) 
-;```````````````````````````
-; Parses a list of chars by forming a list of character sublists,
-; where each sublist is made into an atom (taking into account
-; special characters)
-;
-; Takes a character list as input. Then tokenize into a list of
-; upper-case atoms, treating (i) any nonblank character following a
-; blank, (ii) any non-blank nonalphanumeric character other than
-; #\', #\-, #\_ following an alphanumeric character, and (iii) any
-; alphanumeric character following a nonalphanumeric character other
-; than #\', #\-, #\_, as the start of a new atom.
-;
-  (let (prevch chlist chlists)
-    (if (null chars) (return-from parse-chars nil))
-    ; Form a list of character sublists, each sublist to be made
-    ; into an atom; (the list & sublists will at first be backward,
-    ; and so have to be reversed before interning & output)
-    (setq prevch #\Space)
-    (dolist (ch chars)
-      ; Do we have the start of a new word?
-      (if
-        (or
-          (and
-            (char-equal prevch #\Space) 
-            (not (char-equal ch #\Space)))
-          (and
-            (alphanumericp prevch)
-            (not (alphanumericp ch))
-            (not (member ch '(#\Space #\' #\- #\_) :test #'char-equal)))
-          (and
-            (not (alphanumericp prevch))
-            (not (member prevch '(#\' #\- #\_) :test #'char-equal))
-            (alphanumericp ch)))
-        ; If so, push the current chlist (if nonempty) onto 
-        ; chlists, and start a new chlist containing ch
-        (progn (if chlist (push (reverse chlist) chlists))
-          (setq chlist (list (char-upcase ch))))
-        ; If not, push ch (if nonblank) onto the current chlist
-        (if (not (char-equal ch #\Space))
-          (push (char-upcase ch) chlist)))
-      (setq prevch ch))
-        
-    ; Push the final chlist (if nonempty) onto chlists (in reverse)
-    (if chlist (push (reverse chlist) chlists))
-    ; Return the reverse of chlists, where each sublist has been
-    ; interned into an atom
-    (reverse (mapcar (lambda (x) (intern (coerce x 'string))) chlists))
-)) ; END parse-chars
-
-
-
-(defun str-to-output (str)
-; ``````````````````````````
-; Converts a string to a list of words/punctuation to output
-; TEST: "The next step be putting the Twitter block on the Texaco block."
-; 
-  (let ((char-list (coerce str 'list)) word words)
-    (dolist (c char-list)
-      (cond
-        ; If space, add accumulated word to word list and clear word
-        ((member c '(#\ ) :test #'char-equal)
-          (if word (setq words (cons (reverse word) words)))
-          (setq word nil))
-        ; If punctuation, add accumulated word to word list, clear word,
-        ; and add punctuation to word list
-        ((member c '(#\. #\, #\' #\") :test #'char-equal)
-          (if word (setq words (cons (reverse word) words)))
-          (setq word nil)
-          (setq words (cons (intern (coerce (list c) 'string)) words)))
-        ; Otherwise, add current character to accumulated word
-        (t
-          (setq word (cons c word)))))
-    ; Read list of word symbols from list of strings.
-    (reverse (mapcar (lambda (w)
-      (if (listp w) (read-from-string (coerce w 'string)) w)) words)))
-) ; END str-to-output
