@@ -55,8 +55,8 @@
 ;```````````````````````````````
 ; contains the following fields:
 ; curr-plan        : points to the currently active dialogue plan
-; task-queue       : a list of tasks (currently 'perform-next-step', 'collect-observations', and
-;                    'infer-facts') to repeatedly execute in cycles
+; task-queue       : a list of tasks (currently 'perform-next-step', 'perceive-world', 'interpret-perceptions',
+;                    'infer-facts-top-down', and 'infer-facts-bottom-up') to repeatedly execute in cycles
 ; dialogue-history : should be three lists: surface form, gist clauses, and ULF interpretations
 ; reference-list   : contains a list of discourse entities to be used in ULF coref
 ; equality-sets    : hash table containing a list of aliases, keyed by canonical name
@@ -211,7 +211,7 @@
 ; properties of the dialogue state (e.g. hash tables, task queues, etc.)
 ;
   ; Initialize task queue
-  (setf (ds-task-queue *ds*) '(perform-next-step collect-observations infer-facts-top-down infer-facts-bottom-up))
+  (setf (ds-task-queue *ds*) '(perform-next-step perceive-world interpret-perceptions infer-facts-top-down infer-facts-bottom-up))
 
   ; Dialogue record keeps track of three kinds of history - surface words,
   ; gist clauses, and semantic interpretations
@@ -303,7 +303,8 @@
 ;
   (case task
     (perform-next-step (perform-next-step))
-    (collect-observations (collect-observations))
+    (perceive-world (perceive-world))
+    (interpret-perceptions (interpret-perceptions))
     (infer-facts-top-down (infer-facts-top-down))
     (infer-facts-bottom-up (infer-facts-bottom-up)))
 ) ; END do-task
@@ -344,7 +345,7 @@
 
 
 
-(defun collect-observations ()
+(defun perceive-world ()
 ;````````````````````````````````````
 ; TBC
 ;
@@ -366,18 +367,15 @@
           (remove-old-contextual-fact (second input))
           (store-new-contextual-fact input)))
       inputs))
-)) ; END collect-observations
+)) ; END perceive-world
 
 
 
 
 
-(defun infer-facts-top-down ()
+(defun interpret-perceptions ()
 ;```````````````````````````````
 ; TBC
-;
-; For inferring facts in a top-down way, using the expectation of the
-; next user action in the current dialogue plan.
 ;
   (let (curr-step subplan wff ret bindings new-subplan)
     ; Find the next action from the deepest active subplan
@@ -394,10 +392,22 @@
 
     ; If the current step of the plan is a user action, infer
     ; facts expected from that action
+    ;; TODO!!!!!!!!!!!
     (when (eq (car wff) '^you)
       (inference-from-anticipated-user-action subplan))
 
-)) ; END infer-facts-top-down
+)) ; END interpret-perceptions
+
+
+
+
+
+(defun infer-facts-top-down ()
+;```````````````````````````````
+; TBC
+;
+  nil
+) ; END infer-facts-top-down
 
 
 
