@@ -113,6 +113,9 @@
   ; Use response inhibition via latency numbers when *use-latency* = T
   (defvar *use-latency* t)
 
+  ; Queue of tasks that Eta must perform
+  (defvar *tasks-list* '(perform-next-step perceive-world interpret-perceptions infer-facts-top-down infer-facts-bottom-up))
+
   ; Global variable for dialogue record structure
   (defvar *ds* (make-ds))
   (init-ds)
@@ -163,6 +166,10 @@
   ; an infinite loop (e.g. if the plan isn't correctly updated).
   (defparameter *error-check* 0)
 
+  ; Timer parameters (to be incremented based on task cycles)
+  (defparameter *flush-context-timer* 0)
+  (defparameter *timers* '(*flush-context-timer*))
+
   ; If *read-log* is the name of some file (in logs/ directory), read and
   ; emulate that file, allowing for user corrections and saving them in a file
   ; of the same name in logs_out/ directory.
@@ -211,7 +218,7 @@
 ; properties of the dialogue state (e.g. hash tables, task queues, etc.)
 ;
   ; Initialize task queue
-  (setf (ds-task-queue *ds*) '(perform-next-step perceive-world interpret-perceptions infer-facts-top-down infer-facts-bottom-up))
+  (refill-task-queue)
 
   ; Dialogue record keeps track of three kinds of history - surface words,
   ; gist clauses, and semantic interpretations
@@ -278,11 +285,28 @@
 
 
 
+(defun refill-task-queue ()
+;```````````````````````````````````
+; Refills the task queue after it becomes empty.
+  (setf (ds-task-queue *ds*) *tasks-list*)
+) ; END refill-task-queue
+
+
+
+
+
 (defun select-and-remove-task ()
 ;```````````````````````````````````
 ; Select the task at the front of the task queue. Return the
-; task and update the queue, placing the task at the end of the list.
+; task and update the queue, refilling the queue when empty.
 ;
+  ; When the task queue is empty, refill and increment timers based on task cycles
+  (when (null (ds-task-queue *ds*))
+    (refill-task-queue)
+    (format t ">>>~a~%" *flush-context-timer*)
+    (dolist (timer *timers*) (eval `(incf ,timer))))
+
+  ; Pop the current front of the task queue
   (let ((curr-task (car (ds-task-queue *ds*))))
     (setf (ds-task-queue *ds*) (append (cdr (ds-task-queue *ds*))
                                        (list curr-task)))
@@ -393,8 +417,8 @@
     ; If the current step of the plan is a user action, infer
     ; facts expected from that action
     ;; TODO!!!!!!!!!!!
-    (when (eq (car wff) '^you)
-      (inference-from-anticipated-user-action subplan))
+    ;; (when (eq (car wff) '^you)
+    ;;   (inference-from-anticipated-user-action subplan))
 
 )) ; END interpret-perceptions
 
