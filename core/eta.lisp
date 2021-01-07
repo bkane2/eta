@@ -303,7 +303,6 @@
   ; When the task queue is empty, refill and increment timers based on task cycles
   (when (null (ds-task-queue *ds*))
     (refill-task-queue)
-    (format t ">>>~a~%" *flush-context-timer*)
     (dolist (timer *timers*) (eval `(incf ,timer))))
 
   ; Pop the current front of the task queue
