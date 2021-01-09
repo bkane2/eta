@@ -1243,6 +1243,18 @@
 
 
 
+(defun flush-context ()
+;````````````````````````````````
+; Flushes context of telic verbs (e.g. saying events) which are only
+; "instantaneously" true and are assumed to become false after a predetermined
+; amount of time.
+; These telic verbs are currently recorded manually in 'resources/verbs-telic.lisp'.
+; 
+  (mapcar #'remove-old-contextual-fact *verbs-telic*)
+) ; END flush-context
+
+
+
 ;``````````````````````````````````````````````````````
 ;
 ; NAME/CONCEPT/ALIAS/RECORD STRUCTURE UTIL

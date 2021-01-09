@@ -170,6 +170,11 @@
   (defparameter *flush-context-timer* 0)
   (defparameter *timers* '(*flush-context-timer*))
 
+  ; The timer period (number of task cycles) that must be passed for Eta to flush
+  ; context, removing "instantaneous" telic verbs from context.
+  ; The period should be empirically chosen to be approximately equivalent to 5 seconds.
+  (defparameter *flush-context-period* 50)
+
   ; If *read-log* is the name of some file (in logs/ directory), read and
   ; emulate that file, allowing for user corrections and saving them in a file
   ; of the same name in logs_out/ directory.
@@ -373,6 +378,13 @@
 ; TBC
 ;
   (let (inputs)
+
+  ; Flush context of "instantaneous" telic verbs once task cycle timer
+  ; passes a given period.
+  (when (>= *flush-context-timer* *flush-context-period*)
+    (flush-context)
+    (setq *flush-context-timer* 0))
+
   ; Cycle through all registered input sources
   ; for each observation, instantiate an episode and
   ; any relevant temporal relations.
@@ -382,10 +394,13 @@
         ; If observed that fact is no longer true, remove from
         ; context; otherwise add it to context.
         ; TODO: some facts imply the negation of other ones,
-        ; e.g., (A smiling.a) => (not (A frowning.a))
-        ; Also, some types of "instantaneous" facts we might want to
-        ; restrict to only having one active one in context, e.g.,
-        ; (^you say-to.v ^me '(...))
+        ; e.g., (^you smiling.a) => (not (^you frowning.a)). Presumably
+        ; this would be inferred, but I'm not sure how this inferred
+        ; fact can be used to remove a previous (^you smiling.a) fact
+        ; from context, unless we look for & remove contradictions from
+        ; context each time this task executes. I suppose another option
+        ; to inferring the negation would be using a lexical resource,
+        ; such as WordNet, which has mutual exclusion relations.
         (if (equal 'not (car input))
           (remove-old-contextual-fact (second input))
           (store-new-contextual-fact input)))

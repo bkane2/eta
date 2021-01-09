@@ -23,11 +23,13 @@
   ; Note: input files only created for non-terminal systems,
   ;       output files are only created for non-terminal and non-audio systems
   (mapcar (lambda (system)
-  (let ((fname-in (concatenate 'string "./io/in/" (string system) ".lisp"))
+  (let ((fname-in (if (not (member system '(|Terminal|)))
+                  (concatenate 'string "./io/in/" (string system) ".lisp")))
         (fname-out (if (not (member system '(|Terminal| |Audio|)))
                   (concatenate 'string "./io/out/" (string system) ".lisp"))))
+    (if fname-in
     (with-open-file (outfile fname-in :direction :output :if-exists
-                                      :supersede :if-does-not-exist :create))
+                                      :supersede :if-does-not-exist :create)))
     (if fname-out
     (with-open-file (outfile fname-out :direction :output :if-exists
                                       :supersede :if-does-not-exist :create)))))
