@@ -173,7 +173,7 @@
   ; The timer period (number of task cycles) that must be passed for Eta to flush
   ; context, removing "instantaneous" telic verbs from context.
   ; The period should be empirically chosen to be approximately equivalent to 5 seconds.
-  (defparameter *flush-context-period* 50)
+  (defparameter *flush-context-period* 3000000)
 
   ; If *read-log* is the name of some file (in logs/ directory), read and
   ; emulate that file, allowing for user corrections and saving them in a file
@@ -312,8 +312,7 @@
 
   ; Pop the current front of the task queue
   (let ((curr-task (car (ds-task-queue *ds*))))
-    (setf (ds-task-queue *ds*) (append (cdr (ds-task-queue *ds*))
-                                       (list curr-task)))
+    (setf (ds-task-queue *ds*) (cdr (ds-task-queue *ds*)))
     curr-task)
 ) ; END select-and-remove-task
 
