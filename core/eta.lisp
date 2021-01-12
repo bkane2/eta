@@ -57,6 +57,7 @@
 ; curr-plan        : points to the currently active dialogue plan
 ; task-queue       : a list of tasks (currently 'perform-next-step', 'perceive-world', 'interpret-perceptions',
 ;                    'infer-facts-top-down', and 'infer-facts-bottom-up') to repeatedly execute in cycles
+; perception-queue : a queue of perceptions pending context-driven interpretation
 ; dialogue-history : should be three lists: surface form, gist clauses, and ULF interpretations
 ; reference-list   : contains a list of discourse entities to be used in ULF coref
 ; equality-sets    : hash table containing a list of aliases, keyed by canonical name
@@ -74,6 +75,7 @@
 ;
   curr-plan
   task-queue
+  perception-queue
   dialogue-history
   reference-list
   equality-sets
@@ -390,6 +392,8 @@
     (dolist (system *registered-systems*)
       (setq inputs (read-from-system system))
       (mapcar (lambda (input)
+        ; Add fact to perceptions queue for further context-dependent interpretation.
+        (push input (ds-perception-queue *ds*))
         ; If observed that fact is no longer true, remove from
         ; context; otherwise add it to context.
         ; TODO: some facts imply the negation of other ones,
@@ -427,11 +431,11 @@
     ; Get wff of curr-step
     (setq wff (plan-step-wff curr-step))
 
-    ; If the current step of the plan is a user action, infer
-    ; facts expected from that action
-    ;; TODO!!!!!!!!!!!
-    ;; (when (eq (car wff) '^you)
-    ;;   (inference-from-anticipated-user-action subplan))
+    ; Go through queued perceptions and try to interpret each one in
+    ; context of the previous plan step
+    (dolist (fact (ds-perception-queue *ds*))
+      (interpret-perception-in-context fact wff))
+    (setf (ds-perception-queue *ds*) nil)
 
 )) ; END interpret-perceptions
 
@@ -993,9 +997,10 @@
 
 
 
-(defun inference-from-anticipated-user-action (subplan)
+(defun interpret-perception-in-context (fact wff)
 ;````````````````````````````````````````````````````````
-; TODO: function should return a list of new episode + wffs, to be stored in context.
+; TODO: function should interpret 'fact' in the context of 'wff', storing resulting facts in context.
+; If 'fact' is a say-to.v action, interpret as gist-clause as well as logical form.
 ;
 ; Suppose the next step in a plan is a user action to be matched, like
 ; E20 (^me say-to.v ^you '(...))
@@ -1028,15 +1033,10 @@
 ; relate E21 with whichever episode corresponded to (^you say-to.v ^me ...) used to infer the wff - namely,
 ; these episodes are coextensive. But I'm not entirely sure the best way to go about this yet.
 ;
-  (let* ((curr-step (plan-curr-step subplan)) bindings expr
-         (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
-         wff-inferred ep-name-inferred
-         words superstep ep-name1 wff1 wff1-arg eta-ep-name eta-clauses user-gist-clauses
+  (let* (expr bindings words superstep ep-name1 wff1 wff1-arg eta-ep-name eta-clauses user-gist-clauses
          main-clause user-ulfs user-action input user-try-ka-success)
 
-    ;; (format t "~%WFF = ~a,~%      in the anticipated user action ~a being processed~%" wff ep-name) ; DEBUGGING
-    (format t ">>>>> ~a : ~a~%" ep-name wff)
-    ;; TODO: need to investigate advance-plan, which is causing ep-name to become instantiated prior to matching.
+    (format t "~%fact = ~a,~%     in the context of wff = ~a~%" fact wff) ; DEBUGGING
 
     ; Big conditional statement to observe different types of user actions
     (cond
@@ -1046,7 +1046,7 @@
       ; A say-to.v act may be primitive, having a '?words' variable as its argument,
       ; or may have been created from a (^you reply-to.v <eta action>)) based on reading
       ; the user's input:
-      ((setq bindings (bindings-from-ttt-match '(^you say-to.v ^me _!) wff))
+      ((setq bindings (bindings-from-ttt-match '(^you say-to.v ^me _!) fact))
         (setq expr (get-single-binding bindings))
 
         ;; (cond
@@ -1140,7 +1140,7 @@
       ; often "condensed", sentences; thus we can directly set the 'gist-clauses'
       ; properties of the user action rather than applying 'form-gist-clauses-from-input'
       ; again (as was done above for (^you say-to.v ^me '(...)) actions).
-      ((setq bindings (bindings-from-ttt-match '(^you paraphrase.v _!) wff))
+      ((setq bindings (bindings-from-ttt-match '(^you paraphrase.v _!) fact))
         ;; (setq expr (get-single-binding bindings))
         ;; (cond
         ;;   ((not (quoted-sentence? expr))
@@ -1152,44 +1152,13 @@
             
       )
 
-      ;`````````````````````
-      ; User: Replying
-      ;`````````````````````
-      ; Nonprimitive (^you reply-to.v <eta action name>) action; we particularize this
-      ; action as a subplan, based on reading the user's input
-      ((setq bindings (bindings-from-ttt-match '(^you reply-to.v _!) wff))
-        
-      )
-
-      ;`````````````````````
-      ; User: Responding
-      ;`````````````````````
-      ; Currently, this is treated as a more "general" version of replying, and also
-      ; is aimed at more instantaneous verbal responses, i.e., occurring within some
-      ; seconds after the previous action.
-      ; TODO: ultimately, it seems like a response could be verbal or non-verbal (e.g.
-      ; a gesture, following an instruction, etc.). But this invites certain parallel
-      ; processing issues, so currently I keep these separate. Also, it seems like the
-      ; distinction between replying and responding is somewhat arbitrary currently...
-      ((setq bindings (bindings-from-ttt-match '(^you respond-to.v _!) wff))
-      
-      )
-
-      ;`````````````````````
-      ; User: Acknowledging
-      ;`````````````````````
-      ; Same as replying, but allows for "tacit approval" (some secs of silence) as well.
-      ((setq bindings (bindings-from-ttt-match '(^you acknowledge.v _!) wff))
-      
-      )
-
       ;````````````````````````````
       ; User: Trying
       ;````````````````````````````
       ; User tries some reified action. Queries the BW system for whether or
       ; not trying the action was successful.
       ; TODO: needs to be made more general in the future.
-      ((setq bindings (bindings-from-ttt-match '(^you try1.v _!) wff))
+      ((setq bindings (bindings-from-ttt-match '(^you try1.v _!) fact))
         ;; (setq expr (get-single-binding bindings))
         ;; (setq user-try-ka-success (if (member '|Blocks-World-System| *registered-systems*)
         ;;                                 (get-user-try-ka-success)
@@ -1202,11 +1171,11 @@
         )
 
       ; Unrecognizable step
-      (t (format t "~%*** UNRECOGNIZABLE STEP ~a " wff) (error))
+      (t (format t "~%*** UNRECOGNIZABLE STEP ~a " fact) (error))
     )
 
   nil)
-) ; END inference-from-anticipated-user-action
+) ; END interpret-perception-in-context
 
 
 
