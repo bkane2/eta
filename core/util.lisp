@@ -1086,6 +1086,22 @@
 
 
 
+(defun get-from-memory-characterizing-episode (pred-patt ep-name)
+;``````````````````````````````````````````````````````````````````
+; Given an episode name, find all facts in memory characterizing (or partially characterizing)
+; that episode, and return the ones matching pred-patt.
+; 
+  (let (facts matches)
+    (setq facts (mapcar #'car
+      (append (get-from-memory `(?p ** ,ep-name)) (get-from-memory `(?p * ,ep-name)))))
+    (dolist (fact facts)
+      (when (fact-matches-p pred-patt fact)
+        (setq matches (cons fact matches))))
+    matches
+)) ; END get-from-memory-characterizing-episode
+
+
+
 (defun remove-from-memory (pred-patt)
 ;```````````````````````````````````````
 ; Removes a fact from memory.
@@ -1529,6 +1545,23 @@
 ;```````````````````````````````
   (dolist (fact facts) (remove-fact fact ht))
 ) ; END remove-facts
+
+
+
+(defun fact-matches-p (pred-patt fact)
+;````````````````````````````````````````
+; Returns true if 'fact' matches 'pred-patt' (either the predicate constant of 'fact')
+; or a proposition template containing variables).
+;
+  (or
+    ; pred-patt is either a 0-arity predicate or the predicate constant
+    (and (atom pred-patt)
+         (or (equal pred-patt fact)
+             (and (listp fact) (>= (length fact) 2) (equal pred-patt (second fact)))))
+    ; pred-patt is a proposition of the same arity as fact (possibly with variables)
+    (and (listp pred-patt) (listp fact) (= (length pred-patt) (length fact))
+         (every (lambda (arg-p arg-f) (or (variable? arg-p) (equal arg-p arg-f))) pred-patt fact)))
+) ; END fact-matches-p
 
 
 
