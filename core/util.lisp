@@ -1874,6 +1874,34 @@
 
 
 
+(defun unwrap-gist-clause (gist-fact)
+;``````````````````````````````````````
+; Given a fact of the form (^you implicitly-say-to.v ^me '(<gist-clause>)),
+; return the unquoted gist-clause.
+;
+  (eval (fourth gist-fact))
+) ; END unwrap-gist-clause
+
+(defun unwrap-gist-clauses (gist-facts)
+  (mapcar #'unwrap-gist-clause gist-facts)
+) ; END unwrap-gist-clauses
+
+
+
+(defun unwrap-semantic-interpretation (semantic-fact)
+;``````````````````````````````````````````````````````
+; Given a fact of the form (^you articulate2-to.v ^me (that (<wff>))),
+; return the wff.
+;
+  (second (fourth semantic-fact))
+) ; END unwrap-semantic-interpretation
+
+(defun unwrap-semantic-interpretations (semantic-facts)
+  (mapcar #'unwrap-semantic-interpretation semantic-facts)
+) ; END unwrap-semantic-interpretations
+
+
+
 ;``````````````````````````````````````````````````````
 ;
 ; SCHEMA UTIL
