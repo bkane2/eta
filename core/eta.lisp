@@ -58,7 +58,6 @@
 ; task-queue       : a list of tasks (currently 'perform-next-step', 'perceive-world', 'interpret-perceptions',
 ;                    'infer-facts-top-down', and 'infer-facts-bottom-up') to repeatedly execute in cycles
 ; perception-queue : a queue of perceptions pending context-driven interpretation
-; dialogue-history : should be three lists: surface form, gist clauses, and ULF interpretations
 ; reference-list   : contains a list of discourse entities to be used in ULF coref
 ; equality-sets    : hash table containing a list of aliases, keyed by canonical name
 ; gist-kb-user     : hash table of all gist clauses + associated topic keys from user
@@ -76,7 +75,6 @@
   curr-plan
   task-queue
   perception-queue
-  dialogue-history
   reference-list
   equality-sets
   gist-kb-user
@@ -226,14 +224,6 @@
 ;
   ; Initialize task queue
   (refill-task-queue)
-
-  ; Dialogue record keeps track of three kinds of history - surface words,
-  ; gist clauses, and semantic interpretations
-  (let ((dialogue-history (make-hash-table :test #'equal)))
-    (setf (gethash 'words dialogue-history) nil)
-    (setf (gethash 'gist-clauses dialogue-history) nil)
-    (setf (gethash 'semantics dialogue-history) nil)
-    (setf (ds-dialogue-history *ds*) dialogue-history))
 
   ; Initialize hash table for aliases/equality sets
   (setf (ds-equality-sets *ds*) (make-hash-table :test #'equal))
@@ -636,9 +626,7 @@
             (setq *count* (1+ *count*))
             (if (member '|Audio| *registered-systems*)
               (say-words expr)
-              (print-words expr))
-            (store-turn '^me expr (get ep-name 'gist-clauses) (list (get ep-name 'semantics))
-              (ds-dialogue-history *ds*)))
+              (print-words expr)))
           ; Nonprimitive say-to.v act (e.g. (^me say-to.v ^you (that (?e be.v finished.a)))):
           ; Should probably be illegal action specification since we can use 'tell.v' for
           ; inform acts. For the moment however, handle equivalently to tell.v.
@@ -1124,9 +1112,6 @@
         ;; (store-in-context `((^you ,user-action) * ,ep-name))
         ;; (when ep-name1
         ;;   (store-in-context `((^you ,user-action) * ,ep-name1)))
-
-        ;; ; Add turn to dialogue history
-        ;; (store-turn '^you words user-gist-clauses user-ulfs (ds-dialogue-history *ds*))
         
       )
 
@@ -1364,10 +1349,7 @@
         (format t "Obtained user-action ~a for episode ~a~%" user-action ep-name1) ; DEBUGGING
         (store-in-context `((^you ,user-action) * ,ep-name))
         (when ep-name1
-          (store-in-context `((^you ,user-action) * ,ep-name1)))
-
-        ; Add turn to dialogue history
-        (store-turn '^you words user-gist-clauses user-ulfs (ds-dialogue-history *ds*)))
+          (store-in-context `((^you ,user-action) * ,ep-name1))))
 
       ;`````````````````````
       ; User: Paraphrasing
