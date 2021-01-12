@@ -1105,6 +1105,33 @@
 
 
 
+(defun get-utterances-characterizing-episode (ep-name)
+;``````````````````````````````````````````````````````````````````
+; Given an episode name, find all surface utterances characterizing it.
+;
+  (unwrap-utterances (get-from-memory-characterizing-episode 'say-to.v ep-name))
+) ; END get-utterances-characterizing-episode
+
+
+
+(defun get-gist-clauses-characterizing-episode (ep-name)
+;``````````````````````````````````````````````````````````````````
+; Given an episode name, find all gist-clauses characterizing it.
+;
+  (unwrap-gist-clauses (get-from-memory-characterizing-episode 'implicitly-say-to.v ep-name))
+) ; END get-gist-clauses-characterizing-episode
+
+
+
+(defun get-semantic-interpretations-characterizing-episode (ep-name)
+;``````````````````````````````````````````````````````````````````
+; Given an episode name, find all semantic interpretations characterizing it.
+;
+  (unwrap-semantic-interpretations (get-from-memory-characterizing-episode 'articulate2-to.v ep-name))
+) ; END get-semantic-interpretations-characterizing-episode
+
+
+
 (defun remove-from-memory (pred-patt)
 ;```````````````````````````````````````
 ; Removes a fact from memory.
@@ -1874,9 +1901,23 @@
 
 
 
+(defun unwrap-utterance (say-to-fact)
+;``````````````````````````````````````
+; Given a fact of the form (?x say-to.v ?y '(<expr>)),
+; return the unquoted surface expression.
+;
+  (eval (fourth say-to-fact))
+) ; END unwrap-utterance
+
+(defun unwrap-utterances (say-to-facts)
+  (mapcar #'unwrap-utterance say-to-facts)
+) ; END unwrap-utterances
+
+
+
 (defun unwrap-gist-clause (gist-fact)
 ;``````````````````````````````````````
-; Given a fact of the form (^you implicitly-say-to.v ^me '(<gist-clause>)),
+; Given a fact of the form (?x implicitly-say-to.v ?y '(<gist-clause>)),
 ; return the unquoted gist-clause.
 ;
   (eval (fourth gist-fact))
@@ -1890,7 +1931,7 @@
 
 (defun unwrap-semantic-interpretation (semantic-fact)
 ;``````````````````````````````````````````````````````
-; Given a fact of the form (^you articulate2-to.v ^me (that (<wff>))),
+; Given a fact of the form (?x articulate2-to.v ?y (that (<wff>))),
 ; return the wff.
 ;
   (second (fourth semantic-fact))
