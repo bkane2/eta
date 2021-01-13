@@ -982,19 +982,6 @@
 
 
 
-(defun store-turn (agent words gist-clauses semantics ht)
-;````````````````````````````````````````````````````````````
-; Given a hash table of different kinds of dialogue histories,
-; store a turn (consisting of surface words, gist clauses, and
-; semantic interpretations) in respective history lists.
-;
-  (push (list agent words) (gethash 'words ht))
-  (push (list agent gist-clauses) (gethash 'gist-clauses ht))
-  (push (list agent semantics) (gethash 'semantics ht))
-) ; END store-turn
-
-
-
 (defun print-gist-kb (&key filename)
 ;`````````````````````````````````````
 ; Prints all gist clauses in the gist-kb for a user.
