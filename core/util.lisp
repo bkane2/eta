@@ -1132,6 +1132,26 @@
 
 
 
+(defun store-gist-clause-characterizing-episode (gist-clause ep-name subj obj)
+;```````````````````````````````````````````````````````````````````````````````
+; Given a gist-clause and episode name, store an implicitly-say-to.v fact with given
+; subject and object (e.g. ^me and ^you) partially characterizing the episode.
+;
+  (store-in-memory `((,subj implicitly-say-to.v ,obj ',gist-clause) * ,ep-name))
+) ; END store-gist-clause-characterizing-episode
+
+
+
+(defun store-semantic-interpretation-characterizing-episode (wff ep-name subj obj)
+;```````````````````````````````````````````````````````````````````````````````````
+; Given a wff and episode name, store an articulate2-to.v fact with given
+; subject and object (e.g. ^me and ^you) partially characterizing the episode.
+;
+  (store-in-memory `((,subj articulate2-to.v ,obj (that ,wff)) * ,ep-name))
+) ; END store-semantic-interpretation-characterizing-episode
+
+
+
 (defun remove-from-memory (pred-patt)
 ;```````````````````````````````````````
 ; Removes a fact from memory.
