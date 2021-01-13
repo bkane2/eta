@@ -468,26 +468,28 @@
       ; Gist clauses
       (when (get schema-name 'gist-clauses)
         (setq gist-clauses (gethash ep-var (get schema-name 'gist-clauses)))
-        (setf (get ep-name 'gist-clauses) gist-clauses))
+        (dolist (gist-clause gist-clauses)
+          (store-gist-clause-characterizing-episode gist-clause ep-name '^me '^you)))
 
       ;; (format t "Gist clauses attached to ~a =~% ~a~%"
-      ;;   ep-name (get ep-name 'gist-clauses)) ; DEBUGGING
+      ;;   ep-name (get-gist-clauses-characterizing-episode ep-name)) ; DEBUGGING
 
-      ; Semantics
+      ; Logical forms
       (when (get schema-name 'semantics)
         (setq semantics (gethash ep-var (get schema-name 'semantics)))
-        (setf (get ep-name 'semantics) semantics))
+        (dolist (wff semantics)
+          (store-semantic-interpretation-characterizing-episode wff ep-name '^me '^you)))
 
       ;; (format t "Semantics attached to ~a =~% ~a~%"
-      ;;   ep-name (get ep-name 'semantics)) ; DEBUGGING
+      ;;   ep-name (get-semantic-interpretations-characterizing-episode ep-name)) ; DEBUGGING
 
       ; Topic-keys
       (when (get schema-name 'topic-keys)
         (setq topic-keys (gethash ep-var (get schema-name 'topic-keys)))
         (setf (get ep-name 'topic-keys) topic-keys))
 
-      ;; (format t "Semantics attached to ~a =~% ~a~%"
-      ;;   ep-name (get ep-name 'semantics)) ; DEBUGGING
+      ;; (format t "Topic keys attached to ~a =~% ~a~%"
+      ;;   ep-name (get ep-name 'topic-keys)) ; DEBUGGING
   ))
 ) ; END instantiate-curr-step
 
@@ -571,6 +573,8 @@
     ;; (print-current-plan-steps subplan) ; DEBUGGING
 
     (setq wff (plan-step-wff curr-step))
+
+    ;; (if (eq (car wff) '^you) (return-from process-next-action nil))
 
     ; Perform the action corresponding to the current step
     ; Returns a pair of variable bindings obtained by the action,

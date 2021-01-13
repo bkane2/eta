@@ -612,8 +612,8 @@
         (setq expr (eval-functions (get-single-binding bindings)))
         (cond
           ; If the current "say" action is a question, then use 'topic-keys'
-          ; and 'gist-clauses' of current ep-name and gist-kb-user to see
-          ; if question has already been answered. If so, omit action.
+          ; and gist-kb-user to see if question has already been answered.
+          ; If so, omit action.
           ; TODO: investigate why this required advancing the plan twice...
           ((not (null (obviated-question expr ep-name)))
             (advance-plan subplan)
@@ -642,8 +642,8 @@
       ((setq bindings (bindings-from-ttt-match '(^me react-to.v _!) wff))
         (setq user-ep-name (get-single-binding bindings))
         ; Get user gist clauses and ulf from bound user action
-        (setq user-gist-clauses (get user-ep-name 'gist-clauses))
-        (setq user-ulf (resolve-references (get user-ep-name 'semantics)))
+        (setq user-gist-clauses (get-gist-clauses-characterizing-episode user-ep-name))
+        (setq user-ulf (resolve-references (get-semantic-interpretations-characterizing-episode user-ep-name)))
         (format t "~% user gist clause is ~a ~%" user-gist-clauses) ; DEBUGGING
         (format t "~% user ulf is ~a ~%" user-ulf) ; DEBUGGING
         (setq new-subplan (plan-reaction-to user-gist-clauses user-ulf)))
@@ -803,8 +803,8 @@
           ((null (member '|Blocks-World-System| *registered-systems*))
             (setq proposal-gist '(Could not create proposal \: '|Blocks-World-System| not registered \.)))
           (t (setq proposal-gist (generate-proposal expr))))
-        (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
-        (setf (get ep-name 'gist-clauses) (list proposal-gist))
+        ;; (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
+        (store-gist-clause-characterizing-episode proposal-gist ep-name '^me '^you)
         (setq new-subplan (plan-proposal proposal-gist)))
 
       ;````````````````````````````
@@ -819,7 +819,7 @@
             (setq proposal-gist '(Could not create proposal \: |Blocks-World-System| not registered \.)))
           (t (setq proposal-gist (generate-proposal expr))))
         ;; (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
-        (setf (get ep-name 'gist-clauses) (list proposal-gist))
+        (store-gist-clause-characterizing-episode proposal-gist ep-name '^me '^you)
         (setq new-subplan (plan-correction proposal-gist)))
 
       ;````````````````````````````
@@ -1122,8 +1122,8 @@
       ; actions of form '(^you paraphrase.v '<gist clause>')' in a subplan
       ; derived from a schema for handling complex user turns; i.e. we take the
       ; view that the user paraphrased these gist clauses in his/her original, 
-      ; often "condensed", sentences; thus we can directly set the 'gist-clauses'
-      ; properties of the user action rather than applying 'form-gist-clauses-from-input'
+      ; often "condensed", sentences; thus we can directly store the gist clauses
+      ; of the user action rather than applying 'form-gist-clauses-from-input'
       ; again (as was done above for (^you say-to.v ^me '(...)) actions).
       ((setq bindings (bindings-from-ttt-match '(^you paraphrase.v _!) fact))
         ;; (setq expr (get-single-binding bindings))
@@ -1240,9 +1240,7 @@
 ; action -- this is accessible via the 'subplan-of' property of
 ; {sub}plan-name -- and the wff of this noprimitive action in turn
 ; supplies the name of the Eta action that the user is responding
-; to. The 'gist-clauses' property of that Eta action name leads 
-; to the desired context information for interpreting the user input 
-; utterance. (In future the 'interpretation' property is to be used.)
+; to.
 ; 
   (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
@@ -1305,7 +1303,7 @@
           ; If the superordinate reply-to.v action has an episode with gist clause(s) associated
           ((symbolp wff1-arg)
             (setq eta-ep-name wff1-arg)
-            (setq eta-clauses (get eta-ep-name 'gist-clauses)))
+            (setq eta-clauses (get-gist-clauses-characterizing-episode eta-ep-name)))
           ; Otherwise, assume there is no superordinate action, set gist clauses to nil
           (t (setq eta-clauses nil)))
 
@@ -1329,16 +1327,18 @@
 
         ; Both the primitive user action and the immediately subordinate action
         ; recieve the gist-clause interpretation just computed.
-        (setf (get ep-name 'gist-clauses) user-gist-clauses)
-        (setf (get ep-name1 'gist-clauses) user-gist-clauses)
-
+        (dolist (user-gist-clause user-gist-clauses)
+          (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me)
+          (store-gist-clause-characterizing-episode user-gist-clause ep-name1 '^you '^me))
+        
         ; Get ulfs from user gist clauses and set them as an attribute to the current
         ; user action
         (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
         (format t "Obtained ulfs ~a for episode ~a~%" user-ulfs ep-name1) ; DEBUGGING
 
-        (setf (get ep-name 'semantics) user-ulfs)
-        (setf (get ep-name1 'semantics) user-ulfs)
+        (dolist (user-ulf user-ulfs)
+          (store-semantic-interpretation-characterizing-episode user-ulf ep-name '^you '^me)
+          (store-semantic-interpretation-characterizing-episode user-ulf ep-name1 '^you '^me))
 
         ; Get fine-grained user action type corresponding to gist clauses (e.g. (^you say-be.v)),
         ; and store ((^you say-bye.v) * ?e1), where ?e1 is the ep-name of of say-to.v (and likewise
@@ -1358,8 +1358,8 @@
       ; actions of form '(^you paraphrase.v '<gist clause>')' in a subplan
       ; derived from a schema for handling complex user turns; i.e. we take the
       ; view that the user paraphrased these gist clauses in his/her original, 
-      ; often "condensed", sentences; thus we can directly set the 'gist-clauses'
-      ; properties of the user action rather than applying 'form-gist-clauses-from-input'
+      ; often "condensed", sentences; thus we can directly store the gist clauses
+      ; of the user action rather than applying 'form-gist-clauses-from-input'
       ; again (as was done above for (^you say-to.v ^me '(...)) actions).
       ((setq bindings (bindings-from-ttt-match '(^you paraphrase.v _!) wff))
         (setq expr (get-single-binding bindings))
@@ -1369,7 +1369,8 @@
           (t
             ; Drop quote, leaving a singleton list of clauses
             (setq user-gist-clauses (cdr expr))
-            (setf (get ep-name 'gist-clauses) user-gist-clauses))))
+            (dolist (user-gist-clause user-gist-clauses)
+              (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me)))))
 
       ;`````````````````````
       ; User: Replying
@@ -1963,15 +1964,13 @@
 ; If so, check what facts, if any, are stored in gist-kb-user under 
 ; the 'topic-keys' obtained as the value of that property of
 ; 'eta-action-name'. If there are such facts, check if they
-; seem to provide an answer to the gist-version of the question,
-; which will be the last gist clause stored under property
-; 'gist-clauses' of 'eta-action-name'.
+; seem to provide an answer to the gist-version of the question.
 ; NOTE: modified to check if gist clause contains question rather than surface
 ; sentence (B.K. 4/17/2020)
 ;
   (let (gist-clauses topic-keys facts)
     ;; (format t "~% ****** input sentence: ~a~%" sentence)
-    (setq gist-clauses (get eta-action-name 'gist-clauses))
+    (setq gist-clauses (get-gist-clauses-characterizing-episode eta-action-name))
     ;; (format t "~% ****** gist clauses are ~a **** ~%" gist-clauses)
     ;; (format t "~% ****** quoted question returns ~a **** ~%" (some #'question? gist-clauses)) ; DEBUGGING
     (if (not (some #'question? gist-clauses))
@@ -2084,9 +2083,7 @@
         (store-gist (car clause) keys (ds-gist-kb-user *ds*))
         (push (car clause) facts)))
 
-    ; The results obtained will be stored as the 'gist-clauses'
-    ; property of the name of the user input. So, 'facts' should
-    ; be a concatenation of the above results in the order in
+    ; 'facts' should be a concatenation of the above results in the order in
     ; which they occur in the user's input; in reacting, Eta will
     ; pay particular attention to the first clause, and any final question.
     (setq gist-clauses (reverse facts))
