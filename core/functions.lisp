@@ -37,7 +37,9 @@
 ; to use iteration in interpreting the user's response until, say,
 ; an end of turn is recorded in context?
 ;
-  (if (and (symbolp x) (get x 'semantics)) `(quote ,(car (remove nil (get x 'semantics)))) nil)
+  (when (symbolp x)
+    (let ((semantics (get-semantic-interpretations-characterizing-episode x)))
+      (if semantics `(quote ,(car (remove nil semantics))))))
 ) ; END ulf-of.f
 
 
@@ -47,7 +49,9 @@
 ; Retrives gist clauses attached to action proposition name.
 ; TODO: See issue with ulf-of.f
 ;
-  (if (and (symbolp x) (get x 'gist-clauses)) `(quote (car (get x 'gist-clauses))) nil)
+  (when (symbolp x)
+    (let ((gist-clauses (get-gist-clauses-characterizing-episode x)))
+      (if gist-clauses `(quote (car gist-clauses)))))
 ) ; END gist-of.f
 
 
