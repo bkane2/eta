@@ -22,3 +22,4 @@
 (defparameter *subsystems* '(|Terminal| |Blocks-World-System|))
 (defparameter *dependencies* T)
 (defparameter *safe-mode* NIL)
+ 
