@@ -17,7 +17,7 @@
 ;; *user-id* : unique ID of user (potentially overwritten by sessionInfo.lisp if in live mode)
 ;;
 
-(defparameter *avatar* "david-tutoring")
+(defparameter *avatar* "sophie")
 (defparameter *read-log-mode* NIL)
 (defparameter *subsystems* '(|Terminal| |Blocks-World-System|))
 (defparameter *dependencies* T)
