@@ -1105,7 +1105,7 @@
 ;``````````````````````````````````````````````````````````````````
 ; Given an episode name, find all gist-clauses characterizing it.
 ;
-  (unwrap-gist-clauses (get-from-memory-characterizing-episode 'implicitly-say-to.v ep-name))
+  (unwrap-gist-clauses (get-from-memory-characterizing-episode 'paraphrase.v ep-name))
 ) ; END get-gist-clauses-characterizing-episode
 
 
@@ -1121,10 +1121,10 @@
 
 (defun store-gist-clause-characterizing-episode (gist-clause ep-name subj obj)
 ;```````````````````````````````````````````````````````````````````````````````
-; Given a gist-clause and episode name, store an implicitly-say-to.v fact with given
+; Given a gist-clause and episode name, store a paraphrase.v fact with given
 ; subject and object (e.g. ^me and ^you) partially characterizing the episode.
 ;
-  (store-in-memory `((,subj implicitly-say-to.v ,obj ',gist-clause) * ,ep-name))
+  (store-in-memory `((,subj paraphrase.v ,obj ',gist-clause) * ,ep-name))
 ) ; END store-gist-clause-characterizing-episode
 
 
@@ -1924,7 +1924,7 @@
 
 (defun unwrap-gist-clause (gist-fact)
 ;``````````````````````````````````````
-; Given a fact of the form (?x implicitly-say-to.v ?y '(<gist-clause>)),
+; Given a fact of the form (?x paraphrase.v ?y '(<gist-clause>)),
 ; return the unquoted gist-clause.
 ;
   (eval (fourth gist-fact))
