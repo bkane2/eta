@@ -1123,9 +1123,13 @@
 ;```````````````````````````````````````````````````````````````````````````````
 ; Given a gist-clause and episode name, store a paraphrase-to.v fact with given
 ; subject and object (e.g. ^me and ^you) partially characterizing the episode.
+; Store the wff in context as well.
 ;
-  (store-in-memory `((,subj paraphrase-to.v ,obj ',gist-clause) * ,ep-name))
-) ; END store-gist-clause-characterizing-episode
+  (when (null gist-clause) (return-from store-gist-clause-characterizing-episode nil))
+  (let ((wff `(,subj paraphrase-to.v ,obj ',gist-clause)))
+    (store-in-memory `(,wff * ,ep-name))
+    (store-in-context wff)
+)) ; END store-gist-clause-characterizing-episode
 
 
 
@@ -1133,9 +1137,13 @@
 ;```````````````````````````````````````````````````````````````````````````````````
 ; Given a wff and episode name, store an articulate2-to.v fact with given
 ; subject and object (e.g. ^me and ^you) partially characterizing the episode.
+; Store the wff in context as well.
 ;
-  (store-in-memory `((,subj articulate2-to.v ,obj (that ,wff)) * ,ep-name))
-) ; END store-semantic-interpretation-characterizing-episode
+  (when (null wff)) (return-from store-semantic-interpretation-characterizing-episode nil)
+  (let ((wff `(,subj articulate2-to.v ,obj (that ,wff))))
+    (store-in-memory `(,wff * ,ep-name))
+    (store-in-context wff)
+)) ; END store-semantic-interpretation-characterizing-episode
 
 
 
