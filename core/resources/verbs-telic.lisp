@@ -3,4 +3,4 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar *verbs-telic* '(say-to.v reply-to.v react-to.v move.v))
+(defvar *verbs-telic* '(say-to.v reply-to.v react-to.v paraphrase-to.v articulate2-to.v move.v))
