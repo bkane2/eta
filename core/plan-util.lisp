@@ -523,6 +523,27 @@
 
 
 
+(defun find-prev-step-of-type (plan action-type)
+;`````````````````````````````````````````````````
+; Finds the most recent previous step in a plan of a certain type
+; (e.g. 'say-to.v').
+;
+  (let ((prev-step (plan-step-prev-step (plan-curr-step plan))) wff action-type1)
+
+    ; Iterate through each previous step, and return that step if the
+    ; action type of the wff is the same as action-type
+    (loop while (not (null prev-step)) do
+      (setq wff (plan-step-wff prev-step))
+      (setq action-type1 (if (listp wff) (second wff)))
+      (if (equal action-type1 action-type)
+        (return-from find-prev-step-of-type prev-step))
+      (setq prev-step (plan-step-prev-step prev-step)))
+  
+  nil
+)) ; END find-prev-step-of-type
+
+
+
 (defun has-next-step? (plan) 
 ;`````````````````````````````
 ; Returns t if plan has another step, nil otherwise.
@@ -585,8 +606,8 @@
 
         ; Observe the user action
         ; TODO: modify this
-        ;; (return-from process-next-action nil)
-        (setq ret (observe-next-user-action subplan))
+        (return-from process-next-action nil)
+        ;; (setq ret (observe-next-user-action subplan))
 
         (setq bindings (first ret))
         (setq new-subplan (second ret))

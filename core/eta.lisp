@@ -381,11 +381,8 @@
   ; any relevant temporal relations.
     (dolist (system *registered-systems*)
       (setq inputs (read-from-system system))
-      (mapcar (lambda (input)
-        ; Add fact to perceptions queue for further context-dependent interpretation.
-        (push input (ds-perception-queue *ds*))
-        ; If observed that fact is no longer true, remove from
-        ; context; otherwise add it to context.
+      (mapcar (lambda (input) (cond
+        ; If observed that fact is no longer true, remove from context.
         ; TODO: some facts imply the negation of other ones,
         ; e.g., (^you smiling.a) => (not (^you frowning.a)). Presumably
         ; this would be inferred, but I'm not sure how this inferred
@@ -394,9 +391,12 @@
         ; context each time this task executes. I suppose another option
         ; to inferring the negation would be using a lexical resource,
         ; such as WordNet, which has mutual exclusion relations.
-        (if (equal 'not (car input))
-          (remove-old-contextual-fact (second input))
-          (store-new-contextual-fact input)))
+        ((equal 'not (car input))
+          (remove-old-contextual-fact (second input)))
+        ; Otherwise, add to context and also push into a queue of new
+        ; perceptions for further interpretation.
+          (t (let ((ep-name-new (store-new-contextual-fact input)))
+            (push (list ep-name-new input) (ds-perception-queue *ds*))))))
       inputs))
 )) ; END perceive-world
 
@@ -408,23 +408,14 @@
 ;```````````````````````````````
 ; TBC
 ;
-  (let (curr-step subplan wff ret bindings new-subplan)
+  (let (subplan)
     ; Find the next action from the deepest active subplan
     (setq subplan (find-curr-subplan (ds-curr-plan *ds*)))
 
-    ; Current step becomes whatever the current step of subplan is
-    (setq curr-step (plan-curr-step subplan))
-
-    ; If no curr-step, return nil
-    (if (null curr-step) (return-from infer-facts-top-down nil))
-
-    ; Get wff of curr-step
-    (setq wff (plan-step-wff curr-step))
-
     ; Go through queued perceptions and try to interpret each one in
-    ; context of the previous plan step
+    ; context of the current plan
     (dolist (fact (ds-perception-queue *ds*))
-      (interpret-perception-in-context fact wff))
+      (interpret-perception-in-context fact subplan))
     (setf (ds-perception-queue *ds*) nil)
 
 )) ; END interpret-perceptions
@@ -985,9 +976,10 @@
 
 
 
-(defun interpret-perception-in-context (fact wff)
+(defun interpret-perception-in-context (fact plan)
 ;````````````````````````````````````````````````````````
-; TODO: function should interpret 'fact' in the context of 'wff', storing resulting facts in context.
+; TODO: function should interpret 'fact' in the context of the current dialogue plan (usually
+; this will be the former speech act), storing resulting facts in context.
 ; If 'fact' is a say-to.v action, interpret as gist-clause as well as logical form.
 ;
 ; Suppose the next step in a plan is a user action to be matched, like
@@ -1011,96 +1003,81 @@
 ; 2. how do gist clauses themselves get worked out for the sub-episodes of this schema, and how is the context
 ;    of the previous episode used, if at all? For instance, suppose we have the following episodes in some
 ;    'do-BlocksWorld-action.v' schema (somewhat contrived):
-;    ?e1 (^you paraphrase.v '(Doing an action now \.))
+;    ?e1 (^you paraphrase-to.v '(Doing an action now \.))
 ;    ?e2 (^you move.v ?block ?loc)
-;    ?e3 (^you paraphrase.v ^me '(Action finished \.))
+;    ?e3 (^you paraphrase-to.v ^me '(Action finished \.))
 ;    and suppose the system observes E19 (^you say-to.v ^me '(Okay now I'm making a move \.)). How is this
 ;    matched to E19, and how is the appropriate gist clause (Doing an action now \.) extracted?
 ;
-; TODO: in addition to storing the inferred wff in context (e.g. E21 (^you reply-to.v ^me)), we can temporally
-; relate E21 with whichever episode corresponded to (^you say-to.v ^me ...) used to infer the wff - namely,
-; these episodes are coextensive. But I'm not entirely sure the best way to go about this yet.
+; **TODO: Simply looking at prev-step here will not be enough; this should instead search for the previous speech
+; act that can be used for context of interpretation.
 ;
-  (let* (expr bindings words superstep ep-name1 wff1 wff1-arg eta-ep-name eta-clauses user-gist-clauses
-         main-clause user-ulfs user-action input user-try-ka-success)
+  (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
+         user-gist-clauses
+         main-clause user-ulfs user-action input user-try-ka-success
+      )
 
-    (format t "~%fact = ~a,~%     in the context of wff = ~a~%" fact wff) ; DEBUGGING
+    (setq ep-name (first fact))
+    (setq wff (second fact))
 
-    ; Big conditional statement to observe different types of user actions
+    ; Conditional statement matching different types of 'primitive' observed wffs
     (cond
       ;`````````````````````
       ; User: Saying
       ;`````````````````````
-      ; A say-to.v act may be primitive, having a '?words' variable as its argument,
-      ; or may have been created from a (^you reply-to.v <eta action>)) based on reading
-      ; the user's input:
-      ((setq bindings (bindings-from-ttt-match '(^you say-to.v ^me _!) fact))
+      ((setq bindings (bindings-from-ttt-match '(^you say-to.v ^me _!) wff))
         (setq expr (get-single-binding bindings))
 
-        ;; (cond
+        ; If say-to.v act has a quoted word list argument, e.g., '(nice to meet you \.)',
+        ; it should unquote and decompress the words.
+        (cond
+          ((quoted-sentence? expr)
+            (setq words (decompress (second expr))))
+          ; Anything else is unexpected
+          (t
+            (format t "~%*** SAY-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST OR VARIABLE" expr)))
 
-        ;;   ; if say-to.v act has a quoted word list argument, e.g., '(nice to meet you \.)',
-        ;;   ; it should unquote and decompress the words.
-        ;;   ((quoted-sentence? expr)
-        ;;     (setq words (decompress (second expr))))
+        ; Use previous speech act as context for interpretation
+        (setq prev-step (find-prev-step-of-type plan 'say-to.v))
+        (setq prev-step-ep-name (plan-step-ep-name prev-step))
+        (setq prev-step-wff (plan-step-wff prev-step))
 
-        ;;   ; anything else is unexpected
-        ;;   (t
-        ;;     (format t "~%*** SAY-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST OR VARIABLE" expr)))
+        ;; (format t "~%wff = ~a,~%     in the context of ~a ~a~%" wff prev-step-ep-name prev-step-wff) ; DEBUGGING
 
-        ;; ; Prepare to "interpret" 'words', using the Eta output it is a response to;
-        ;; ; first we need the superordinate action (wff should be in the form (^you reply-to.v <eta action>))
-        ;; (setq superstep (plan-subplan-of subplan))
-        ;; (when superstep
-        ;;   (setq ep-name1 (plan-step-ep-name superstep))
-        ;;   (setq wff1 (plan-step-wff superstep))
-        ;;   (setq wff1-arg (car (last wff1))))
+        ; Get gist-clauses corresponding to previous speech act
+        (setq prev-step-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
 
-        ;; ;; (format t "~%User action name1 = ~a" ep-name1)
-        ;; ;; (format t "~%User words = ~a" words)
-        ;; ;; (format t "~%User WFF1 = ~a, if correct,~%    ends in a ETA action name" wff1) ; DEBUGGING
-        
-        ;; (cond
-        ;;   ; If the superordinate reply-to.v action has specific gist clause(s)
-        ;;   ((quoted-sentence-list? wff1-arg)
-        ;;     (setq eta-clauses (eval wff1-arg)))
-        ;;   ; If the superordinate reply-to.v action has an episode with gist clause(s) associated
-        ;;   ((symbolp wff1-arg)
-        ;;     (setq eta-ep-name wff1-arg)
-        ;;     (setq eta-clauses (get eta-ep-name 'gist-clauses)))
-        ;;   ; Otherwise, assume there is no superordinate action, set gist clauses to nil
-        ;;   (t (setq eta-clauses nil)))
+        (format t "~%ETA gist clauses that the user is responding to (from episode ~a)~% = ~a " prev-step-ep-name prev-step-gist-clauses)
+        (format t "~%using gist clause: ~a~% " (car (last prev-step-gist-clauses))) ; DEBUGGING
 
-        ;; ;; (format t "~%ETA action name is ~a" eta-ep-name)
-        ;; ;; (format t "~%ETA gist clauses that the user is responding to~% = ~a " eta-clauses)
-        ;; ;; (format t "~%using gist clause: ~a " (car (last eta-clauses))) ; DEBUGGING
+        ; Compute the "interpretation" (gist clauses) of the user input,
+        ; which will be done with a gist-clause packet selected using the
+        ; main Eta action clause, and with the user input being the text
+        ; to which the tests in the gist clause packet (tree) are applied.
+        ;
+        ; TODO: In the future, we might instead of or in addition use the semantic
+        ; interpretation of Eta's previous speech act.
+        (setq user-gist-clauses
+          (form-gist-clauses-from-input words (car (last prev-step-gist-clauses))))
 
-        ;; ; Compute the "interpretation" (gist clauses) of the user input,
-        ;; ; which will be done with a gist-clause packet selected using the
-        ;; ; main Eta action clause, and with the user input being the text
-        ;; ; to which the tests in the gist clause packet (tree) are applied.
-        ;; ;
-        ;; ; TODO: In the future, we might instead of or in addition use
-        ;; ; (get eta-ep-name 'interpretation).
-        ;; (setq user-gist-clauses
-        ;;   (form-gist-clauses-from-input words (car (last eta-clauses))))
+        ; Remove contradicting user gist-clauses (if any)
+        (setq user-gist-clauses (remove-contradiction user-gist-clauses))
+        (format t "~%Obtained user gist clauses ~a for episode ~a~%" user-gist-clauses ep-name) ; DEBUGGING
 
-        ;; ; Remove contradiction
-        ;; (setq user-gist-clauses (remove-contradiction user-gist-clauses))
-        ;; (format t "Obtained user gist clauses ~a for episode ~a~%" user-gist-clauses ep-name1) ; DEBUGGING
+        ; Store the user gist-clauses in memory
+        (dolist (user-gist-clause user-gist-clauses)
+          (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me))
 
-        ;; ; Both the primitive user action and the immediately subordinate action
-        ;; ; recieve the gist-clause interpretation just computed.
-        ;; (setf (get ep-name 'gist-clauses) user-gist-clauses)
-        ;; (setf (get ep-name1 'gist-clauses) user-gist-clauses)
+        ; Obtain semantic interpretation(s) of the user gist-clauses
+        (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
+        (format t "~%Obtained ulfs ~a for episode ~a~%" user-ulfs ep-name) ; DEBUGGING
 
-        ;; ; Get ulfs from user gist clauses and set them as an attribute to the current
-        ;; ; user action
-        ;; (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
-        ;; (format t "Obtained ulfs ~a for episode ~a~%" user-ulfs ep-name1) ; DEBUGGING
+        ; Store the semantic interpretations in memory
+        (dolist (user-ulf user-ulfs)
+          (store-semantic-interpretation-characterizing-episode user-ulf ep-name '^you '^me))
 
-        ;; (setf (get ep-name 'semantics) user-ulfs)
-        ;; (setf (get ep-name1 'semantics) user-ulfs)
+        ; Add the fact (^you reply-to.v <prev-step-ep-name>) to context (characterizing ep-name)
+        (store-contextual-fact-characterizing-episode `(^you reply-to.v ,prev-step-ep-name) ep-name)
 
         ;; ; Get fine-grained user action type corresponding to gist clauses (e.g. (^you say-be.v)),
         ;; ; and store ((^you say-bye.v) * ?e1), where ?e1 is the ep-name of of say-to.v (and likewise
@@ -1114,36 +1091,17 @@
         ;;   (store-in-context `((^you ,user-action) * ,ep-name1)))
         
       )
-
-      ;`````````````````````
-      ; User: Paraphrasing
-      ;`````````````````````
-      ; Next we deal with gist clauses "attributed" to the user, in user
-      ; actions of form '(^you paraphrase.v '<gist clause>')' in a subplan
-      ; derived from a schema for handling complex user turns; i.e. we take the
-      ; view that the user paraphrased these gist clauses in his/her original, 
-      ; often "condensed", sentences; thus we can directly store the gist clauses
-      ; of the user action rather than applying 'form-gist-clauses-from-input'
-      ; again (as was done above for (^you say-to.v ^me '(...)) actions).
-      ((setq bindings (bindings-from-ttt-match '(^you paraphrase.v _!) fact))
-        ;; (setq expr (get-single-binding bindings))
-        ;; (cond
-        ;;   ((not (quoted-sentence? expr))
-        ;;     (format t "~%*** PARAPHRASE-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST" expr))
-        ;;   (t
-        ;;     ; Drop quote, leaving a singleton list of clauses
-        ;;     (setq user-gist-clauses (cdr expr))
-        ;;     (setf (get ep-name 'gist-clauses) user-gist-clauses)))
-            
-      )
-
       ;````````````````````````````
       ; User: Trying
       ;````````````````````````````
       ; User tries some reified action. Queries the BW system for whether or
       ; not trying the action was successful.
-      ; TODO: needs to be made more general in the future.
-      ((setq bindings (bindings-from-ttt-match '(^you try1.v _!) fact))
+      ; TODO: This should match primitive spatial 'move' observations instead. Then,
+      ; given a move observation, this should check if the move matches the move that the
+      ; user is expected to try, according to the dialogue/spatial planner output. If so, store
+      ; ((^you try1.v (ka <move wff>))) ** <ep-name>), and perhaps also
+      ; ((pair ^you <ep-name>) successful.a) etc.
+      ((setq bindings (bindings-from-ttt-match '(^you try1.v _!) wff))
         ;; (setq expr (get-single-binding bindings))
         ;; (setq user-try-ka-success (if (member '|Blocks-World-System| *registered-systems*)
         ;;                                 (get-user-try-ka-success)
@@ -1153,14 +1111,11 @@
         ;;   (store-in-context `((pair ^you ,ep-name) successful.a))
         ;;   (store-in-context `((pair ^you ,ep-name) instance-of.p ,expr)))
 
-        )
+      )
+      ; Some other wff (currently nothing is done in this case)
+      (t nil))
 
-      ; Unrecognizable step
-      (t (format t "~%*** UNRECOGNIZABLE STEP ~a " fact) (error))
-    )
-
-  nil)
-) ; END interpret-perception-in-context
+)) ; END interpret-perception-in-context
 
 
 
@@ -1203,7 +1158,7 @@
 ; further below. Second, Eta actions of type (^me react-to.v ...)
 ; may generate schema-based subplans that contain multiple Eta
 ; comments of type (^me say-to.v ^you '(...)), where these are
-; preceded by "hallucinated" user inputs of form (^you paraphrase.v
+; preceded by "hallucinated" user inputs of form (^you paraphrase-to.v
 ; '(...)); here the quoted words comprise a gist clause "attributed"
 ; to the user, i.e., these are treated as implicit versions of 
 ; (parts of) the user's previous actual input that were "para-
@@ -1355,13 +1310,13 @@
       ; User: Paraphrasing
       ;`````````````````````
       ; Next we deal with gist clauses "attributed" to the user, in user
-      ; actions of form '(^you paraphrase.v '<gist clause>')' in a subplan
+      ; actions of form '(^you paraphrase-to.v '<gist clause>')' in a subplan
       ; derived from a schema for handling complex user turns; i.e. we take the
       ; view that the user paraphrased these gist clauses in his/her original, 
       ; often "condensed", sentences; thus we can directly store the gist clauses
       ; of the user action rather than applying 'form-gist-clauses-from-input'
       ; again (as was done above for (^you say-to.v ^me '(...)) actions).
-      ((setq bindings (bindings-from-ttt-match '(^you paraphrase.v _!) wff))
+      ((setq bindings (bindings-from-ttt-match '(^you paraphrase-to.v _!) wff))
         (setq expr (get-single-binding bindings))
         (cond
           ((not (quoted-sentence? expr))

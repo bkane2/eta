@@ -1105,7 +1105,7 @@
 ;``````````````````````````````````````````````````````````````````
 ; Given an episode name, find all gist-clauses characterizing it.
 ;
-  (unwrap-gist-clauses (get-from-memory-characterizing-episode 'paraphrase.v ep-name))
+  (unwrap-gist-clauses (get-from-memory-characterizing-episode 'paraphrase-to.v ep-name))
 ) ; END get-gist-clauses-characterizing-episode
 
 
@@ -1121,10 +1121,10 @@
 
 (defun store-gist-clause-characterizing-episode (gist-clause ep-name subj obj)
 ;```````````````````````````````````````````````````````````````````````````````
-; Given a gist-clause and episode name, store a paraphrase.v fact with given
+; Given a gist-clause and episode name, store a paraphrase-to.v fact with given
 ; subject and object (e.g. ^me and ^you) partially characterizing the episode.
 ;
-  (store-in-memory `((,subj paraphrase.v ,obj ',gist-clause) * ,ep-name))
+  (store-in-memory `((,subj paraphrase-to.v ,obj ',gist-clause) * ,ep-name))
 ) ; END store-gist-clause-characterizing-episode
 
 
@@ -1233,6 +1233,20 @@
 
 
 
+(defun store-contextual-fact-characterizing-episode (wff ep-name)
+;```````````````````````````````````````````````````````````````````
+; Stores a contextual fact characterizing episode ep-name. e.g., if
+; wff = (^you reply-to.v E1) and ep-name = E2, store <wff> in context
+; and (<wff> ** E2) in memory.
+;
+  (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)))
+    (store-in-memory `(,wff1 ** ,ep-name))
+    (store-in-context wff1)
+    ep-name
+)) ; END store-contextual-fact-characterizing-episode
+
+
+
 (defun store-new-contextual-fact (wff)
 ;```````````````````````````````````````
 ; Stores a new contextual fact, i.e., something found to be "true now". An episode
@@ -1260,8 +1274,8 @@
     (store-in-memory `(,timestamp during ,ep-name))
     ; Store wff in context
     (store-in-context wff1)
-    ep-name)
-) ; END store-new-contextual-fact
+    ep-name
+)) ; END store-new-contextual-fact
 
 
 
@@ -1924,7 +1938,7 @@
 
 (defun unwrap-gist-clause (gist-fact)
 ;``````````````````````````````````````
-; Given a fact of the form (?x paraphrase.v ?y '(<gist-clause>)),
+; Given a fact of the form (?x paraphrase-to.v ?y '(<gist-clause>)),
 ; return the unquoted gist-clause.
 ;
   (eval (fourth gist-fact))
