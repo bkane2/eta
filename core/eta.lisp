@@ -1013,9 +1013,7 @@
 ; act that can be used for context of interpretation.
 ;
   (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
-         user-gist-clauses
-         main-clause user-ulfs user-action input user-try-ka-success
-      )
+         user-gist-clauses user-ulfs inferred-wffs)
 
     (setq ep-name (first fact))
     (setq wff (second fact))
@@ -1079,16 +1077,22 @@
         ; Add the fact (^you reply-to.v <prev-step-ep-name>) to context (characterizing ep-name)
         (store-contextual-fact-characterizing-episode `(^you reply-to.v ,prev-step-ep-name) ep-name)
 
-        ;; ; Get fine-grained user action type corresponding to gist clauses (e.g. (^you say-be.v)),
-        ;; ; and store ((^you say-bye.v) * ?e1), where ?e1 is the ep-name of of say-to.v (and likewise
-        ;; ; for the parent of the say-to.v episode, if it exists).
-        ;; ; NOTE: for now, we assume that each user utterance is described by only one action type,
-        ;; ; so the gist clauses are concatenated together first.
-        ;; (setq user-action (form-user-action-type (apply #'append user-gist-clauses)))
-        ;; (format t "Obtained user-action ~a for episode ~a~%" user-action ep-name1) ; DEBUGGING
-        ;; (store-in-context `((^you ,user-action) * ,ep-name))
-        ;; (when ep-name1
-        ;;   (store-in-context `((^you ,user-action) * ,ep-name1)))
+        ; Infer any additional facts from user gist-clauses
+        ; TODO: since this is now input-driven inference rather than (gist-clause/LF) interpretation,
+        ; it should probably be moved to a different function, perhaps using another queue of 'new'
+        ; gist-clauses or LF interpretations. Ultimately, it seems like this sort of inference should
+        ; be done directly using the LF interpretations, rather than the gist-clause, but using 
+        ; gist-clauses is more straightforward for now.
+        ; TODO: currently this only supports one inferred wff per gist-clause, but it should allow multiple.
+        ; NOTE: for now, we assume that each user utterance is described by only one action type,
+        ; so the gist clauses are concatenated together first.
+        (setq inferred-wffs (mapcar #'form-inferences-from-gist-clause user-gist-clauses))
+
+        (format t "Inferred wffs ~a for episode ~a~%" inferred-wffs ep-name) ; DEBUGGING
+
+        ; Add each inferred wff to context (characterizing ep-name)
+        (dolist (inferred-wff inferred-wffs)
+          (store-contextual-fact-characterizing-episode inferred-wff ep-name))
         
       )
       ;````````````````````````````
@@ -2088,17 +2092,17 @@
 
 
 
-(defun form-user-action-type (clause)
-;```````````````````````````````````````
-; Given a gist clause, find a corresponding 'action type'
-; (i.e., a predicate like say-bye.v) using hierarchical
-; pattern transduction.
+(defun form-inferences-from-gist-clause (clause)
+;``````````````````````````````````````````````````
+; Infer an additional wff from a user gist-clause using pattern transduction.
+; TODO: currently, this only supports one inferred wff per gist-clause, but should
+; be able to support multiple.
 ;
-  (let (tagged-clause action-type)
+  (let (tagged-clause inferred-wff)
     (setq tagged-clause (mapcar #'tagword clause))
-    (setq action-type (choose-result-for tagged-clause '*clause-action-type-tree*))
-  action-type)
-) ; END form-user-action-type
+    (setq inferred-wff (choose-result-for tagged-clause '*clause-inference-tree*))
+  inferred-wff)
+) ; END form-inferences-from-gist-clause
 
 
 
