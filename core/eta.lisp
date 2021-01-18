@@ -414,7 +414,7 @@
 
   ; Flush context of "instantaneous" telic verbs once timer passes a certain period.
   (when (>= (- (get-universal-time) *flush-context-timer*) *flush-context-period*)
-    (format t "FLUSHING CONTEXT~%") ; DEBUGGING
+    ;; (format t "FLUSHING CONTEXT~%") ; DEBUGGING
     (flush-context)
     (setq *flush-context-timer* (get-universal-time)))
 
