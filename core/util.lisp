@@ -141,6 +141,54 @@
 
 
 
+(defun >inf (x y)
+;``````````````````
+; > with symbol 'inf interpreted as infinity, and 'ninf' as negative infinity.
+;
+  (cond
+    ((equal x 'inf)
+      (cond ((equal y 'inf) nil) ((equal y 'ninf) t) (t t)))
+    ((equal x 'ninf)
+      (cond ((equal y 'inf) nil) ((equal y 'ninf) nil) (t nil)))
+    (t
+      (cond ((equal y 'inf) nil) ((equal y 'ninf) t) (t (> x y)))))
+) ; END >inf
+
+
+
+(defun >=inf (x y)
+;``````````````````
+; >= with symbol 'inf interpreted as infinity, and 'ninf' as negative infinity.
+;
+  (cond
+    ((equal x 'inf)
+      (cond ((equal y 'inf) t) ((equal y 'ninf) t) (t t)))
+    ((equal x 'ninf)
+      (cond ((equal y 'inf) nil) ((equal y 'ninf) t) (t nil)))
+    (t
+      (cond ((equal y 'inf) nil) ((equal y 'ninf) t) (t (>= x y)))))
+) ; END >=inf
+
+
+
+(defun <inf (x y)
+;``````````````````
+; < with symbol 'inf interpreted as infinity, and 'ninf' as negative infinity.
+;
+  (not (>=inf x y))
+) ; END <inf
+
+
+
+(defun <=inf (x y)
+;``````````````````
+; <= with symbol 'inf interpreted as infinity, and 'ninf' as negative infinity.
+;
+  (not (>inf x y))
+) ; END <=inf
+
+
+
 (defun chars-to-int (chars)
 ; ``````````````````````````````
 ; Converts list of chars to integer
