@@ -344,21 +344,36 @@
 ; from context when appropriate when a user step is matched to
 ; something in context.
 ;
-  ; Process next action of dialogue plan
-  (process-next-action (ds-curr-plan *ds*))
+  (let ((plan (ds-curr-plan *ds*)) subplan curr-step wff subj)
 
-  ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
-  ;; (format t " here is after the print-current-plan-status -----------~%")
+    ; Find the next action from the deepest active subplan
+    (setq subplan (find-curr-subplan plan))
 
-  ;; (error-check :caller 'eta)
+    ; Current step becomes whatever the current step of subplan is
+    (setq curr-step (plan-curr-step subplan))
 
-  ; Update plan state after processing the previous step
-  (update-plan-state (ds-curr-plan *ds*))
+    ; Get wff of current step and the subject of the episode
+    (setq wff (plan-step-wff curr-step))
+    (setq subj (car wff))
 
-  ;; (format t " here is after the plan state has been updated -----------~%")
-  ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+    ; If the subject of the expected plan step is the user, inquire
+    ; about the truth of the episode; otherwise, process the plan step
+    (case subj
+      (^you (inquire-truth-of-next-episode subplan))
+      (otherwise (process-next-episode subplan)))
 
-) ; END perform-next-step
+    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+    ;; (format t " here is after the print-current-plan-status -----------~%")
+
+    ;; (error-check :caller 'eta)
+
+    ; Update plan state after processing the previous step
+    (update-plan-state plan)
+
+    ;; (format t " here is after the plan state has been updated -----------~%")
+    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+
+)) ; END perform-next-step
 
 
 
@@ -1120,343 +1135,6 @@
       (t nil))
 
 )) ; END interpret-perception-in-context
-
-
-
-
-
-(defun observe-next-user-action (subplan)
-;```````````````````````````````````````````````
-; TBC (rewrite)
-;
-; '{sub}plan-name' provides the name of a (sub)plan whose
-; 'rest-of-plan' pointer points to a user action, i.e., the
-; name of a user action followed by a wff of type (^you ...).
-;
-; We build a two-level plan structure for nonprimitive user
-; replies (with a (^you say-to.v ^me '(...)) at the primitive
-; level), and (in another Eta plan iteration) "interpret" 
-; these replies. The value returned is a pair 
-;    (<user action name> <corresponding wff>) 
-; for the step that was processed. (This is not needed but 
-; may help in debugging.)
-;
-; The idea is that we should recognize user actions as being
-; hierarchically organized (just like Eta actions). 
-; Currently we're just anticipating nonprimitive top-level
-; actions like 
-;        (^you reply-to.v <eta action>)
-; that we expand to one further, primitive level of type
-;        (^you say-to.v ^me '(...)) 
-; actions. However, in principle, observing a user action
-; is a plan-recognition process, where for example multiple 
-; sentences uttered by the user may comprise a sequence of
-; speech acts of different types (just like outputs by Eta);
-; as well, the highest-level user plan that is recognized may
-; fail to match the *expected* type of the user action (but
-; we're ignoring this possibility for now).
-;
-; Primitive user actions arise in two ways: First, (^you say-to.v
-; ^me '(...)) actions are generated here from nonprimitive
-; (^you reply-to.v ...) actions as already mentioned and explained
-; further below. Second, Eta actions of type (^me react-to.v ...)
-; may generate schema-based subplans that contain multiple Eta
-; comments of type (^me say-to.v ^you '(...)), where these are
-; preceded by "hallucinated" user inputs of form (^you paraphrase-to.v
-; '(...)); here the quoted words comprise a gist clause "attributed"
-; to the user, i.e., these are treated as implicit versions of 
-; (parts of) the user's previous actual input that were "para-
-; phrased" by the user in the context of the Eta question they
-; answer. These "hallucinated" clauses attributed to the user are
-; needed to enable uniform processing of Eta's reaction to each
-; individual gist clause derived from an actual input.
-;
-; To generate a subplan containing a primitive (^you say-to.v ^me 
-; '(...)) action, given a (^you reply-to.v <eta action>) action, 
-; we read the user input, form a wff for the primitive action with
-; the input word list filled in, generate a plan name for the
-; simple subordinate plan, and assign a value to that plan name
-; consisting of a new action name for the primitive action and the
-; (^you say-to.v ...) wff. We don't make interpretation of the 
-; user input part of the process of generating the primitive 
-; action (though we could, since we have at hand the <eta action>
-; to which the user is responding, in the wff (^you reply-to.v 
-; <eta action>)); instead, we derive the interpretation when
-; processing the primitive action; this is for consistency with
-; the general principle that interpretation (including speech act
-; recognition) should proceed bottom-up (but with the previous 
-; Eta utterance as context). [However, maybe hierarchical
-; interpretation should be a process separate from hierarchical
-; plan processing...]
-; 
-; So, processing of primitive (^you say-to.v ^me '(...)) actions
-; should lead to their "interpretation", i.e., extraction of gist
-; clauses and possibly supplementary information that could
-; obviate later Eta questions. This requires finding out what
-; the user is replying to, by looking "upward" and "backward" in the
-; plan hierarchy. Specifically, we need to access the nonprimitive
-; user action that immediately subsumes the (^you say-to.v ^me ...)
-; action -- this is accessible via the 'subplan-of' property of
-; {sub}plan-name -- and the wff of this noprimitive action in turn
-; supplies the name of the Eta action that the user is responding
-; to.
-; 
-  (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
-         (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
-         words superstep ep-name1 wff1 wff1-arg eta-ep-name eta-clauses user-gist-clauses
-         main-clause user-ulfs user-action input user-try-ka-success)
-
-    ;; (format t "~%WFF = ~a,~%      in the user action ~a being processed~%" wff ep-name) ; DEBUGGING
-
-    ; Big conditional statement to observe different types of user actions
-    (cond
-      ;`````````````````````
-      ; User: Saying
-      ;`````````````````````
-      ; A say-to.v act may be primitive, having a '?words' variable as its argument,
-      ; or may have been created from a (^you reply-to.v <eta action>)) based on reading
-      ; the user's input:
-      ((setq bindings (bindings-from-ttt-match '(^you say-to.v ^me _!) wff))
-        (setq expr (get-single-binding bindings))
-
-        (cond
-          ; if say-to.v act has a variable argument, e.g. '?words', it should read the user's
-          ; words, and destructively substitute these words in for the variable in the plan.
-          ((variable? expr)
-            (loop while (not input) do
-              (setq input (cond
-                (*read-log* (if (>= *log-ptr* (length *log-contents*))
-                  (read-words "bye")
-                  (read-words (first (nth *log-ptr* *log-contents*)))))
-                ((member '|Audio| *registered-systems*) (hear-words *delay-say-to.v*))
-                (t (read-words)))))
-            (setq words (decompress input))
-            ; Bind input words to variable in plan
-            (setq var-bindings (cons (list expr `(quote ,input)) var-bindings)))
-
-          ; if say-to.v act has a quoted word list argument, e.g., '(nice to meet you \.)',
-          ; it should unquote and decompress the words.
-          ((quoted-sentence? expr)
-            (setq words (decompress (second expr))))
-
-          ; anything else is unexpected
-          (t
-            (format t "~%*** SAY-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST OR VARIABLE" expr)))
-
-        ; Prepare to "interpret" 'words', using the Eta output it is a response to;
-        ; first we need the superordinate action (wff should be in the form (^you reply-to.v <eta action>))
-        (setq superstep (plan-subplan-of subplan))
-        (when superstep
-          (setq ep-name1 (plan-step-ep-name superstep))
-          (setq wff1 (plan-step-wff superstep))
-          (setq wff1-arg (car (last wff1))))
-
-        ;; (format t "~%User action name1 = ~a" ep-name1)
-        ;; (format t "~%User words = ~a" words)
-        ;; (format t "~%User WFF1 = ~a, if correct,~%    ends in a ETA action name" wff1) ; DEBUGGING
-        
-        (cond
-          ; If the superordinate reply-to.v action has specific gist clause(s)
-          ((quoted-sentence-list? wff1-arg)
-            (setq eta-clauses (eval wff1-arg)))
-          ; If the superordinate reply-to.v action has an episode with gist clause(s) associated
-          ((symbolp wff1-arg)
-            (setq eta-ep-name wff1-arg)
-            (setq eta-clauses (get-gist-clauses-characterizing-episode eta-ep-name)))
-          ; Otherwise, assume there is no superordinate action, set gist clauses to nil
-          (t (setq eta-clauses nil)))
-
-        ;; (format t "~%ETA action name is ~a" eta-ep-name)
-        ;; (format t "~%ETA gist clauses that the user is responding to~% = ~a " eta-clauses)
-        ;; (format t "~%using gist clause: ~a " (car (last eta-clauses))) ; DEBUGGING
-
-        ; Compute the "interpretation" (gist clauses) of the user input,
-        ; which will be done with a gist-clause packet selected using the
-        ; main Eta action clause, and with the user input being the text
-        ; to which the tests in the gist clause packet (tree) are applied.
-        ;
-        ; TODO: In the future, we might instead of or in addition use
-        ; (get eta-ep-name 'interpretation).
-        (setq user-gist-clauses
-          (form-gist-clauses-from-input words (car (last eta-clauses))))
-
-        ; Remove contradiction
-        (setq user-gist-clauses (remove-contradiction user-gist-clauses))
-        (format t "Obtained user gist clauses ~a for episode ~a~%" user-gist-clauses ep-name1) ; DEBUGGING
-
-        ; Both the primitive user action and the immediately subordinate action
-        ; recieve the gist-clause interpretation just computed.
-        (dolist (user-gist-clause user-gist-clauses)
-          (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me)
-          (store-gist-clause-characterizing-episode user-gist-clause ep-name1 '^you '^me))
-        
-        ; Get ulfs from user gist clauses and set them as an attribute to the current
-        ; user action
-        (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
-        (format t "Obtained ulfs ~a for episode ~a~%" user-ulfs ep-name1) ; DEBUGGING
-
-        (dolist (user-ulf user-ulfs)
-          (store-semantic-interpretation-characterizing-episode user-ulf ep-name '^you '^me)
-          (store-semantic-interpretation-characterizing-episode user-ulf ep-name1 '^you '^me))
-
-        ; Get fine-grained user action type corresponding to gist clauses (e.g. (^you say-be.v)),
-        ; and store ((^you say-bye.v) * ?e1), where ?e1 is the ep-name of of say-to.v (and likewise
-        ; for the parent of the say-to.v episode, if it exists).
-        ; NOTE: for now, we assume that each user utterance is described by only one action type,
-        ; so the gist clauses are concatenated together first.
-        (setq user-action (form-user-action-type (apply #'append user-gist-clauses)))
-        (format t "Obtained user-action ~a for episode ~a~%" user-action ep-name1) ; DEBUGGING
-        (store-in-context `((^you ,user-action) * ,ep-name))
-        (when ep-name1
-          (store-in-context `((^you ,user-action) * ,ep-name1))))
-
-      ;`````````````````````
-      ; User: Paraphrasing
-      ;`````````````````````
-      ; Next we deal with gist clauses "attributed" to the user, in user
-      ; actions of form '(^you paraphrase-to.v '<gist clause>')' in a subplan
-      ; derived from a schema for handling complex user turns; i.e. we take the
-      ; view that the user paraphrased these gist clauses in his/her original, 
-      ; often "condensed", sentences; thus we can directly store the gist clauses
-      ; of the user action rather than applying 'form-gist-clauses-from-input'
-      ; again (as was done above for (^you say-to.v ^me '(...)) actions).
-      ((setq bindings (bindings-from-ttt-match '(^you paraphrase-to.v _!) wff))
-        (setq expr (get-single-binding bindings))
-        (cond
-          ((not (quoted-sentence? expr))
-            (format t "~%*** PARAPHRASE-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST" expr))
-          (t
-            ; Drop quote, leaving a singleton list of clauses
-            (setq user-gist-clauses (cdr expr))
-            (dolist (user-gist-clause user-gist-clauses)
-              (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me)))))
-
-      ;`````````````````````
-      ; User: Replying
-      ;`````````````````````
-      ; Nonprimitive (^you reply-to.v <eta action name>) action; we particularize this
-      ; action as a subplan, based on reading the user's input
-      ((setq bindings (bindings-from-ttt-match '(^you reply-to.v _!) wff))
-        ; If in *read-log* mode, finish processing the previous turn-tuple before moving on
-        (when *read-log*
-          (when (>= *log-ptr* 0)
-            (if (not *log-answer*) (setq *log-answer* '(PARSE FAILURE \.)))
-            (verify-log *log-answer* (nth *log-ptr* *log-contents*) *read-log*)
-            (setq *log-answer* nil))
-          (setq *log-ptr* (1+ *log-ptr*)))
-
-        (loop while (not input) do
-          
-          ;; Read user input
-          (setq input (cond
-            (*read-log* (if (>= *log-ptr* (length *log-contents*))
-              (read-words "bye")
-              (read-words (first (nth *log-ptr* *log-contents*)))))
-            ((member '|Audio| *registered-systems*) (hear-words))
-            (t (read-words)))))
-
-        ;; (format t "~% input is equal to ~a ~%" input) ; DEBUGGING
-
-        (cond
-          ((null input) (setq new-subplan nil))
-          (t
-            ; Make sure that any final punctuation, such as ?, ., or !,
-            ; is separated from the final word (so as to not impair pattern matching)
-            (setq input (detach-final-punctuation input))
-
-            ;; (format t "~%echo of input: ~a" input) ; DEBUGGING
-
-            ; Create subplan
-            (setq new-subplan
-              (init-plan-from-episode-list
-                (list :episodes (episode-var) (create-say-to-wff input :reverse t)))))))
-
-      ;`````````````````````
-      ; User: Responding
-      ;`````````````````````
-      ; Currently, this is treated as a more "general" version of replying, and also
-      ; is aimed at more instantaneous verbal responses, i.e., occurring within some
-      ; seconds after the previous action.
-      ; TODO: ultimately, it seems like a response could be verbal or non-verbal (e.g.
-      ; a gesture, following an instruction, etc.). But this invites certain parallel
-      ; processing issues, so currently I keep these separate. Also, it seems like the
-      ; distinction between replying and responding is somewhat arbitrary currently...
-      ((setq bindings (bindings-from-ttt-match '(^you respond-to.v _!) wff))
-        ; Read user input (within some secs if live mode)
-        (setq input (if (member '|Audio| *registered-systems*)
-                          (hear-words :delay *delay-respond-to.v*)
-                          (read-words)))
-        (format t "~% input is equal to ~a ~%" input) ; DEBUGGING
-
-        (cond
-          ((null input) (setq new-subplan nil))
-          (t
-            ; Make sure that any final punctuation, such as ?, ., or !,
-            ; is separated from the final word (so as to not impair pattern matching)
-            (setq input (detach-final-punctuation input))
-
-            ;; (format t "~%echo of input: ~a" input) ; DEBUGGING
-
-            ; Create subplan
-            (setq new-subplan
-              (init-plan-from-episode-list
-                (list :episodes (episode-var) (create-say-to-wff input :reverse t)))))))
-
-      ;`````````````````````
-      ; User: Acknowledging
-      ;`````````````````````
-      ; Same as replying, but allows for "tacit approval" (some secs of silence) as well.
-      ((setq bindings (bindings-from-ttt-match '(^you acknowledge.v _!) wff))
-        ; Read user input (within some secs if live mode)
-        (setq input (if (member '|Audio| *registered-systems*)
-                          (hear-words :delay *delay-acknowledge.v*)
-                          (read-words)))
-        (format t "~% input is equal to ~a ~%" input) ; DEBUGGING
-
-        (cond
-          ((null input) (setq new-subplan nil))
-          (t
-            ; Make sure that any final punctuation, such as ?, ., or !,
-            ; is separated from the final word (so as to not impair pattern matching)
-            (setq input (detach-final-punctuation input))
-
-            ;; (format t "~%echo of input: ~a" input) ; DEBUGGING
-
-            ; Create subplan
-            (setq new-subplan
-              (init-plan-from-episode-list
-                (list :episodes (episode-var) (create-say-to-wff input :reverse t)))))))
-
-      ;````````````````````````````
-      ; User: Trying
-      ;````````````````````````````
-      ; User tries some reified action. Queries the BW system for whether or
-      ; not trying the action was successful.
-      ; TODO: needs to be made more general in the future.
-      ((setq bindings (bindings-from-ttt-match '(^you try1.v _!) wff))
-        (setq expr (get-single-binding bindings))
-        (setq user-try-ka-success (if (member '|Blocks-World-System| *registered-systems*)
-                                        (get-user-try-ka-success)
-                                        (get-user-try-ka-success-offline)))
-        (format t "~% user-try-ka-success is equal to ~a ~%" user-try-ka-success) ; DEBUGGING
-        (when user-try-ka-success
-          (store-in-context `((pair ^you ,ep-name) successful.a))
-          (store-in-context `((pair ^you ,ep-name) instance-of.p ,expr)))
-
-        ; As a subplan of this, Eta should percieve the world (assuming a BW system).
-        (setq new-subplan
-          (init-plan-from-episode-list
-            (list :episodes (episode-var)
-              '(^me perceive-world.v |Blocks-World-System| nil ?perceptions)))))
-
-      ; Unrecognizable step
-      (t (format t "~%*** UNRECOGNIZABLE STEP ~a " wff) (error))
-    )
-
-    ; Return new subplan (possibly nil) and any variable bindings
-    (list var-bindings new-subplan)
-
-)) ; END observe-next-user-action
 
 
 
