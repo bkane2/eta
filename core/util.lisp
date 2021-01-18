@@ -1130,13 +1130,33 @@
 ; that episode, and return the ones matching pred-patt.
 ; 
   (let (facts matches)
-    (setq facts (mapcar #'car
+    (setq facts (mapcar #'first
       (append (get-from-memory `(?p ** ,ep-name)) (get-from-memory `(?p * ,ep-name)))))
     (dolist (fact facts)
       (when (fact-matches-p pred-patt fact)
         (setq matches (cons fact matches))))
     matches
 )) ; END get-from-memory-characterizing-episode
+
+
+
+(defun get-episode-from-contextual-fact (pred-patt)
+;```````````````````````````````````````````````````````````````````
+; Given a fact, find the episode-name that that fact characterizes (or
+; partially characterizes). The fact must be currently true in context
+; for the corresponding episode to be returned.
+;
+  (let (ep-names)
+    (setq ep-names (mapcar #'third
+      (append (get-from-memory `(,pred-patt ** ?e)) (get-from-memory `(,pred-patt * ?e)))))
+    ; Remove any episodes that aren't currently true in context
+    (setq ep-names
+      (remove-if-not (lambda (ep-name) (get-from-memory `(NOW* during ,ep-name))) ep-names))
+    ; If there are multiple episodes, return the first one in the list
+    ; TODO: this should be modified to return the most temporally recent episode (using timegraph
+    ; or direct episode relations in memory) eventually.
+    (car ep-names)
+)) ; END get-episode-from-contextual-fact
 
 
 

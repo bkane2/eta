@@ -578,7 +578,27 @@
 ; TODO: in addition to updating the plan accordingly, this should
 ; return t if the inquiry was a success, or nil otherwise.
 ; 
+  (let (curr-step ep-var ep-name wff)
   
+    ; Get current expected step, expected wff, and episode var
+    (setq curr-step (plan-curr-step plan))
+    (setq ep-var (plan-step-ep-name curr-step))
+    (setq wff (plan-step-wff curr-step))
+
+    ; Inquire about truth of wff in context
+    (when (get-from-context wff)
+
+      ; Get episode name corresponding to contextual fact
+      (setq ep-name (get-episode-from-contextual-fact wff))
+
+      ; Substitute that episode name for the episode variable in the plan
+      (nsubst-variable plan ep-name ep-var)
+
+      ; Attach wff to episode name (likely not used, but for convenience's sake)
+      (setf (get ep-name 'wff) wff)
+
+      ; Advance the plan
+      (advance-plan plan)))
 ) ; END inquire-truth-of-next-episode
 
 
