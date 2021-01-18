@@ -339,15 +339,15 @@
 (defun certainty-to-period (certainty)
 ;``````````````````````````````````````````
 ; Maps a certainty from [0,1] to a period corresponding to the
-; number of task cycles that Eta must wait to consider
-; an expected episode failed and move on in the plan.
+; period (in seconds) that Eta must wait to consider an expected episode
+; failed and move on in the plan.
 ; The proportion between the period (in task cycles) and the
 ; quantity -log(1 - certainty) is determined by the global
-; constant *expected-step-failure-period-proportion*.
+; constant *expected-step-failure-period-coefficient*.
 ;
   (if (or (>= certainty 1) (< certainty 0))
     'inf
-    (* *expected-step-failure-period-proportion*
+    (* *expected-step-failure-period-coefficient*
       (* -1 (log (- 1 certainty)))))
 ) ; END certainty-to-period
 
