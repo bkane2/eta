@@ -336,6 +336,23 @@
 
 
 
+(defun certainty-to-period (certainty)
+;``````````````````````````````````````````
+; Maps a certainty from [0,1] to a period corresponding to the
+; number of task cycles that Eta must wait to consider
+; an expected episode failed and move on in the plan.
+; The proportion between the period (in task cycles) and the
+; quantity -log(1 - certainty) is determined by the global
+; constant *expected-step-failure-period-proportion*.
+;
+  (if (or (>= certainty 1) (< certainty 0))
+    'inf
+    (* *expected-step-failure-period-proportion*
+      (* -1 (log (- 1 certainty)))))
+) ; END certainty-to-period
+
+
+
 (defun form-name-wff-pairs (contents)
 ;`````````````````````````````````````
 ; Groups contents of a schema section, assumed to be a series of
@@ -558,13 +575,25 @@
 ; Checks the truth of the immediately pending episode in the plan,
 ; through a process of "self-inquiry" (i.e. checking the system's
 ; context/memory, potentially with some level of inference (TBC) as well).
-; The amount of times this is attempted for a given expected episode (i.e.,
-; the number of task cycles before the system instantiates a 'failed' episode
-; and moves on) is proportional to the certainty of that episode in the schema.
-; TODO: semantics of a 'failed' episode need to be further worked out.
+; TODO: in addition to updating the plan accordingly, this should
+; return t if the inquiry was a success, or nil otherwise.
 ; 
   
 ) ; END inquire-truth-of-next-episode
+
+
+
+(defun determine-next-episode-failed (plan)
+;``````````````````````````````````````````````
+; Determine that the immediately pending episode in the plan is a
+; 'failed' episode; i.e. an expected episode which did not end up
+; coming true during the "period" of expectation (governed by the
+; certainty of the episode). Instantiate the episode with a new episode
+; name characterized as a failure.
+; Should return t after instantiating failed episode.
+;
+  t
+) ; END determine-next-episode-failed
 
 
 

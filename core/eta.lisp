@@ -168,12 +168,25 @@
 
   ; Timer parameters (to be incremented based on task cycles)
   (defparameter *flush-context-timer* 0)
-  (defparameter *timers* '(*flush-context-timer*))
+  (defparameter *expected-step-failure-timer* 0)
+  (defparameter *timers* '(*flush-context-timer* *expected-step-failure-timer*))
+
+  ; This constant should correspond to the empirical number of task cycles (on average)
+  ; that are processed in 1 second.
+  (defparameter *task-cycle-mult* 6000)
 
   ; The timer period (number of task cycles) that must be passed for Eta to flush
   ; context, removing "instantaneous" telic verbs from context.
   ; The period should be empirically chosen to be approximately equivalent to 5 seconds.
-  (defparameter *flush-context-period* 3000000)
+  (defparameter *flush-context-period* (* 5 *task-cycle-mult*))
+
+  ; The certainty of an episode determines the timer period (number of task cycles) that
+  ; must be passed for Eta to consider an expected episode failed and move on in the plan.
+  ; This is a function on the certainty of the episode, with a certainty of 1 having
+  ; an infinite period, and a certainty of 0 having a period of 0. This constant determines the
+  ; the proportion of 
+  ; Currently, this proportion makes a certainty of ~0.632 correspond to ~30 seconds.
+  (defparameter *expected-step-failure-period-proportion* (* 30 *task-cycle-mult*))
 
   ; If *read-log* is the name of some file (in logs/ directory), read and
   ; emulate that file, allowing for user corrections and saving them in a file
@@ -344,7 +357,7 @@
 ; from context when appropriate when a user step is matched to
 ; something in context.
 ;
-  (let ((plan (ds-curr-plan *ds*)) subplan curr-step wff subj)
+  (let ((plan (ds-curr-plan *ds*)) subplan curr-step wff subj certainty plan-advanced?)
 
     ; Find the next action from the deepest active subplan
     (setq subplan (find-curr-subplan plan))
@@ -356,11 +369,28 @@
     (setq wff (plan-step-wff curr-step))
     (setq subj (car wff))
 
-    ; If the subject of the expected plan step is the user, inquire
-    ; about the truth of the episode; otherwise, process the plan step
-    (case subj
-      (^you (inquire-truth-of-next-episode subplan))
-      (otherwise (process-next-episode subplan)))
+    (cond
+      ; If the subject of the expected plan step is the user, inquire about the truth of the episode.
+      ((equal subj '^you)
+
+        ; Check certainty of expected plan step
+        (setq certainty (plan-step-certainty curr-step))
+
+        (cond
+          ; If task cycle timer exceeds period (a function of certainty of step), instantiate a 'failed'
+          ; episode and continue with the plan.
+          ((>=inf *expected-step-failure-timer* (certainty-to-period certainty)) 
+            (setq plan-advanced? (determine-next-episode-failed subplan)))
+            
+          ; Otherwise, nquire self about the truth of the immediately pending episode. Plan is advanced
+          ; (and appropriate substitutions made) if the expected episode is determined to be true.
+          (t
+            (setq plan-advanced? (inquire-truth-of-next-episode subplan)))))
+
+      ; Otherwise, process the plan step, resetting the timer for 
+      (t
+        (process-next-episode subplan)
+        (setq plan-advanced? t)))
 
     ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
     ;; (format t " here is after the print-current-plan-status -----------~%")
@@ -369,6 +399,9 @@
 
     ; Update plan state after processing the previous step
     (update-plan-state plan)
+
+    ; If plan was advanced, reset the timer for checking whether to declare an expected step a failure.
+    (if plan-advanced? (setq *expected-step-failure-timer* 0))
 
     ;; (format t " here is after the plan state has been updated -----------~%")
     ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
@@ -388,6 +421,7 @@
   ; Flush context of "instantaneous" telic verbs once task cycle timer
   ; passes a given period.
   (when (>= *flush-context-timer* *flush-context-period*)
+    ;; (format t "FLUSHING CONTEXT~%") ; DEBUGGING
     (flush-context)
     (setq *flush-context-timer* 0))
 
