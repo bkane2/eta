@@ -344,13 +344,6 @@
 ;````````````````````````````````````
 ; Performs the next step of the current dialogue plan, and
 ; updates the plan state, removing any completed subplans.
-; TODO: add code for matching observations, counter for
-; determining when to move on from a non-Eta step based
-; on certainty.
-;
-; TODO: certain facts (e.g. say-to.v, reply-to.v) need to be removed
-; from context when appropriate when a user step is matched to
-; something in context.
 ;
   (let ((plan (ds-curr-plan *ds*)) subplan curr-step wff subj certainty plan-advanced?)
 
@@ -408,7 +401,14 @@
 
 (defun perceive-world ()
 ;````````````````````````````````````
-; TBC
+; Perceive the world by cycling through each of Eta's registered subsystems
+; collecting facts from each one, and adding them to context as well as a
+; perception queue for further interpretation. In the case where a fact
+; is negated (i.e., (not ...)), the fact is instead removed from context.
+;
+; Periodically (with the parameter determining the period defined in the 'init'
+; function), Eta should also flush context of facts with predicates that are
+; known to be "instantaneous" telic predicates, e.g., saying, replying, moving, etc.
 ;
   (let (inputs)
 
@@ -448,7 +448,8 @@
 
 (defun interpret-perceptions ()
 ;```````````````````````````````
-; TBC
+; Given a list of enqueued perceptions, go through each one and interpret it
+; in the context of the current (sub)plan (emptying the queue in the process).
 ;
   (let (subplan)
     ; Find the next action from the deepest active subplan
@@ -481,16 +482,6 @@
 ;````````````````````````````````````
 ; TBC
 ; 
-; For inferring facts in a bottom-up, "data-driven" way from existing
-; facts in context, and gist clauses obtained during interpretation.
-;
-; Facts like (^you say-bye.v) can be inferred from gist clauses using
-; pattern transduction trees. Does this necessitate adding a :context
-; directive to the pattern transduction trees, or something similar, or
-; should the :ulf directive be used in conjunction with a special function
-; for calling this tree and adding the chosen result to context? What about
-; more complicated formulas or EL-formulas, such as ((^you ask-question.v) ** E3)?
-; 
   nil
 ) ; END infer-facts-bottom-up
 
@@ -500,10 +491,10 @@
 
 (defun implement-next-plan-episode (subplan)
 ;``````````````````````````````````````````````
-; TBC
-;
-; This program is called if an episode is a general event or control flow
-; formula, rather than an action formula starting with "Me" or "You".
+; Any "abstract" plan episodes concerned with control flow (e.g., conditional events,
+; repeating an event, etc.), as opposed to actions starting with "^me" or "^you", are
+; implemented here. Execution of such episodes by Eta involves modifying the plan structure
+; in a way that corresponds to the episode in question.
 ;
   (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
@@ -578,19 +569,29 @@
 
 (defun implement-next-eta-action (subplan)
 ;``````````````````````````````````````````````````
-; TBC (rewrite)
+; Any actions by Eta are implemented here. We assume that this program
+; is called only if the first action of the plan is already known to be of
+; type (^me ...).
 ;
-; We assume that every {sub}plan name has a 'rest-of-plan' property
-; pointing to the remainder of the plan that has not been fully executed
-; (i.e., the first step of this remainder has been at most partially
-; executed). Further, every action name for a nonprimitive action has,
-; or needs to be supplied with, a 'subplan' property pointing to the
-; name of a subplan, which will again have a 'rest-of-plan' property.
-; Also, the subplan name will have a 'subplan-of' property that points
-; back to the name of the action it expands.
+; If the currently due step of the plan is a primitive action (e.g., saying
+; something), execute it. Otherwise, create a subplan for the action. 
+; No part of the new subplan is immediately executed or further
+; elaborated, so that the main Eta plan manager can in principle
+; check and amend the overall rest of the plan if necessary (e.g.,
+; add or modify temporal constraints to avoid inconsistencies; more 
+; radical changes may be warranted for optimizing overall utility).
+; Any subschemas used in the elaboration process typically supply 
+; multiple (^me say-to.v ^you '(...)) actions), and choice packets used
+; for step elaboration typically elaborate (^me react-to.v ...) actions
+; into single or multiple (^me say-to.v ^you '(...)) subactions.
 ;
-; We assume that this program is called only if the first action of
-; the plan  is already known to be of type (^me ...), i.e., an action by Eta.
+; The function returns a pair (var-bindings new-subplan), where either
+; may be nil. var-bindings is a list of pairs of variables and symbols
+; generated during execution of the action, to be bound to that variable
+; in the remainder of the plan. new-subplan is the subplan created by the
+; action (if any). If a new subplan is returned, it is attached to the
+; current plan step by the calling function, otherwise the calling function
+; advances the plan to the next step.
 ;
 ; TODO: IT SEEMS THAT THIS PROGRAM COULD ITSELF BE
 ;   REFORMULATED AS A KIND OF CHOICE TREE THAT SELECTS A SUBPLAN
@@ -605,24 +606,6 @@
 ;   TREES FOR FINDING SUITABLE METHODS FOR ELABORATION (AND DOING 
 ;   FREQUENT OVERALL CONSISTENCY, PROBABILITY, AND UTILITY 
 ;   CALCULATIONS).
-;
-; If the currently due action pointed to by the 'rest-of-plan'
-; property of '{sub}plan-name' is primitive (e.g., saying something),
-; execute it and advance the 'rest-of-plan pointer' of '{sub}plan-name'.
-; Otherwise, if the 'subplan' property of the currently due action
-; is nil, generate a subplan name, point to it via the 'subplan'
-; property of the currently due action, find a choice tree or subschema
-; for realizing the currently due action, and initialize the subplan.
-;
-; No part of the new subplan is immediately executed or further
-; elaborated, so that the main Eta plan manager can in principle
-; check and amend the overall rest of the plan if necessary (e.g.,
-; add or modify temporal constraints to avoid inconsistencies; more 
-; radical changes may be warranted for optimizing overall utility).
-; Any subschemas used in the elaboration process typically supply 
-; multiple (^me say-to.v ^you '(...)) actions), and choice packets used
-; for step elaboration typically elaborate (^me react-to.v ...) actions
-; into single or multiple (^me say-to.v ^you '(...)) subactions.
 ;
   (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
@@ -762,6 +745,23 @@
       ;`````````````````````````````````````
       ; Eta: Recalling answer from history
       ;`````````````````````````````````````
+      ; TODO: revise to update coordinates if in *read-log* mode (taking place of perception)
+      ; TODO: this should use context directly (looking for block location coordinates), rather than
+      ;       being provided with perceptions from a previous schema step
+      ;
+      ;; (*read-log* (setq perceptions (second (nth *log-ptr* *log-contents*))))
+      ;;     ((not (member '|Blocks-World-System| *registered-systems*)) (setq perceptions nil))
+      ;;     (t (setq perceptions (get-perceptions))))
+
+      ;;   ; Ensure perceptions are in correct format, i.e. a list of lists, otherwise set to nil
+      ;;   (if (or (not perceptions) (not (listp perceptions)) (not (every #'listp perceptions)))
+      ;;     (setq perceptions nil))
+      ;;   ; When in terminal mode w/ blocks world subsystem, update block coordinates after user gives move and add to perceptions
+      ;;   ; TODO: re-implement this to be compatible with changes
+      ;;   ;; (when (or *read-log* (and (not (member '|Audio| *registered-systems*)) (member '|Blocks-World-System| *registered-systems*)))
+      ;;   ;;   (setq perceptions (update-block-coordinates (remove-if-not #'verb-phrase? perceptions))))
+      ;
+      ;
       ((setq bindings (bindings-from-ttt-match '(^me recall-answer.v _! _!1 _!2) wff))
         (setq object-locations (eval-functions (get-single-binding bindings)))
         ;; (format t "bindings: ~a~% object locations: ~a~%" (get-single-binding bindings) object-locations) ; DEBUGGING
@@ -782,6 +782,20 @@
       ;````````````````````````````````````````
       ; Eta: Seek answer from external source
       ;````````````````````````````````````````
+      ; TODO: revise to update coordinates if in *read-log* mode (taking place of perception)
+      ;
+      ;; (*read-log* (setq perceptions (second (nth *log-ptr* *log-contents*))))
+      ;;     ((not (member '|Blocks-World-System| *registered-systems*)) (setq perceptions nil))
+      ;;     (t (setq perceptions (get-perceptions))))
+
+      ;;   ; Ensure perceptions are in correct format, i.e. a list of lists, otherwise set to nil
+      ;;   (if (or (not perceptions) (not (listp perceptions)) (not (every #'listp perceptions)))
+      ;;     (setq perceptions nil))
+      ;;   ; When in terminal mode w/ blocks world subsystem, update block coordinates after user gives move and add to perceptions
+      ;;   ; TODO: re-implement this to be compatible with changes
+      ;;   ;; (when (or *read-log* (and (not (member '|Audio| *registered-systems*)) (member '|Blocks-World-System| *registered-systems*)))
+      ;;   ;;   (setq perceptions (update-block-coordinates (remove-if-not #'verb-phrase? perceptions))))
+      ;
       ((setq bindings (bindings-from-ttt-match '(^me seek-answer-from.v _! _!1) wff))
         (setq system (get-single-binding bindings))
         (setq bindings (cdr bindings))
@@ -858,6 +872,8 @@
       ;````````````````````````````
       ; Eta: Perceiving world
       ;````````````````````````````
+      ; TODO: deprecated, remove
+      ;
       ((setq bindings (bindings-from-ttt-match '(^me perceive-world.v _! _!1 _!2) wff))
         (setq system (get-single-binding bindings))
         (setq bindings (cdr bindings))
@@ -1020,39 +1036,22 @@
 
 (defun interpret-perception-in-context (fact plan)
 ;````````````````````````````````````````````````````````
-; TODO: function should interpret 'fact' in the context of the current dialogue plan (usually
-; this will be the former speech act), storing resulting facts in context.
-; If 'fact' is a say-to.v action, interpret as gist-clause as well as logical form.
+; Interpret a 'primitive' perception in the context of the current plan status.
+; In the case of a perceived "^you say-to.v ^me" action by the user, the relevant
+; context is the previous speech act in the plan (typically by Eta), and the user's
+; reply is 'automatically' interpreted as a response to that speech act.
 ;
-; Suppose the next step in a plan is a user action to be matched, like
-; E20 (^me say-to.v ^you '(...))
-; ?e4 (^you ACTION.V ...)
+; e.g., suppose the previous speech act by Eta in the plan is:
+; E1 (^me say-to.v ^you '(What is your favorite type of food ?))
 ;
-; If ACTION.V is handled here (e.g. (^you reply-to.v ^me)), we want to look for (^you say-to.v ^me ...) 
-; observations (or any other observations corresponding to the respective action), apply any special
-; pattern transduction procedures for that action in the context of the previous plan episode, and return
-; E21 (^you reply-to.v ^me) (with appropriate gist clauses attached to 'E21), to be stored in context.
-; Later, during a different task, this episode can be matched to ?e4 in the plan.
+; And the following action by the user is perceived:
+; E2 (^you say-to.v ^me '(Thai food \.))
 ;
-; If ACTION.V is a schema, we want to get all episodes in the schema's episode decomposition, and try to
-; match them with observations in context. If successful, store E21 (^you ACTION.V ...) in context (and
-; maybe also infer any preconditions/goals/etc. of the schema).
-; Issues with this that I still have to work out:
-; 1. what if the episodes in the ACTION.V schema themselves involve interactions between the agent and user
-;    that need to be acted out first? Well, maybe this isn't a problem, since any such schemas should have a
-;    header beginning with either ((set-of ^me ^you) ...), or (^me ... ^you ...), which will be added as subplans
-;    rather than simply trying to find a matching observation in context.
-; 2. how do gist clauses themselves get worked out for the sub-episodes of this schema, and how is the context
-;    of the previous episode used, if at all? For instance, suppose we have the following episodes in some
-;    'do-BlocksWorld-action.v' schema (somewhat contrived):
-;    ?e1 (^you paraphrase-to.v '(Doing an action now \.))
-;    ?e2 (^you move.v ?block ?loc)
-;    ?e3 (^you paraphrase-to.v ^me '(Action finished \.))
-;    and suppose the system observes E19 (^you say-to.v ^me '(Okay now I'm making a move \.)). How is this
-;    matched to E19, and how is the appropriate gist clause (Doing an action now \.) extracted?
-;
-; **TODO: Simply looking at prev-step here will not be enough; this should instead search for the previous speech
-; act that can be used for context of interpretation.
+; We want to try to interpret the utterance in E2 using the context of E1 (particularly, the gist-clause
+; corresponding to Eta's utterance), extracting a gist-clause and semantic interpretation (when relevant)
+; for the user, and possibly additional inferences. After doing so (and storing them in memory), we store
+; the fact:
+; ((^you reply-to.v E1) ** E2)
 ;
   (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
          user-gist-clauses user-ulfs inferred-wffs)
@@ -1102,7 +1101,7 @@
 
         ; Remove contradicting user gist-clauses (if any)
         (setq user-gist-clauses (remove-contradiction user-gist-clauses))
-        (format t "~%Obtained user gist clauses ~a for episode ~a~%" user-gist-clauses ep-name) ; DEBUGGING
+        (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
 
         ; Store the user gist-clauses in memory
         (dolist (user-gist-clause user-gist-clauses)
@@ -1110,7 +1109,7 @@
 
         ; Obtain semantic interpretation(s) of the user gist-clauses
         (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
-        (format t "~%Obtained ulfs ~a for episode ~a~%" user-ulfs ep-name) ; DEBUGGING
+        (format t "~%Obtained ulfs ~a for episode ~a" user-ulfs ep-name) ; DEBUGGING
 
         ; Store the semantic interpretations in memory
         (dolist (user-ulf user-ulfs)
@@ -1130,7 +1129,7 @@
         ; so the gist clauses are concatenated together first.
         (setq inferred-wffs (mapcar #'form-inferences-from-gist-clause user-gist-clauses))
 
-        (format t "Inferred wffs ~a for episode ~a~%" inferred-wffs ep-name) ; DEBUGGING
+        (format t "~%Inferred wffs ~a for episode ~a~%" inferred-wffs ep-name) ; DEBUGGING
 
         ; Add each inferred wff to context (characterizing ep-name)
         (dolist (inferred-wff inferred-wffs)
@@ -1142,6 +1141,7 @@
       ;````````````````````````````
       ; User tries some reified action. Queries the BW system for whether or
       ; not trying the action was successful.
+      ; TBC
       ; TODO: This should match primitive spatial 'move' observations instead. Then,
       ; given a move observation, this should check if the move matches the move that the
       ; user is expected to try, according to the dialogue/spatial planner output. If so, store
@@ -1815,6 +1815,7 @@
 
 (defun commit-perceptions-to-memory (perceptions user-ulf)
 ;``````````````````````````````````````````````````````````
+; TODO: deprecated, remove
 ; Given perceptions by the system (e.g., block moves) and/or a
 ; query ULF, store these facts in short-term memory (context).
 ; The facts are deindexed and stored in context as, e.g.,

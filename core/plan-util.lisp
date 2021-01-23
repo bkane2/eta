@@ -1,7 +1,11 @@
 ;; Aug 5/2020
 ;; ===========================================================
 ;;
-;; TODO: Write header
+;; Contains the schema-based planning module used by Eta, built around
+;; the 'plan' and 'plan-step' structures defined below (essentially a doubly-linked-list
+;; with pointers for subplan relations.)
+;;
+;; Functions described in more detail in their headers.
 ;;
 
 (setf *print-circle* t) ; needed to prevent recursive loop when printing plan-step
@@ -318,7 +322,8 @@
 
 (defun process-schema-certainties (plan certainties)
 ;``````````````````````````````````````````````````````
-; TBC
+; Processes certainty formulas in the schema, adding the certainty to a
+; property list of the episode var/name.
 ; e.g., !c1 (!e1 .8)
 ;
   (let ((certainty-pairs (form-name-wff-pairs certainties)) certainty-name certainty-wff
