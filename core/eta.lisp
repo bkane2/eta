@@ -745,22 +745,8 @@
       ;`````````````````````````````````````
       ; Eta: Recalling answer from history
       ;`````````````````````````````````````
-      ; TODO: revise to update coordinates if in *read-log* mode (taking place of perception)
       ; TODO: this should use context directly (looking for block location coordinates), rather than
       ;       being provided with perceptions from a previous schema step
-      ;
-      ;; (*read-log* (setq perceptions (second (nth *log-ptr* *log-contents*))))
-      ;;     ((not (member '|Blocks-World-System| *registered-systems*)) (setq perceptions nil))
-      ;;     (t (setq perceptions (get-perceptions))))
-
-      ;;   ; Ensure perceptions are in correct format, i.e. a list of lists, otherwise set to nil
-      ;;   (if (or (not perceptions) (not (listp perceptions)) (not (every #'listp perceptions)))
-      ;;     (setq perceptions nil))
-      ;;   ; When in terminal mode w/ blocks world subsystem, update block coordinates after user gives move and add to perceptions
-      ;;   ; TODO: re-implement this to be compatible with changes
-      ;;   ;; (when (or *read-log* (and (not (member '|Audio| *registered-systems*)) (member '|Blocks-World-System| *registered-systems*)))
-      ;;   ;;   (setq perceptions (update-block-coordinates (remove-if-not #'verb-phrase? perceptions))))
-      ;
       ;
       ((setq bindings (bindings-from-ttt-match '(^me recall-answer.v _! _!1 _!2) wff))
         (setq object-locations (eval-functions (get-single-binding bindings)))
@@ -769,37 +755,38 @@
         (setq user-ulf (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
-        ; Output ULF if in live mode, along with indicator that the ULF is not intended as a query.
+
+        ; Output ULF, along with indicator that the ULF is not intended as a query.
         (write-ulf `(quote ,(list 'non-query (eval user-ulf))))
+
+        ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
+        (when *read-log*
+          (mapcar #'store-new-contextual-fact
+            (update-block-coordinates (remove-if-not #'verb-phrase? (second (nth *log-ptr* *log-contents*))))))
+
         ; Determine answers by recalling from history
         (if *dependencies*
           (setq ans `(quote ,(recall-answer object-locations (eval user-ulf))))
           (setq ans '()))
         (format t "recalled answer: ~a~%" ans) ; DEBUGGING
+
         ; Bind ans to variable given in plan (e.g. ?ans-relations)
         (setq var-bindings (cons (list expr ans) var-bindings)))
 
       ;````````````````````````````````````````
       ; Eta: Seek answer from external source
       ;````````````````````````````````````````
-      ; TODO: revise to update coordinates if in *read-log* mode (taking place of perception)
-      ;
-      ;; (*read-log* (setq perceptions (second (nth *log-ptr* *log-contents*))))
-      ;;     ((not (member '|Blocks-World-System| *registered-systems*)) (setq perceptions nil))
-      ;;     (t (setq perceptions (get-perceptions))))
-
-      ;;   ; Ensure perceptions are in correct format, i.e. a list of lists, otherwise set to nil
-      ;;   (if (or (not perceptions) (not (listp perceptions)) (not (every #'listp perceptions)))
-      ;;     (setq perceptions nil))
-      ;;   ; When in terminal mode w/ blocks world subsystem, update block coordinates after user gives move and add to perceptions
-      ;;   ; TODO: re-implement this to be compatible with changes
-      ;;   ;; (when (or *read-log* (and (not (member '|Audio| *registered-systems*)) (member '|Blocks-World-System| *registered-systems*)))
-      ;;   ;;   (setq perceptions (update-block-coordinates (remove-if-not #'verb-phrase? perceptions))))
-      ;
       ((setq bindings (bindings-from-ttt-match '(^me seek-answer-from.v _! _!1) wff))
         (setq system (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq user-ulf (get-single-binding bindings))
+
+        ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
+        (when *read-log*
+          (mapcar #'store-new-contextual-fact
+            (update-block-coordinates (remove-if-not #'verb-phrase? (second (nth *log-ptr* *log-contents*))))))
+
+        ; Write ULF to Blocks World System
         (if (member '|Blocks-World-System| *registered-systems*) (write-ulf user-ulf)))
 
       ;``````````````````````````````````````````
@@ -868,39 +855,6 @@
         ;; (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
         (store-gist-clause-characterizing-episode proposal-gist ep-name '^me '^you)
         (setq new-subplan (plan-correction proposal-gist)))
-
-      ;````````````````````````````
-      ; Eta: Perceiving world
-      ;````````````````````````````
-      ; TODO: deprecated, remove
-      ;
-      ((setq bindings (bindings-from-ttt-match '(^me perceive-world.v _! _!1 _!2) wff))
-        (setq system (get-single-binding bindings))
-        (setq bindings (cdr bindings))
-        (setq user-ulf (get-single-binding bindings))
-        (setq bindings (cdr bindings))
-        (setq expr (get-single-binding bindings))
-        ; Get perceptions
-        (cond
-          (*read-log* (setq perceptions (second (nth *log-ptr* *log-contents*))))
-          ((not (member '|Blocks-World-System| *registered-systems*)) (setq perceptions nil))
-          (t (setq perceptions (get-perceptions))))
-
-        ; Ensure perceptions are in correct format, i.e. a list of lists, otherwise set to nil
-        (if (or (not perceptions) (not (listp perceptions)) (not (every #'listp perceptions)))
-          (setq perceptions nil))
-        ; When in terminal mode w/ blocks world subsystem, update block coordinates after user gives move and add to perceptions
-        ; TODO: re-implement this to be compatible with changes
-        ;; (when (or *read-log* (and (not (member '|Audio| *registered-systems*)) (member '|Blocks-World-System| *registered-systems*)))
-        ;;   (setq perceptions (update-block-coordinates (remove-if-not #'verb-phrase? perceptions))))
- 
-        (format t "received perceptions: ~a~% (for variable ~a)~%" perceptions expr) ; DEBUGGING
-
-        ; Commit perceptions to memory
-        (commit-perceptions-to-memory perceptions user-ulf)       
-        
-        ; Bind quoted perceptions for var in plan
-        (setq var-bindings (cons (list expr `(quote ,perceptions)) var-bindings)))
 
       ;`````````````````````````
       ; Eta: Committing to STM
@@ -1813,46 +1767,46 @@
 
 
 
-(defun commit-perceptions-to-memory (perceptions user-ulf)
-;``````````````````````````````````````````````````````````
-; TODO: deprecated, remove
-; Given perceptions by the system (e.g., block moves) and/or a
-; query ULF, store these facts in short-term memory (context).
-; The facts are deindexed and stored in context as, e.g.,
-; ((you.pro ((past move.v) |B1|)) @ NOW1), though the indexical
-; formula is also stored hashed on the time NOW1.
-; TODO: as indicated, many aspects of this will need changing.
-; I'm also not sure that such historical temporal facts should
-; be stored in short-term memory/context at all, versus some
-; form of long-term memory.
-;
-  ; Store move.v facts in context, deindexed at the current time
-  ; TODO: COME BACK TO THIS
-  ; It seems like this should be somehow an explicit store-in-context step in schema, but which facts are
-  ; indexical? Should e.g. past moves in fact be stored in memory rather than context?
-  (let ((action-perceptions (remove-if-not #'verb-phrase? perceptions)))
-    (when action-perceptions
-      (setq *time-prev* *time*)
-      (mapcar (lambda (perception)
-          (let ((perception1 (list perception '@ *time*)))
-            (update-time)
-            (store-in-context perception1)
-          ))
-        action-perceptions)))
+;; (defun commit-perceptions-to-memory (perceptions user-ulf)
+;; ;``````````````````````````````````````````````````````````
+;; ; TODO: deprecated, remove
+;; ; Given perceptions by the system (e.g., block moves) and/or a
+;; ; query ULF, store these facts in short-term memory (context).
+;; ; The facts are deindexed and stored in context as, e.g.,
+;; ; ((you.pro ((past move.v) |B1|)) @ NOW1), though the indexical
+;; ; formula is also stored hashed on the time NOW1.
+;; ; TODO: as indicated, many aspects of this will need changing.
+;; ; I'm also not sure that such historical temporal facts should
+;; ; be stored in short-term memory/context at all, versus some
+;; ; form of long-term memory.
+;; ;
+;;   ; Store move.v facts in context, deindexed at the current time
+;;   ; TODO: COME BACK TO THIS
+;;   ; It seems like this should be somehow an explicit store-in-context step in schema, but which facts are
+;;   ; indexical? Should e.g. past moves in fact be stored in memory rather than context?
+;;   (let ((action-perceptions (remove-if-not #'verb-phrase? perceptions)))
+;;     (when action-perceptions
+;;       (setq *time-prev* *time*)
+;;       (mapcar (lambda (perception)
+;;           (let ((perception1 (list perception '@ *time*)))
+;;             (update-time)
+;;             (store-in-context perception1)
+;;           ))
+;;         action-perceptions)))
 
-  ; Store ULF of user utterance in context, deindexed at the current time
-  ; TODO: COME BACK TO THIS
-  ; This should probably be done elsewhere (e.g. at the time of Eta processing the say-to.v episode),
-  ; but then the utterance would come temporally before any block moves, whereas it should be the other
-  ; way around. The perceive-world.v action in general needs to be rethought (since really observing a
-  ; user say-to.v action, much like a move.v action or any other action, IS a perceive world action).
-  ; Update Eta's current time
-  (when user-ulf
-    (let ((utterance-prop `((^you ((past ask.v) ,user-ulf)) @ ,*time*)))
-      (update-time)
-      (store-in-context utterance-prop)
-    ))
-) ; END commit-perceptions-to-memory
+;;   ; Store ULF of user utterance in context, deindexed at the current time
+;;   ; TODO: COME BACK TO THIS
+;;   ; This should probably be done elsewhere (e.g. at the time of Eta processing the say-to.v episode),
+;;   ; but then the utterance would come temporally before any block moves, whereas it should be the other
+;;   ; way around. The perceive-world.v action in general needs to be rethought (since really observing a
+;;   ; user say-to.v action, much like a move.v action or any other action, IS a perceive world action).
+;;   ; Update Eta's current time
+;;   (when user-ulf
+;;     (let ((utterance-prop `((^you ((past ask.v) ,user-ulf)) @ ,*time*)))
+;;       (update-time)
+;;       (store-in-context utterance-prop)
+;;     ))
+;; ) ; END commit-perceptions-to-memory
 
 
 
