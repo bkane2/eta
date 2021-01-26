@@ -40,7 +40,7 @@
 ; a reaction to the extra clause. To be able to process individual
 ; (^me react-to.v ...) components in the usual way, we "hallucinate"
 ; separate user inputs of form
-;    (^you paraphrase-to.v ^me '...)
+;    (^you paraphrase.v '...)
 ; containing single user gist clauses, viewing these as what the
 ; use had in mind but "paraphrased" in the context of the preceding
 ; Eta question.
