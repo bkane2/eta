@@ -610,6 +610,7 @@
   (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
          superstep ep-name1 user-ep-name user-ulf n user-gist-clauses user-gist-passage
+         prev-step prev-step-ep-name prev-step-wff utterance
          proposal-gist main-clause info topic suggestion query ans perceptions
          perceived-actions sk-var sk-name concept-name goal-schema)
 
@@ -650,6 +651,53 @@
 
       ; For now, saying something is the only primitive action, so everything
       ; beyond this point is non-primitive actions, to be expanded using choice packets.
+
+      ;`````````````````````
+      ; Eta: Paraphrasing
+      ;`````````````````````
+      ; Yields e.g. ((_+ '(I am a senior comp sci major \.))), or nil if unsuccessful.
+      ; Used for elaborating a gist-clause by Eta into a surface-level utterance via choice
+      ; packets which first branch on the gist-clause to select an appropriate subtree, and
+      ; then generate an utterance based on the context of the previous speech act in the dialogue.
+      ((setq bindings (bindings-from-ttt-match '(^me paraphrase-to.v ^you _+) wff))
+        (setq expr (eval-functions (get-single-binding bindings)))
+        (cond
+          ; If the current "say" action is a question, then use 'topic-keys'
+          ; and gist-kb-user to see if question has already been answered.
+          ; If so, omit action.
+          ((not (null (obviated-question expr ep-name)))
+            (advance-plan subplan)
+            (setq new-subplan nil))
+
+          ; Get subtree, get surface response, attach say-to.v action
+          ((eq (car expr) 'quote)
+            (setq expr (flatten (second expr)))
+
+            ; Store gist-clause that Eta is paraphrasing
+            (store-gist-clause-characterizing-episode expr ep-name '^me '^you)
+
+            ; Use previous user reply as context for response generation
+            (setq prev-step (find-prev-step-of-type subplan '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
+            (setq prev-step-ep-name (plan-step-ep-name prev-step))
+            (setq prev-step-wff (plan-step-wff prev-step))
+
+            ;; (format t "~%found previous speech act: ~a (~a)~%" prev-step-ep-name prev-step-wff) ; DEBUGGING
+
+            ; Get gist-clauses corresponding to previous user speech act
+            (setq user-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
+
+            ;; (format t "associated gist clauses: ~a~%" user-gist-clauses) ; DEBUGGING
+
+            ; Get utterance from gist-clause and prior gist-clause
+            (setq utterance (form-surface-utterance-from-gist-clause expr (car user-gist-clauses)))
+
+            ; Attach say-to.v action as subplan to paraphrase-to.v action
+            (setq new-subplan
+              (init-plan-from-episode-list
+                (list :episodes (episode-var) (create-say-to-wff utterance)))))
+
+          ; Other argument types unexpected
+          (t (setq new-subplan nil))))
 
       ;`````````````````````
       ; Eta: Reacting
@@ -1031,7 +1079,7 @@
             (format t "~%*** SAY-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST OR VARIABLE" expr)))
 
         ; Use previous speech act as context for interpretation
-        (setq prev-step (find-prev-step-of-type plan 'say-to.v))
+        (setq prev-step (find-prev-step-of-type plan '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
         (setq prev-step-ep-name (plan-step-ep-name prev-step))
         (setq prev-step-wff (plan-step-wff prev-step))
 
@@ -1630,6 +1678,42 @@
     (if (null facts) (return-from obviated-action nil))
   facts)
 ) ; END obviated-action
+
+
+
+
+
+(defun form-surface-utterance-from-gist-clause (gist-clause prior-gist-clause)
+;``````````````````````````````````````````````````````````````````````````````
+; Given a gist-clause by Eta, elaborate it into a surface utterance using the
+; context provided by the prior gist-clause using choice trees.
+;
+; First this uses Eta's gist-clause to select a relevant subtree for response
+; generation, then it uses the context of the previous gist-clause to select
+; the surface utterance.
+;
+  (let (tagged-gist-clause tagged-prior-gist-clause relevant-tree utterance)
+
+    ; Get the relevant pattern transduction tree given Eta's gist clause
+    ;````````````````````````````````````````````````````````````````````````````````````````````````
+    ;; (format t "~% gist-clause = ~a" gist-clause) ; DEBUGGING
+    (setq tagged-gist-clause (mapcar #'tagword gist-clause))
+    ;; (format t "~% tagged gist clause = ~a" tagged-gist-clause) ; DEBUGGING
+    (setq relevant-tree (cadr
+      (choose-result-for tagged-gist-clause '*gist-clause-trees-for-response*)))
+    ;; (format t "~% relevant tree = ~a" relevant-tree) ; DEBUGGING   
+
+    ; Get the surface utterance using prior gist-clause and relevant tree
+    ;````````````````````````````````````````````````````````````````````````````````````````````````
+    ;; (format t "~% prior-gist-clause = ~a" prior-gist-clause) ; DEBUGGING
+    (setq tagged-prior-gist-clause (mapcar #'tagword prior-gist-clause))
+    ;; (format t "~% tagged gist clause = ~a" tagged-prior-gist-clause) ; DEBUGGING
+    (setq utterance (cdr
+      (choose-result-for tagged-prior-gist-clause relevant-tree)))
+    ;; (format t "~% utterance = ~a" utterance) ; DEBUGGING   
+
+    utterance
+)) ; END form-surface-utterance-from-gist-clause
 
 
 

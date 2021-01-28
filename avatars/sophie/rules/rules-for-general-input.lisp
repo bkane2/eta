@@ -131,10 +131,10 @@
   ; If no gist clauses were extracted from user, ask them to repeat the question (repeats at most 2 times in a row,
   ; otherwise Eta will ignore and return to the central conversation)
   1 (0 ?)
-    2 (2 ?); too short to be a question
-      3 () (0 :out)
-    2 (*have-subdialogue* ((I\'m sorry\, I didn\'t quite understand\. Can you say it again ?) nil)) (3 :schema+args)
-    2 (*have-subdialogue* ((Would you mind rephrasing ?) nil)) (3 :schema+args)
+    ;; 2 (2 ?); too short to be a question
+    ;;   3 () (0 :out)
+    2 *ask-for-clarification* (3 :schema)
+    2 *ask-for-clarification* (3 :schema)
     2 (Sorry\, you still didn\'t quite understand\. You have some more questions\, maybe we can come back to it\.) (0 :out)
   1 (0)
     2 (You see\.) (8 :out)

@@ -548,7 +548,9 @@
 (defun find-prev-step-of-type (plan action-type)
 ;`````````````````````````````````````````````````
 ; Finds the most recent previous step in a plan of a certain type
-; (e.g. 'say-to.v').
+; (e.g. 'say-to.v') or within a list of types.
+; If no such step in the current plan, try recursively in the superplan
+; of plan (returning nil if no superplan exists).
 ;
   (let ((prev-step (plan-step-prev-step (plan-curr-step plan))) wff action-type1)
 
@@ -557,11 +559,18 @@
     (loop while (not (null prev-step)) do
       (setq wff (plan-step-wff prev-step))
       (setq action-type1 (if (listp wff) (second wff)))
-      (if (equal action-type1 action-type)
-        (return-from find-prev-step-of-type prev-step))
+      (cond
+        ((and (atom action-type) (equal action-type1 action-type))
+          (return-from find-prev-step-of-type prev-step))
+        ((and (listp action-type) (member action-type1 action-type))
+          (return-from find-prev-step-of-type prev-step)))
       (setq prev-step (plan-step-prev-step prev-step)))
   
-  nil
+    ; If no such step found in current plan, recursively try in superplan (if exists)
+    (cond
+      ((plan-subplan-of plan)
+        (find-prev-step-of-type (plan-step-step-of (plan-subplan-of plan)) action-type))
+      (t nil))
 )) ; END find-prev-step-of-type
 
 
