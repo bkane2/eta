@@ -674,6 +674,7 @@
             (setq expr (flatten (second expr)))
 
             ; Store gist-clause that Eta is paraphrasing
+            (store-gist expr (get ep-name 'topic-keys) (ds-gist-kb-eta *ds*))
             (store-gist-clause-characterizing-episode expr ep-name '^me '^you)
 
             ; Use previous user reply as context for response generation
@@ -710,7 +711,7 @@
         (setq user-ulf (resolve-references (get-semantic-interpretations-characterizing-episode user-ep-name)))
         (format t "~% user gist clause is ~a ~%" user-gist-clauses) ; DEBUGGING
         (format t "~% user ulf is ~a ~%" user-ulf) ; DEBUGGING
-        (setq new-subplan (plan-reaction-to user-gist-clauses user-ulf)))
+        (setq new-subplan (plan-reaction-to user-gist-clauses user-ulf ep-name)))
 
       ; NOTE: Apart from saying and reacting, assume that Eta actions
       ; also allow telling, describing, suggesting, asking, saying 
@@ -1258,7 +1259,7 @@
 
 
 
-(defun plan-reaction-to (user-gist-clauses user-ulf)
+(defun plan-reaction-to (user-gist-clauses user-ulf ep-name)
 ;````````````````````````````````````````````````````````````````
 ; Starting at a top-level choice tree root, choose an action or
 ; subschema suitable for reacting to 'user-gist-clauses' (which
@@ -1287,7 +1288,7 @@
 ; in light of the meaning of these reactive comments...More thought
 ; required.
 ;
-  (let (user-gist-words choice tagged-words wff schema-name args)
+  (let (user-gist-words choice tagged-words wff schema-name args eta-gist-clause keys)
     
     (if (null user-gist-clauses)
       (return-from plan-reaction-to nil))
@@ -1332,13 +1333,32 @@
 
     (if (null choice) (return-from plan-reaction-to nil))
 
-    ; 'choice' may be an instantiated reassembly pattern (prefaced by
-    ; directive :out), or the name of a schema (to be initialized).
+    ; 'choice' may be an instantiated reassembly pattern corresponding to a
+    ; gist-clause (directive :gist), to be contextually paraphrased by Eta
+    ; as a subplan, or a direct output (directive :out) to be spoken to the
+    ; user as a subplan. Otherwise it may be the name of a schema (to be initialized).
     ; In the first case we create a 1-step subplan whose action is of
-    ; the type (^me say-to.v ^you '(...)), where the verbal output is
-    ; adjusted by applying 'modify-response' to the reassembly patterns.
-    ; In the second case, we initiate a multistep plan.
+    ; the type (^me paraphrase-to.v ^you '(...)) or (^me say-to.v ^you '(...)),
+    ; respectively, where in the latter case the verbal output is adjusted by
+    ; applying 'modify-response' to the reassembly patterns.
+    ; In the case of a schema, we initiate a multistep plan.
     (cond
+      ; :gist directive
+      ((eq (car choice) :gist)
+        (cond
+          ((atom (first (cdr choice)))
+            (setq eta-gist-clause (cdr choice)))
+          (t
+            (setq eta-gist-clause (first (cdr choice)))
+            (setq keys (second (cdr choice)))))
+        ;; (format t "~%chosen Eta gist clause = ~a~%" eta-gist-clause) ; DEBUGGING
+        ; Store Eta's gist-clause under top-level episode
+        (store-gist eta-gist-clause keys (ds-gist-kb-eta *ds*))
+        (store-gist-clause-characterizing-episode eta-gist-clause ep-name '^me '^you)
+        ; Add paraphrase-to.v subplan
+        (init-plan-from-episode-list
+          (list :episodes (episode-var) `(^me paraphrase-to.v ^you (quote ,eta-gist-clause)))))
+
       ; :out directive
       ((eq (car choice) :out)
         (init-plan-from-episode-list
@@ -1692,24 +1712,32 @@
 ; generation, then it uses the context of the previous gist-clause to select
 ; the surface utterance.
 ;
-  (let (tagged-gist-clause tagged-prior-gist-clause relevant-tree utterance)
+  (let (tagged-gist-clause choice tagged-prior-gist-clause relevant-tree utterance)
 
     ; Get the relevant pattern transduction tree given Eta's gist clause
     ;````````````````````````````````````````````````````````````````````````````````````````````````
     ;; (format t "~% gist-clause = ~a" gist-clause) ; DEBUGGING
     (setq tagged-gist-clause (mapcar #'tagword gist-clause))
     ;; (format t "~% tagged gist clause = ~a" tagged-gist-clause) ; DEBUGGING
-    (setq relevant-tree (cadr
-      (choose-result-for tagged-gist-clause '*gist-clause-trees-for-response*)))
-    ;; (format t "~% relevant tree = ~a" relevant-tree) ; DEBUGGING   
+    (setq choice (choose-result-for tagged-gist-clause '*gist-clause-trees-for-response*))
 
-    ; Get the surface utterance using prior gist-clause and relevant tree
+    ; Get the surface utterance using context (if applicable)
     ;````````````````````````````````````````````````````````````````````````````````````````````````
-    ;; (format t "~% prior-gist-clause = ~a" prior-gist-clause) ; DEBUGGING
-    (setq tagged-prior-gist-clause (mapcar #'tagword prior-gist-clause))
-    ;; (format t "~% tagged gist clause = ~a" tagged-prior-gist-clause) ; DEBUGGING
-    (setq utterance (cdr
-      (choose-result-for tagged-prior-gist-clause relevant-tree)))
+    (cond
+      ; :out directive; output utterance directly without using context
+      ((eq (car choice) :out)
+        (setq utterance (cdr choice)))
+
+      ; :subtrees directive; use first subtree to select response based on context
+      ((eq (car choice) :subtrees)
+        (setq relevant-tree (cadr choice))
+        ;; (format t "~% relevant tree = ~a" relevant-tree) ; DEBUGGING   
+        ;; (format t "~% prior-gist-clause = ~a" prior-gist-clause) ; DEBUGGING
+        (setq tagged-prior-gist-clause (mapcar #'tagword prior-gist-clause))
+        ;; (format t "~% tagged gist clause = ~a" tagged-prior-gist-clause) ; DEBUGGING
+        (setq utterance (cdr
+          (choose-result-for tagged-prior-gist-clause relevant-tree)))))
+
     ;; (format t "~% utterance = ~a" utterance) ; DEBUGGING   
 
     utterance
