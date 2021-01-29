@@ -2,6 +2,8 @@
 '(
   1 (can 1 rephrase 1 question 1)
     2 (*response-tree-general*) (0 :subtrees)
+  1 (0)
+    2 (*default-response-tree*) (0 :subtrees)
 ))
 
 
@@ -11,4 +13,12 @@
     2 (You are sorry\, you didn\'t quite understand\. Can I say it again ?) (3 :out)
     2 (Would I mind rephrasing ?) (3 :out)
     2 (Could I repeat that one more time using a different phrasing ?) (0 :out)
+))
+
+
+(READRULES '*default-response-tree*
+'(
+  ; By default, simply output the gist-clause
+  1 (0)
+    2 (1) (0 :out)
 ))
