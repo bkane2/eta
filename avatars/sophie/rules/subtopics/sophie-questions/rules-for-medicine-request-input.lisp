@@ -56,12 +56,10 @@
 (READRULES '*medicine-request-reaction*
 '(
   1 (You should take 1 med-narcotic \.)
-    2 (*have-subdialogue* ((Usually when I hear about narcotics\, it\'s people getting addicted to them\. Is that a possibility here?)
-                           ((Can I get addicted to narcotics ?)))) (100 :schema+args)
+    2 *ask-about-narcotic-addiction* (100 :schema)
     2 (You think having the stronger pain medication would help\.) (0 :out)
   1 (You should take stronger pain medication \.)
-    2 (*have-subdialogue* ((Yeah\, a stronger pain medication would be good\. What would the side effects be?)
-                           ((I want a stronger pain medication \.) (What are the side effects of stronger pain medication ?)))) (100 :schema+args)
+    2 *ask-about-pain-medication-side-effects* (100 :schema)
     2 (You think having the stronger pain medication would help\.) (0 :out)
   1 (0)
     2 (Okay\, you get it \.) (0 :out)

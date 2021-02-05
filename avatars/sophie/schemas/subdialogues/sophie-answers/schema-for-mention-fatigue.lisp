@@ -1,18 +1,18 @@
-;; *ask-for-clarification*: development version 6
+;; *mention-fatigue*: development version 6
 ;;
 ;; 
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *ask-for-clarification*
+(defparameter *mention-fatigue*
 
-'(event-schema :header (((set-of ^me ^you) ask-for-clarification.v) ** ?e)
+'(event-schema :header (((set-of ^me ^you) mention-fatigue.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (
 
-?e1 (^me paraphrase-to.v ^you '(Can you rephrase your question ?))
+?e1 (^me paraphrase-to.v ^you '(I have been fatigued \.))
  
 ?e2 (^you reply-to.v ?e1)
 
@@ -20,14 +20,14 @@
 
 )
 
-)) ; END defparameter *ask-for-clarification*
+)) ; END defparameter *mention-fatigue*
 
 
 
 ;````````````````````````````````````````````````````````
 ; Store schema variable name under header in *schemas*
 ;
-(store-schema-name 'ask-for-clarification.v '*ask-for-clarification*)
+(store-schema-name 'mention-fatigue.v '*mention-fatigue*)
 
 
 
@@ -35,9 +35,9 @@
 ; Create empty hash tables for semantics,
 ; gist-clauses, and topic-keys
 ;
-(setf (get '*ask-for-clarification* 'semantics) (make-hash-table))
-(setf (get '*ask-for-clarification* 'gist-clauses) (make-hash-table))
-(setf (get '*ask-for-clarification* 'topic-keys) (make-hash-table))
+(setf (get '*mention-fatigue* 'semantics) (make-hash-table))
+(setf (get '*mention-fatigue* 'gist-clauses) (make-hash-table))
+(setf (get '*mention-fatigue* 'topic-keys) (make-hash-table))
 
 
 
@@ -45,7 +45,7 @@
 ; EL Semantics - Not yet used
 ;
 (mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*ask-for-clarification*))
+      (store-output-semantics (first x) (second x) '*mention-fatigue*))
   '()
 ) ; END mapcar #'store-output-semantics
 
@@ -55,7 +55,7 @@
 ; Gist clauses
 ;
 (mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*ask-for-clarification*))
+      (store-output-gist-clauses (first x) (second x) '*mention-fatigue*))
   '()
 ) ; END mapcar #'store-output-gist-clauses
 
@@ -65,6 +65,6 @@
 ; Topic keys
 ;
 (mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*ask-for-clarification*))
+      (store-topic-keys (first x) (second x) '*mention-fatigue*))
   '()
 ) ; END mapcar #'store-topic-keys

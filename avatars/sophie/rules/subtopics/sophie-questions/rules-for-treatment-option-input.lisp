@@ -39,24 +39,18 @@
 (READRULES '*treatment-option-reaction*
 '(
   1 (Maintaining good quality of life is a treatment option \.)
-    2 (*have-subdialogue* ((Keeping a high quality of life for the rest of my time is the most important thing to me right now\.
-                            What\'s the best option for making sure this is possible?)
-                           ((What are my options for treatment ?)))) (100 :schema+args)
+    2 *ask-about-treatment-options* (100 :schema)
   
   1 (Radiation is a treatment option \.)
-    2 (*have-subdialogue* ((Do you think radiation is really going to help at this point?)
-                           ((Do you think radiation will help ?)))) (0 :schema+args)
+    2 *ask-about-will-radiation-help* (0 :schema)
 
   1 (Chemotherapy is a treatment option \.)
-    2 (*have-subdialogue* ((What happens if I don\'t do chemotherapy?)
-                           ((What happens if I do not do chemotherapy ?)))) (100 :schema+args)
-    2 (*have-subdialogue* ((Do you think chemotherapy is really going to help?)
-                           ((Do you think chemotherapy will help ?)))) (0 :schema+args)
+    2 *ask-about-what-happens-without-chemotherapy* (100 :schema)
+    2 *ask-about-will-chemotherapy-help* (0 :schema)
     
   1 (Comfort care is a treatment option \.)
-    2 (*have-subdialogue* ((Comfort care sounds good to me\. What I want is to try to get my life back to normal as much as possible\. You know\,
-                            spend time with my family\. What do I have to do for that?)
-                           ((How does comfort care work ?)))) (0 :schema+args)
+    2 *ask-about-comfort-care* (0 :schema)
+
   1 (0)
-    2 (You will have to think about what you said more\.) (0 :out)
+    2 (You will have to think about what I said more\.) (0 :out)
 ))

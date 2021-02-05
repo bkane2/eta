@@ -76,17 +76,13 @@
 (READRULES '*medicine-working-reaction*
 '(
   1 (You should take something different \.)
-    2 (*have-subdialogue* ((I think something stronger for the pain would be good\. What would the side effects be for a different pain medication?)
-                           ((I want a stronger pain medication \.) (What are the side effects of stronger pain medication ?)))) (0 :schema+args)
+    2 *ask-about-pain-medication-side-effects* (0 :schema)
   1 (You should take med-narcotic \.)
-    2 (*have-subdialogue* ((Usually when I hear about narcotics\, it\'s people getting addicted to them\. Is that a possibility here?)
-                           ((Can I get addicted to narcotics ?)))) (100 :schema+args)
+    2 *ask-about-narcotic-addiction* (100 :schema)
     2 (You think having the stronger pain medication would help\.) (0 :out)
   1 (You should take stronger pain medication \.)
-    2 (*have-subdialogue* ((Yeah\, I think I should take a stronger pain medication\. The current one isn\'t working well\.
-                            What are the side effects?)
-                           ((I want a stronger pain medication \.) (What are the side effects of stronger pain medication ?)))) (100 :schema+args)
+    2 *ask-about-pain-medication-side-effects* (100 :schema)
     2 (You think having the stronger pain medication would help\.) (0 :out)
   1 (0)
-    2 (You think for now I\'ll wait to see if the Lortab starts helping more\.) (0 :out)
+    2 (You think for now you will wait to see if the Lortab starts helping more\.) (0 :out)
 ))

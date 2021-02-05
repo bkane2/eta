@@ -56,8 +56,6 @@
 (READRULES '*chemotherapy-reaction*
 '(
   1 (0)
-    2 (*have-subdialogue* ((I hear about people getting sick and losing hair during chemotherapy\. What are some of the side effects?)
-                           ((What are the side effects of chemotherapy ?)))) (100 :schema+args)
-    2 (*have-subdialogue* ((How does chemotherapy usually work?)
-                           ((How does chemotherapy work ?)))) (0 :schema+args)            
+    2 *ask-about-chemotherapy-side-effects* (100 :schema)
+    2 *ask-how-chemotherapy-works* (0 :schema)            
 ))

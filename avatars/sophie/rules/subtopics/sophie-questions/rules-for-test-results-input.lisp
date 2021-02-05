@@ -51,15 +51,11 @@
 (READRULES '*test-results-reaction*
 '(
   1 (The test results show that the cancer hasn\'t spread \.)
-    2 (*have-subdialogue* ((My previous doctor didn\'t seem very optimistic\. So what do you think this all means for me?)
-                           ((What is my prognosis ?)))) (0 :schema+args)
+    2 *ask-about-prognosis* (0 :schema)
   1 (The test results show that you cannot be cured \.)
-    2 (*have-subdialogue* ((That\'s distressing\. I was trying to prepare for the worst\, though\. What I\'m wondering
-                            at this point is\, how much time do I have left?)
-                           ((What is my prognosis ?)))) (0 :schema+args)
+    2 *ask-about-prognosis* (0 :schema)
   1 (The test results show that your cancer has spread \.)
-    2 (*have-subdialogue* ((I see\. That sounds pretty bleak\. What does it mean for me?)
-                           ((What is my prognosis ?)))) (0 :schema+args)
+    2 *ask-about-prognosis* (0 :schema)
   1 (0)
     2 (Oh\, you see\.) (0 :out)
 ))

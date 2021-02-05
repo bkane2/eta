@@ -53,8 +53,7 @@
 (READRULES '*comfort-care-reaction*
 '(
   1 (I do not think you need comfort care \.)
-    2 (*have-subdialogue* ((Are you sure I don\'t need hospice? At this point I would really just prefer to be comfortable\.)
-                           ((Are you sure that I do not need comfort care ?)))) (100 :schema+args)
+    2 *confirm-no-comfort-care* (100 :schema)
     2 (Okay\, you see\. You will think about starting chemotherapy right away then\.) (0 :out)
   1 (0)
     2 (Comfort care sounds good\. If you\'re not going to make it\, you want to at least want to be comfortable

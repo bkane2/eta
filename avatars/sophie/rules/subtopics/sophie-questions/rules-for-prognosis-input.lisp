@@ -97,19 +97,14 @@
     2 (That\'s all very difficult to hear\. At this point\, you just hope you can enjoy that 10 with family\.) (0 :out)
 
   1 (The prognosis is that you cannot be cured \.)
-    2 (*have-subdialogue* ((I feared as much\, though it\'s still pretty upsetting\. How long do you think I have?)
-                           ((What is my prognosis ?)))) (100 :schema+args)
+    2 *ask-about-prognosis* (100 :schema)
     2 (You guess you need to make peace with it \.) (0 :out)
 
   1 (The prognosis is that your cancer should be treated with chemotherapy \.)
-    2 (*have-subdialogue* ((I want to talk about my options in a minute\, but first I just want to know how bad it really is\.
-                            How long do you think I have?)
-                           ((What is my prognosis ?)))) (0 :schema+args)
+    2 *ask-about-prognosis* (0 :schema)
 
   1 (The prognosis is hard to predict \.)
-    2 (*have-subdialogue* ((My last doctor also just said it would be hard to predict\. I think I\'m ready to hear though\.
-                            Could you please just tell me what the worst case looks like?)
-                           ((What is my prognosis ?)))) (100 :schema+args)
+    2 *ask-about-prognosis* (0 :schema)
 
   1 (0)
     2 (That\'s all very difficult to hear\. At this point you just want to spend time with family and prepare yourself for the worst\.) (0 :out)

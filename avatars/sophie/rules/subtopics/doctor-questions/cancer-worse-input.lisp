@@ -52,11 +52,9 @@
 (READRULES '*cancer-worse-reaction*
 '(
   1 (Your cancer has gotten worse \.)
-    2 (*have-subdialogue* ((What does that mean for me?)
-                           ((What is my prognosis ?)))) (0 :schema+args)
+    2 *ask-about-prognosis* (0 :schema)
   1 (Your cancer has not gotten worse \.)
-    2 (*have-subdialogue* ((Are you sure it\'s not gotten worse? The pain seems to have gotten worse\.)
-                           ((Are you sure the cancer has not gotten worse ?)))) (100 :schema+args)
+    2 *verify-cancer-status* (100 :schema)
     2 (Okay\. Well\, that makes me feel a little bit better\.) (0 :out)
   1 (I am not sure whether your cancer has gotten worse \.)
     2 (That\'s not very reassuring\.) (0 :out)

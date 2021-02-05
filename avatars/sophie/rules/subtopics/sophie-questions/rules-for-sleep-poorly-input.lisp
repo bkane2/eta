@@ -99,11 +99,9 @@
   1 (You are sleeping poorly because of a side effect from a medication \.)
     2 (You see\. If the medicine is going to make you tired no matter what\, you\'d rather at least have the pain controlled\.) (0 :out)
   1 (You are sleeping poorly because the cancer has spread \.)
-    2 (*have-subdialogue* ((Does that mean that the cancer has gotten worse?)
-                           ((Has the cancer gotten worse ?)))) (0 :schema+args)
+    2 *ask-if-cancer-worse* (0 :schema)
   1 (You are sleeping poorly because of your mental health \.)
-     2 (*have-subdialogue* ((I see\. I do try to keep carrying on\, but sometimes I just feel down\.) 
-                           ((I feel mildly depressed \.)))) (0 :schema+args)
+     2 *discuss-depression* (0 :schema)
     
   1 (0)
     2 (You see\.) (0 :out)

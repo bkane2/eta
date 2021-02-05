@@ -56,6 +56,5 @@
 (READRULES '*radiation-reaction*
 '(
   1 (0)
-    2 (*have-subdialogue* ((What about chemotherapy?)
-                           ((Do you think chemotherapy will help ?)))) (0 :schema+args)
+    2 *ask-about-will-chemotherapy-help* (0 :schema)
 ))
