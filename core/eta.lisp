@@ -871,7 +871,7 @@
         (format t "answer to output: ~a~%" ans) ; DEBUGGING
         ; If in read-log mode, append answer to list of new log answers
         (when *read-log*
-          (setq *log-answer* (modify-response ans)))
+          (setq *log-answer* ans))
         ; Create say-to.v subplan from answer
         (setq new-subplan
           (init-plan-from-episode-list

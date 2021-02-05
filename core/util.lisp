@@ -919,6 +919,8 @@
 
 (defun modify-response (resp)
 ;``````````````````````````````
+; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
+; (\bme\b|\bmy\b|\bI\b|\bmine\b|\byou\b|\byour\b|\byours\b|\byou\\'re\b)
 ; A set of word-level operations, formerly part of the main (doolittle)
 ; program, to prepare choice-packet-derived responses for proper output.
 ; Changes YOU ARE to YOU ARE2 in preparation for replacement of YOU ARE2
@@ -933,6 +935,7 @@
 
 (defun dual (sentence)
 ;``````````````````````
+; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
 ; Replaces 'I' by 'you', 'you' by 'I', 'my' by 'your', etc.
 ;
   (cond
@@ -959,6 +962,7 @@
 
 (defun presubst (response)
 ;`````````````````````````````
+; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
 ; This function is applied to eta's responses before 
 ; their "dual" is formed and printed out. It helps avoid 
 ; outputs like
@@ -2199,7 +2203,7 @@
 ; action, or a (^you say-to.v ^me '(...)) action if :reverse t is given.
 ;
   (if (not reverse)
-    `(^me say-to.v ^you (quote ,(modify-response content)))
+    `(^me say-to.v ^you (quote ,content))
     `(^you say-to.v ^me (quote ,content)))
 ) ; END create-say-to-wff
 
