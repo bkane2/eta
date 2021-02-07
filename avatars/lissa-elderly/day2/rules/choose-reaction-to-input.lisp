@@ -39,13 +39,9 @@
 ; Choose between reaction to a question and an assertion
 ; Only one gist clause is expected here
 '(
-   1 (0 wh_ 3 you 0)
+   1 (0 wh_ 3 SELF 0)
       2 *reaction-to-question* (0 :subtree)
-   1 (0 wh_ 3 your 0)
-      2 *reaction-to-question* (0 :subtree)
-   1 (0 aux your 0)
-      2 *reaction-to-question* (0 :subtree)
-   1 (0 aux you 0)
+   1 (0 aux SELF 0)
       2 *reaction-to-question* (0 :subtree)
    1 (0 right-really 4 ?)
       2 *reaction-to-question* (0 :subtree)
@@ -65,35 +61,35 @@
 ;
 '(
    ; rochester1
-   1 (0 I 0 been in Rochester 0)
+   1 (0 you 0 been in rochester 0)
       2 *reaction-to-how-long-in-rochester-input* (0 :subtree)
-   1 (0 I do not like 6 Rochester 0) 
+   1 (0 you do not like 6 rochester 0) 
       2 *reaction-to-not-like-about-rochester-input* (0 :subtree)
-   1 (0 I like 6 Rochester 0)
+   1 (0 you like 6 rochester 0)
       2 *reaction-to-like-about-rochester-input* (0 :subtree)
-   1 (0 I would change 0 Rochester 0)
+   1 (0 you would change 0 rochester 0)
       2 *reaction-to-changing-rochester-input* (0 :subtree)
 
    ; rochester2
-   1 (0 I would take you 0)
+   1 (0 you would take me 0)
       2 *reaction-to-tour-of-rochester-input* (0 :subtree)
-   1 (0 My favorite place to eat 0)
+   1 (0 your favorite place to eat 0)
       2 *reaction-to-favorite-eatery-input* (0 :subtree)
    1 (0 garbage plate 0)
       2 *reaction-to-garbage-plate-input* (0 :subtree)
-   1 (0 I have 2 to 2 Dinosaur Barbecue 0)
+   1 (0 you have 2 to 2 dinosaur barbecue 0)
       2 *reaction-to-dinosaur-bbq-input* (0 :subtree)
 
    ; pets
-   1 (0 I do not have a pet 0)
+   1 (0 you do not have a pet 0)
       2 *reaction-to-have-a-pet-input* (0 :subtree)
-   1 (0 my pet is 0)
+   1 (0 your pet is 0)
       2 *reaction-to-have-a-pet-input* (0 :subtree)
-   1 (0 my family member has 0) 
+   1 (0 your family member has 0) 
       2 *reaction-to-family-neighbor-pet-input* (0 :subtree)
-   1 (0 my neighbor has 0)
+   1 (0 your neighbor has 0)
       2 *reaction-to-family-neighbor-pet-input* (0 :subtree)
-   1 (0 I believe pets help their owners 0)
+   1 (0 you believe pets help their owners 0)
       2 *reaction-to-pets-help-owners-input* (0 :subtree)
 ))
 

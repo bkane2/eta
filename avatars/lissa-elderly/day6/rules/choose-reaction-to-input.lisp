@@ -35,13 +35,9 @@
 ; Choose between reaction to a question and an assertion
 ; Only one gist clause is expected here
 '(
-  1 (0 wh_ 3 you 0)
+  1 (0 wh_ 3 SELF 0)
     2 *reaction-to-question* (0 :subtree)
-  1 (0 wh_ 3 your 0)
-    2 *reaction-to-question* (0 :subtree)
-  1 (0 aux your 0)
-    2 *reaction-to-question* (0 :subtree)
-  1 (0 aux you 0)
+  1 (0 aux SELF 0)
     2 *reaction-to-question* (0 :subtree)
   1 (0 right-really 4 ?)
     2 *reaction-to-question* (0 :subtree)
@@ -64,9 +60,9 @@
     2 *reaction-to-householdChores-today-input* (0 :subtree)
   1 (0 household chore 4 enjoy 0) 
     2 *reaction-to-householdChore-enjoy-input* (0 :subtree) 
-  1 (0 I helped someone with 0) 
+  1 (0 you helped someone with 0) 
     2 *reaction-to-householdChore-help-others-input* (0 :subtree)
-  1 (0 felt 2 I helped someone with household chores 0)
+  1 (0 felt 2 you helped someone with household chores 0)
     2 *reaction-to-householdChore-help-others-input* (0 :subtree)
 
   ; money

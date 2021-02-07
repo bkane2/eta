@@ -53,5 +53,5 @@
    1 (2 What 2 hardest part 2 growing older 2)
       2 (*growing-older-hardest-part-input*) (0 :subtrees)
    1 (2 What 2 best part 2 growing older 2)
-      2 (*growing-older-best-part-input**) (0 :subtrees)
+      2 (*growing-older-best-part-input*) (0 :subtrees)
 ))

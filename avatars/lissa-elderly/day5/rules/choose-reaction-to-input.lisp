@@ -35,13 +35,9 @@
 ; Choose between reaction to a question and an assertion
 ; Only one gist clause is expected here
 '(
-  1 (0 wh_ 3 you 0)
+  1 (0 wh_ 3 SELF 0)
     2 *reaction-to-question* (0 :subtree)
-  1 (0 wh_ 3 your 0)
-    2 *reaction-to-question* (0 :subtree)
-  1 (0 aux your 0)
-    2 *reaction-to-question* (0 :subtree)
-  1 (0 aux you 0)
+  1 (0 aux SELF 0)
     2 *reaction-to-question* (0 :subtree)
   1 (0 right-really 4 ?)
     2 *reaction-to-question* (0 :subtree)
@@ -65,7 +61,7 @@
     2 *reaction-to-recent-outdoor-activity-input* (0 :subtree) 
   1 (0 favorite season 2 outdoors is 0)
     2 *reaction-to-favorite-season-outdoors-input* (0 :subtree)
-  1 (0 enjoy 3 I have to stay indoors 0)
+  1 (0 enjoy 3 you have to stay indoors 0)
     2 *reaction-to-things-enjoy-doing-indoors-input* (0 :subtree)
 
   ; travel
@@ -73,17 +69,17 @@
     2 *reaction-to-travel-enjoy-input* (0 :subtree)
   1 (0 favorite vacation 0)
     2 *reaction-to-favorite-vacation-input* (0 :subtree)
-  1 (0 if I win 1 free trip 0)
+  1 (0 if you win 1 free trip 0)
     2 *reaction-to-free-trip-input* (0 :subtree)
-  1 (0 I do not want 3 free trip 0)
+  1 (0 you do not want 3 free trip 0)
     2 *reaction-to-free-trip-input* (0 :subtree)
 
   ; plan-for-today
-  1 (0 my plan after this session 0)
+  1 (0 your plan after this session 0)
     2 *reaction-to-plan-after-this-session-input* (0 :subtree) 
-	1 (0 I will have 3 for dinner tonight 0)
+	1 (0 you will have 3 for dinner tonight 0)
     2 *reaction-to-dinner-tonight-input* (0 :subtree)
-  1 (0 I 4 to wind down before bed 0) 
+  1 (0 you 4 to wind down before bed 0) 
     2 *reaction-to-wind-down-before-bed-input* (0 :subtree)
 ))
 
