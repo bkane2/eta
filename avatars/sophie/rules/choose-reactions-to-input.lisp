@@ -100,11 +100,11 @@
 
   ; No question among the gist clauses (by earlier level-1 failure)
   1 (5 \. 0); short initial answer? Respond just to that
-    2 (*reaction-to-assertion* (1 \.)) (0 :subtree+clause)
+    2 (*reaction-to-input* (1 \.)) (0 :subtree+clause)
   1 (10 \. 0); longer initial answer? Respond just to that
-    2 (*reaction-to-assertion* (1 \.)) (0 :subtree+clause)
+    2 (*reaction-to-input* (1 \.)) (0 :subtree+clause)
   1 (15 \. 0); longer initial answer? Respond just to that
-    2 (*reaction-to-assertion* (1 \.)) (0 :subtree+clause)
+    2 (*reaction-to-input* (1 \.)) (0 :subtree+clause)
   1 (0 \. 0); longer initial answer? Respond just to that
-    2 (*reaction-to-assertion* (1 \.)) (0 :subtree+clause)
+    2 (*reaction-to-input* (1 \.)) (0 :subtree+clause)
 )) ; END *reactions-to-input*

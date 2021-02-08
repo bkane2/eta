@@ -43,48 +43,48 @@
 '(
   ; How much weight have you lost?
   1 (0 how much symptom-weight 0 lose 0)
-    2 ((How much weight have you lost ?) (weight-loss)) (0 :gist)
+    2 ((How much weight have I lost ?) (Weight-loss)) (0 :gist)
   1 (0 do pron 2 lose 3 lot 0 symptom-weight 0)
-    2 ((How much weight have you lost ?) (weight-loss)) (0 :gist)
+    2 ((How much weight have I lost ?) (Weight-loss)) (0 :gist)
   1 (0 have pron 2 lose 3 lot 0 symptom-weight 0)
-    2 ((How much weight have you lost ?) (weight-loss)) (0 :gist)
+    2 ((How much weight have I lost ?) (Weight-loss)) (0 :gist)
 
   ; What symptoms do you have?
   1 (0 wh_ 1 symptom 0)
-    2 ((What symptoms do you have ?) (symptoms)) (0 :gist)
+    2 ((What symptoms do I have ?) (Symptoms)) (0 :gist)
   1 (0 do pron 3 symptom 0)
-    2 ((What symptoms do you have ?) (symptoms)) (0 :gist)
+    2 ((What symptoms do I have ?) (Symptoms)) (0 :gist)
   1 (0 more-info 4 symptom 0)
-    2 ((What symptoms do you have ?) (symptoms)) (0 :gist)
+    2 ((What symptoms do I have ?) (Symptoms)) (0 :gist)
   1 (0 have pron 5 diagnosis-symptom 0)
     2 (0 symptom-weight 0)
-      3 ((Have you changed weight ?) (symptoms)) (0 :gist)
+      3 ((Have I changed weight ?) (Symptoms)) (0 :gist)
     2 (0 symptom-appetite 0)
-      3 ((Have you changed appetite ?) (symptoms)) (0 :gist)
+      3 ((Have I changed appetite ?) (Symptoms)) (0 :gist)
 
   ; Do you have [non-symptom]?
   1 (1 do 0 diagnosis-non-symptom 0)
-    2 ((Do you have the symptom of 4 ?) (symptoms)) (0 :gist)
+    2 ((Do I have the symptom of 4 ?) (Symptoms)) (0 :gist)
   1 (1 have 0 diagnosis-non-symptom 0)
-    2 ((Do you have the symptom of 4 ?) (symptoms)) (0 :gist)
+    2 ((Do I have the symptom of 4 ?) (Symptoms)) (0 :gist)
   1 (0 any diagnosis-non-symptom 0)
-    2 ((Do you have the symptom of 3 ?) (symptoms)) (0 :gist)
+    2 ((Do I have the symptom of 3 ?) (Symptoms)) (0 :gist)
 
   ; Do you understand your test results?
   1 (1 be-aux 2 you know 3 diagnosis-tests 0)
-    2 ((Do you know what the tests say ?) (test-results)) (0 :gist)
+    2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
 
   ; How did you get your diagnosis?
   1 (0 what 2 bring you 0)
-      2 ((How did you get your diagnosis ?) (diagnosis-details)) (0 :gist)
+      2 ((How did I get my diagnosis ?) (Diagnosis-details)) (0 :gist)
   1 (0 what 1 before 1 to 2 diagnosis 0)
-    2 ((How did you get your diagnosis ?) (diagnosis-details)) (0 :gist)
+    2 ((How did I get my diagnosis ?) (Diagnosis-details)) (0 :gist)
   1 (0 what 2 before 0 diagnosis 0)
-    2 ((How did you get your diagnosis ?) (diagnosis-details)) (0 :gist)
+    2 ((How did I get my diagnosis ?) (Diagnosis-details)) (0 :gist)
   1 (0 how do 3 know 0 diagnosis 0)
-    2 ((How did you get your diagnosis ?) (diagnosis-details)) (0 :gist)
+    2 ((How did I get my diagnosis ?) (Diagnosis-details)) (0 :gist)
   1 (0 how 0 find out 0 diagnosis 0)
-    2 ((How did you get your diagnosis ?) (diagnosis-details)) (0 :gist)
+    2 ((How did I get my diagnosis ?) (Diagnosis-details)) (0 :gist)
 ))
 
 

@@ -25,13 +25,13 @@
     2 *comfort-care-input* (0 :subtree)
     
   1 (0 POS 0)
-    2 ((I think you need chemotherapy \.) (chemotherapy)) (0 :gist)
+    2 ((You think I need chemotherapy \.) (Chemotherapy)) (0 :gist)
   1 (0 I 1 think-gen so 0)
-    2 ((I think you need chemotherapy \.) (chemotherapy)) (0 :gist)
+    2 ((You think I need chemotherapy \.) (Chemotherapy)) (0 :gist)
   1 (0 no 0)
-    2 ((I do not think you need chemotherapy \.) (chemotherapy)) (0 :gist)
+    2 ((You do not think I need chemotherapy \.) (Chemotherapy)) (0 :gist)
   1 (0 NEG 1 think-gen 0)
-    2 ((I do not think you need chemotherapy \.) (chemotherapy)) (0 :gist)
+    2 ((You do not think I need chemotherapy \.) (Chemotherapy)) (0 :gist)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -43,13 +43,13 @@
 (READRULES '*chemotherapy-question*
 '(
   1 (0 did 4 tell 4 you 4 need chemotherapy 0)
-    2 ((Did your doctor mention chemotherapy ?) (chemotherapy)) (0 :gist)
+    2 ((Did my doctor mention chemotherapy ?) (Chemotherapy)) (0 :gist)
   1 (0 did 8 you 4 about chemotherapy 0)
-    2 ((Did your doctor mention chemotherapy ?) (chemotherapy)) (0 :gist)
+    2 ((Did my doctor mention chemotherapy ?) (Chemotherapy)) (0 :gist)
   1 (0 mention 3 chemotherapy 0)
-    2 ((Did your doctor mention chemotherapy ?) (chemotherapy)) (0 :gist)
+    2 ((Did my doctor mention chemotherapy ?) (Chemotherapy)) (0 :gist)
   1 (0 think 3 chemotherapy 0)
-    2 ((What are your feelings about chemotherapy ?) (chemotherapy)) (0 :gist)
+    2 ((What are my feelings about chemotherapy ?) (Chemotherapy)) (0 :gist)
 ))
 
 

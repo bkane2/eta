@@ -21,5 +21,5 @@
 (READRULES '*tell-family-reaction*
 '(
   1 (0)
-    2 (Okay\. It will be difficult\, but your family and you will have to be strong\.) (0 :out)
+    2 (Okay\. It will be difficult\, but my family and I will have to be strong\.) (0 :out)
 ))

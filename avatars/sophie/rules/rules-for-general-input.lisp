@@ -44,7 +44,7 @@
 '(
   ; Generic greeting
   1 (0 nice to meet you 0)
-    2 ((It is nice to meet you \.)) (0 :gist)
+    2 ((It is nice to meet me \.)) (0 :gist)
   ; If asked if anyone is here with you
   1 (0 here anyone-here-with-you 0)
     2 *appointment-question* (0 :subtree)
@@ -123,21 +123,21 @@
 
 (READRULES '*general-reaction*
 '(
-  1 (It is nice to meet you \.)
-    2 (Thank me \, it\'s nice to meet me too \.) (100 :out)
+  1 (It is nice to meet me \.)
+    2 (Thank you \, it\'s nice to meet you too \.) (100 :out)
   ; If doctor is just giving an indication to keep talking, react silently and continue
   1 (Continue talking \.)
     2 () (0 :out)
-  ; If no gist clauses were extracted from user, ask them to repeat the question (repeats at most 2 times in a row,
-  ; otherwise Eta will ignore and return to the central conversation)
+  ; If no gist clauses were extracted from user, ask them to repeat the question (Repeats at most 2 times in a row,
+  ; otherwise eta will ignore and return to the central conversation)
   1 (0 ?)
     ;; 2 (2 ?); too short to be a question
     ;;   3 () (0 :out)
     2 *ask-for-clarification* (3 :schema)
     2 *ask-for-clarification* (3 :schema)
-    2 (Sorry\, you still didn\'t quite understand\. You have some more questions\, maybe we can come back to it\.) (0 :out)
+    2 (Sorry\, I still didn\'t quite understand\. I have some more questions\, maybe we can come back to it\.) (0 :out)
   1 (0)
-    2 (You see\.) (8 :out)
+    2 (I see\.) (8 :out)
     2 (Okay\.) (8 :out)
     2 (Sure\.) (8 :out)
     2 (Uh huh\.) (0 :out)

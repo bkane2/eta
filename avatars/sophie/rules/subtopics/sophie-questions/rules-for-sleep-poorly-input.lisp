@@ -51,20 +51,20 @@
   
   ; You may be sleeping poorly because of anxiety/depression.
   1 (0 be-aux 0 because 2 ment-health 0)
-    2 ((You are sleeping poorly because of your mental health \.) (sleeping-poorly)) (0 :gist)
+    2 ((I am sleeping poorly because of my mental health \.) (Sleeping-poorly)) (0 :gist)
   1 (0 ment-health 3 cause 0)
-    2 ((You are sleeping poorly because of your mental health \.) (sleeping-poorly)) (0 :gist)
+    2 ((I am sleeping poorly because of my mental health \.) (Sleeping-poorly)) (0 :gist)
   
   1 (0 medicine-gen 1 neg 1 work 0)
-    2 ((You are sleeping poorly because the pain medication is no longer working \.) (sleeping-poorly)) (0 :gist)
+    2 ((I am sleeping poorly because the pain medication is no longer working \.) (Sleeping-poorly)) (0 :gist)
 
   1 (6 side 1 effect 0)
-    2 ((You are sleeping poorly because of a side effect from a medication \.) (sleeping-poorly)) (0 :gist)
+    2 ((I am sleeping poorly because of a side effect from a medication \.) (Sleeping-poorly)) (0 :gist)
 
   1 (0 illness 2 spread 0)
-    2 ((You are sleeping poorly because the cancer has spread \.) (test-results)) (0 :gist)
+    2 ((I am sleeping poorly because the cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 illness 2 worse 0)
-    2 ((Your cancer has gotten worse \.) (test-results)) (0 :gist)
+    2 ((My cancer has gotten worse \.) (Test-results)) (0 :gist)
 
   1 (0 medicine-gen 0)
     2 *medicine-working-input* (0 :subtree)
@@ -96,13 +96,13 @@
 
 (READRULES '*sleep-poorly-reaction*
 '(
-  1 (You are sleeping poorly because of a side effect from a medication \.)
-    2 (You see\. If the medicine is going to make you tired no matter what\, you\'d rather at least have the pain controlled\.) (0 :out)
-  1 (You are sleeping poorly because the cancer has spread \.)
+  1 (I am sleeping poorly because of a side effect from a medication \.)
+    2 (I see\. If the medicine is going to make me tired no matter what\, I\'d rather at least have the pain controlled\.) (0 :out)
+  1 (I am sleeping poorly because the cancer has spread \.)
     2 *ask-if-cancer-worse* (0 :schema)
-  1 (You are sleeping poorly because of your mental health \.)
+  1 (I am sleeping poorly because of my mental health \.)
      2 *discuss-depression* (0 :schema)
     
   1 (0)
-    2 (You see\.) (0 :out)
+    2 (I see\.) (0 :out)
 ))

@@ -21,23 +21,23 @@
 
   ; You have life for about up to two years
   1 (0 number 2 elapsed-time 0)
-    2 ((The prognosis is that you may live for 2 4 \.) (prognosis)) (0 :gist)
+    2 ((The prognosis is that I may live for 2 4 \.) (Prognosis)) (0 :gist)
   1 (0 number-vague 2 elapsed-time 0)
-    2 ((The prognosis is that you may live for several 4 \.) (prognosis)) (0 :gist)
+    2 ((The prognosis is that I may live for several 4 \.) (Prognosis)) (0 :gist)
   1 (0 a 2 elapsed-time 0)
-    2 ((The prognosis is that you may live for a 4 \.) (prognosis)) (0 :gist)
+    2 ((The prognosis is that I may live for a 4 \.) (Prognosis)) (0 :gist)
 
   ; There is no cure
   1 (0 NEG 2 cure 0)
-    2 ((The prognosis is that you cannot be cured \.) (prognosis)) (0 :gist)
+    2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
   1 (0 NEG 8 curable 0)
-    2 ((The prognosis is that you cannot be cured \.) (prognosis)) (0 :gist)
+    2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
   1 (0 NEG 2 go away 0)
-    2 ((The prognosis is that you cannot be cured \.) (prognosis)) (0 :gist)
+    2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
   1 (0 fight 2 rest 4 life 0)
-    2 ((The prognosis is that you cannot be cured \.) (prognosis)) (0 :gist)
+    2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
   1 (0 lose 1 battle 0)
-    2 ((The prognosis is that you cannot be cured \.) (prognosis)) (0 :gist)
+    2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
 
   ; TODO: fix issue with extracting multiple time gist clauses from this:
   ; Good question. It’s hard to tell. If you were to read a book people would say with treatment people live about up to two years. That being said, we have patients in our practice that live much longer.  And that being said, we have patients in our practice that don’t live that long. And it really depends on the aggressiveness of your disease.  So, back in the day when we didn’t have treatments for lung cancer people would pass away within less than six months. That was the norm in an untreated lung cancer patient. And now we have patients living several years.  And the good part, if there is a silver lining in the treatment of lung cancer, is that there are so many new treatments coming out. And that my hope is that my patients currently being treated for lung
@@ -65,11 +65,11 @@
 
   ; Mention of chemotherapy
   1 (0 chemotherapy 0)
-    2 ((The prognosis is that your cancer should be treated with chemotherapy \.) (chemotherapy)) (0 :gist)
+    2 ((The prognosis is that my cancer should be treated with chemotherapy \.) (Chemotherapy)) (0 :gist)
 
   ; It's hard to predict
   1 (0 hard 2 to 2 predict 0)
-    2 ((The prognosis is hard to predict \.) (prognosis)) (0 :gist)
+    2 ((The prognosis is hard to predict \.) (Prognosis)) (0 :gist)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -87,25 +87,25 @@
 '(
   ; I asked my doctor in Florida about what’s going to happen next, he just did not want to say. 
   ; He said” These things are always hard to predict.” 
-  1 (The prognosis is that you may live for number-plur elapsed-time-plur \.)
-    2 (That\'s all very difficult to hear\. At this point\, you just hope you can enjoy those 9 10 with family\.) (0 :out)
-  1 (The prognosis is that you may live for number elapsed-time \.)
-    2 (That\'s all very difficult to hear\. At this point\, you just hope you can enjoy that 9 10 with family\.) (0 :out)
-  1 (The prognosis is that you may live for several elapsed-time \.)
-    2 (That\'s all very difficult to hear\. At this point\, you just hope you can enjoy those 10 with family\.) (0 :out)
-  1 (The prognosis is that you may live for a elapsed-time \.)
-    2 (That\'s all very difficult to hear\. At this point\, you just hope you can enjoy that 10 with family\.) (0 :out)
+  1 (The prognosis is that I may live for number-plur elapsed-time-plur \.)
+    2 (That\'s all very difficult to hear\. At this point\, I just hope I can enjoy those 9 10 with family\.) (0 :out)
+  1 (The prognosis is that I may live for number elapsed-time \.)
+    2 (That\'s all very difficult to hear\. At this point\, I just hope I can enjoy that 9 10 with family\.) (0 :out)
+  1 (The prognosis is that I may live for several elapsed-time \.)
+    2 (That\'s all very difficult to hear\. At this point\, I just hope I can enjoy those 10 with family\.) (0 :out)
+  1 (The prognosis is that I may live for a elapsed-time \.)
+    2 (That\'s all very difficult to hear\. At this point\, I just hope I can enjoy that 10 with family\.) (0 :out)
 
-  1 (The prognosis is that you cannot be cured \.)
+  1 (The prognosis is that I cannot be cured \.)
     2 *ask-about-prognosis* (100 :schema)
-    2 (You guess you need to make peace with it \.) (0 :out)
+    2 (I guess I need to make peace with it \.) (0 :out)
 
-  1 (The prognosis is that your cancer should be treated with chemotherapy \.)
+  1 (The prognosis is that my cancer should be treated with chemotherapy \.)
     2 *ask-about-prognosis* (0 :schema)
 
   1 (The prognosis is hard to predict \.)
     2 *ask-about-prognosis* (0 :schema)
 
   1 (0)
-    2 (That\'s all very difficult to hear\. At this point you just want to spend time with family and prepare yourself for the worst\.) (0 :out)
+    2 (That\'s all very difficult to hear\. At this point I just want to spend time with family and prepare myself for the worst\.) (0 :out)
 ))

@@ -65,34 +65,36 @@
 '(
   ; Did the pain come back?
   1 (0 do 1 pain 1 pain-return 0)
-    2 ((Did your pain come back ?) (pain-return)) (0 :gist)
+    2 ((Did my pain come back ?) (Pain-return)) (0 :gist)
   ; How do you rate your pain?
   1 (0 scale 0)
-    2 ((How do you rate your pain ?) (pain-description)) (0 :gist)
+    2 ((How do I rate my pain ?) (Pain-description)) (0 :gist)
   1 (0 how pain-bad 0)
-    2 ((How do you rate your pain ?) (pain-description)) (0 :gist)
+    2 ((How do I rate my pain ?) (Pain-description)) (0 :gist)
   ; Can you tell me about your pain?
   1 (0 how be 2 pain 0)
-    2 ((Can you tell me about your pain ?) (pain-description)) (0 :gist)
+    2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
   1 (0 more-info 1 about 2 pain 0)
-    2 ((Can you tell me about your pain ?) (pain-description)) (0 :gist)
+    2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
+  1 (0 what 2 medicine-gen 0)
+    2 (*medicine-question* (what medication are you taking ?)) (0 :subtree+clause)
   1 (0 what pain 1 be you 0)
-    2 ((Can you tell me about your pain ?) (pain-description)) (0 :gist)
+    2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
   ; Where does it hurt?
   1 (0 where it 3 pain 0)
-    2 ((Where is the pain located ?) (pain-description)) (0 :gist)
+    2 ((Where is the pain located ?) (Pain-description)) (0 :gist)
   1 (0 where do 3 pain 0)
-    2 ((Where is the pain located ?) (pain-description)) (0 :gist)
+    2 ((Where is the pain located ?) (Pain-description)) (0 :gist)
   1 (0 where be 3 pain 0)
-    2 ((Where is the pain located ?) (pain-description)) (0 :gist)
+    2 ((Where is the pain located ?) (Pain-description)) (0 :gist)
   1 (0 what part 3 pain 0)
-    2 ((Where is the pain located ?) (pain-description)) (0 :gist)
+    2 ((Where is the pain located ?) (Pain-description)) (0 :gist)
   ; Does it hurt to [...]
   1 (0 do 2 pain to 0)
     2 (0 breath 0)
-      3 ((Does it hurt to breath ?) (pain-description)) (0 :gist)
+      3 ((Does it hurt to breath ?) (Pain-description)) (0 :gist)
     2 (0)
-      3 ((Does it hurt to do anything ?) (pain-description)) (0 :gist)
+      3 ((Does it hurt to do anything ?) (Pain-description)) (0 :gist)
 ))
 
 
