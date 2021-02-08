@@ -328,6 +328,23 @@
 
 
 
+(defun list-split (l sym)
+;```````````````````````````
+; Given a list, split into multiple lists based on delimiter sym.
+; e.g., (list-split '(a b c d b e f) 'b) => '((a) (c d) (e f))
+;
+  (labels
+    ((list-split-recur (l sym temp)
+      (cond
+        ((equal (car l) sym)
+          (append (list (reverse temp)) (list-split-recur (cdr l) sym nil)))
+        ((null l) (list (reverse temp)))
+        (t (list-split-recur (cdr l) sym (cons (car l) temp))))))
+  (list-split-recur l sym nil))
+) ; END list-split
+
+
+
 (defun sym-contains (sym char)
 ;```````````````````````````````
 ; Returns true if a symbol contains the character given by char.
@@ -1176,8 +1193,11 @@
 (defun get-gist-clauses-characterizing-episode (ep-name)
 ;``````````````````````````````````````````````````````````````````
 ; Given an episode name, find all gist-clauses characterizing it.
+; NOTE: split any gist-clauses with [SEP] delimiters into multiple gist-clauses;
+; see note in 'interpret-perception-in-context'.
 ;
-  (unwrap-gist-clauses (get-from-memory-characterizing-episode 'paraphrase-to.v ep-name))
+  (apply #'append (mapcar (lambda (clause) (list-split clause '[SEP])) 
+    (unwrap-gist-clauses (get-from-memory-characterizing-episode 'paraphrase-to.v ep-name))))
 ) ; END get-gist-clauses-characterizing-episode
 
 

@@ -1106,9 +1106,15 @@
         (setq user-gist-clauses (remove-contradiction user-gist-clauses))
         (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
 
-        ; Store the user gist-clauses in memory
-        (dolist (user-gist-clause user-gist-clauses)
-          (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me))
+        ; Combine user gist-clauses into single gist-clause (using [SEP] delimiters to be separated later)
+        ; TODO: ideally these should be stored into memory separately, as in the commented code below,
+        ; but this would lose the ordering of the gist-clauses within the user response.
+        (store-gist-clause-characterizing-episode
+          (cdr (apply #'append (mapcar (lambda (clause) (cons '[SEP] clause)) user-gist-clauses)))
+          ep-name '^you '^me)
+
+        ;; (dolist (user-gist-clause user-gist-clauses)
+        ;;   (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me))
 
         ; Obtain semantic interpretation(s) of the user gist-clauses
         (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
