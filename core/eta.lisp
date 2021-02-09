@@ -678,19 +678,20 @@
             (store-gist-clause-characterizing-episode expr ep-name '^me '^you)
 
             ; Use previous user reply as context for response generation
-            (setq prev-step (find-prev-step-of-type subplan '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
+            (setq prev-step (find-prev-step-of-type subplan '^you '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
             (setq prev-step-ep-name (plan-step-ep-name prev-step))
             (setq prev-step-wff (plan-step-wff prev-step))
 
-            ;; (format t "~%found previous speech act: ~a (~a)~%" prev-step-ep-name prev-step-wff) ; DEBUGGING
+            (format t "~%found previous speech act: ~a (~a)~%" prev-step-ep-name prev-step-wff) ; DEBUGGING
 
             ; Get gist-clauses corresponding to previous user speech act
             (setq user-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
 
-            ;; (format t "associated gist clauses: ~a~%" user-gist-clauses) ; DEBUGGING
+            (format t "associated gist clauses: ~a~%" user-gist-clauses) ; DEBUGGING
 
             ; Get utterance from gist-clause and prior gist-clause
-            (setq utterance (form-surface-utterance-from-gist-clause expr (car user-gist-clauses)))
+            ; TODO: for now this appends all user gist-clauses together, but there might be a better way to do it
+            (setq utterance (form-surface-utterance-from-gist-clause expr (apply #'append user-gist-clauses)))
 
             ; Attach say-to.v action as subplan to paraphrase-to.v action
             (setq new-subplan
@@ -705,10 +706,19 @@
       ;`````````````````````
       ; Yields e.g. ((_! EP34.)), or nil if unsuccessful.
       ((setq bindings (bindings-from-ttt-match '(^me react-to.v _!) wff))
-        (setq user-ep-name (get-single-binding bindings))
-        ; Get user gist clauses and ulf from bound user action
-        (setq user-gist-clauses (get-gist-clauses-characterizing-episode user-ep-name))
-        (setq user-ulf (resolve-references (get-semantic-interpretations-characterizing-episode user-ep-name)))
+        (setq expr (get-single-binding bindings))
+        (cond
+          ; If 'quoted' gist-clause, attribute gist-clause to user
+          ((and (listp expr) (eq (car expr) 'quote))
+            (setq expr (flatten (second expr)))
+            (setq user-gist-clauses (list expr))
+            (setq user-ulf nil))
+          ; Otherwise, find gist-clauses associated with episode Eta is reacting to
+          (t
+            (setq user-ep-name (get-single-binding bindings))
+            (setq user-gist-clauses (get-gist-clauses-characterizing-episode user-ep-name))
+            (setq user-ulf (resolve-references (get-semantic-interpretations-characterizing-episode user-ep-name)))))
+
         (format t "~% user gist clause is ~a ~%" user-gist-clauses) ; DEBUGGING
         (format t "~% user ulf is ~a ~%" user-ulf) ; DEBUGGING
         (setq new-subplan (plan-reaction-to user-gist-clauses user-ulf ep-name)))
@@ -1080,7 +1090,7 @@
             (format t "~%*** SAY-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST OR VARIABLE" expr)))
 
         ; Use previous speech act as context for interpretation
-        (setq prev-step (find-prev-step-of-type plan '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
+        (setq prev-step (find-prev-step-of-type plan '^me '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
         (setq prev-step-ep-name (plan-step-ep-name prev-step))
         (setq prev-step-wff (plan-step-wff prev-step))
 
@@ -1106,15 +1116,9 @@
         (setq user-gist-clauses (remove-contradiction user-gist-clauses))
         (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
 
-        ; Combine user gist-clauses into single gist-clause (using [SEP] delimiters to be separated later)
-        ; TODO: ideally these should be stored into memory separately, as in the commented code below,
-        ; but this would lose the ordering of the gist-clauses within the user response.
-        (store-gist-clause-characterizing-episode
-          (cdr (apply #'append (mapcar (lambda (clause) (cons '[SEP] clause)) user-gist-clauses)))
-          ep-name '^you '^me)
-
-        ;; (dolist (user-gist-clause user-gist-clauses)
-        ;;   (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me))
+        ; Store user gist-clauses in memory
+        (dolist (user-gist-clause user-gist-clauses)
+          (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me))
 
         ; Obtain semantic interpretation(s) of the user gist-clauses
         (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))

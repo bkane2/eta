@@ -62,5 +62,5 @@
     2 *ask-about-pain-medication-side-effects* (100 :schema)
     2 (I think having the stronger pain medication would help\.) (0 :out)
   1 (0)
-    2 (Okay\, I get it \.) (0 :out)
+    2 (Okay\, I see \.) (0 :out)
 ))

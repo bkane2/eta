@@ -47,7 +47,8 @@
   1 (0 be-aux 1 it 3 do anything 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
 
-
+  1 (0 SELF 2 sorry 0)
+    2 ((You are sorry that I am in pain \.)) (0 :gist)
 
   1 (0 medicine-gen 0)
     2 *medicine-working-input* (0 :subtree)
@@ -100,5 +101,6 @@
 
 (READRULES '*pain-reaction*
 '(
-
+  1 (You are sorry that I am in pain 1)
+    2 (Thanks\, I just hope the pain can be treated \.) (0 :out)
 ))

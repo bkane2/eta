@@ -545,10 +545,11 @@
 
 
 
-(defun find-prev-step-of-type (plan action-type)
-;`````````````````````````````````````````````````
+(defun find-prev-step-of-type (plan subject action-type)
+;``````````````````````````````````````````````````````````
 ; Finds the most recent previous step in a plan of a certain type
-; (e.g. 'say-to.v') or within a list of types.
+; (e.g. 'say-to.v') or within a list of types, and a particular subject
+; (nil if subject doesn't matter).
 ; If no such step in the current plan, try recursively in the superplan
 ; of plan (returning nil if no superplan exists).
 ;
@@ -559,17 +560,18 @@
     (loop while (not (null prev-step)) do
       (setq wff (plan-step-wff prev-step))
       (setq action-type1 (if (listp wff) (second wff)))
+      (setq subject1 (if (listp wff) (first wff)))
       (cond
-        ((and (atom action-type) (equal action-type1 action-type))
+        ((and (atom action-type) (equal action-type1 action-type) (or (null subject) (equal subject1 subject)))
           (return-from find-prev-step-of-type prev-step))
-        ((and (listp action-type) (member action-type1 action-type))
+        ((and (listp action-type) (member action-type1 action-type) (or (null subject) (equal subject1 subject)))
           (return-from find-prev-step-of-type prev-step)))
       (setq prev-step (plan-step-prev-step prev-step)))
   
     ; If no such step found in current plan, recursively try in superplan (if exists)
     (cond
       ((plan-subplan-of plan)
-        (find-prev-step-of-type (plan-step-step-of (plan-subplan-of plan)) action-type))
+        (find-prev-step-of-type (plan-step-step-of (plan-subplan-of plan)) subject action-type))
       (t nil))
 )) ; END find-prev-step-of-type
 

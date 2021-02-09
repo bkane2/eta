@@ -77,6 +77,8 @@
     2 *medical-history-reaction* (0 :subtree)
   1 (0 ment-treatment 0)
     2 *energy-reaction* (0 :subtree)
+  1 (0 pain 0)
+    2 *pain-reaction* (0 :subtree)
  
   1 (0)
     2 *general-reaction* (0 :subtree)

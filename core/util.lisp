@@ -1194,7 +1194,8 @@
 ;``````````````````````````````````````````````````````````````````
 ; Given an episode name, find all gist-clauses characterizing it.
 ; NOTE: split any gist-clauses with [SEP] delimiters into multiple gist-clauses;
-; see note in 'interpret-perception-in-context'.
+; currently does nothing but useful if multiple gist-clauses need to be concatenated
+; before storage and split later.
 ;
   (apply #'append (mapcar (lambda (clause) (list-split clause '[SEP])) 
     (unwrap-gist-clauses (get-from-memory-characterizing-episode 'paraphrase-to.v ep-name))))
@@ -2045,7 +2046,7 @@
 ) ; END unwrap-gist-clause
 
 (defun unwrap-gist-clauses (gist-facts)
-  (mapcar #'unwrap-gist-clause gist-facts)
+  (reverse (mapcar #'unwrap-gist-clause gist-facts))
 ) ; END unwrap-gist-clauses
 
 

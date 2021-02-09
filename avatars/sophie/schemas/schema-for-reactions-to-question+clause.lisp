@@ -48,16 +48,12 @@
 :episodes (
 ; we start execution at this keyword
 ; (other schema components are omitted for the time being.)
-?e1 (^you paraphrase-to.v ^me '?clause)
-
-?e2 (^me react-to.v ?e1)
+?e1 (^me react-to.v '?clause)
 
 ; This feels sort of unnatural most of the time.
-?e3 (^me say-to.v ^you '(As for your question \,))
+?e2 (^me say-to.v ^you '(As for your question \,))
 
-?e4 (^you paraphrase-to.v ^me '?question)
-
-?e5 (^me react-to.v ?e4)
+?e3 (^me react-to.v '?question)
 
 )
 
