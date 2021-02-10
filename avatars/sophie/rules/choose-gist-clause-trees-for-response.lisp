@@ -19,6 +19,8 @@
     2 (*response-tree-pain-medication-not-working*) (0 :subtrees)
   1 (How does comfort care work 1)
     2 (*response-tree-comfort-care*) (0 :subtrees)
+  1 (What are my options for treatment 1)
+    2 (*response-tree-treatment-options*) (0 :subtrees)
 
   ; Subtrees for elaborating answers
   1 (My pain has recently been getting worse 1)
@@ -52,15 +54,28 @@
     2 (I see \. I do try to keep carrying on\, but sometimes I just feel down \.) (0 :out)
   1 (Has the cancer gotten worse 1)
     2 (Does that mean that the cancer has gotten worse ?) (0 :out)
-  1 (What are my options for treatment 1)
-    2 (Keeping a high quality of life for the rest of my time is the most important thing to me right now \.
-       What\'s the best option for making sure this is possible ?) (0 :out)
   1 (Do you think radiation will help 1)
     2 (Do you think radiation is really going to help at this point ?) (0 :out)
   1 (What happens if I do not do chemotherapy 1)
     2 (What happens if I don\'t do chemotherapy ?) (0 :out)
   1 (I would like a refill of medicine 1)
     2 (I need a refill of my Lortab \.) (0 :out)
+  ; The following are from the top-level dialogue track
+  1 (Why have I not been sleeping well 1)
+    2 (One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
+       have to take medication for my pain \. I\'m not sure if it\'s only the pain\, but I keep waking up at night \.
+       Do you know why I keep waking up like this ?) (0 :out)
+  1 (How will I know if my pain medication is working 1)
+    2 (I just started on my new pain medication recently \. How long will it be before I know if it\'s working ?) (0 :out)
+  1 (Can I have a stronger pain medication 1)
+    2 (You know\, I\'m in a lot of pain\, and the Lortab just isn\'t working \. I think maybe I need something
+       stronger for my pain \.) (0 :out)
+  1 (Should I get comfort care 1)
+    2 (You know\, I really just prefer to be comfortable at this point \. Do you think I should
+       start considering comfort care ?) (0 :out)
+  1 (What should I tell my family 1)
+    2 (I haven\'t told my family everything yet \. I wanted to wait to talk to you first \.
+       What should I say to them ?) (0 :out)
 
   ; Direct rules for elaborating answers
   ; NOTE: if there are ever multiple contexts where these are warranted with different
@@ -125,6 +140,15 @@
 ; Below here are specific subtrees for elaborating questions or answers based on context of previous user utterance
 ;```````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
 
+(READRULES '*response-tree-treatment-options*
+'(
+  1 (0 Maintaining good quality of life is a treatment option 0)
+    2 (Keeping a high quality of life for the rest of my time is the most important thing to me right now \.
+       What\'s the best option for making sure this is possible ?) (0 :out)
+  1 (0)
+    2 (What are my choices at this point ?) (0 :out)
+))
+
 (READRULES '*response-tree-comfort-care*
 '(
   1 (0 Comfort care is a treatment option 0)
@@ -170,7 +194,7 @@
   1 (0 Do I know what the tests say 0)
     2 (I don\'t really understand the test results \. Can you explain them ?) (0 :out)
   1 (0)
-    2 (Could you explain what my test results mean ?) (0 :out)
+    2 (Could you explain to me what my test results mean ?) (0 :out)
 ))
 
 (READRULES '*response-tree-weight*
@@ -245,6 +269,8 @@
     2 (My doctor mentioned something about chemotherapy\, but said that I should wait to see how
        things go after the radiation is done \. Why? Do you think I need chemotherapy ?) (0 :out)
   1 (0)
+    2 (My previous doctor mentioned something about chemotherapy\, but he said to wait to see how
+       things go after the radiation \. Do you think I need chemotherapy ?) (100 :out)
     2 (Do you think I need chemotherapy ?) (0 :out)
 ))
 
@@ -266,6 +292,8 @@
   1 (0 The test results show that my cancer has spread 0)
     2 (Those are not the words I wanted to hear \. I mean\, I was bracing for the worst\, since I could tell by the pain that it\'s bad \.
        But to hear that the cancer has spread is quite depressing \. What does it all mean for me ?) (0 :out)
+  1 (0)
+    2 (I want you to be honest with me \. How long do you think I have ?) (0 :out)
 ))
 
 (READRULES '*response-tree-rephrase*

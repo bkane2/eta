@@ -49,7 +49,7 @@
     2 *ask-about-will-chemotherapy-help* (0 :schema)
     
   1 (Comfort care is a treatment option \.)
-    2 *ask-about-comfort-care* (0 :schema)
+    2 *ask-how-comfort-care-works* (0 :schema)
 
   1 (0)
     2 (I will have to think about what you said more\.) (0 :out)

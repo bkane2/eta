@@ -104,7 +104,7 @@
 
   ; Comfort care
   1 (Have I considered comfort care ?)
-    2 *ask-about-comfort-care* (0 :schema)
+    2 *ask-how-comfort-care-works* (0 :schema)
 
   ;Questions about medical history
   1 (What is my history with alcohol ?)
