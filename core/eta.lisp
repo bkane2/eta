@@ -679,8 +679,9 @@
 
             ; Use previous user reply as context for response generation
             (setq prev-step (find-prev-step-of-type subplan '^you '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
-            (setq prev-step-ep-name (plan-step-ep-name prev-step))
-            (setq prev-step-wff (plan-step-wff prev-step))
+            (when prev-step
+              (setq prev-step-ep-name (plan-step-ep-name prev-step))
+              (setq prev-step-wff (plan-step-wff prev-step)))
 
             (format t "~%found previous speech act: ~a (~a)~%" prev-step-ep-name prev-step-wff) ; DEBUGGING
 
