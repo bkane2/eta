@@ -1092,8 +1092,9 @@
 
         ; Use previous speech act as context for interpretation
         (setq prev-step (find-prev-step-of-type plan '^me '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
-        (setq prev-step-ep-name (plan-step-ep-name prev-step))
-        (setq prev-step-wff (plan-step-wff prev-step))
+        (when prev-step
+          (setq prev-step-ep-name (plan-step-ep-name prev-step))
+          (setq prev-step-wff (plan-step-wff prev-step)))
 
         ;; (format t "~%wff = ~a,~%     in the context of ~a ~a~%" wff prev-step-ep-name prev-step-wff) ; DEBUGGING
 
