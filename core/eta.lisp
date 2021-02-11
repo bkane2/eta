@@ -382,8 +382,6 @@
     ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
     ;; (format t " here is after the print-current-plan-status -----------~%")
 
-    ;; (error-check :caller 'eta)
-
     ; Update plan state after processing the previous step
     (update-plan-state plan)
 

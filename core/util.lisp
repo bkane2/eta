@@ -2534,7 +2534,7 @@
 ; Checks whether program has entered an infinite loop using a counter
 ;
   (cond
-    ((> *error-check* 500)
+    ((> *error-check* 1000)
       (if caller
         (error-message (format nil "An error caused Eta to fall into an infinite loop in '~a'. Check if the plan is being updated correctly." caller))
         (error-message "An error caused Eta to fall into an infinite loop. Check if the plan is being updated correctly."))
