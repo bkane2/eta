@@ -26,7 +26,9 @@
 ; we want punctuation since Google ASR is capable of it. The pattern-
 ; matching files therefore need to take punctuation into account.
 ;
-  (if (listen) `((^you say-to.v ^me ',(parse-chars (coerce (read-line) 'list)))))
+  (when (listen)
+    (let ((text (parse-chars (coerce (read-line) 'list))))
+      (if text `((^you say-to.v ^me ',text)))))
 ) ; END read-terminal
 
 
