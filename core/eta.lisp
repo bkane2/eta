@@ -369,12 +369,12 @@
           ((>=inf (- (get-universal-time) *expected-step-failure-timer*) (certainty-to-period certainty)) 
             (setq plan-advanced? (determine-next-episode-failed subplan)))
 
-          ; Otherwise, nquire self about the truth of the immediately pending episode. Plan is advanced
+          ; Otherwise, inquire self about the truth of the immediately pending episode. Plan is advanced
           ; (and appropriate substitutions made) if the expected episode is determined to be true.
           (t
             (setq plan-advanced? (inquire-truth-of-next-episode subplan)))))
 
-      ; Otherwise, process the plan step, resetting the timer for 
+      ; Otherwise, process the plan step, resetting the timer for expected step failure.
       (t
         (process-next-episode subplan)
         (setq plan-advanced? t)))
