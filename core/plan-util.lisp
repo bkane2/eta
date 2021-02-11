@@ -531,6 +531,8 @@
       ((null subplan) plan)
       ; If subplan forms an infinite loop, break loop and return subplan
       ((and (plan-curr-step subplan) (equal subplan (plan-step-subplan (plan-curr-step subplan))))
+        (format t "*** found infinite loop in subplan ~a; breaking loop ~%"
+          (plan-plan-name subplan))
         (setf (plan-step-subplan curr-step) nil)
         subplan)
       ; If the subplan is fully executed, then remove subplan and return plan
