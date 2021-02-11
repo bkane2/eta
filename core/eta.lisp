@@ -162,10 +162,6 @@
   ; Used for keeping track of output number in output.txt.
   (defparameter *output-count* 0)
 
-  ; This is used to check whether some error has caused Eta to enter
-  ; an infinite loop (e.g. if the plan isn't correctly updated).
-  (defparameter *error-check* 0)
-
   ; Timer parameters. Each end up being set to current system time, meaning
   ; that time elapsed can be calculated by comparing the timer values to the
   ; system time at a future point.
