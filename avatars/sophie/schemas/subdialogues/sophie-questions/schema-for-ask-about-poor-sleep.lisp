@@ -12,7 +12,6 @@
 
 :episodes (
 
-?e0 (^me say-to.v ^you '(test \.))
 ?e1 (^me paraphrase-to.v ^you '(Why have I not been sleeping well ?))
  
 ?e2 (^you reply-to.v ?e1)
