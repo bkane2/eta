@@ -418,6 +418,9 @@
   ; any relevant temporal relations.
     (dolist (system *registered-systems*)
       (setq inputs (read-from-system system))
+
+      ;; (format t "received inputs: ~a~%" inputs) ; DEBUGGING
+      
       (mapcar (lambda (input) (cond
         ; If observed that fact is no longer true, remove from context.
         ; TODO: some facts imply the negation of other ones,
