@@ -324,6 +324,7 @@
 ; (funcall task), but I didn't want to assume that all tasks will
 ; necessarily share the same format.
 ;
+  ;; (format t "executing task: ~a~%" task) ; DEBUGGING
   (case task
     (perform-next-step (perform-next-step))
     (perceive-world (perceive-world))
