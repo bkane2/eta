@@ -1400,7 +1400,7 @@
       (setq timestamp (get-time))
       ; Get all formulas with fact and ** operator, and extract ep-names
       (setq ep-wffs (get-from-memory `(,fact ** ?e)))
-      (setq ep-names (mapcan #'last ep-wffs))
+      (setq ep-names (apply #'append (mapcar #'last ep-wffs)))
       ; For each ep-name, remove NOW* fact from memory and add ending timestamp
       (dolist (ep-name ep-names)
         (remove-from-memory `(NOW* during ,ep-name))
