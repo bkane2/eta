@@ -10,6 +10,10 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-poor-sleep.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ?g1 (^me want.v (that (^me know.v (ans-to '(Why have I not been sleeping well ?)))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Why have I not been sleeping well ?))

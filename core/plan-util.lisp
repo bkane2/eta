@@ -18,6 +18,7 @@
 ; schema-contents : the contents of the schema used to generate the plan (if any)
 ; curr-step       : the current (to be processed) step of the plan
 ; vars            : contains any local variables in plan (potentially inherited)
+; goals           : contains any goals of a plan
 ; subplan-of      : points to a plan-step that the plan is a subplan of
 ;
   plan-name
@@ -25,6 +26,7 @@
   schema-contents
   curr-step
   vars
+  goals
   subplan-of
 ) ; END defstruct plan
 
@@ -109,8 +111,12 @@
     ; Process episodes last so things like certainties can be used
     (process-schema-episodes          plan (gethash :episodes sections))
 
-  plan)
-) ; END init-plan-from-schema
+  ; If goals of plan are already satisfied, skip over plan by returning nil,
+  ; otherwise return new plan
+  (if (and (plan-goals plan) (every #'check-goal-satisfied (plan-goals plan)))
+    nil
+    plan)
+)) ; END init-plan-from-schema
 
 
 
@@ -201,8 +207,10 @@
 
 (defun process-schema-static-conds (plan static-conds)
 ;````````````````````````````````````````````````````````
+; Adds any static conditions of the schema to the plan structure, as a list (static-cond-name static-cond-wff).
+; e.g., ?s2 (^you at-loc.p |Table|) gets added as:
+; (?s2 (^you at-loc.p |Table|))
 ; TBC
-; e.g., ?s2 (^you at-loc.p |Table|)
 ;
   (let ((static-cond-pairs (form-name-wff-pairs static-conds)) static-cond-name static-cond-wff)
     (dolist (static-cond-pair static-cond-pairs)
@@ -216,8 +224,10 @@
 
 (defun process-schema-preconds (plan preconds)
 ;```````````````````````````````````````````````
+; Adds any preconditions of the schema to the plan structure, as a list (precond-name precond-wff).
+; e.g., ?p1 (some ?c ((?c member-of.p ?cc) and (not (^you understand.v ?c)))) gets added as:
+; (?p1 (some ?c ((?c member-of.p ?cc) and (not (^you understand.v ?c)))))
 ; TBC
-; e.g., ?p1 (some ?c ((?c member-of.p ?cc) and (not (^you understand.v ?c))))
 ;
   (let ((precond-pairs (form-name-wff-pairs preconds)) precond-name precond-wff)
     (dolist (precond-pair precond-pairs)
@@ -231,15 +241,15 @@
 
 (defun process-schema-goals (plan goals)
 ;`````````````````````````````````````````
-; TBC
-; e.g., ?g1 (^me want1.v (that (^you understand1.v ?c)))
+; Adds any goals of the schema to the plan structure, as a list (goal-name goal-wff).
+; e.g., ?g1 (^me want1.v (that (^you understand1.v ?c))) gets added as:
+; (?g1 (^me want1.v (that (^you understand1.v ?c))))
 ;
   (let ((goal-pairs (form-name-wff-pairs goals)) goal-name goal-wff)
     (dolist (goal-pair goal-pairs)
       (setq goal-name (first goal-pair))
       (setq goal-wff (second goal-pair))
-    )
-  )
+      (push (list goal-name goal-wff) (plan-goals plan))))
 ) ; END process-schema-goals
 
 
@@ -427,7 +437,7 @@
 ; Updates the state of the plan by advancing any step whose
 ; subplan has been completed, i.e. has no more steps left.
 ; 
-  (let ((curr-step (plan-curr-step plan)) subplan)
+  (let ((curr-step (plan-curr-step plan)) subplan unsatisfied-goals replanned?)
 
     ; If no curr-step, return nil
     (if (null curr-step) (return-from update-plan-state nil))
@@ -441,10 +451,21 @@
         (setf (plan-step-subplan curr-step) nil))
       ; Otherwise, recursively update each subplan
       (t (update-plan-state subplan)
+
         ; Advance plan once subplan is finished
         (when (null (plan-curr-step subplan))
+
+          ; If goals of subplan (if any) still unsatisfied, try replanning based on the first unsatisfied goal
+          (when (plan-goals subplan)
+            (setq unsatisfied-goals (remove-if #'check-goal-satisfied (plan-goals subplan)))
+            (when unsatisfied-goals
+              (setq replanned? (replan-for-goal plan (car unsatisfied-goals)))
+              (if replanned? (return-from update-plan-state nil))))
+
           ;; (format t "subplan ~a has no curr-step, so advancing plan ~a past step: ~%  ~a ~a ~%"
           ;;   (plan-plan-name subplan) (plan-plan-name plan) (plan-step-ep-name curr-step) (plan-step-wff curr-step)) ; DEBUGGING
+
+          ; Advance plan if subplan is finished and goals (if any) satisfied
           (advance-plan plan)))))
 ) ; END update-plan-state
 
@@ -618,6 +639,78 @@
       ; Advance the plan
       (advance-plan plan)))
 ) ; END inquire-truth-of-next-episode
+
+
+
+(defun check-goal-satisfied (goal)
+;`````````````````````````````````````
+; Check whether a goal is satisfied through process of "self-inquiry",
+; i.e. checking context to verify whether the content of the goal
+; (assuming, for now, a standard "want that ..." goal) is true in context.
+; TODO: should also check knowledge base and/or memory if the goal is
+; something like "want that me know ...".
+;
+  (let (goal-var goal-wff bindings goal-clause)
+    (setq goal-var (first goal))
+    (setq goal-wff (second goal))
+
+    ; Check goal wff (currently only 'want that ...' goals are supported)
+    (cond
+      ((setq bindings (bindings-from-ttt-match '(^me want.v (that _!)) goal-wff))
+        (setq goal-clause (get-single-binding bindings))
+        ; Check if goal clause is true in context
+        (if (get-from-context goal-clause) t nil))
+
+      (t (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff)))
+)) ; END check-goal-satisfied
+
+
+
+(defun replan-for-goal (plan goal)
+;```````````````````````````````````````
+; Given an unsatisfied goal, use a transduction tree to determine an appropriate subplan to instantiate
+; and attach to the current plan step.
+; TODO: currently only goals of form (^me want.v (that (^me know.v (ans-to '(...))))) are supported,
+; and only the quoted expression is used to select a subplan. This will need to be made more general eventually.
+;
+  (let (curr-step goal-var goal-wff bindings goal-words tagged-words choice schema-name args subplan)
+
+    ; Get current expected step, expected wff, and instantiated ep-name
+    (setq curr-step (plan-curr-step plan))
+    (setq goal-var (first goal))
+    (setq goal-wff (second goal))
+
+    ; Get quoted words of goal statement
+    (cond
+      ((setq bindings (bindings-from-ttt-match '(^me want.v (that (^me know.v (ans-to _!)))) goal-wff))
+        (setq goal-words (get-single-binding bindings))
+        ; Remove quote
+        (setq goal-words (cadr goal-words)))
+
+      (t (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff)))
+
+    ; Select subplan for replanning
+    (setq tagged-words (mapcar #'tagword goal-words))
+    (setq choice (choose-result-for tagged-words '*replan-tree*))
+
+    ; Create subplan depending on directive
+    (cond
+      ; :schema directive
+      ((eq (car choice) :schema)
+        (setq schema-name (cdr choice))
+        (setq subplan (init-plan-from-schema schema-name nil)))
+
+      ; :schema+args directive
+      ((eq (car choice) :schema+args)
+        (setq schema-name (first (cdr choice)) args (second (cdr choice)))
+        (setq subplan (init-plan-from-schema schema-name args))))
+    
+    ; If subplan was obtained, attach to current step and return t, otherwise return nil
+    (when subplan
+      (add-subplan-curr-step plan subplan)
+      t)
+
+)) ; END replan-for-goal
 
 
 
