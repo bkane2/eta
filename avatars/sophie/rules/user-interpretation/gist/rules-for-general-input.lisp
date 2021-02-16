@@ -1,3 +1,8 @@
+; This rule tree is called in the case where no specific-input pattern is matched;
+; this will first try to branch to a topical question-input tree based on generic keywords,
+; and if that fails, the system will try to match general question forms, with the aim of
+; allowing the system to ask for a clarification.
+
 (READRULES '*general-input*
 '(
   ; Generic greeting
@@ -36,7 +41,7 @@
   ; If doctor asks something about medicine
   1 (0 medicine-gen 0)
     2 *medicine-question* (0 :subtree)
-  ;If the doctor asks about your medical history
+  ; If the doctor asks about your medical history
   1 (0 medical-history 0)
     2 *medical-history-question* (0 :subtree)
   ; If doctor asks something about patient's energy (or mood)
@@ -76,27 +81,4 @@
     2 ((NIL Question ?)) (0 :gist)
   ;; 1 (0)
   ;;   2 ((NIL Gist)) (0 :gist)
-))
-
-
-(READRULES '*general-reaction*
-'(
-  1 (It is nice to meet me \.)
-    2 (Thank you \, it\'s nice to meet you too \.) (100 :out)
-  ; If doctor is just giving an indication to keep talking, react silently and continue
-  1 (Continue talking \.)
-    2 () (0 :out)
-  ; If no gist clauses were extracted from user, ask them to repeat the question (Repeats at most 2 times in a row,
-  ; otherwise eta will ignore and return to the central conversation)
-  1 (0 ?)
-    ;; 2 (2 ?); too short to be a question
-    ;;   3 () (0 :out)
-    2 *ask-for-clarification* (3 :schema)
-    2 *ask-for-clarification* (3 :schema)
-    2 (Sorry\, I still didn\'t quite understand\. I have some more questions\, maybe we can come back to it\.) (0 :out)
-  1 (0)
-    2 (I see\.) (8 :out)
-    2 (Okay\.) (8 :out)
-    2 (Sure\.) (8 :out)
-    2 (Uh huh\.) (0 :out)
 ))

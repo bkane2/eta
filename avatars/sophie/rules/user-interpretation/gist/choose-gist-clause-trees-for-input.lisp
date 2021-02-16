@@ -1,3 +1,7 @@
+; This is the top-level gist-clause interpretation rule tree, used to select an appropriate choice packet using
+; the context of SOPHIE's previous question or statement. If a match fails here, the system falls back to a
+; general subtree intended to match generic questions from the user.
+
 (READRULES '*gist-clause-trees-for-input*
 '(
    ; Direct gist clauses from schema
@@ -24,7 +28,7 @@
    1 (My pain has recently been getting worse \.)
       2 (*pain-input*) (0 :subtrees)
    1 (I am here alone \.)
-      2 (*anyone-here-with-you-input*) (0 :subtrees)
+      2 (*appointment-input*) (0 :subtrees)
    1 (I got my diagnosis after visiting a lung doctor \.)
       2 (*diagnosis-details-input*) (0 :subtrees)
    1 (I have lost 1 weight \.)
@@ -35,8 +39,6 @@
       2 (*radiation-input*) (0 :subtrees)
    1 (Do you think radiation will help ?)
       2 (*radiation-input-verification-input*) (0 :subtrees)
-   1 (Do I need chemotherapy ?)
-      2 (*chemotherapy-input*) (0 :subtrees)
    1 (Do you think chemotherapy will help ?)
       2 (*chemotherapy-input*) (0 :subtrees)
    1 (What are the side effects of chemotherapy ?)
@@ -91,7 +93,7 @@
       2 (*medical-history-input*) (0 :subtrees)
    1 (My mother died of complications from her diabetes \.)
       2 (*medicine-input*) (0 :subtrees)
-   1 (My father died of prostate cancer\.)
+   1 (My father died of prostate cancer \.)
       2 (*medicine-input*) (0 :subtrees)
    1 (I would like a refill of medicine \.)
       2 (*medicine-request-input*) (0 :subtrees)
@@ -99,8 +101,6 @@
       2 (*cancer-worse-input*) (0 :subtrees)
    1 (Are you sure the cancer has not gotten worse ?)
       2 (*cancer-worse-verification-input*) (0 :subtrees)
-   1 (What is my prognosis ?)
-      2 (*prognosis-input*) (0 :subtrees)
    1 (What happens if I do not do chemotherapy ?)
       2 (*treatment-option-input*) (0 :subtrees)
    1 (How does comfort care work ?)
@@ -111,4 +111,3 @@
    1 (0)
       2 (*general-input*) (0 :subtrees)
 ))
-;

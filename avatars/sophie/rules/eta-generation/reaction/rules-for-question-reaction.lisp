@@ -104,7 +104,7 @@
   1 (Have I considered comfort care ?)
     2 *ask-how-comfort-care-works* (0 :schema)
 
-  ;Questions about medical history
+  ; Questions about medical history
   1 (What is my history with alcohol ?)
     2 *discuss-drinking-habits* (100 :schema)
     2 (At one time\, I suppose I used to have a drink or two maybe three or four days a week \. I have cut back since then though \. 

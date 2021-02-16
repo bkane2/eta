@@ -51,6 +51,7 @@
   (cure curable recover recovery solution fix miracle)
 
   ; General
+  (affirm pos posadv)
   (anyone-here-with-you here with alone by)
   (know-gen know sure)
   (think-gen think thoughts thought feel feelings feeling believe)
