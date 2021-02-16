@@ -1,26 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-  (effect effects)
-
-  (side-effect-addiction addiction addicted high)
-
-  (side-effect-fatigue fatigue fatigued exhaustion exhausted sleepiness sleepy sleep tiredness tired energy drowsy insomnia)
-  (side-effect-appetite appetite eating eat hunger hungry)
-  (side-effect-nausea nausea vomiting vomit sick sickness)
-  (side-effect-neuropathy neuropathy numb numbness tingle tingling)
-
-  (side-effects-insignificant side-effect-fatigue side-effect-appetite)
-  (side-effects-moderate side-effects-nausea diarrhea)
-  (infection infections)
-  (side-effects-significant hair side-effect-neuropathy side-effect-addiction blood infection)
-
-  (chemotherapy-injection injection injections vein veins needle needles)
-  (chemotherapy-IV IV tube tubes)
-  (mediport infusaport port)
-  (under underneath)
-))
-
-
 (READRULES '*chemotherapy-details-input*
 '(
   ; Side effects

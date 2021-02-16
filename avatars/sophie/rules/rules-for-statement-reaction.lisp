@@ -1,18 +1,3 @@
-(MAPC 'ATTACHFEAT
-  '(
-   (smoke smokes smoking smoked cigarettes cigarette tobacco)
-   (drink drinking drank wine alcohol beer drunk inebriated)
-   (recreational drugs marijuana weed)
-   (history background past experience)
-   (med-history smoke drink recreational history)
-   (congratulations congrats congratulate commend)
-   (antidepressant SSRI Prozac fluoxetine sertraline Zoloft Celexa citalopram Lexapro escitalopram paroxetine Paxil Pexeva)
-   (therapy therapist counseling counselor)
-   (ment-treatment antidepressant therapy)
-   (energy mood depressed depression anxiety anxious mental)
-   
-))
-
 (READRULES '*reaction-to-statement*
 ; Here we match any non-question statements which the user might ask, and respond to them appropriately.
 ; If some topic has enough possible gist clauses where it gets messy to put them all here, we can branch off

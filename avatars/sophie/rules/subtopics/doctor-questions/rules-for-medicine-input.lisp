@@ -1,18 +1,3 @@
-(MAPC 'ATTACHFEAT
-  '(
-    (med-take take taking get getting use using)
-    (med-past took taken used gotten prescribed)
-    (work working help helping treat treating effective)
-    (med-narcotic narcotic narcotics oxycodone morphine)
-    (often frequent frequently much)
-    (med-time every time times hour hours minute minutes day days week weeks)
-    (want need)
-    (med-better better stronger effective heavier)
-    (med-for for work)
-    (med-help care help helping helpful better effective work working)
-  ))
-
-
 (READRULES '*medicine-input*
 '(
 
@@ -38,9 +23,9 @@
     2 ((Do I have allergies to any medicine ?) (Medicine-allergies)) (0 :gist)
 
   ; How often are you taking medication?
-  1 (0 how 1 often 3 med-take 0)
+  1 (0 how 1 frequently 3 med-take 0)
     2 ((How often am I taking medication ?) (Medicine-frequency)) (0 :gist)
-  1 (0 be 0 med-take 2 often 0)
+  1 (0 be 0 med-take 2 frequently 0)
     2 ((How often am I taking medication ?) (Medicine-frequency)) (0 :gist)
   1 (0 be 0 med-take 2 med-time 0)
     2 ((How often am I taking medication ?) (Medicine-frequency)) (0 :gist)
@@ -72,9 +57,9 @@
     2 ((Is the pain medication working ?) (Medicine-working)) (0 :gist)
 
   ; Do you want stronger pain medication?
-  1 (0 do 1 you 3 want 3 med-better 1 medicine-taking 0)
+  1 (0 do 1 you 3 want-gen 3 med-better 1 medicine-taking 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
-  1 (0 do 1 you 3 want 3 med-narcotic 0)
+  1 (0 do 1 you 3 want-gen 3 med-narcotic 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
   1 (0 wh_ 5 think-gen 5 med-take 1 med-better 1 medicine-taking 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
@@ -86,7 +71,7 @@
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
   
   ; Do you need more medicine?
-  1 (0 do 1 you 3 want 2 medicine-taking 0)
+  1 (0 do 1 you 3 want-gen 2 medicine-taking 0)
     2 ((Do I need more medicine ?) (Medicine-refill)) (0 :gist)
   1 (0 how are you 1 medicine-taking 0); e.g., how are you on medicine?
     2 ((Do I need more medicine ?) (Medicine-refill)) (0 :gist)

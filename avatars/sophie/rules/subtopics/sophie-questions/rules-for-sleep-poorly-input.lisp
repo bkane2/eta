@@ -1,23 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-  (sleep sleeping)
-  (okay alright well good fine)
-  (problem problems issue issues hard difficulty)
-  (sleep-prob problem insomnia)
-  (lot much)
-  (often frequent frequently much)
-  (wake waking)
-  (day daytime)
-  (sleep-medication ambien nyquil lunesta)
-  (work working effective help helping)
-  (cause causing causes caused triggering triggered triggers trigger provoke provokes provoking provoked)
-  (spread spreading metastasized metastatic)
-  (sleep-thought thought thoughts head mind brain)
-  (ment-health anxiety anxiousness depression anxious depressed mental)
-  (recently lately)
-))
-
-
 (READRULES '*sleep-poorly-input*
 '(
   
@@ -55,12 +35,21 @@
   1 (0 ment-health 3 cause 0)
     2 ((I am sleeping poorly because of my mental health \.) (Sleeping-poorly)) (0 :gist)
   
+  ; You may be sleeping poorly because of pain.
   1 (0 medicine-gen 1 neg 1 work 0)
     2 ((I am sleeping poorly because the pain medication is no longer working \.) (Sleeping-poorly)) (0 :gist)
+  1 (0 be-aux 0 because 2 pain 0)
+    2 ((I am sleeping poorly because of my pain \.) (Sleeping-poorly)) (0 :gist)
+  1 (0 be-aux 1 pain 0)
+    2 ((I am sleeping poorly because of my pain \.) (Sleeping-poorly)) (0 :gist)
+  1 (0 pain 3 cause 0)
+    2 ((I am sleeping poorly because of my pain \.) (Sleeping-poorly)) (0 :gist)
 
+  ; You may be sleeping poorly because of a side effect.
   1 (6 side 1 effect 0)
     2 ((I am sleeping poorly because of a side effect from a medication \.) (Sleeping-poorly)) (0 :gist)
 
+  ; You may be sleeping poorly because your cancer has gotten worse.
   1 (0 illness 2 spread 0)
     2 ((I am sleeping poorly because the cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 illness 2 worse 0)
@@ -73,7 +62,7 @@
 
   1 (0 sleep 2 during 3 day 0)
     2 (*sleep-question* (do you sleep during the day ?)) (0 :subtree+clause)
-  1 (0 how 1 often 0 wake)
+  1 (0 how 1 frequently 0 wake)
     2 (*sleep-question* (how often are you waking up at night ?)) (0 :subtree+clause)
 
   ; What's going through your head/what are you thinking

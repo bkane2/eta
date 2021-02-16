@@ -1,10 +1,3 @@
-(MAPC 'ATTACHFEAT
-  '(
-    (thought think consider considered look looked)
-    (comfort-care-word comfort palliative hospice care)
-  ))
-
-
 (READRULES '*comfort-care-verification-input*
 '(
   1 (0 POS 0)

@@ -1,16 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-  (more-info learn hear tell say more additional elaborate)
-  (elaborate continue describe)
-  (can could)
-  (scale rate rating)
-  (part parts section sections area areas)
-  (pain-bad bad much strongly intensely badly)
-  (take taking)
-  (pain-return come back return)
-))
-
-
 (READRULES '*pain-input*
 '(
   ; If doctor inquires for more information

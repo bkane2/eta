@@ -1,7 +1,3 @@
-(MAPC 'ATTACHFEAT
-  '()
-)
-
 (READRULES '*reaction-to-input*
 ; Currently we only branch to a question in the case
 ; of a question related to the getting-to-know you

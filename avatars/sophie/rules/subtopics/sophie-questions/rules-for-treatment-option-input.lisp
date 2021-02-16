@@ -1,8 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-))
-
-
 (READRULES '*treatment-option-input*
 '(
   1 (0 palliative care 0)

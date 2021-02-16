@@ -1,8 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-))
-
-
 (READRULES '*chemotherapy-input*
 '(
   ; TODO: see if any of this should be incorporated

@@ -1,23 +1,10 @@
-(MAPC 'ATTACHFEAT
-'(
-  (okay alright well good fine)
-  (problem problems issue issues hard)
-  (lot much)
-  (often frequent frequently much)
-  (wake waking)
-  (day daytime)
-  (sleep-medication ambien nyquil lunesta)
-  (happen happens)
-))
-
-
 (READRULES '*sleep-input*
 '(
   
 
   1 (0 sleep 2 during 3 day 0)
     2 (*sleep-question* (do you sleep during the day ?)) (0 :subtree+clause)
-  1 (0 how 1 often 0 wake)
+  1 (0 how 1 frequently 0 wake)
     2 (*sleep-question* (how often are you waking up at night ?)) (0 :subtree+clause)
 
   1 (0)
@@ -34,13 +21,13 @@
     2 ((Have I been sleeping okay ?) (Sleep)) (0 :gist)
   1 (0 have you 2 sleep 1 okay 0)
     2 ((Have I been sleeping okay ?) (Sleep)) (0 :gist)
-  1 (0 you 3 problem sleep 0)
+  1 (0 you 3 trouble sleep 0)
     2 ((Have I been sleeping okay ?) (Sleep)) (0 :gist)
-  1 (0 you 2 sleep 1 lot 0)
+  1 (0 you 2 sleep 1 much 0)
     2 ((Have I been sleeping okay ?) (Sleep)) (0 :gist)
 
   ; How often are you waking up at night?
-  1 (0 how often 0)
+  1 (0 how frequently 0)
     2 ((How often am I waking up at night ?) (Waking-frequency)) (0 :gist)
 
   ; Do you sleep during the day?

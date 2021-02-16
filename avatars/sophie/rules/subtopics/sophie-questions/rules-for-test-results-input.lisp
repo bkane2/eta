@@ -1,11 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-  (body-part lung lungs bone bones chest)
-  (cure curable recover recovery solution fix miracle)
-  (cancer-increase increase spread)
-))
-
-
 (READRULES '*test-results-input*
 '(
   ; The cancer hasn't yet spread

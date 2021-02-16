@@ -1,15 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-  (number one number-plur)
-  (number-plur two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen)
-  (number-vague few some many several couple)
-  (elapsed-time-plur years months)
-  (elapsed-time year month elapsed-time-plur)
-  (predict tell say know)
-  (lose losing)
-))
-
-
 (READRULES '*prognosis-verification-input*
 '(
 

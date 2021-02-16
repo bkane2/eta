@@ -1,8 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-))
-
-
 (READRULES '*tell-family-input*
 '(
   1 (0)

@@ -1,32 +1,8 @@
-(MAPC 'ATTACHFEAT
-'(
-  (quit quitting stop stopping stopped forgo forgoing)
-  (smoke smokes smoking smoked cigarettes cigarette tobacco)
-  (taken take used use smoke)
-  (before prior lead)
-  (know aware understand)
-  (bring brings)
-  (symptom symptoms)
-  (lose lost)
-  (much lot)
-  (often frequently much)
-  (drink drinking drank wine alcohol beer drunk inebriated)
-  (congratulations congrats)
-  (ment-health depression mental anxiety depressed anxious schizophrenia)
-  (family parents grandparents siblings)
-  (history background past experience)
-  (experienced experiencing having had have suffered suffering diagnosed)
-  (parent parents mother father mom dad)
-  (die died dead pass passed depart perish)
-  (recreational drugs marijuana weed)
-  ))
-
-
 (READRULES '*medical-history-input*
 '(
  
  ;What is your history with drinking?
- 1 (0 how 1 often 5 drink 0)
+ 1 (0 how 1 frequently 5 drink 0)
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
   1 (0 do 1 pron 5 drink 0)
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
@@ -38,7 +14,7 @@
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)
   1 (0 do 1 pron 5 smoke 0)
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)
-  1 (0 how 1 often 5 smoke 0)
+  1 (0 how 1 frequently 5 smoke 0)
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)
   
   ;What is your family's history with mental health ?
@@ -90,7 +66,7 @@
 (READRULES '*medical-history-question*
 '(
   ;How often do you drink?
-  1 (0 how 1 often 5 drink 0)
+  1 (0 how 1 frequently 5 drink 0)
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
   1 (0 do 1 pron 5 drink 0)
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
@@ -98,7 +74,7 @@
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
    
    ;How often do you smoke?
-  1 (0 how 1 often 5 smoke 0)
+  1 (0 how 1 frequently 5 smoke 0)
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)
   1 (0 do 1 pron 5 smoke 0)
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)

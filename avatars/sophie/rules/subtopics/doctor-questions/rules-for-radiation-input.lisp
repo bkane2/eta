@@ -1,13 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-  (redness red)
-  (respond responded react reacted)
-  (made make)
-  (radiation-help help better alleviate reduce comfort comfortable)
-  (pain-return come back return)
-))
-
-
 (READRULES '*radiation-verification-input*
 '(
   1 (0 POS 0)

@@ -1,10 +1,3 @@
-(MAPC 'ATTACHFEAT
-  '(
-    (married marry spouse partner husband wife)
-    (doing feeling feel)
-  ))
-
-
 (READRULES '*appointment-input*
 '(
   ; Asking about where your daughter works

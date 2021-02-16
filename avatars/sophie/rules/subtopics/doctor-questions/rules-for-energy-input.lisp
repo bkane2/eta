@@ -1,17 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-  (have having)
-  (trouble troubles problem problems)
-  (concentrate concentrating focus focusing)
-  (ment-health anxiety anxious depression depressed mental)
-  (work working help helping treat treating effective)
-  (med-take take taking get getting use using)
-  (med-give recommend recommending recommended recommend advise advising advises advised suggests suggesting suggested suggest gives give given giving prescribe prescribes prescribed prescribed)
-  (antidepressant SSRI Prozac fluoxetine sertraline Zoloft Celexa citalopram Lexapro escitalopram paroxetine Paxil Pexeva)
-  (therapy therapist counseling counselor)
-  ))
-
-
 (READRULES '*energy-input*
 '(
     1 (0 be-aux 3 ment-health 3 recently 0)

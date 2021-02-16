@@ -1,20 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-  (effect effects)
-
-  (side-effect-addiction addiction addicted high)
-
-  (side-effect-fatigue fatigue fatigued exhaustion exhausted sleepiness sleepy sleep tiredness tired energy drowsy insomnia)
-  (side-effect-appetite appetite eating eat hunger hungry)
-  (side-effect-nausea nausea vomiting vomit sick sickness)
-  (side-effect-neuropathy neuropathy numb numbness tingle tingling)
-
-  (side-effects-insignificant side-effect-fatigue side-effect-appetite)
-  (side-effects-moderate side-effects-nausea diarrhea)
-  (side-effects-significant hair side-effect-neuropathy side-effect-addiction)
-))
-
-
 (READRULES '*medicine-side-effects-addiction-input*
 '(
   1 (0 low 1 risk 0)

@@ -1,19 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-  (lead leading)
-  (before prior lead)
-  (know aware understand)
-  (bring brings)
-  (symptom symptoms)
-  (symptom-weight weight skinny skinnier heavy heavier fat)
-  (symptom-appetite appetite eating)
-  (diagnosis-symptom symptom weight skinny skinnier appetite eating)
-  (diagnosis-non-symptom headache headaches chill chills fever fevers nausea eyesight eyes)
-  (lose lost)
-  (much lot)
-))
-
-
 (READRULES '*diagnosis-details-input*
 '(
   1 (0 medicine-gen 0)
@@ -25,9 +9,9 @@
     2 (*diagnosis-details-question* (how much weight have you lost ?)) (0 :subtree+clause)
   1 (0 how much 0 lose 0)
     2 (*diagnosis-details-question* (how much weight have you lost ?)) (0 :subtree+clause)
-  1 (0 do pron 2 lose 3 lot 0)
+  1 (0 do pron 2 lose 3 much 0)
     2 (*diagnosis-details-question* (how much weight have you lost ?)) (0 :subtree+clause)
-  1 (0 have pron 2 lose 3 lot 0)
+  1 (0 have pron 2 lose 3 much 0)
     2 (*diagnosis-details-question* (how much weight have you lost ?)) (0 :subtree+clause)
   1 (0 wh_ do 2 lose 0)
     2 (*diagnosis-details-question* (how much weight have you lost ?)) (0 :subtree+clause)
@@ -44,9 +28,9 @@
   ; How much weight have you lost?
   1 (0 how much symptom-weight 0 lose 0)
     2 ((How much weight have I lost ?) (Weight-loss)) (0 :gist)
-  1 (0 do pron 2 lose 3 lot 0 symptom-weight 0)
+  1 (0 do pron 2 lose 3 much 0 symptom-weight 0)
     2 ((How much weight have I lost ?) (Weight-loss)) (0 :gist)
-  1 (0 have pron 2 lose 3 lot 0 symptom-weight 0)
+  1 (0 have pron 2 lose 3 much 0 symptom-weight 0)
     2 ((How much weight have I lost ?) (Weight-loss)) (0 :gist)
 
   ; What symptoms do you have?

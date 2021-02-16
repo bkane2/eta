@@ -1,12 +1,3 @@
-(MAPC 'ATTACHFEAT
-  '(
-    (med-take take taking get getting use using)
-    (work working help helping treat treating effective)
-    (often frequent frequently much)
-    (med-time every time times hour hours minute minutes day days week weeks)
-  ))
-
-
 (READRULES '*medicine-request-input*
 '(
   ; You should take morphine
@@ -14,9 +5,9 @@
     2 ((I should take a narcotic \.) (Medicine-request)) (0 :gist)
 
   ; Do you want something better / stronger pain medication
-  1 (0 do 1 you 3 want 3 med-better medicine-taking 0)
+  1 (0 do 1 you 3 want-gen 3 med-better medicine-taking 0)
     2 (*medicine-question* (do you want stronger pain medication ?)) (0 :subtree+clause)
-  1 (0 do 1 want 3 med-better 0)
+  1 (0 do 1 want-gen 3 med-better 0)
     2 (*medicine-question* (do you want stronger pain medication ?)) (0 :subtree+clause)
 
   ; You should take something stronger / better pain medication
@@ -24,9 +15,9 @@
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 you 5 med-take 1 something 1 med-better 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
-  1 (0 you 5 want 3 med-better 2 medicine-gen 0)
+  1 (0 you 5 want-gen 3 med-better 2 medicine-gen 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
-  1 (0 you 5 want 1 something 1 med-better 0)
+  1 (0 you 5 want-gen 1 something 1 med-better 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
 
   ; Maximizing your pain medication

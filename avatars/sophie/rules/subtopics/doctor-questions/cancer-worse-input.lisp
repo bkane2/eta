@@ -1,8 +1,3 @@
-(MAPC 'ATTACHFEAT
-'(
-))
-
-
 (READRULES '*cancer-worse-input*
 '(
   1 (0 POS 0)
