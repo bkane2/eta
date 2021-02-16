@@ -11,4 +11,6 @@
 '(
   1 (Why have I not been sleeping well ?)
     2 *ask-about-poor-sleep* (100 :schema)
+  1 (Do I need chemotherapy ?)
+    2 *ask-if-need-chemotherapy* (100 :schema)
 ))

@@ -67,6 +67,8 @@
     2 *mention-taking-naps* (0 :schema)
   1 (What is on my mind when I try to sleep ?)
     2 *explain-not-sleeping-well* (0 :schema)
+  1 (What happens when I try to sleep ?)
+    2 *explain-not-sleeping-well* (0 :schema)
 
   ; Questions about energy
   1 (How is my energy ?)

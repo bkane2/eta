@@ -188,6 +188,9 @@
   1 (0 What is on my mind when I try to sleep 0)
     2 (When I actually sleep\, I don\'t really have anything on my mind \. When I have trouble sleeping I usually can\'t think
        of anything except for the pain \.) (0 :out)
+  1 (0 What happens when I try to sleep 0)
+    2 (I usually have trouble staying asleep \. Sometimes I wake up in the middle of the night and notice an ache in my
+       back and near my chest \. That\'s when I have to take pain medication to fall back asleep \.) (0 :out)
 ))
 
 (READRULES '*response-tree-test-results*
@@ -272,6 +275,7 @@
   1 (0)
     2 (My previous doctor mentioned something about chemotherapy\, but he said to wait to see how
        things go after the radiation \. Do you think I need chemotherapy ?) (100 :out)
+    2 (Thanks\, though I\'m still a bit confused at this point \. Should I get chemotherapy ?) (100 :out)
     2 (Do you think I need chemotherapy ?) (0 :out)
 ))
 

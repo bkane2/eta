@@ -80,6 +80,10 @@
   1 (0 wh_ 3 sleep-thought 0)
     2 (*sleep-question* (what is on your mind when you try to sleep ?)) (0 :subtree+clause)
 
+  ; Can you tell me more
+  1 (0 aux 1 you 1 tell 3 more 0)
+    2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+
 
   
   1 (0)
