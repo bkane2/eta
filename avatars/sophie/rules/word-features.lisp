@@ -127,7 +127,7 @@
   (blood-pressure-med cozar)
   (sleep-medication ambien nyquil lunesta)
   (med-give recommend advise suggest give prescribe)
-  (med-take take taking get getting use using)
+  (med-take take taking get getting use using on)
   (med-past took taken used gotten prescribed)
   (med-time every time times hour hours minute minutes day days week weeks)
   (med-better better stronger effective heavier)

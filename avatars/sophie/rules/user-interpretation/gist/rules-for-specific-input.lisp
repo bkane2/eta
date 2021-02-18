@@ -27,7 +27,8 @@
 ; - chemotherapy
 ; - comfort-care
 ; - comfort-care-verification
-; - medicine-request
+; - medicine-refill-request
+; - medicine-stronger-request
 ; - medicine-working
 ; - prognosis
 ; - prognosis-verification
@@ -35,6 +36,7 @@
 ; - tell-family
 ; - test-results
 ; - treatment-option
+; - stronger-medicine-help-sleep
 
 
 (READRULES '*cancer-worse-input*
@@ -389,12 +391,23 @@
   ;; 1 (0 sure \, I can arrange that 0)
   ;;   2 ((You will give me more medicine \.) (Stronger-medicine)) (0 :gist)
 
+  ; how is that working for you?
+  1 (0 how be 3 med-help 0)
+    2 (*medicine-question* (how are you feeling on the lortab ?)) (0 :subtree+clause)
+
   ; Possibly too general, might need refining
   1 (0 med-narcotic 0)
     2 ((I should take a narcotic \.) (Medicine-request)) (0 :gist)
 
   1 (0 refill 0)
     2 (*medicine-question* (do you need a refill on medicine ?)) (0 :subtree+clause)
+
+  1 (0 something 3 med-better 0)
+    2 (*medicine-question* (have you thought about a stronger pain medication ?)) (0 :subtree+clause)
+  1 (0 some thing 3 med-better 0)
+    2 (*medicine-question* (have you thought about a stronger pain medication ?)) (0 :subtree+clause)
+  1 (0 a 2 med-better 2 medication 0)
+    2 (*medicine-question* (have you thought about a stronger pain medication ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -587,8 +600,7 @@
 
 
 
-(READRULES '*medicine-request-input*
-; (Can I have a stronger pain medication ?)
+(READRULES '*medicine-refill-request-input*
 ; (I would like a refill of medicine \.)
 '(
   ; You should take morphine
@@ -623,6 +635,44 @@
   1 (0 different 2 medicine-gen 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
 
+  ; Sure, I can give you a refill of pain medication
+  1 (0 affirm 0)
+    2 ((I can give you a refill of pain medication \.) (Medicine-request)) (0 :gist)
+  1 (0 no 1 problem 0)
+    2 ((I can give you a refill of pain medication \.) (Medicine-request)) (0 :gist)
+
+  ; No
+  1 (0 NEG 0)
+    2 ((I cannot give you a refill of pain medication \.) (Medicine-request)) (0 :gist)
+
+  1 (0)
+    2 *general-input* (0 :subtree)
+  1 (0)
+    2 ((NIL Gist \: nothing found for refill of pain medication \.)) (0 :gist)
+
+)) ; END *medicine-refill-request-input*
+
+
+
+(READRULES '*medicine-stronger-request-input*
+; (Can I have a stronger pain medication ?)
+'(
+  ; You should take morphine
+  1 (0 med-narcotic 0)
+    2 ((I should take a narcotic \.) (Medicine-request)) (0 :gist)
+
+  ; Maximizing your pain medication
+  1 (0 med-increase 3 medicine-gen 0)
+    2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
+  1 (0 make 1 medicine-gen 2 med-better 0)
+    2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
+
+  ; You should take something different
+  1 (0 something 2 different 0)
+    2 ((I should take something different \.) (Medicine-request)) (0 :gist)
+  1 (0 different 2 medicine-gen 0)
+    2 ((I should take something different \.) (Medicine-request)) (0 :gist)
+
   ; Sure, I can give you a stronger pain medication
   1 (0 affirm 0)
     2 ((I can give you stronger pain medication \.) (Medicine-request)) (0 :gist)
@@ -638,7 +688,7 @@
   1 (0)
     2 ((NIL Gist \: nothing found for stronger pain medication \.)) (0 :gist)
     
-)) ; END *medicine-request-input*
+)) ; END *medicine-stronger-request-input*
 
 
 
@@ -850,7 +900,7 @@
     2 (*sleep-question* (what is on your mind when you try to sleep ?)) (0 :subtree+clause)
 
   ; Can you tell me more
-  1 (0 aux 1 you 1 tell 3 more 0)
+  1 (0 aux 1 you 1 tell 5 more 0)
     2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
 
   1 (0)
@@ -946,3 +996,22 @@
     2 ((NIL Gist \: nothing found for treatment option \.)) (0 :gist)
     
 )) ; END *treatment-option-input*
+
+
+
+(READRULES '*stronger-medicine-help-sleep-input*
+; (Will stronger pain medication help me sleep ?)
+'(
+  1 (0 affirm 0)
+    2 ((A stronger pain medication will help me sleep \.) (Medicine-request)) (0 :gist)
+  1 (3 probably 0)
+    2 ((A stronger pain medication will help me sleep \.) (Medicine-request)) (0 :gist)
+  1 (0 NEG 0)
+    2 ((A stronger pain medication will not help me sleep \.) (Medicine-request)) (0 :gist)
+
+  1 (0)
+    2 *general-input* (0 :subtree)
+  1 (0)
+    2 ((NIL Gist \: nothing found for will stronger pain medication help me sleep \.)) (0 :gist)
+
+)) ; END *stronger-medicine-help-sleep-input*

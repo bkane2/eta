@@ -263,6 +263,10 @@
   1 (0 be 0 med-take 2 med-time 0)
     2 ((How often am I taking medication ?) (Medicine-frequency)) (0 :gist)
 
+  ; How are you on the [medication]?
+  1 (0 how 1 be you 2 feeling 2 med-take 2 medicine-taking 0)
+    2 ((How is the pain medication working ?) (Medicine-working)) (0 :gist)
+
   ; Does taking the medicine more frequently help?
   1 (0 medicine-taking 3 frequently 5 med-help 0)
     2 ((Does taking medication more frequently help ?) (Medicine-frequency)) (0 :gist)
@@ -287,7 +291,7 @@
   1 (0 be-aux 0 medicine-taking 0 med-help 0)
     2 ((Is the pain medication working ?) (Medicine-working)) (0 :gist)
   1 (0 how 0 medicine-taking 0 med-help 0)
-    2 ((Is the pain medication working ?) (Medicine-working)) (0 :gist)
+    2 ((How is the pain medication working ?) (Medicine-working)) (0 :gist)
 
   ; Do you want stronger pain medication?
   1 (0 do 1 you 3 want-gen 3 med-better 1 medicine-taking 0)

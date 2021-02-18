@@ -22,6 +22,8 @@
   ;;   2 (*have-subdialogue* ((Could you tell me about some of the side effects of that ?)
   ;;                          ((Can you tell me about the side effects ?)))) (100 :schema+args)
 
+  1 (0 stronger pain medication 0 help me sleep 0)
+    2 *medicine-reaction* (0 :subtree)
   1 (0 sleeping poorly 0 \.)
     2 *sleep-poorly-reaction* (0 :subtree)
   1 (0 medication 4 working 0 \.)
@@ -31,6 +33,8 @@
   1 (0 take 3 different \.)
     2 *medicine-working-reaction* (0 :subtree)
   1 (0 stronger 1 medication 0 \.)
+    2 *medicine-request-reaction* (0 :subtree)
+  1 (0 refill 2 medication 0 \.)
     2 *medicine-request-reaction* (0 :subtree)
   1 (0 med-narcotic 0 \.)
     2 *medicine-request-reaction* (0 :subtree)

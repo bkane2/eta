@@ -60,6 +60,9 @@
     2 (What happens if I don\'t do chemotherapy ?) (0 :out)
   1 (I would like a refill of medicine 1)
     2 (I need a refill of my Lortab \.) (0 :out)
+  1 (Will stronger pain medication help me sleep 1)
+    2 (It sounds like my pain is the root of my sleeping problems \. Do you think having
+       stronger pain medication would help with that ?) (0 :out)
   ; The following are from the top-level dialogue track
   1 (Why have I not been sleeping well 1)
     2 (One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I

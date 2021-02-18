@@ -126,6 +126,14 @@
 '(
   ;; 1 (0 you will give me more medicine 0)
   ;;   2 (Great\, thank you !) (0 :out)
+  1 (A stronger pain medication will help me sleep \.)
+    2 *ask-about-pain-medication-side-effects* (100 :schema)
+    2 (If I continue to have trouble sleeping\, I might call in for stronger pain medication later \.) (0 :out)
+  1 (A stronger pain medication will not help me sleep \.)
+    2 (I guess it\'s just something I\'ll have to live with \.) (0 :out)
+
+  1 (0)
+    2 (I see \.) (0 :out)
 
 )) ; END *medicine-reaction*
 
@@ -185,6 +193,7 @@
 
 (READRULES '*medicine-request-reaction*
 ; (0 stronger 1 medication 0 \.)
+; (0 refill 2 medication 0 \.)
 ; (0 med-narcotic 0 \.)
 '(
   1 (I should take 1 med-narcotic \.)
@@ -197,6 +206,11 @@
     2 (Thank you very much\, I hope that will help with the pain\.) (0 :out)
   1 (I cannot give you stronger pain medication \.)
     2 (I see\. For now I\'ll stick with my current medication\, but will let you know if the pain starts getting worse\.) (0 :out)
+
+  1 (I can give you a refill of pain medication \.)
+    2 (Thanks\, appreciate it \!) (0 :out)
+  1 (I cannot give you a refill of pain medication \.)
+    2 (Okay\. I will try to do without it\, but if the pain gets worse I\'m going to call you back for more pain medication\.) (0 :out)
 
   1 (0)
     2 (Okay\, I see \.) (0 :out)

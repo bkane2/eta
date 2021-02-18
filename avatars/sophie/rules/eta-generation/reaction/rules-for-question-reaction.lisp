@@ -95,6 +95,8 @@
     2 *ask-why-pain-medication-not-working* (0 :schema)
   1 (Is the pain medication working ?)
     2 *ask-why-pain-medication-not-working* (0 :schema)
+  1 (How is the pain medication working ?)
+    2 *ask-why-pain-medication-not-working* (0 :schema)
   1 (Do I want stronger pain medication ?)
     2 *ask-about-pain-medication-side-effects* (0 :schema)
   1 (Do I need more medicine ?)

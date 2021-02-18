@@ -35,6 +35,8 @@
 (READRULES '*response-tree-pain-medication-not-working*
 ; (Why isn\'t the pain medication working anymore 1)
 '(
+  1 (0 How is the pain medication working 0)
+    2 (My pain is a little better under the lortab\, but it\'s not really helping as much as it used to \.) (0 :out)
   1 (0 Is the pain medication working at all 0)
     2 (The lortab is working a little bit\, but not much \.) (0 :out)
   1 (0 Is the pain medication working 0)
@@ -132,6 +134,9 @@
 ; (What are the side effects of stronger pain medication 1)
 ; (I am only taking Lortab to treat my pain 1)
 '(
+  1 (0 a stronger pain medication will help me sleep 0)
+    2 (It would be nice to be able to sleep soundly again \. What would the side effects of a stronger pain medication be\, though ?) (0 :out)
+
   1 (0 I should take stronger pain medication 0)
     2 (Yeah\, I think I should take a stronger pain medication \. The current one isn\'t working well \. What are the side effects ?) (100 :out)
     2 (Yeah \, a stronger pain medication would be good \. What would the side effects be ?) (0 :out)
