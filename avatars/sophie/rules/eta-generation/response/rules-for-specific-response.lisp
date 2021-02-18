@@ -238,6 +238,8 @@
        it all mean for me ?) (0 :out)
 
   1 (0)
+    2 (What do you think this means for me in the future ?) (100 :out)
+    2 (How long do you think I have left at this point ?) (100 :out)
     2 (I want you to be honest with me \. How long do you think I have ?) (0 :out)
 
 )) ; END *response-tree-prognosis*

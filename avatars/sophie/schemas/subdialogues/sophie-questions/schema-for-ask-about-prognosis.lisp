@@ -10,6 +10,10 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-prognosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ?g1 (^me want.v (that (^me know.v (ans-to '(What is my prognosis ?)))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(What is my prognosis ?))

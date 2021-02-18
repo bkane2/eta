@@ -244,13 +244,17 @@
   ; I asked my doctor in Florida about what’s going to happen next, he just did not want to say. 
   ; He said” These things are always hard to predict.” 
   1 (The prognosis is that I may live for number-plur elapsed-time-plur \.)
-    2 (That\'s all very difficult to hear\. At this point\, I just hope I can enjoy those 9 10 with family\.) (0 :out)
+    2 (That\'s very difficult to hear\. I thought I would have more time than that\.
+       At this point\, I just hope I can enjoy those 9 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for number elapsed-time \.)
-    2 (That\'s all very difficult to hear\. At this point\, I just hope I can enjoy that 9 10 with family\.) (0 :out)
+    2 (That\'s very difficult to hear\. I thought I would have more time than that\.
+       At this point\, I just hope I can enjoy that 9 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for several elapsed-time \.)
-    2 (That\'s all very difficult to hear\. At this point\, I just hope I can enjoy those 10 with family\.) (0 :out)
+    2 (That\'s very difficult to hear\. I thought I would have more time than that\.
+       At this point\, I just hope I can enjoy those 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for a elapsed-time \.)
-    2 (That\'s all very difficult to hear\. At this point\, I just hope I can enjoy that 10 with family\.) (0 :out)
+    2 (That\'s very difficult to hear\. I thought I would have more time than that\.
+       At this point\, I just hope I can enjoy that 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
 
   1 (The prognosis is that I cannot be cured \.)
     2 *ask-about-prognosis* (100 :schema)

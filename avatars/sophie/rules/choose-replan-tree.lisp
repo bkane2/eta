@@ -13,4 +13,7 @@
     2 *ask-if-stronger-medication-will-help-sleep* (100 :schema)
   1 (Do I need chemotherapy ?)
     2 *ask-if-need-chemotherapy* (100 :schema)
+  1 (What is my prognosis ?)
+    2 *ask-about-prognosis* (100 :schema)
+    2 *ask-about-prognosis* (100 :schema)
 ))
