@@ -187,9 +187,9 @@
 
     ; in case no ULF is able to be extracted
     1 (0)
-       2 (You didn\'t catch what I said\. Could I rephrase ?) (6 :out)
-       2 (Sorry\, you didn\'t hear what I said\.) (6 :out)
-       2 (You didn\'t quite understand\.) (0 :out)
+       2 (I didn\'t catch what you said\. Could you rephrase ?) (6 :out)
+       2 (Sorry\, I didn\'t hear what you said\.) (6 :out)
+       2 (I didn\'t quite understand\.) (0 :out)
 
 )) ; END *spatial-question-ulf-tree*
 
@@ -818,7 +818,7 @@
     ; Should I not have moved the ... ?
     ; Should not I have moved the ... ?
 
-    1 (Sorry\, you are not handling modal questions yet\.) (0 :out)
+    1 (Sorry\, I am not handling modal questions yet\.) (0 :out)
 
 )) ; END *modal-question-ulf-tree*
 
@@ -1590,18 +1590,18 @@
        2 (((*yn-question-ulf-tree* 1 2 3 4 5 2 6 7 8)) (poss-ques 1)) (0 :ulf-recur)
     ; More can/should be added
     1 (0 det 2 block 0)
-       2 (I am asking about some 3 4 \, but you didn\'t catch what it was\.) (6 :out)
-       2 (You heard me mention some 3 4 \, but didn\'t hear the rest\.) (6 :out)
-       2 (You couldn\'t hear what I said apart from mentioning some 3 4 \.) (0 :out)
+       2 (You are asking about some 3 4 \, but I didn\'t catch what it was\.) (6 :out)
+       2 (I heard you mention some 3 4 \, but didn\'t hear the rest\.) (6 :out)
+       2 (I couldn\'t hear what you said apart from mentioning some 3 4 \.) (0 :out)
     1 (0 det table 0)
-       2 (I referred to the table\, but you didn\'t catch what I said\.) (0 :out)
+       2 (You referred to the table\, but I didn\'t catch what you said\.) (0 :out)
     1 (0 index-det block 0)
-       2 (You\'re not sure what block I\'m referring to\.) (0 :out)
+       2 (I\'m not sure what block you\'re referring to\.) (0 :out)
     1 (0 pron 0)
-       2 (You\'re not sure what your question is referring to\.) (4 :out)
-       2 (You didn\'t catch what I am referring to\.) (0 :out)
+       2 (I\'m not sure what your question is referring to\.) (4 :out)
+       2 (I didn\'t catch what you are referring to\.) (0 :out)
     1 (0 corp 0)
-       2 (You heard me mention the 2 block\, but you didn\'t catch the rest\.) (0 :out)
+       2 (I heard you mention the 2 block\, but I didn\'t catch the rest\.) (0 :out)
     ; variants of begging-off responses should be added, with non-zero latency,
     ; so that the user will see a variety of such responses
  ))  

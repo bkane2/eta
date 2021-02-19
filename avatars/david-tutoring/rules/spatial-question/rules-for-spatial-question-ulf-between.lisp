@@ -184,11 +184,11 @@
     1 (2 be 1 det 2 noun 2 between 7 noun 4); so\, is n\'t the NVidia block between the two of them ?
        2 (((*yn-between-question-ulf-tree* 2 4 5 6 8 9 10 ?)) (poss-ques 1)) (0 :ulf-recur)
     1 (0 det 1 block 0 between 0)
-       2 (Sorry\, I am asking about some 3 4 being between objects \, but you didn\'t 
-          really catch what it was\.) (0 :out)
+       2 (Sorry\, you are asking about some 3 4 being between objects \, but I didn\'t 
+          really catch what it was \.) (0 :out)
     1 (0 between 0 det table 0)
-       2 (Hmm\, you think I asked about a between-relation on the table\, but you 
-          didn\'t really catch what I said\.) (0 :out)
+       2 (I think you asked about a between relation on the table\, but I
+          didn\'t really catch what you said \.) (0 :out)
 
     ; variants of begging-off responses should be added, with non-zero latency,
     ; so that the user will see a variety of such responses

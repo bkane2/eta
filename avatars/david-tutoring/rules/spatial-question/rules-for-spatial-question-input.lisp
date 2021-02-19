@@ -45,20 +45,20 @@
     ;; For now, preempt any references/pronouns
     ;; ----------------------------------------
     ;; 1 (0 spatial-word-potential 0 ANA-PRON 0)
-    ;;   2 ((Can you answer my question referring to a past question ?)) (0 :gist)
+    ;;   2 ((Can I answer your question referring to a past question ?)) (0 :gist)
     ;; 1 (0 spatial-word-potential 0 that block 0)
-    ;;   2 ((Can you answer my question referring to a past question ?)) (0 :gist)
+    ;;   2 ((Can I answer your question referring to a past question ?)) (0 :gist)
     ;; 1 (0 spatial-word-potential 0 that one 0)
-    ;;   2 ((Can you answer my question referring to a past question ?)) (0 :gist)
+    ;;   2 ((Can I answer your question referring to a past question ?)) (0 :gist)
     ;; ----------------------
     ;; Verification questions
     ;; ----------------------
     1 (2 be 1 index-det 1 correct 2)
-      2 ((Did I make the correct move ?)) (0 :gist)
+      2 ((Did you make the correct move ?)) (0 :gist)
     1 (2 do 1 pron 1 correct 2)
-      2 ((Did I make the correct move ?)) (0 :gist)
+      2 ((Did you make the correct move ?)) (0 :gist)
     1 (2 like 1 index-det 2)
-      2 ((Did I make the correct move ?)) (0 :gist)
+      2 ((Did you make the correct move ?)) (0 :gist)
     ;; ----------------------------------------
     ;; If spatial question, start preprocessing
     ;; ----------------------------------------
@@ -73,15 +73,15 @@
     ;; "Small talk" patterns
     ;; ---------------------
     1 (0 wh_ 1 your name 0)
-      2 ((What is your name ?)) (0 :gist)
+      2 ((What is my name ?)) (0 :gist)
     1 (0 aux you 1 answer 3 question 0)
-      2 ((Can you answer my question ?)) (0 :gist)
+      2 ((Can I answer your question ?)) (0 :gist)
     1 (0 aux you 0)
-      2 ((Can you do something ?)) (0 :gist)
+      2 ((Can I do something ?)) (0 :gist)
     1 (0 wh_ 1 kinds 2 question 1 aux you 1 answer 0)
-      2 ((What questions can you answer ?)) (0 :gist)
+      2 ((What questions can I answer ?)) (0 :gist)
     1 (0)
-      2 ((NIL Gist \: Eta could not understand my question \.)) (0 :gist)
+      2 ((NIL Gist \: Eta could not understand your question \.)) (0 :gist)
   ))
 
   ; The first stage of preprocessing. Here we combine any words that have multiple tokens,
