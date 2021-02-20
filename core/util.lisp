@@ -1232,7 +1232,7 @@
 ; subject and object (e.g. ^me and ^you) partially characterizing the episode.
 ; Store the wff in context as well.
 ;
-  (when (null wff)) (return-from store-semantic-interpretation-characterizing-episode nil)
+  (when (null wff) (return-from store-semantic-interpretation-characterizing-episode nil))
   (let ((wff `(,subj articulate2-to.v ,obj (that ,wff))))
     (store-in-memory `(,wff * ,ep-name))
     (store-in-context wff)

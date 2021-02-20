@@ -718,8 +718,8 @@
             (setq user-gist-clauses (get-gist-clauses-characterizing-episode user-ep-name))
             (setq user-ulf (resolve-references (get-semantic-interpretations-characterizing-episode user-ep-name)))))
 
-        (format t "~% user gist clause is ~a ~%" user-gist-clauses) ; DEBUGGING
-        (format t "~% user ulf is ~a ~%" user-ulf) ; DEBUGGING
+        (format t "~% user gist clause (for ~a) is ~a" user-ep-name user-gist-clauses) ; DEBUGGING
+        (format t "~% user ulf (for ~a) is ~a ~%" user-ep-name user-ulf) ; DEBUGGING
         (setq new-subplan (plan-reaction-to user-gist-clauses user-ulf ep-name)))
 
       ; NOTE: Apart from saying and reacting, assume that Eta actions
