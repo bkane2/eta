@@ -77,9 +77,9 @@
     ; If next turn has some move action, return a relation to that move, otherwise just return the original time(s).
     (cond
       (moved-before-block
-        (list `(before.ps (I.pro ((past move.v) ,moved-before-block)))))
+        (list `(before.ps (you.pro ((past move.v) ,moved-before-block)))))
       (moved-after-block
-        (list `(after.ps (I.pro ((past move.v) ,moved-after-block)))))
+        (list `(after.ps (you.pro ((past move.v) ,moved-after-block)))))
       (t times)))
 ) ; END find-relation-to-next-time
 

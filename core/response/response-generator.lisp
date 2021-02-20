@@ -97,9 +97,9 @@
 
     ; Convert output ULF to an english string and output (or output an error if the output ULF is nil)
     (if output-ulf
-      (append (if poss-ans '(You are not sure that you understood the question correctly \, but))
+      (append (if poss-ans '(I\'m not sure that I understood the question correctly \, but))
         (ulf-to-english (normalize-output output-ulf)))
-      '(Sorry \, you was unable to find an object that satisfies given constraints \, please rephrase in a simpler way \.)))
+      '(Sorry \, I was unable to find an object that satisfies given constraints \, please rephrase in a simpler way \.)))
 ) ; END generate-response
 
 
@@ -184,7 +184,7 @@
         (form-ans-time ans-set))
       ; Other
       (t
-        '(Sorry \, you was unable to find an object that satisfies given constraints \, please rephrase in a simpler way \.))))
+        '(Sorry \, I was unable to find an object that satisfies given constraints \, please rephrase in a simpler way \.))))
 
     (list ans uncertain-flag))
 ) ; END form-ans
