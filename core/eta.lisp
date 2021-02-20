@@ -419,7 +419,7 @@
     (dolist (system *registered-systems*)
       (setq inputs (read-from-system system))
 
-      ;; (format t "received inputs: ~a~%" inputs) ; DEBUGGING
+      ;; (when inputs (format t "received inputs: ~a~%" inputs)) ; DEBUGGING
       
       (mapcar (lambda (input) (cond
         ; If observed that fact is no longer true, remove from context.
@@ -803,21 +803,20 @@
       ;`````````````````````````````````````
       ; Eta: Recalling answer from history
       ;`````````````````````````````````````
-      ; TODO: this should use context directly (looking for block location coordinates), rather than
-      ;       being provided with perceptions from a previous schema step
-      ;
-      ((setq bindings (bindings-from-ttt-match '(^me recall-answer.v _! _!1 _!2) wff))
-        (setq object-locations (eval-functions (get-single-binding bindings)))
-        ;; (format t "bindings: ~a~% object locations: ~a~%" (get-single-binding bindings) object-locations) ; DEBUGGING
-        (setq bindings (cdr bindings))
+      ((setq bindings (bindings-from-ttt-match '(^me recall-answer.v _!1 _!2) wff))
         (setq user-ulf (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
 
+        ; Get object locations from context
+        (setq object-locations (get-from-context '(?x at-loc.p ?y)))
+        ;; (format t "found object locations from context: ~a~%" object-locations) ; DEBUGGING
+        
         ; Output ULF, along with indicator that the ULF is not intended as a query.
         (write-ulf `(quote ,(list 'non-query (eval user-ulf))))
 
         ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
+        ; TODO: first might need to remove stored block coordinates from context.
         (when *read-log*
           (mapcar #'store-new-contextual-fact
             (update-block-coordinates (remove-if-not #'verb-phrase? (second (nth *log-ptr* *log-contents*))))))
