@@ -161,6 +161,8 @@
 
   ; Used for keeping track of output number in output.txt.
   (defparameter *output-count* 0)
+  ; Used for detecting whether to print "dummy" line to output.txt to prompt system to listen.
+  (defparameter *output-listen-prompt* 0)
 
   ; Timer parameters. Each end up being set to current system time, meaning
   ; that time elapsed can be calculated by comparing the timer values to the
@@ -358,6 +360,9 @@
       ; If the subject of the expected plan step is the user, inquire about the truth of the episode.
       ((equal subj '^you)
 
+        ; Output prompt for external system to listen for user audio (but only once)
+        (setq *output-listen-prompt* (if (= *output-listen-prompt* 0) 1 2))
+
         ; Check certainty of expected plan step
         (setq certainty (plan-step-certainty curr-step))
 
@@ -373,6 +378,9 @@
 
       ; Otherwise, process the plan step, resetting the timer for expected step failure.
       (t
+        ; Disable prompt for external system to listen for user audio
+        (setq *output-listen-prompt* 0)
+
         (process-next-episode subplan)
         (setq plan-advanced? t)))
 

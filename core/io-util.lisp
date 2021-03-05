@@ -36,18 +36,29 @@
 (defun read-audio ()
 ;`````````````````````
 ; Reads input from |Audio| subsystem (i.e., (^you say-to.v ^me '(...)), or
-; possibly (^you say-to.v ^me "...")) propositions from io/Audio.lisp.
+; possibly (^you say-to.v ^me "...")) propositions from io/in/Audio.lisp.
 ; NOTE: previously in eta.lisp, it would call detach-final-punctuation
 ; after reading input from hear-words or read-words. However, I suspect
 ; we want punctuation since Google ASR is capable of it. The pattern-
 ; matching files therefore need to take punctuation into account.
 ; 
+  ; Write empty star line to output to prompt avatar to listen
+  ; TODO: there has to be a better way of doing this...
+  (when (= *output-listen-prompt* 1)
+    (setq *output-count* (1+ *output-count*))
+    (with-open-file (outfile "./io/output.txt" :direction :output
+                                               :if-exists :append
+                                               :if-does-not-exist :create)
+      (format outfile "~%*~D: dummy" *output-count*))
+    (setq *output-listen-prompt* 2))
+
+  ; Read from Audio input
   (setq *input* nil)
-  (load "./io/Audio.lisp")
+  (load "./io/in/Audio.lisp")
   (if *input*
-    (with-open-file (outfile "./io/Audio.lisp" :direction :output
-                                               :if-exists :supersede
-                                               :if-does-not-exist :create)))
+    (with-open-file (outfile "./io/in/Audio.lisp" :direction :output
+                                                  :if-exists :supersede
+                                                  :if-does-not-exist :create)))
   (mapcar (lambda (wff)
       ; If say-to.v argument given in string form, parse it into list form
       (if (and (equal (butlast wff) '(^you say-to.v ^me)) (stringp (car (last wff))))
@@ -224,6 +235,7 @@
 
 (defun hear-words (&key (delay nil)) 
 ;`````````````````````````````````````
+; NOTE: deprecated function; to remove.
 ; This waits until it can load a character sequence from "./io/input.lisp",
 ; which will set the value of *next-input*, and then processes *input*
 ; in the same way as the result of (read-line) is processed in direct
