@@ -1334,49 +1334,57 @@
 
 
 
-(defun store-contextual-fact-characterizing-episode (wff ep-name)
-;```````````````````````````````````````````````````````````````````
+(defun store-contextual-fact-characterizing-episode (wff ep-name &key partial)
+;`````````````````````````````````````````````````````````````````````````````````
 ; Stores a contextual fact characterizing episode ep-name. e.g., if
 ; wff = (^you reply-to.v E1) and ep-name = E2, store <wff> in context
 ; and (<wff> ** E2) in memory.
 ;
   (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)))
-    (store-in-memory `(,wff1 ** ,ep-name))
+    (if partial
+      (store-in-memory `(,wff1 * ,ep-name))
+      (store-in-memory `(,wff1 ** ,ep-name)))
     (store-in-context wff1)
     ep-name
 )) ; END store-contextual-fact-characterizing-episode
 
 
 
-(defun store-new-contextual-fact (wff)
-;```````````````````````````````````````
-; Stores a new contextual fact, i.e., something found to be "true now". An episode
-; name is instantiated for the fact, e.g., E1. We store the following facts in memory:
+(defun store-new-contextual-facts (wffs)
+;`````````````````````````````````````````
+; An episode name, say, E1 is generated for the list of fact(s) given as input.
+; For each wff, we store the following fact in memory:
 ;
-; 1. (wff ** E1)
+; 1. (wff ** E1)    (if a single wff)
+;    (wff * E1)     (if multiple wffs)
+;
+; As well as storing each wff in a special context hash table,
+; containing all wffs which are true at NOW*.
+;
+; Furthermore, we store the following facts in memory:
+;
 ; 2. (NOW* during E1)
 ; 3. (<timestamp> during E1)
-; 
+;
 ; where <timestamp> is a record structure of the current system time.
 ; Note that we don't necessarily know that <timestamp> is the beginning of E1, but
 ; rather just that it marks a point where we know that wff is true.
 ;
-; In addition, we store wff in a special context hash table, containing
-; all wffs which are true at NOW*.
+; Returns the episode name that was created.
 ;
-; Returns the ep-name that was created.
-; 
-  (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)) ep-name timestamp)
+  (let (ep-name timestamp)
     (setq ep-name (episode-name))
     (setq timestamp (get-time))
-    ; Store episodic facts in memory
-    (store-in-memory `(,wff1 ** ,ep-name))
+    ; Store temporal propositions related to episode in memory
     (store-in-memory `(NOW* during ,ep-name))
     (store-in-memory `(,timestamp during ,ep-name))
-    ; Store wff in context
-    (store-in-context wff1)
+    ; Store each fact in memory and context
+    (cond
+      ((= 1 (length wffs))
+        (store-contextual-fact-characterizing-episode (car wffs) ep-name))
+      (t (mapcar (lambda (wff) (store-contextual-fact-characterizing-episode wff ep-name :partial t)) wffs)))
     ep-name
-)) ; END store-new-contextual-fact
+)) ; END store-new-contextual-facts
 
 
 
@@ -1399,7 +1407,7 @@
     (dolist (fact facts)
       (setq timestamp (get-time))
       ; Get all formulas with fact and ** operator, and extract ep-names
-      (setq ep-wffs (get-from-memory `(,fact ** ?e)))
+      (setq ep-wffs (append (get-from-memory `(,fact ** ?e)) (get-from-memory `(,fact * ?e))))
       (setq ep-names (apply #'append (mapcar #'last ep-wffs)))
       ; For each ep-name, remove NOW* fact from memory and add ending timestamp
       (dolist (ep-name ep-names)

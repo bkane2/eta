@@ -428,24 +428,24 @@
       (setq inputs (read-from-system system))
 
       ;; (when inputs (format t "received inputs: ~a~%" inputs)) ; DEBUGGING
-      
-      (mapcar (lambda (input) (cond
-        ; If observed that fact is no longer true, remove from context.
-        ; TODO: some facts imply the negation of other ones,
-        ; e.g., (^you smiling.a) => (not (^you frowning.a)). Presumably
-        ; this would be inferred, but I'm not sure how this inferred
-        ; fact can be used to remove a previous (^you smiling.a) fact
-        ; from context, unless we look for & remove contradictions from
-        ; context each time this task executes. I suppose another option
-        ; to inferring the negation would be using a lexical resource,
-        ; such as WordNet, which has mutual exclusion relations.
-        ((equal 'not (car input))
-          (remove-old-contextual-fact (second input)))
-        ; Otherwise, add to context and also push into a queue of new
-        ; perceptions for further interpretation.
-          (t (let ((ep-name-new (store-new-contextual-fact input)))
-            (push (list ep-name-new input) (ds-perception-queue *ds*))))))
-      inputs))
+
+      ; Remove any facts observed to no longer be true, i.e. of the form (not (...)).
+      ; Then remove these facts from the list.
+      ; TODO: some facts imply the negation of other ones,
+      ; e.g., (^you smiling.a) => (not (^you frowning.a)). Presumably
+      ; this would be inferred, but I'm not sure how this inferred
+      ; fact can be used to remove a previous (^you smiling.a) fact
+      ; from context, unless we look for & remove contradictions from
+      ; context each time this task executes. I suppose another option
+      ; to inferring the negation would be using a lexical resource,
+      ; such as WordNet, which has mutual exclusion relations.
+      (mapcar (lambda (input)
+        (when (equal 'not (car input)) (remove-old-contextual-fact (second input)))) inputs)
+      (remove-if (lambda (input) (equal 'not (car input))) inputs)
+
+      ; Add facts to context, and push them into a queue of new perceptions for further interpretation.
+      (when inputs (setq ep-name-new (store-new-contextual-facts inputs)))
+      (mapcar (lambda (input) (push (list ep-name-new input) (ds-perception-queue *ds*))) inputs))
 )) ; END perceive-world
 
 
@@ -826,8 +826,8 @@
         ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
         ; TODO: first might need to remove stored block coordinates from context.
         (when *read-log*
-          (mapcar #'store-new-contextual-fact
-            (update-block-coordinates (remove-if-not #'verb-phrase? (second (nth *log-ptr* *log-contents*))))))
+          (store-new-contextual-facts (update-block-coordinates
+            (remove-if-not #'verb-phrase? (second (nth *log-ptr* *log-contents*))))))
 
         ; Determine answers by recalling from history
         (if *dependencies*
@@ -849,8 +849,8 @@
 
         ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
         (when *read-log*
-          (mapcar #'store-new-contextual-fact
-            (update-block-coordinates (remove-if-not #'verb-phrase? (second (nth *log-ptr* *log-contents*))))))
+          (store-new-contextual-facts (update-block-coordinates
+            (remove-if-not #'verb-phrase? (second (nth *log-ptr* *log-contents*))))))
 
         ; Send query to external source
         (if system (write-subsystem (list user-ulf) system)))
@@ -933,7 +933,7 @@
       ((setq bindings (bindings-from-ttt-match '(^me commit-to-STM.v (that _!)) wff))
         (setq expr (get-single-binding bindings))
         ; Store each formula in context
-        (store-new-contextual-fact expr))
+        (store-new-contextual-facts (list expr)))
 
       ;````````````````````````````
       ; Eta: Trying
