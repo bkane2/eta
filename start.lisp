@@ -14,6 +14,7 @@
   (ensure-directories-exist "./io/")
   (ensure-directories-exist "./io/in/")
   (ensure-directories-exist "./io/out/")
+  (ensure-directories-exist "./io/user-log/")
   (when *read-log-mode*
     (ensure-directories-exist "./logs/")
     (ensure-directories-exist "./logs/logs/")
@@ -34,6 +35,14 @@
     (with-open-file (outfile fname-out :direction :output :if-exists
                                       :supersede :if-does-not-exist :create)))))
   *subsystems*)
+
+  ; Delete the contents of user-log files
+  (with-open-file (outfile "./io/user-log/text.txt" :direction :output :if-exists
+                                                    :supersede :if-does-not-exist :create))
+  (with-open-file (outfile "./io/user-log/gist.txt" :direction :output :if-exists
+                                                    :supersede :if-does-not-exist :create))
+  (with-open-file (outfile "./io/user-log/ulf.txt" :direction :output :if-exists
+                                                   :supersede :if-does-not-exist :create))
 
   ; Delete the content of the Audio.lisp file after reading
   (with-open-file (outfile "./io/Audio.lisp" :direction :output :if-exists

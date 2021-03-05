@@ -837,14 +837,15 @@
         (setq system (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq user-ulf (get-single-binding bindings))
+        (setq user-ulf (eval user-ulf))
 
         ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
         (when *read-log*
           (mapcar #'store-new-contextual-fact
             (update-block-coordinates (remove-if-not #'verb-phrase? (second (nth *log-ptr* *log-contents*))))))
 
-        ; Write ULF to Blocks World System
-        (if (member '|Blocks-World-System| *registered-systems*) (write-ulf user-ulf)))
+        ; Send query to external source
+        (if system (write-subsystem (list user-ulf) system)))
 
       ;``````````````````````````````````````````
       ; Eta: Recieve answer from external source
@@ -1087,6 +1088,8 @@
           (t
             (format t "~%*** SAY-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST OR VARIABLE" expr)))
 
+        (user-log 'text words)
+
         ; Use previous speech act as context for interpretation
         (setq prev-step (find-prev-step-of-type plan '^me '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
         (when prev-step
@@ -1111,6 +1114,8 @@
         (setq user-gist-clauses
           (form-gist-clauses-from-input words (car (last prev-step-gist-clauses))))
 
+        (user-log 'gist user-gist-clauses)
+
         ; Remove contradicting user gist-clauses (if any)
         (setq user-gist-clauses (remove-contradiction user-gist-clauses))
         (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
@@ -1122,6 +1127,8 @@
         ; Obtain semantic interpretation(s) of the user gist-clauses
         (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
         (format t "~%Obtained ulfs ~a for episode ~a" user-ulfs ep-name) ; DEBUGGING
+
+        (user-log 'ulf (resolve-references user-ulfs))
 
         ; Store the semantic interpretations in memory
         (dolist (user-ulf user-ulfs)

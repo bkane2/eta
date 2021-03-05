@@ -77,13 +77,30 @@
 (defun write-subsystem (output system)
 ;`````````````````````````````````````````
 ; Writes output/"query" ULF propositions to io/out/<system>.lisp.
+; output should be a list of propositions.
 ;
   (let ((fname (concatenate 'string "./io/out/" (string system) ".lisp")))
     (with-open-file (outfile fname :direction :output
                                    :if-exists :supersede
                                    :if-does-not-exist :create)
-      (format outfile "(setq *output* ~a)" output))
+      (format outfile "(setq *output* '~a)" output))
 )) ; END write-subsystem
+
+
+
+(defun user-log (logfile content)
+;`````````````````````````````````````
+; Logs some user data in the corresponding log file (i.e., text, gist, or ulf).
+; Temporarily disable pretty-printing so each line in the log file corresponds to a single turn.
+;
+  (let ((fname (concatenate 'string "./io/user-log/" (string-downcase (string logfile)) ".txt")))
+    (setq *print-pretty* nil)
+    (with-open-file (outfile fname :direction :output
+                                   :if-exists :append
+                                   :if-does-not-exist :create)
+      (format outfile "~a~%" content))
+    (setq *print-pretty* t)
+)) ; END user-log
 
 
 
