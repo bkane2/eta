@@ -34,7 +34,7 @@
     (if fname-out
     (with-open-file (outfile fname-out :direction :output :if-exists
                                       :supersede :if-does-not-exist :create)))))
-  *subsystems*)
+  (append *subsystems-perception* *subsystems-specialist*))
 
   ; Delete the contents of user-log files
   (with-open-file (outfile "./io/user-log/text.txt" :direction :output :if-exists
@@ -131,7 +131,7 @@
   ; Run Eta (safe mode)
   ;`````````````````````````
   (*safe-mode*
-    (handler-case (eta nil *subsystems* *dependencies*)
+    (handler-case (eta nil *subsystems-perception* *subsystems-specialist* *dependencies*)
       (error (c)
         (error-message "Execution of Eta failed due to an internal error.")
         (values 0 c))))
@@ -151,11 +151,11 @@
         (format t "==:: READING LOG ~a ::==~%" log)
         (load "load-eta.lisp")
         (load-avatar-files *avatar*)
-        (eta log *subsystems* *dependencies*)) logs)))
+        (eta log *subsystems-perception* *subsystems-specialist* *dependencies*)) logs)))
 
   ; Run Eta
   ;`````````````````````````
-  (t (eta nil *subsystems* *dependencies*)))
+  (t (eta nil *subsystems-perception* *subsystems-specialist* *dependencies*)))
 
 
 ; Write user gist clauses to file

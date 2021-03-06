@@ -192,9 +192,12 @@
   (defparameter *log-answer* nil)
   (defparameter *log-ptr* 0)
 
-  ; A list of any registered subsystems that Eta needs to listen to.
+  ; A list of any registered perception subsystems that Eta needs to listen to.
   ; Currently only supports '|Blocks-World-System|, '|Terminal|, and '|Audio|.
-  (defparameter *registered-systems* nil)
+  (defparameter *registered-systems-perception* nil)
+  ; A list of any registered specialist subsystems that Eta can interact with.
+  ; Currently only supports '|Spatial-Reasoning-System|.
+  (defparameter *registered-systems-specialist* nil)
 
   ; If terminal mode and perceptive, keep list of block coordinates mimicking actual BW system.
   (defparameter *block-coordinates* '(
@@ -253,8 +256,8 @@
 
 
 
-(defun eta (read-log subsystems &optional (dependencies t))
-;````````````````````````````````````````````````````````````
+(defun eta (read-log subsystems-perception subsystems-specialist &optional (dependencies t))
+;```````````````````````````````````````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
 ; (now largely commented out) and controls the loop for producing,
 ; managing, and executing the dialog plan (mostly, reading & feature-
@@ -265,7 +268,8 @@
 
   (init)
   (setq *read-log* read-log)
-  (setq *registered-systems* subsystems)
+  (setq *registered-systems-perception* subsystems-perception)
+  (setq *registered-systems-specialist* subsystems-specialist)
   (setq *count* 0) ; Number of outputs so far
 
   (when *read-log*
@@ -421,10 +425,10 @@
     (flush-context)
     (setq *flush-context-timer* (get-universal-time)))
 
-  ; Cycle through all registered input sources
+  ; Cycle through all registered perception sources;
   ; for each observation, instantiate an episode and
   ; any relevant temporal relations.
-    (dolist (system *registered-systems*)
+    (dolist (system *registered-systems-perception*)
       (setq inputs (read-from-system system))
 
       ;; (when inputs (format t "received inputs: ~a~%" inputs)) ; DEBUGGING
@@ -647,7 +651,7 @@
           ((eq (car expr) 'quote)
             (setq expr (flatten (second expr)))
             (setq *count* (1+ *count*))
-            (if (member '|Audio| *registered-systems*)
+            (if (member '|Audio| *registered-systems-perception*)
               (say-words expr)
               (print-words expr)))
           ; Nonprimitive say-to.v act (e.g. (^me say-to.v ^you (that (?e be.v finished.a)))):
@@ -865,7 +869,7 @@
         ; Leaving this open in case we want different procedures for different systems
         (cond
           (*read-log* (setq ans '()))
-          ((not (member '|Blocks-World-System| *registered-systems*)) (setq ans '()))
+          ((not (member '|Spatial-Reasoning-System| *registered-systems-specialist*)) (setq ans '()))
           (t (setq ans `(quote ,(get-answer)))))
         (if (not (answer-list? (eval ans)))
           (setq ans '()))
@@ -882,8 +886,8 @@
         (setq expr (get-single-binding bindings))
         ; Generate response based on list of relations
         (cond
-          ((not (member '|Blocks-World-System| *registered-systems*))
-            (setq ans '(Could not form final answer \: |Blocks-World-System| not registered \.)))
+          ((not (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
+            (setq ans '(Could not form final answer \: |Spatial-Reasoning-System| not registered \.)))
           (t (setq ans (generate-response (eval user-ulf) (eval expr)))))
         (format t "answer to output: ~a~%" ans) ; DEBUGGING
         ; If in read-log mode, append answer to list of new log answers
@@ -900,8 +904,8 @@
       ((setq bindings (bindings-from-ttt-match '(^me propose1-to.v ^you _!) wff))
         (setq expr (get-single-binding bindings))
         (cond
-          ((null (member '|Blocks-World-System| *registered-systems*))
-            (setq proposal-gist '(Could not create proposal \: '|Blocks-World-System| not registered \.)))
+          ((null (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
+            (setq proposal-gist '(Could not create proposal \: '|Spatial-Reasoning-System| not registered \.)))
           (t (setq proposal-gist (generate-proposal expr))))
         ;; (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
         (store-gist-clause-characterizing-episode proposal-gist ep-name '^me '^you)
@@ -915,8 +919,8 @@
       ((setq bindings (bindings-from-ttt-match '(^me issue-correction-to.v ^you _!) wff))
         (setq expr (get-single-binding bindings))
         (cond
-          ((null (member '|Blocks-World-System| *registered-systems*))
-            (setq proposal-gist '(Could not create proposal \: |Blocks-World-System| not registered \.)))
+          ((null (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
+            (setq proposal-gist '(Could not create proposal \: |Spatial-Reasoning-System| not registered \.)))
           (t (setq proposal-gist (generate-proposal expr))))
         ;; (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
         (store-gist-clause-characterizing-episode proposal-gist ep-name '^me '^you)
@@ -1176,7 +1180,7 @@
       ; ((pair ^you <ep-name>) successful.a) etc.
       ((setq bindings (bindings-from-ttt-match '(^you try1.v _!) wff))
         ;; (setq expr (get-single-binding bindings))
-        ;; (setq user-try-ka-success (if (member '|Blocks-World-System| *registered-systems*)
+        ;; (setq user-try-ka-success (if (member '|Spatial-Reasoning-System| *registered-systems-specialist*)
         ;;                                 (get-user-try-ka-success)
         ;;                                 (get-user-try-ka-success-offline)))
         ;; (format t "~% user-try-ka-success is equal to ~a ~%" user-try-ka-success) ; DEBUGGING
@@ -1617,7 +1621,7 @@
 ; in the find4.v action), which it shouldn't be.
 ;
   (let (step)
-    (setq step (if (member '|Blocks-World-System| *registered-systems*)
+    (setq step (if (member '|Spatial-Reasoning-System| *registered-systems-specialist*)
                     (get-planner-input)
                     (get-planner-input-offline)))
     (remove-from-context `(?x step1-toward.p ,goal-rep))

@@ -22,7 +22,7 @@
   ; an action name as an argument when a schema is selected during pattern transduction
   ; TODO: Add this functionality and then add ?var back to header
     :episodes (
-              ?e1 (^me seek-answer-from.v |Spatial-QA-Server| ?ulf)
+              ?e1 (^me seek-answer-from.v |Spatial-Reasoning-System| ?ulf)
                ; this would send the ulf (obtained from the properties
                ; of the actual name replacing ?var) to an appropriate
                ; file, monitored by the Spatial-QA-Server; the server
@@ -30,7 +30,7 @@
                ; Currently variable given should be '?ans+alternates if expect
                ; to recieve list of answer and then alternates, or should be given
                ; as '?ans if expect to recieve only answer.
-              ?e2 (^me receive-answer-from.v |Spatial-QA-Server| ?ans+alternates)
+              ?e2 (^me receive-answer-from.v |Spatial-Reasoning-System| ?ans+alternates)
                ; the value of ?ans+alternates would be read off from a file
                ; to which Spatial-QA-Server sends the answer (with weighted
                ; alternates); once ; the answer is read off, the file would
