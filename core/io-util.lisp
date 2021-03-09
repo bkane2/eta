@@ -69,13 +69,20 @@
 
 
 
-(defun read-subsystem (system)
-;```````````````````````````````````
+(defun read-subsystem (system &key block)
+;``````````````````````````````````````````
 ; Reads input ULF propositions from io/in/<system>.lisp.
+; If :block t is given, loop until a non-nil value is set for *input*.
 ;
   (let ((fname (concatenate 'string "./io/in/" (string system) ".lisp")))
   (setq *input* nil)
-  (load fname)
+  (cond
+    ; If :block t is given, loop until non-nil input
+    (block
+      (loop while (and block (null *input*)) do
+        (load fname)))
+    ; Otherwise, load file once
+    (t (load fname)))
   (if *input*
     (with-open-file (outfile fname :direction :output
                                    :if-exists :supersede
@@ -428,40 +435,6 @@
 
 
 
-(defun get-answer () 
-;``````````````````````
-; This waits until it can load a list of relations from "./io/answer.lisp".
-;
-  (setq *next-answer* nil)
-  (loop while (not *next-answer*) do
-    (sleep .5)
-    (progn
-      (load "./io/answer.lisp")
-		  (if *next-answer*
-        (with-open-file (outfile "./io/answer.lisp" :direction :output 
-                                                    :if-exists :supersede
-                                                    :if-does-not-exist :create)))))
-          
-  (if (equal *next-answer* 'None) nil
-    *next-answer*)
-) ; END get-answer
-
-
-
-(defun get-answer-offline () 
-;`````````````````````````````
-; This is the answer reader when ETA is used with argument live =
-; nil (hence also *live* = nil)
-;
-  (finish-output)
-  (format t "enter answer relations below:~%")
-  (finish-output)
-  (let ((ans (read-from-string (read-line))))
-    (if (equal ans 'None) nil ans))
-) ; END get-answer-offline
-
-
-
 (defun get-user-try-ka-success () 
 ;``````````````````````````````````
 ; This waits until it can load a list of relations from "./io/user-try-ka-success.lisp".
@@ -493,31 +466,6 @@
   (let ((user-try-ka-success (read-from-string (read-line))))
     (if (equal user-try-ka-success 'Failure) nil user-try-ka-success))
 ) ; END get-user-try-ka-success-offline
-
-
-
-(defun get-answer-string () 
-;````````````````````````````
-; This waits until it can load a character sequence from "./io/answer.lisp",
-; which will set the value of *next-answer*, and then processes it.
-;
-  (setq *next-answer* nil)
-  (loop while (not *next-answer*) do
-    (sleep .5)
-    (progn
-      (load "./io/answer.lisp")
-		  (if *next-answer*
-        (with-open-file (outfile "./io/answer.lisp" :direction :output 
-                                                   :if-exists :supersede
-                                                   :if-does-not-exist :create)))))
-          
-  ;; (parse-chars (if (stringp *next-answer*) (coerce *next-answer* 'list)
-  ;;                                            (coerce (car *next-answer*) 'list)))
-  (cond
-    ((stringp *next-answer*) (list (parse-chars (coerce *next-answer* 'list))))
-    ((listp *next-answer*) (cons (parse-chars (coerce (car *next-answer*) 'list))
-                            (cdr *next-answer*))))
-) ; END get-answer-string
 
 
 

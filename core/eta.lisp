@@ -866,13 +866,10 @@
         (setq system (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
-        ; Leaving this open in case we want different procedures for different systems
-        (cond
-          (*read-log* (setq ans '()))
-          ((not (member '|Spatial-Reasoning-System| *registered-systems-specialist*)) (setq ans '()))
-          (t (setq ans `(quote ,(get-answer)))))
-        (if (not (answer-list? (eval ans)))
-          (setq ans '()))
+        ; Get answer from subsystem
+        (setq ans (read-subsystem system :block t))
+        (if (or *read-log* (not (answer-list? ans))) (setq ans nil))
+        (if ans (setq ans `(quote ,ans)))
         (format t "received answer: ~a~% (for variable ~a)~%" ans expr) ; DEBUGGING
         ; Bind ans to variable given in plan (e.g. ?ans-relations)
         (setq var-bindings (cons (list expr ans) var-bindings)))

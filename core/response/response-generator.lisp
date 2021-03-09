@@ -21,10 +21,14 @@
 
 (defun generate-response (query-ulf relations)
 ; `````````````````````````````````````````````
-; Generates a natural language response, given a query ULF and a list of satisfying relations+certainties.
+; Generates a natural language response, given a query ULF and a list of satisfying relations with
+; certainties (of form ((that ?rel) certain-to-degree ?cert)).
 ; In the case where relations is nil, we rely on presupposition handling to generate the appropriate response.
 ;
   (let ((query-type (get-query-type query-ulf)) ans-tuple ans-ulf output-ulf uncertain-flag poss-ans)
+
+    ; Simplify format of relations to (?rel ?cert) pairs
+    (setq relations (mapcar (lambda (relation) (list (second (first relation)) (third relation))) relations))
 
     ; Check if poss-ques, if so set flag to true (to add a hedge later on) and set ulf to remainder
     (when (poss-ques? query-ulf)

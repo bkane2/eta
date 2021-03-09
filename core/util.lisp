@@ -536,10 +536,11 @@
 ; TODO: needs cleaning
 ;
   (and (listp list) (every (lambda (l)
-      (and (listp l) (= 2 (length l)) (numberp (second l))
-          (or (np? (first l)) (symbolp (first l))
-              (and (listp (first l)) (symbolp (car (first l))))
-              (and (listp (first l)) (np? (car (first l)))))))
+      (and (listp l) (= 3 (length l)) (numberp (third l)) (equal (second l) 'certain-to-degree)
+          (listp (first l)) (equal (first (first l)) 'that)
+          (or (np? (second (first l))) (symbolp (second (first l)))
+              (and (listp (second (first l))) (symbolp (car (second (first l)))))
+              (and (listp (second (first l))) (np? (car (second (first l))))))))
     list))
 ) ; END answer-list?
 
