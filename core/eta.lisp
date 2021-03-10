@@ -367,6 +367,29 @@
         ; Output prompt for external system to listen for user audio (but only once)
         (setq *output-listen-prompt* (if (= *output-listen-prompt* 0) 1 2))
 
+        ; If first time listening for user input for given episode, and in read-log mode,
+        ; read next tuple in log as input.
+        ; NOTE: the following code is only relevant if (*read-log-mode* t) is set in config.lisp.
+        ; TODO: this still isn't working; need to look into this more.
+        (when (and (= *output-listen-prompt* 1) (not plan-advanced?))
+          ; Verify current tuple
+          (when (>= *log-ptr* 0)
+            (if (not *log-answer*) (setq *log-answer* '(PARSE FAILURE \.)))
+            (verify-log *log-answer* (nth *log-ptr* *log-contents*) *read-log*)
+            (setq *log-answer* nil))
+          ; Increment log pointer
+          (setq *log-ptr* (1+ *log-ptr*))
+          ; Read off input of next tuple and store in context
+          (let ((log-input (if (>= *log-ptr* (length *log-contents*))
+                    (parse-chars (coerce "bye" 'list))
+                    (parse-chars (coerce (first (nth *log-ptr* *log-contents*)) 'list)))))
+            (setq log-input `(^you say-to.v ^me ',log-input))
+            (when log-input
+              (setq ep-name-new (store-new-contextual-facts (list log-input)))
+              (push (list ep-name-new log-input) (ds-perception-queue *ds*))))
+          (update-plan-state plan)
+          (return-from perform-next-step nil))
+
         ; Check certainty of expected plan step
         (setq certainty (plan-step-certainty curr-step))
 
@@ -830,8 +853,9 @@
         ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
         ; TODO: first might need to remove stored block coordinates from context.
         (when *read-log*
-          (store-new-contextual-facts (update-block-coordinates
-            (remove-if-not #'verb-phrase? (second (nth *log-ptr* *log-contents*))))))
+          (let ((perceptions (second (nth *log-ptr* *log-contents*))))
+            (if (not (listp perceptions)) (setq perceptions nil))
+            (store-new-contextual-facts (update-block-coordinates (remove-if-not #'verb-phrase? perceptions)))))
 
         ; Determine answers by recalling from history
         (if *dependencies*
@@ -853,8 +877,9 @@
 
         ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
         (when *read-log*
-          (store-new-contextual-facts (update-block-coordinates
-            (remove-if-not #'verb-phrase? (second (nth *log-ptr* *log-contents*))))))
+          (let ((perceptions (second (nth *log-ptr* *log-contents*))))
+            (if (not (listp perceptions)) (setq perceptions nil))
+            (store-new-contextual-facts (update-block-coordinates (remove-if-not #'verb-phrase? perceptions)))))
 
         ; Send query to external source
         (if system (write-subsystem (list user-ulf) system)))
