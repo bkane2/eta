@@ -53,8 +53,8 @@
         (mapcar (lambda (prop) (add-certainty prop nil))
           (find-relation-to-next-time answer coords))
         ; Otherwise, get spatial relations
-        (mapcan (lambda (time)
-          (mapcar (lambda (prop) (add-certainty prop time)) (get time '@))) answer))
+        (apply #'append (mapcar (lambda (time)
+          (mapcar (lambda (prop) (add-certainty prop time)) (get time '@))) answer)))
       :test (lambda (x y) (equal (car x) (car y)))))
 ) ; END recall-answer
 
@@ -888,7 +888,7 @@
 ; Adds certainty to a relation based on time.
 ; NOTE: currently always set to 1.0 - see note on 'apply-to-times' func.
 ;
-  (list rel 1.0)
+  `((that ,rel) certain-to-degree 1.0)
 ) ; END add-certainty
 
 
