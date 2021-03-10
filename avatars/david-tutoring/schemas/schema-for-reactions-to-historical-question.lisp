@@ -43,7 +43,7 @@
                ; this is where Eta "sees" the blocks world, specifically block movements.
                ; ?perceptions is given as a list of propositions reflecting Eta's perceptions
                ; e.g. locations of blocks (at-loc.p), things that have moved (move.v), etc.
-              ?e3 (^me recall-answer.v (get-object-locations.f ?perceptions) ?ulf ?ans-relations)
+              ?e3 (^me recall-answer.v ?ulf ?ans-relations)
                ; this would attempt to recall an answer from Eta's context (containing
                ; block moves at each time step), using the observed locations of blocks
                ; at the present time step.
