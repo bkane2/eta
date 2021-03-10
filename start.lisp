@@ -53,15 +53,6 @@
   ; Delete the content of input.lisp, if it exists, otherwise create
   (with-open-file (outfile "./io/input.lisp" :direction :output :if-exists 
                                              :supersede :if-does-not-exist :create))
-  ; Delete the content of ulf.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/ulf.lisp" :direction :output :if-exists 
-                                           :supersede :if-does-not-exist :create))
-  ; Delete the content of perceptions.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/perceptions.lisp" :direction :output :if-exists 
-                                              :supersede :if-does-not-exist :create))
-  ; Delete the content of answer.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/answer.lisp" :direction :output :if-exists 
-                                              :supersede :if-does-not-exist :create))
   ; Delete the content of goal-request.lisp, if it exists, otherwise create
   (with-open-file (outfile "./io/goal-request.lisp" :direction :output :if-exists 
                                                     :supersede :if-does-not-exist :create))

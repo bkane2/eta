@@ -214,19 +214,6 @@
 
 
 
-(defun write-ulf (ulf)
-;````````````````````````
-; Writes a ulf to the file ulf.lisp, so that it can be used
-; by the blocksworld system.
-;
-  (with-open-file (outfile "./io/ulf.lisp" :direction :output
-                                        :if-exists :supersede
-                                        :if-does-not-exist :create)
-    (format outfile "(setq *next-ulf* ~a)" ulf))
-) ; END write-ulf
-
-
-
 (defun read-words (&optional str) 
 ;``````````````````````````````````
 ; This is the input reader when ETA is used with argument live =
@@ -274,41 +261,6 @@
           
   (parse-chars (coerce *next-input* 'list))
 )) ; END hear-words
-
-
-
-(defun get-perceptions () 
-;``````````````````````
-; This waits until it can load a list of block perceptions from "./io/perceptions.lisp".
-; This should have a list of relations of the following two forms:
-; ((the.d (|Twitter| block.n)) at-loc.p ($ loc ?x ?y ?z))
-; ((the.d (|Toyota| block.n)) ((past move.v) (from.p-arg ($ loc ?x1 ?y1 ?z1)) (to.p-arg ($ loc ?x2 ?y2 ?z2))))
-;
-  (setq *next-perceptions* nil)
-  (loop while (not *next-perceptions*) do
-    (sleep .5)
-    (progn
-      (load "./io/perceptions.lisp")
-		  (if *next-perceptions*
-        (with-open-file (outfile "./io/perceptions.lisp" :direction :output 
-                                                 :if-exists :supersede
-                                                 :if-does-not-exist :create)))))
-          
-  *next-perceptions*
-) ; END get-perceptions
-
-
-
-(defun get-perceptions-offline () 
-;``````````````````````````````````
-; This is the perceptions reader when ETA is used with argument live =
-; nil (hence also *live* = nil)
-;
-  (finish-output)
-  (format t "enter perceptions below:~%")
-  (finish-output)
-  (read-from-string (read-line))
-) ; END get-perceptions-offline
 
 
 

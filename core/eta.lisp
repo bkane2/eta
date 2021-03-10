@@ -371,7 +371,7 @@
         ; read next tuple in log as input.
         ; NOTE: the following code is only relevant if (*read-log-mode* t) is set in config.lisp.
         ; TODO: this still isn't working; need to look into this more.
-        (when (and (= *output-listen-prompt* 1) (not plan-advanced?))
+        (when (and (= *output-listen-prompt* 1) *read-log*)
           ; Verify current tuple
           (when (>= *log-ptr* 0)
             (if (not *log-answer*) (setq *log-answer* '(PARSE FAILURE \.)))
@@ -846,9 +846,6 @@
         ; Get object locations from context
         (setq object-locations (get-from-context '(?x at-loc.p ?y)))
         ;; (format t "found object locations from context: ~a~%" object-locations) ; DEBUGGING
-        
-        ; Output ULF, along with indicator that the ULF is not intended as a query.
-        (write-ulf `(quote ,(list 'non-query (eval user-ulf))))
 
         ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
         ; TODO: first might need to remove stored block coordinates from context.
