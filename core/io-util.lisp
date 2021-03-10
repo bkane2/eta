@@ -22,9 +22,8 @@
 ; Scans input from the terminal. If the user presses enter, read the
 ; input, create and return a (^you say-to.v ^me '(...)) proposition.
 ; NOTE: previously in eta.lisp, it would call detach-final-punctuation
-; after reading input from hear-words or read-words. However, I suspect
-; we want punctuation since Google ASR is capable of it. The pattern-
-; matching files therefore need to take punctuation into account.
+; after reading input. However, I suspect we want punctuation since Google ASR is
+; capable of it. The pattern-matching files therefore need to take punctuation into account.
 ;
   (when (listen)
     (let ((text (parse-chars (coerce (read-line) 'list))))
@@ -38,9 +37,8 @@
 ; Reads input from |Audio| subsystem (i.e., (^you say-to.v ^me '(...)), or
 ; possibly (^you say-to.v ^me "...")) propositions from io/in/Audio.lisp.
 ; NOTE: previously in eta.lisp, it would call detach-final-punctuation
-; after reading input from hear-words or read-words. However, I suspect
-; we want punctuation since Google ASR is capable of it. The pattern-
-; matching files therefore need to take punctuation into account.
+; after reading input. However, I suspect we want punctuation since Google ASR is
+; capable of it. The pattern-matching files therefore need to take punctuation into account.
 ; 
   ; Write empty star line to output to prompt avatar to listen
   ; TODO: there has to be a better way of doing this...
@@ -211,56 +209,6 @@
         (setq result (concatenate 'string result " " l))))
     (read-from-string (concatenate 'string "(" result ")")))
 ) ; END read-log-contents
-
-
-
-(defun read-words (&optional str) 
-;``````````````````````````````````
-; This is the input reader when ETA is used with argument live =
-; nil (hence also *live* = nil), i.e., with terminal input rather
-; than live spoken input.
-; If optional str parameter given, simply read words from str.
-;
-  (finish-output)
-  (parse-chars (coerce (if str str (read-line)) 'list))
-) ; END read-words
-
-
-
-(defun hear-words (&key (delay nil)) 
-;`````````````````````````````````````
-; NOTE: deprecated function; to remove.
-; This waits until it can load a character sequence from "./io/input.lisp",
-; which will set the value of *next-input*, and then processes *input*
-; in the same way as the result of (read-line) is processed in direct
-; terminal input mode.
-; If some delay (an integer) is given, move on if no words heard after that
-; number of seconds.
-;
-  (let ((s 0))
-    ; Write empty star line to output to prompt avatar to listen
-    ; TODO: there has to be a better way of doing this...
-    (setq *output-count* (1+ *output-count*))
-    (with-open-file (outfile "./io/output.txt" :direction :output
-                                               :if-exists :append
-                                               :if-does-not-exist :create)
-      (format outfile "~%*~D: dummy" *output-count*))
-
-    (setq *next-input* nil)
-    (loop while (and (not *next-input*) (or (not delay) (< s delay))) do
-      (sleep .5)
-      (setq s (+ s .5))
-      (progn
-        (load "./io/input.lisp")
-		    (if *next-input*
-          (progn
-            (format t "~a~%" *next-input*)
-            (with-open-file (outfile "./io/input.lisp" :direction :output 
-                                                       :if-exists :supersede
-                                                       :if-does-not-exist :create))))))
-          
-  (parse-chars (coerce *next-input* 'list))
-)) ; END hear-words
 
 
 
@@ -444,7 +392,8 @@
 ; filename in log_out/ directory.
 ;
   (let ((filename-out (concatenate 'string "logs/logs_out/" (pathname-name filename)))
-        (answer-old (read-words (third turn-tuple))) (feedback-old (fourth turn-tuple)) feedback-new)
+        (answer-old (parse-chars (coerce (third turn-tuple) 'list)))
+        (feedback-old (fourth turn-tuple)) feedback-new)
     ;; (format t "/~a~%\\~a~%" answer-old answer-new)
     (with-open-file (outfile filename-out :direction :output :if-exists :append :if-does-not-exist :create)
       (cond
