@@ -50,12 +50,6 @@
   ; Delete the content of output.txt, if it exists, otherwise create
   (with-open-file (outfile "./io/output.txt" :direction :output :if-exists 
                                              :supersede :if-does-not-exist :create))
-  ; Delete the content of goal-request.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/goal-request.lisp" :direction :output :if-exists 
-                                                    :supersede :if-does-not-exist :create))
-  ; Delete the content of goal-rep.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/goal-rep.lisp" :direction :output :if-exists 
-                                                :supersede :if-does-not-exist :create)) 
   ; Delete the content of planner-input.lisp, if it exists, otherwise create
   (with-open-file (outfile "./io/planner-input.lisp" :direction :output :if-exists 
                                                      :supersede :if-does-not-exist :create))    

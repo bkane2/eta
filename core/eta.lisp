@@ -643,9 +643,9 @@
   (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
          superstep ep-name1 user-ep-name user-ulf n user-gist-clauses user-gist-passage
-         prev-step prev-step-ep-name prev-step-wff utterance
-         proposal-gist main-clause info topic suggestion query ans perceptions
-         perceived-actions sk-var sk-name concept-name goal-schema)
+         prev-step prev-step-ep-name prev-step-wff utterance query
+         proposal-gist main-clause info topic suggestion ans perceptions
+         perceived-actions sk-var sk-name concept-name concept-schema goal-schema)
 
     ;; (format t "~%WFF = ~a,~% in the ETA action ~a being processed~%" wff ep-name) ; DEBUGGING
 
@@ -869,8 +869,7 @@
       ((setq bindings (bindings-from-ttt-match '(^me seek-answer-from.v _! _!1) wff))
         (setq system (get-single-binding bindings))
         (setq bindings (cdr bindings))
-        (setq user-ulf (get-single-binding bindings))
-        (setq user-ulf (eval user-ulf))
+        (setq query (eval (get-single-binding bindings)))
 
         ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
         (when *read-log*
@@ -879,7 +878,7 @@
             (store-new-contextual-facts (update-block-coordinates (remove-if-not #'verb-phrase? perceptions)))))
 
         ; Send query to external source
-        (if system (write-subsystem (list user-ulf) system)))
+        (if system (write-subsystem (list query) system)))
 
       ;``````````````````````````````````````````
       ; Eta: Recieve answer from external source
@@ -1017,6 +1016,12 @@
         (setq sk-name (choose-variable-restrictions sk-var (third expr)))
         (format t "chose value ~a for variable ~a~%" sk-name sk-var) ; DEBUGGING
 
+        ; Store fact that sk-name chosen in context (removing any existing choice)
+        ; TODO: perhaps choose.v actions are 'instantaneous' and should therefore be
+        ; removed periodically, along with say-to.v actions etc.
+        (remove-from-context '(^me choose.v ?x))
+        (store-in-context `(^me choose.v ,sk-name))
+
         ; Bind variable to skolem constant in plan
         (setq var-bindings (cons (list sk-var sk-name) var-bindings)))
 
@@ -1033,20 +1038,29 @@
       ((setq bindings (bindings-from-ttt-match '(^me form-spatial-representation.v _!) wff))
         (setq expr (get-single-binding bindings))
         (setq sk-var (second expr))
+        ; Get concept name from expr, and corresponding record structure
+        (setq concept-name (get-single-binding
+          (cdr (bindings-from-ttt-match-deep '(_!1 instance-of.p _!2) expr))))
+        (setq concept-schema (get-record-structure concept-name))
         ; Substitute record structure for concept name in expr
-        (setq expr (ttt:apply-rule '(/ (_!1 instance-of.p _!2)
-                                       (_!1 instance-of.p (record-structure! _!2)))
-                      expr :max-n 1))
+        (setq expr (subst concept-schema concept-name expr))
         ; Request goal representation from BW system
-        (request-goal-rep expr)
-        ; Get goal representation from BW system
-        ; NOTE: currently no special offline (terminal mode) procedure for getting goal schema.
-        (setq goal-schema (get-goal-rep))
-        ; Generate skolem name, add alias and facts in context
+        (setq query `((what.pro be.v (= ,expr)) ?))
+        (write-subsystem (list query) '|Spatial-Reasoning-System|)
+
+        ; Get answer from BW system
+        ; This is a list of relations ((($ ...) goal-schema1.n) (($ ...) instance-of.p ($ ...)))
+        (setq ans (read-subsystem '|Spatial-Reasoning-System| :block t))
+        ; Create name for goal representation and add alias
         (setq sk-name (gensym "BW-goal-rep"))
-        (add-alias (cons '$ goal-schema) sk-name)
-        (store-in-context (list sk-name 'goal-schema1.n))
-        (store-in-context (list sk-name 'instance-of.p concept-name))
+        (setq goal-schema (get-single-binding
+          (bindings-from-ttt-match-deep '(_! goal-schema1.n) ans)))
+        (add-alias goal-schema sk-name)
+        ; Substitute canonical names for record structures in relations
+        (setq ans (subst concept-name concept-schema ans :test #'equal))
+        (setq ans (subst sk-name goal-schema ans :test #'equal))
+        ; Store answer in context
+        (mapcar #'store-in-context ans)
         ; Substitute skolem name for skolem var in schema
         (format t "formed representation ~a for variable ~a~%" sk-name sk-var)
         
@@ -1596,6 +1610,7 @@
 
 ;; (defun form-spatial-representation ()
 ;; ;``````````````````````````````````````
+;; ; TODO: now deprecated; will delete in the future.
 ;; ; Forms a spatial representation from the currently chosen BW-concept.n
 ;; ; (assuming such a choice has actually been made at this point), through
 ;; ; sending the BW system the chosen concept schema and receiving a goal
@@ -1661,12 +1676,6 @@
 ; some adjective modifier, e.g.,
 ; (random.a (:l (?x) (and (?x member-of.p ?cc)
 ;                         (not (^you understand.v ?x)))))
-; The fact that some individual was chosen is also stored in context.
-; NOTE: does this make sense? i.e., should something being chosen be
-; stored in dialogue context? If the choosing occurs as part of a loop,
-; how is something "unchosen" at the end of the loop? Currently I do that
-; here, so basically only one (^me choose.v ?x) fact can be active in
-; context at once, but it's pretty ugly.
 ;
   (let (sk-name sk-const lambda-descr modifier candidates)
     (setq sk-const (skolem (implode (cdr (explode sk-var)))))
@@ -1681,9 +1690,6 @@
       ((equal modifier 'random.a)
         (nth (random (length candidates)) candidates))
       (t (car candidates))))
-    ; Store fact that sk-name chosen in context (removing any existing choice).
-    (remove-from-context '(^me choose.v ?x))
-    (store-in-context `(^me choose.v ,sk-name))
     sk-name)
 ) ; END choose-variable-restrictions
 

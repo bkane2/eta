@@ -102,7 +102,7 @@
     (with-open-file (outfile fname :direction :output
                                    :if-exists :supersede
                                    :if-does-not-exist :create)
-      (format outfile "(setq *output* '~a)" output))
+      (format outfile "(setq *output* '~s)" output))
 )) ; END write-subsystem
 
 
@@ -226,37 +226,6 @@
 (mapcar (lambda (file) (load file))
     (directory "core/resources/obj-schemas/*.lisp"))
 ) ; END load-obj-schemas
-
-
-
-(defun request-goal-rep (wff)
-;`````````````````````````````
-; Writes a formula (containing an indefinite quantifier with a lambda abstract)
-; to the file goal-request.lisp, so that it can be processed by BW system.
-;
-  (with-open-file (outfile "./io/goal-request.lisp" :direction :output
-                                                    :if-exists :supersede
-                                                    :if-does-not-exist :create)
-    (format outfile "(setq *goal-request* '~s)" wff))
-) ; END request-goal-rep
-
-
-
-(defun get-goal-rep ()
-;```````````````````````
-; This waits until it can load a goal representation from "./io/goal-rep.lisp".
-;
-  (setq *goal-rep* nil)
-  (loop while (not *goal-rep*) do
-    (sleep .5)
-    (progn
-      (load "./io/goal-rep.lisp")
-		  (if *goal-rep*
-        (with-open-file (outfile "./io/goal-rep.lisp" :direction :output 
-                                                      :if-exists :supersede
-                                                      :if-does-not-exist :create)))))
-  *goal-rep*
-) ; END get-goal-rep
 
 
 

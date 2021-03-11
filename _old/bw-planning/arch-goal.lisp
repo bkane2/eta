@@ -1,3 +1,46 @@
+(setq *input* '(
+  (($ rel-schema
+    :header (red-and-blue-arch ?s)
+    "for testing 'find-a-block-to-place' and 'place-block'"
+    :vars (?x ?y ?z ?u ?v) ; a list of vars for exactly the objects to be placed
+    :types ((?x block) (?y block) (?z block) (?u block) (?v block) (?w block))
+    :nonfluent-conds ((red ?x) (red ?y) (red ?z) (red ?u) (blue ?v))
+    :static-conds (
+      (on ?x ?y) (on ?y table) (on ?z ?u) (on ?u table)
+      (on ?v ?x) (on ?v ?z)
+    )
+    :end)
+  goal-schema1.n)
+
+  (($ rel-schema
+    :header (red-and-blue-arch ?s)
+    "for testing 'find-a-block-to-place' and 'place-block'"
+    :vars (?x ?y ?z ?u ?v) ; a list of vars for exactly the objects to be placed
+    :types ((?x block) (?y block) (?z block) (?u block) (?v block) (?w block))
+    :nonfluent-conds ((red ?x) (red ?y) (red ?z) (red ?u) (blue ?v))
+    :static-conds (
+      (on ?x ?y) (on ?y table) (on ?z ?u) (on ?u table)
+      (on ?v ?x) (on ?v ?z)
+    )
+    :end)
+  instance-of.p
+  
+    ($ OBJ-SCHEMA :HEADER (?X BW-ARCH.N) :TYPES
+                              (!T0 (?STACK1 BW-STACK.N) !T1
+                               (?STACK2 BW-STACK.N) !T2 (?TOP BW-BLOCK.N))
+                              :RIGID-CONDS
+                              (!R0 (?TOP ON.P ?STACK1) !R1 (?TOP ON.P ?STACK2)
+                               !R2 (?STACK1 NEXT-TO.P ?STACK2) !R3
+                               (NOT (?STACK1 TOUCHING.P ?STACK2)) !R4
+                               (?TOP CLEAR.A) !R5
+                               ((HEIGHT-OF.F ?STACK1) = (HEIGHT-OF.F ?STACK2)))
+                              :SKELETAL-PROTOTYPE
+                              (BW-ARCH1.OBJ BW-ARCH2.OBJ))
+  )
+  
+))
+
+
 (setq *goal-rep*
 ; Currently only types are assumed to be in infix form. Note that 'req-properties'
 ; reverses infixed type predications to get prefix form.
