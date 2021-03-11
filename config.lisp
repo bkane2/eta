@@ -6,7 +6,11 @@
 ;;                   If a string corresponding to a file name, read just that file from logs/
 ;;                   (NOTE: currently only relevant to david/blocks world)
 ;;
-;; *subsystems* : A list of subsystems registered with Eta. Supported: |Audio|, |Terminal|, |Blocks-World-System|
+;; *subsystems-perception* : A list of perception subsystems registered with Eta.
+;;                           Supported: |Audio|, |Terminal|, |Blocks-World-System|
+;;
+;; *subsystems-specialist* : A list of specialist subsystems registered with Eta.
+;;                           Supported: |Spatial-Reasoning-System|
 ;;
 ;; *dependencies* : T to include Quicklisp dependencies, NIL to only include local packages (note that some applications may not
 ;;                  work without Quicklisp dependencies).
@@ -16,10 +20,15 @@
 ;;
 ;; *user-id* : unique ID of user (potentially overwritten by sessionInfo.lisp if in live mode)
 ;;
+;; *session-number* : the number session to load (a session-number of 1 corresponds to the files in the day1 directory of an avatar)
+;;                    in a multi-session dialogue (potentially overwritten by sessionInfo.lisp if in live mode)
+;;
 
 (defparameter *avatar* "sophie")
 (defparameter *read-log-mode* NIL)
-(defparameter *subsystems* '(|Terminal| |Blocks-World-System|))
-(defparameter *dependencies* T)
+(defparameter *subsystems-perception* '(|Audio|))
+(defparameter *subsystems-specialist* '())
+(defparameter *dependencies* NIL)
 (defparameter *safe-mode* NIL)
+;; (defparameter *session-number* 1)
  
