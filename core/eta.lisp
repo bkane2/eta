@@ -645,7 +645,7 @@
          superstep ep-name1 user-ep-name user-ulf n user-gist-clauses user-gist-passage
          prev-step prev-step-ep-name prev-step-wff utterance query
          proposal-gist main-clause info topic suggestion ans perceptions
-         perceived-actions sk-var sk-name concept-name concept-schema goal-schema)
+         perceived-actions sk-var sk-name concept-name concept-schema goal-name goal-schema)
 
     ;; (format t "~%WFF = ~a,~% in the ETA action ~a being processed~%" wff ep-name) ; DEBUGGING
 
@@ -977,21 +977,46 @@
       ;````````````````````````````
       ; Finding some action (or other entity?), given an episode like
       ; ?e1 (find4.v (some.d ?ka1 (:l (?x) (?x step1-toward.p ?goal-rep))))
-      ; TODO: currently manually stores ((pair ^me ?e1) successful.a), which
-      ; needs to be changed - see note on 'Eta: Trying' action.
-      ; Also sends query to the BW system for step regardless of what the
-      ; argument of the find4.v action is.
+      ; TODO: currently assumes that the request must be sent to the
+      ; Spatial-Reasoning-System, but in theory a 'finding' episode could involve
+      ; any specialist server, or possibly even none (e.g., 'finding' in memory).
+      ; The former can be solved somewhat unelegantly by adding the server as an
+      ; argument to this action in the schema; the latter will be more difficult.
       ((setq bindings (bindings-from-ttt-match '(^me find4.v _!) wff))
         (setq expr (get-single-binding bindings))
         (setq sk-var (second expr))
-        (observe-step-towards-goal (third (third (third expr)))); desperately needs changing
-        (setq sk-name (choose-variable-restrictions sk-var (third expr)))
+        ; Get goal name from expr, and corresponding record structure
+        (setq goal-name (get-single-binding
+          (cdr (bindings-from-ttt-match-deep '(_!1 step1-toward.p _!2) expr))))
+        (setq goal-schema (get-record-structure goal-name))
+        ; Substitute record structure for goal name in expr
+        (setq expr (subst goal-schema goal-name expr))
+        ; Request step towards goal schema from BW system
+        (setq query `((what.pro be.v (= ,expr)) ?))
+        (write-subsystem (list query) '|Spatial-Reasoning-System|)
+
+        ; Get answer from BW system
+        ; This is either nil or a list (((ka ...) step1-toward.p ($ ...)))
+        (setq ans (read-subsystem '|Spatial-Reasoning-System| :block t))
+        ; Substitute goal name for record structure in ans
+        (setq ans (subst goal-name goal-schema ans :test #'equal))
+        ; Set sk-name to reified action
+        (setq sk-name (get-single-binding
+          (bindings-from-ttt-match-deep '(_!1 step1-toward.p _!2) ans)))
+        ; Remove existing step1-toward.p propositions from context, and add new one(s)
+        (remove-from-context `(?x step1-toward.p ,goal-name))
+        (mapcar #'store-in-context ans)
+        ; Substitute skolem name for skolem var in schema
         (format t "found ~a for variable ~a~%" sk-name sk-var)
+
+        ; If a step was found for the current episode, store that
+        ; the episode was successful in context
+        ; TODO: needs to be changed; see comment on 'Eta: Trying' action.
         ;; (setq superstep (plan-subplan-of subplan))
         ;; (setq ep-name1 (plan-step-ep-name superstep))
         (setq ep-name1 ep-name)
         (if (and sk-name ep-name1)
-          (store-in-context `((pair ^me ,ep-name1) successful.a))); also desperately needs changing
+          (store-in-context `((pair ^me ,ep-name1) successful.a)))
 
         ; Bind variable to skolem constant in plan
         (setq var-bindings (cons (list sk-var sk-name) var-bindings)))
@@ -1645,23 +1670,24 @@
 
 
 
-(defun observe-step-towards-goal (goal-rep)
-;`````````````````````````````````````````````
-; Observes next step towards the currently active BW goal-schema,
-; through reading IO file. Store fact in context.
-; TODO: might need changing - see note on 'find4.v' implementation.
-; Currently, the (?x step1-toward.p ?goal-rep) step is hard-coded
-; (based on the value of ?goal-rep extracted from the lambda function
-; in the find4.v action), which it shouldn't be.
-;
-  (let (step)
-    (setq step (if (member '|Spatial-Reasoning-System| *registered-systems-specialist*)
-                    (get-planner-input)
-                    (get-planner-input-offline)))
-    (remove-from-context `(?x step1-toward.p ,goal-rep))
-    (if step
-      (store-in-context `(,step step1-toward.p ,goal-rep))))
-) ; END observe-step-toward-goal
+;; (defun observe-step-towards-goal (goal-rep)
+;; ;`````````````````````````````````````````````
+;; ; TODO: now deprecated; will delete in the future.
+;; ; Observes next step towards the currently active BW goal-schema,
+;; ; through reading IO file. Store fact in context.
+;; ; TODO: might need changing - see note on 'find4.v' implementation.
+;; ; Currently, the (?x step1-toward.p ?goal-rep) step is hard-coded
+;; ; (based on the value of ?goal-rep extracted from the lambda function
+;; ; in the find4.v action), which it shouldn't be.
+;; ;
+;;   (let (step)
+;;     (setq step (if (member '|Spatial-Reasoning-System| *registered-systems-specialist*)
+;;                     (get-planner-input)
+;;                     (get-planner-input-offline)))
+;;     (remove-from-context `(?x step1-toward.p ,goal-rep))
+;;     (if step
+;;       (store-in-context `(,step step1-toward.p ,goal-rep))))
+;; ) ; END observe-step-toward-goal
 
 
 

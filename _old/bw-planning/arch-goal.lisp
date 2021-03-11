@@ -41,6 +41,32 @@
 ))
 
 
+(setq *input* '(
+  (
+  ;;  (KA (DO2.V NOTHING.PRO))
+   (KA (PUT.V (the.d (|Twitter| block.n)) (ON.P (the.d (|Texaco| block.n)))))
+    step1-toward.p
+    ($ REL-SCHEMA :HEADER (RED-AND-BLUE-ARCH ?S)
+                        "for testing 'find-a-block-to-place' and 'place-block'"
+                        :VARS (?X ?Y ?Z ?U ?V) :TYPES
+                        ((?X BLOCK) (?Y BLOCK) (?Z BLOCK) (?U BLOCK) (?V BLOCK)
+                         (?W BLOCK))
+                        :NONFLUENT-CONDS
+                        ((RED ?X) (RED ?Y) (RED ?Z) (RED ?U) (BLUE ?V))
+                        :STATIC-CONDS
+                        ((ON ?X ?Y) (ON ?Y TABLE) (ON ?Z ?U) (ON ?U TABLE)
+                         (ON ?V ?X) (ON ?V ?Z))
+                        :END)
+  )
+))
+
+
+
+
+;; ------------------------
+
+
+
 (setq *goal-rep*
 ; Currently only types are assumed to be in infix form. Note that 'req-properties'
 ; reverses infixed type predications to get prefix form.
