@@ -71,6 +71,9 @@
 ;``````````````````````````````````````````
 ; Reads input ULF propositions from io/in/<system>.lisp.
 ; If :block t is given, loop until a non-nil value is set for *input*.
+; NOTE: 'None is reserved as a special value, which causes the function
+; to return nil (nil itself cannot be used, since otherwise the program
+; would be unable to distinguish from cases where no input is given yet)
 ;
   (let ((fname (concatenate 'string "./io/in/" (string system) ".lisp")))
   (setq *input* nil)
@@ -85,7 +88,7 @@
     (with-open-file (outfile fname :direction :output
                                    :if-exists :supersede
                                    :if-does-not-exist :create)))
-  *input*
+  (if (equal *input* 'None) nil *input*)
 )) ; END read-subsystem
 
 
