@@ -63,9 +63,10 @@
 )
 
 :goals (
-  ; Currently not handled by Eta
-  ?g1 (^me want1.v (that (^you understand1.v ?c)))
-  ?g2 (^you want1.v (that ((^me teach-BW-concept-to.v ^you) @ ^now)))
+  ; TODO: now that this is (somewhat) supported, should the schema be modified to
+  ; use goal-driven replanning?
+  ;; ?g1 (^me want1.v (that (^you understand1.v ?c)))
+  ;; ?g2 (^you want1.v (that ((^me teach-BW-concept-to.v ^you) @ ^now)))
 )
 
 
