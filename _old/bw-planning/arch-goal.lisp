@@ -63,6 +63,16 @@
 
 
 
+(setq *input* '(((THE.D (|Twitter| BLOCK.N))
+                                 ((PAST MOVE.V)
+                                  (FROM.P-ARG
+                                   ($ LOC :X -0.27 :Y -2.415 :Z 0.493))
+                                  (TO.P-ARG
+                                   ($ LOC :X 0.676 :Y -1.345 :Z 0.521))))
+                (^YOU MOVE.V (THE.D (|Twitter| BLOCK.N)) (ON.P (THE.D (|Texaco| BLOCK.N))))))
+
+
+
 ;; ------------------------
 
 

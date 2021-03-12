@@ -1136,16 +1136,16 @@
 ; ((^you reply-to.v E1) ** E2)
 ;
   (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
-         user-gist-clauses user-ulfs inferred-wffs)
+         user-gist-clauses user-ulfs inferred-wffs goal-step ka try-success)
 
     (setq ep-name (first fact))
     (setq wff (second fact))
 
     ; Conditional statement matching different types of 'primitive' observed wffs
     (cond
-      ;`````````````````````
-      ; User: Saying
-      ;`````````````````````
+      ;```````````````````````````
+      ; User: Saying -> Replying
+      ;```````````````````````````
       ((setq bindings (bindings-from-ttt-match '(^you say-to.v ^me _!) wff))
         (setq expr (get-single-binding bindings))
 
@@ -1226,25 +1226,35 @@
         
       )
       ;````````````````````````````
-      ; User: Trying
+      ; User: Moving -> Trying
       ;````````````````````````````
-      ; User tries some reified action. Queries the BW system for whether or
-      ; not trying the action was successful.
-      ; TBC
-      ; TODO: This should match primitive spatial 'move' observations instead. Then,
-      ; given a move observation, this should check if the move matches the move that the
-      ; user is expected to try, according to the dialogue/spatial planner output. If so, store
-      ; ((^you try1.v (ka <move wff>))) ** <ep-name>), and perhaps also
-      ; ((pair ^you <ep-name>) successful.a) etc.
-      ((setq bindings (bindings-from-ttt-match '(^you try1.v _!) wff))
-        ;; (setq expr (get-single-binding bindings))
-        ;; (setq user-try-ka-success (if (member '|Spatial-Reasoning-System| *registered-systems-specialist*)
-        ;;                                 (get-user-try-ka-success)
-        ;;                                 (get-user-try-ka-success-offline)))
-        ;; (format t "~% user-try-ka-success is equal to ~a ~%" user-try-ka-success) ; DEBUGGING
-        ;; (when user-try-ka-success
-        ;;   (store-in-context `((pair ^you ,ep-name) successful.a))
-        ;;   (store-in-context `((pair ^you ,ep-name) instance-of.p ,expr)))
+      ((setq bindings (bindings-from-ttt-match '(^you action-verb? _*) wff))
+        (setq expr (get-multiple-bindings bindings))
+
+        ;; (format t "~%Matched arguments = ~a" expr) ; DEBUGGING
+
+        ; Check context for any current goal step; get reified action from goal step
+        (setq goal-step (car (get-from-context '(?ka step1-toward.p ?goal))))
+        (setq ka (first goal-step))
+        
+        (format t "~%Found ka = ~a" ka) ; DEBUGGING
+
+        ; If the (ka ...) consists of an action verb, check arguments of action verb against arguments of
+        ; the matched action to check if the action successfully instantiates (ka ...)
+        (when (action-verb? (car (second ka)))
+          (when (and (equal (length (cdr (second ka))) (length expr))
+                     (every (lambda (x y) (equal x y)) (cdr (second ka)) expr))
+            (setq try-success t)))
+
+        ;; (format t "~%Match between ~a and ~a successful?: ~a~%" (cdr (second ka)) expr try-success) ; DEBUGGING
+
+        ; If the action was successful, store the following facts in context
+        (when try-success
+          (store-in-context `((pair ^you ,ep-name) successful.a))
+          (store-in-context `((pair ^you ,ep-name) instance-of.p ,ka)))
+        
+        ; Store (^you try1.v (ka ...)) as characterizing ep-name regardless
+        (store-contextual-fact-characterizing-episode `(^you try1.v ,ka) ep-name)
 
       )
       ; Some other wff (currently nothing is done in this case)

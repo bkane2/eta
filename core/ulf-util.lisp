@@ -325,7 +325,7 @@
 ; Checks if a ULF is an action verb.
 ;
   (if (and (atom ulf)
-    (member ulf '(move.v put.v change.v pick_up.v rotate.v place.v))) t nil)
+    (member ulf '(move.v make.v put.v change.v pick_up.v rotate.v place.v))) t nil)
 ) ; END action-verb?
 
 

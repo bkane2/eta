@@ -229,40 +229,6 @@
 
 
 
-(defun get-user-try-ka-success () 
-;``````````````````````````````````
-; This waits until it can load a list of relations from "./io/user-try-ka-success.lisp".
-;
-  (setq *user-try-ka-success* nil)
-  (loop while (not *user-try-ka-success*) do
-    (sleep .5)
-    (progn
-      (load "./io/user-try-ka-success.lisp")
-		  (if *user-try-ka-success*
-        (with-open-file (outfile "./io/user-try-ka-success.lisp" :direction :output 
-                                                                 :if-exists :supersede
-                                                                 :if-does-not-exist :create)))))
-          
-  (if (equal *user-try-ka-success* 'Failure) nil
-    *user-try-ka-success*)
-) ; END get-user-try-ka-success
-
-
-
-(defun get-user-try-ka-success-offline () 
-;```````````````````````````````````````````
-; This is the user-try-ka-success reader when ETA is 
-; used with argument live = nil (hence also *live* = nil)
-;
-  (finish-output)
-  (format t "enter user-try-ka-success below:~%")
-  (finish-output)
-  (let ((user-try-ka-success (read-from-string (read-line))))
-    (if (equal user-try-ka-success 'Failure) nil user-try-ka-success))
-) ; END get-user-try-ka-success-offline
-
-
-
 (defun update-block-coordinates (moves)
 ;````````````````````````````````````````
 ; Given a list of moves (in sequential order), update *block-coordinates*. Return a list of
