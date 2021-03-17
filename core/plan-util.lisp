@@ -920,6 +920,8 @@
       (gethash var (get schema-name 'semantics)))
     (setf (gethash new-var (get schema-name 'topic-keys))
       (gethash var (get schema-name 'topic-keys)))
+    ; New var has same certainty as old var
+    (setf (get new-var 'certainty) (get var 'certainty))
   ; Return new var
   new-var)
 ) ; END duplicate-variable
