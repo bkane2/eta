@@ -7,7 +7,7 @@
 
 (defparameter *discuss-history-mental-illness.lisp*
 
-'(event-schema :header (((set-of ^me ^you) discuss-history-mental-illness.lisp.v) ** ?e)
+'(event-schema :header (((set-of ^me ^you) discuss-history-mental-illness.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (
@@ -27,7 +27,7 @@
 ;````````````````````````````````````````````````````````
 ; Store schema variable name under header in *schemas*
 ;
-(store-schema-name 'discuss-history-mental-illness.lisp.v '*discuss-history-mental-illness.lisp*)
+(store-schema-name 'discuss-history-mental-illness.v '*discuss-history-mental-illness.lisp*)
 
 
 

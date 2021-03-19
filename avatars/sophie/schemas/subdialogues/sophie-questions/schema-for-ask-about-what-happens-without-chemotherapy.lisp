@@ -7,7 +7,7 @@
 
 (defparameter *ask-about-what-happens-without-chemotherapy.lisp*
 
-'(event-schema :header (((set-of ^me ^you) ask-about-what-happens-without-chemotherapy.lisp.v) ** ?e)
+'(event-schema :header (((set-of ^me ^you) ask-about-what-happens-without-chemotherapy.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (
@@ -27,7 +27,7 @@
 ;````````````````````````````````````````````````````````
 ; Store schema variable name under header in *schemas*
 ;
-(store-schema-name 'ask-about-what-happens-without-chemotherapy.lisp.v '*ask-about-what-happens-without-chemotherapy.lisp*)
+(store-schema-name 'ask-about-what-happens-without-chemotherapy.v '*ask-about-what-happens-without-chemotherapy.lisp*)
 
 
 
