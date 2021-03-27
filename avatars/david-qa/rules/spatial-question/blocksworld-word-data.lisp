@@ -67,6 +67,8 @@
   (rotate rotates rotated)
   (place places placed)
 
+  (reason reasons reasoning justification justifications explanation explanations)
+
   (verb-rel-past touched supported connected consisted_of sat adjoined flanked
       faced moved puts changed picked_up rotated placed)
 
@@ -101,8 +103,12 @@
   (be is are was were)
   (verb-rel touch support connect consist_of sit adjoin flank face
       move put change pick_up rotate place)
+  (verb-answer answer answered say said tell told mention mentioned claim claimed 
+      reply replied respond responded think thought believe believed know knew)
+  (verb-explain explain justify elaborate)
 
   (aux-bw do modal)
+  (wh-explanation why how)
   
   (adv-e-number first second third fourth fifth sixth seventh eighth ninth tenth)
   (adv-e previously before originally initially currently now recently ever since last finally adv-e-number)
