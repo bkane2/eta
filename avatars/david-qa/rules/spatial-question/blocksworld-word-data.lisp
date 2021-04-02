@@ -107,6 +107,8 @@
       reply replied respond responded think thought believe believed know knew)
   (verb-explain explain justify elaborate)
 
+  (noun-explain answer answers response responses reply replies)
+
   (aux-bw do modal)
   (wh-explanation why how)
   

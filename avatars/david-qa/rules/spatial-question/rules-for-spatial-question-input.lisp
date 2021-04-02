@@ -60,7 +60,15 @@
     ;; -----------------
     1 (0 special-request 0)
       2 (*request-input* (1 2 3)) (0 :subtree+clause)
-    ;; ---------------------
+    ;; ----------------------------------
+    ;; 'Indexical' explanation requests 
+    ;; ----------------------------------
+    1 (0 aux you verb-explain 4)
+      2 (*multi-token-word-tree* (can you explain your answer ?)) (0 :subtree+clause)
+    1 (1 verb-explain 1)
+      2 (*multi-token-word-tree* (can you explain your answer ?)) (0 :subtree+clause)
+    1 (1 wh-explanation 1)
+      2 (*multi-token-word-tree* (can you explain your answer ?)) (0 :subtree+clause)
     ;; "Small talk" patterns
     ;; ---------------------
     1 (0 wh_ 1 your name 0)
@@ -174,6 +182,8 @@
       2 (*trim-prefix-tree* (1 2 ?)) (0 :subtree+clause)
     1 (0 spatial-word 0)
       2 (*trim-prefix-tree* (1 2 ?)) (0 :subtree+clause)
+    1 (0 explain 0 noun-explain 0)
+      2 (*trim-prefix-tree* (1 2 3 4 ?)) (0 :subtree+clause)
   ))
 
   ; The third stage of preprocessing. We want to remove any "prefix" that the user might
