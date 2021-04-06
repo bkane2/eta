@@ -281,10 +281,18 @@
   1 (0 medicine-taking 5 med-help 5 frequently 0)
     2 ((Does taking medication more frequently help ?) (Medicine-frequency)) (0 :gist)
 
+  ; What is your dosage?
+  1 (0 wh_ 3 dose 0)
+    2 ((What dosage of pain medication am I taking ?) (Medicine)) (0 :gist)
+  1 (0 how 1 med-dosage 3 be 3 med-take 0)
+    2 ((What dosage of pain medication am I taking ?) (Medicine)) (0 :gist)
+
   ; Are you taking [some med]?
   1 (0 be 2 you 8 med-take 0 medicine-particular 0)
     2 ((Am I taking 8 ?) (Medicine)) (0 :gist)
   1 (0 what medicine 3 you 2 med-take 0)
+    2 ((What medicine am I taking ?) (Medicine)) (0 :gist)
+  1 (0 what other medicine 3 you 2 med-take 0)
     2 ((What medicine am I taking ?) (Medicine)) (0 :gist)
 
   ; Is the pain medication working?
@@ -354,7 +362,8 @@
   1 (0 more-info 1 about 2 pain 0)
     2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
   1 (0 what 2 medicine-gen 0)
-    2 (*medicine-question* (what medication are you taking ?)) (0 :subtree+clause)
+    2 (- 0 dose 0)
+      3 (*medicine-question* (what medication are you taking ?)) (0 :subtree+clause)
   1 (0 what pain 1 be you 0)
     2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
 

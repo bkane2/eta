@@ -85,6 +85,8 @@
     2 *deny-allergies* (0 :schema)
   1 (What medicine am I taking ?)
     2 *mention-taking-lortab* (0 :schema)
+  1 (What dosage of pain medication am I taking ?)
+    2 *mention-taking-lortab* (0 :schema)
   1 (Am I taking pain-med ?)
     2 *mention-taking-lortab* (0 :schema)
   1 (How often am I taking medication ?)

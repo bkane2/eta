@@ -152,6 +152,9 @@
   1 (0 What medicine am I taking 0)
     2 (I am just taking the lortab for pain right now \.) (0 :out)
 
+  1 (0 What dosage of pain medication am I taking 0)
+    2 (I\'ve been taking a pill of the lortab every three hours \. About five pills each day \. I\'m not sure what the exact dosage is \.) (0 :out)
+
   1 (0 Am I taking pain-med 0)
     2 (I think so \. I am taking lortab for pain right now \.) (0 :out)
   1 (0 Am I taking pain-med-other 0)

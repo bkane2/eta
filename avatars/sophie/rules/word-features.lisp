@@ -5,7 +5,7 @@
   (care treatment treatments)
   (come came)
   (pain hurt hurting)
-  (medicine medicines medication drug drugs pill pills med meds dose doses)
+  (medicine medicines medication medications drug drugs pill pills med meds dose)
   (drive drove driving)
   (illness cancer disease condition)
   (mention say)
@@ -50,6 +50,7 @@
   (recently lately)
   (cure curable recover recovery solution fix miracle)
   (alone yourself)
+  (dose doses dosage dosages)
 
   ; General
   (affirm pos posadv)
@@ -128,13 +129,14 @@
   (blood-pressure-med cozar)
   (sleep-medication ambien nyquil lunesta)
   (med-give recommend advise suggest give prescribe)
-  (med-take take taking get getting use using on)
+  (med-take take taking get getting use using on prescribed)
   (med-past took taken used gotten prescribed)
   (med-time every time times hour hours minute minutes day days week weeks)
   (med-better better stronger effective heavier)
   (med-for for work)
   (med-help care help helping helpful better effective work working)
   (med-increase maximize maximizing increase increasing upping)
+  (med-dosage much many milligrams grams)
 
   ; Pain
   (pain-bad bad much strongly intensely badly)
