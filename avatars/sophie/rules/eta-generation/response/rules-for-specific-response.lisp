@@ -76,6 +76,8 @@
   1 (0 What happens when I try to sleep 0)
     2 (I usually have trouble staying asleep \. Sometimes I wake up in the middle of the night and notice an ache in my
        back and near my chest \. That\'s when I have to take pain medication to fall back asleep \.) (0 :out)
+  1 (0 Is your mental health keeping you awake 0)
+    2 (My anxiety can sometimes make it difficult to fall asleep\, but usually it\'s my pain that keeps me awake \.) (0 :out)
 
 )) ; END *response-tree-sleep*
 

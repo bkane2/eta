@@ -57,7 +57,7 @@
   (think-gen think thoughts thought feel feelings feeling believe)
   (be-aux be aux)
   (frequently frequent often more much)
-  (sleep sleeping wake waking awake insomnia)
+  (sleep bed bedtime wake waking awake insomnia night nighttime)
   (family parents siblings sibling grandparents)
   (parent parents mother father mom dad)
   (child children grandchild grandchildren son daughter)
@@ -108,7 +108,7 @@
   (diagnosis-tests diagnosis test tests result results)
 
   ; Mental health
-  (ment-health mental depression depressed anxiety anxious anxiousness unease uneasy schizophrenia)
+  (ment-health mental depression depressed anxiety anxious worry worried worrying anxiousness unease uneasy schizophrenia)
   (energy mood concentrate ment-health med-ment-health health illness)
   (antidepressant SSRI Prozac fluoxetine sertraline Zoloft Celexa citalopram Lexapro escitalopram paroxetine Paxil Pexeva)
   (therapy therapist counseling counselor)
@@ -153,5 +153,6 @@
   ; Sleep
   (sleep-prob problem insomnia)
   (sleep-thought thought thoughts head mind brain)
+  (sleep-awake awake up)
 
 ))

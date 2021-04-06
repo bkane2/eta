@@ -65,6 +65,10 @@
     2 *explain-not-sleeping-well* (0 :schema)
   1 (What happens when I try to sleep ?)
     2 *explain-not-sleeping-well* (0 :schema)
+  1 (What is my sleep routine ?)
+    2 *discuss-sleep-routine* (0 :schema)
+  1 (Is your mental health keeping you awake ?)
+    2 *explain-not-sleeping-well* (0 :schema)
 
   ; Questions about energy
   1 (How is my energy ?)
@@ -73,6 +77,8 @@
     2 *mention-trouble-concentrating* (0 :schema)
   1 (How is my mental health ?)
     2 *mention-mild-depression* (0 :schema)
+  1 (Is something harming your mental health ?)
+    2 *mention-anxiety* (0 :schema)
 
   ; Questions about medicine
   1 (Do I have allergies to any medicine ?)

@@ -881,6 +881,10 @@
   1 (0 illness 2 worse 0)
     2 ((My cancer has gotten worse \.) (Test-results)) (0 :gist)
 
+  ; A stronger pain medication might help.
+  1 (0 med-better 3 med-help 0)
+    2 ((A stronger pain medication will help me sleep \.) (Medicine-request)) (0 :gist)
+
   ; You might need some better medication.
   1 (0 medicine-gen 0)
     2 *medicine-working-input* (0 :subtree)
@@ -901,6 +905,8 @@
 
   ; Can you tell me more
   1 (0 aux 1 you 1 tell 5 more 0)
+    2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+  1 (0 aux 1 you be able 1 tell 5 more 0)
     2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
 
   1 (0)
@@ -1002,8 +1008,31 @@
 (READRULES '*stronger-medicine-help-sleep-input*
 ; (Will stronger pain medication help me sleep ?)
 '(
+  ; What medicine are you taking?
+  1 (8 wh_ 1 medicine-gen 0)
+    2 (*medicine-question* (what medicine are you taking ?)) (0 :subtree+clause)
+  1 (8 wh_ 2 med-take 0)
+    2 (*medicine-question* (what medicine are you taking ?)) (0 :subtree+clause)
+
+  ; When you take it does it take care of the pain?
+  1 (0 be-aux 3 med-help 3 pain 0)
+    2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
+  1 (0 be-aux 3 med-help 1 at acd Documll 0)
+    2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
+  1 (0 be-aux 3 med-help 1 little 0)
+    2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
+  1 (0 be-aux 1 it 3 do anything 0)
+    2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
+
+  ; Can you tell me more
+  1 (0 aux 1 you 1 tell 5 more 0)
+    2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+  1 (0 aux 1 you be able 1 tell 5 more 0)
+    2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+
   1 (0 affirm 0)
-    2 ((A stronger pain medication will help me sleep \.) (Medicine-request)) (0 :gist)
+    2 (- 0 NEG sure 0)
+      3 ((A stronger pain medication will help me sleep \.) (Medicine-request)) (0 :gist)
   1 (3 probably 0)
     2 ((A stronger pain medication will help me sleep \.) (Medicine-request)) (0 :gist)
   1 (0 NEG 0)

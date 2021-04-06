@@ -118,6 +118,8 @@
     2 (I have only had trouble concentrating sometimes \.) (0 :out)
   1 (I feel mildly depressed 1)
     2 (Well\, I do try to keep carrying on\, but sometimes I just feel down \.) (0 :out)
+  1 (I feel anxious about my future 1)
+    2 (Sometimes I get some pretty bad anxiety about my future\, and what this all means for me \.) (0 :out)
   1 (I don\'t have allergies to any medicine 1)
     2 (No\, I don\'t believe I have any allergies \.) (0 :out)
   1 (I am taking blood pressure medicine 1)
@@ -135,6 +137,8 @@
        My mother died from complications with her diabetes \. She was a smoker\, something she passed onto me \.
        My father\, though\, died when his prostate cancer went into his bones \. Near the end of his life\, he was in a
        lot of pain\, which I guess is why I worry about my medications \.) (0 :out)
+  1 (I take some pain medication and read a book before I sleep 1)
+    2 (I take some Lortab about an hour before I go to bed\, and then I read a book until I start to fall asleep \.) (0 :out)
 
   ; By default, simply output the gist-clause
   1 (0)

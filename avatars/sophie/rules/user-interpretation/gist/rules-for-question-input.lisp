@@ -228,6 +228,8 @@
 (READRULES '*energy-question*
 ; (0 energy 0)
 '(
+  1 (0 be-aux 2 you 2 ment-health 2 about 0)
+    2 ((Is something harming your mental health ?) (Energy)) (0 :gist)
   1 (0 be-aux 5 ment-health 5)
     2 ((How is my mental health ?) (Energy)) (0 :gist)
   1 (0 trouble 1 concentrate 0)
@@ -424,6 +426,20 @@
   ; What happens when you try to sleep?
   1 (0 wh_ 2 happen 4 sleep 0)
     2 ((What happens when I try to sleep ?) (Sleep)) (0 :gist)
+
+  ; What do you do before bed?
+  1 (0 wh_ 2 you 2 before 3 sleep 0)
+    2 ((What is my sleep routine ?) (Sleep)) (0 :gist)
+  1 (0 wh_ 2 your 1 sleep routine 0)
+    2 ((What is my sleep routine ?) (Sleep)) (0 :gist)
+  1 (0 wh_ 2 sleep routine 2 you 1 have 0)
+    2 ((What is my sleep routine ?) (Sleep)) (0 :gist)
+
+  ; Is worrying keeping you up at night?
+  1 (0 be 3 ment-health 4 you 2 sleep-awake 0)
+    2 ((Is your mental health keeping you awake ?) (Sleep)) (0 :gist)
+  1 (0 your 2 ment-health 4 you 2 sleep-awake 0)
+    2 ((Is your mental health keeping you awake ?) (Sleep)) (0 :gist)
 
 )) ; END *sleep-question*
 
