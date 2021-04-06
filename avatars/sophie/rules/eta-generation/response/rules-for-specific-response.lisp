@@ -86,6 +86,11 @@
 (READRULES '*response-tree-test-results*
 ; (What do my test results mean 1)
 '(
+  1 (0 What test results am I referring to 0)
+    2 (Oh\, sorry\, I assumed you were sent the results \. I had a second CT scan a couple weeks after radiation \.
+       I was told that the tumor is still there\, but I wasn\'t sure how to interpret that \. They mentioned something
+       about possible metastasis \.) (0 :out)
+
   1 (0 Do I know what the tests say 0)
     2 (I don\'t really understand the test results \. Can you explain them ?) (0 :out)
 

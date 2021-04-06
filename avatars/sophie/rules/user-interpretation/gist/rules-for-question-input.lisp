@@ -210,6 +210,10 @@
     2 ((Do I have the symptom of 3 ?) (Symptoms)) (0 :gist)
 
   ; Do you understand your test results?
+  1 (1 wh_ diagnosis-tests diagnosis-tests 6)
+    2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
+  1 (1 wh_ diagnosis-tests 6)
+    2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
   1 (1 be-aux 2 you know 3 diagnosis-tests 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
 

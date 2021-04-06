@@ -33,6 +33,8 @@
     2 *deny-symptom* (0 :schema) ; might need to be made more specific, but we're assuming that this is
                                  ; a "catch-all" rule for any symptom which isn't captured as another
                                  ; gist-clause listed above
+  1 (What test results am I referring to ?)
+    2 *ask-about-test-results* (0 :schema)
   1 (Do I know what the tests say ?)
     2 *ask-about-test-results* (0 :schema)
 
