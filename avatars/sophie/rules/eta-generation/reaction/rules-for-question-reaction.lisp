@@ -150,6 +150,8 @@
     2 (Yes\, one grandson\. He\'s starting middle school this year and is absolutely thrilled about it\.) (0 :out)
   1 (Do I have any children ?)
     2 (Yes\, I\'m staying with my daughter and her husband here in rochester\, but I have a son out in utica as well\.) (0 :out)
+  1 (Do I live alone ?)
+    2 (I live with my daughter and her husband while I\'m here in rochester \.) (0 :out)
   1 (Am I married ?)
     2 (I was for about twenty years\. But as we got older and the kids went off to college\, things just didn\'t work out as well as we thought they would\. We separated about ten years ago and divorced two years later\.) (0 :out)
   1 (How am I doing today ?)

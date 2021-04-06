@@ -49,6 +49,7 @@
   (cause causing causes caused trigger provoke)
   (recently lately)
   (cure curable recover recovery solution fix miracle)
+  (alone yourself)
 
   ; General
   (affirm pos posadv)

@@ -19,6 +19,8 @@
     2 *appointment-question* (0 :subtree)
   1 (0 married 0)
     2 *appointment-question* (0 :subtree)
+  1 (0 live 3 alone 0)
+    2 *appointment-question* (0 :subtree)
   ; If asked to elaborate about pain
   1 (0 pain 0)
     2 *pain-question* (0 :subtree)

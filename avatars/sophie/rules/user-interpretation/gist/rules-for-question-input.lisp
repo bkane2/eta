@@ -158,6 +158,10 @@
   1 (0 wh_ 2 you 3 feeling 0)
     2 ((How am I doing today ?)) (0 :gist)
 
+  ; Do you live alone?
+  1 (0 aux 1 you 2 live 2 alone 0)
+    2 ((Do I live alone ?)) (0 :gist)
+
   1 (0)
     2 ((NIL Gist)) (0 :gist)
 
