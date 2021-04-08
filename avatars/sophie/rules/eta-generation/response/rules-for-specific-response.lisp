@@ -175,6 +175,28 @@
 
 
 
+(READRULES '*response-tree-medication-stronger-request*
+; (Can I have a stronger pain medication 1)
+'(
+  1 (0 Addiction is not a side effect of the medication 0)
+    2 (It\'s good to know that stronger pain medication is an option without risking addiction \. Would you be
+       able to prescribe me some stronger medication\, then ?) (0 :out)
+  1 (0 A side effect of the medication be 2 side-effects-moderate 2 \. 0)
+    2 (I think I should try the medicine and see if I have problems with 9 10 11 \. Could you prescribe me some ?) (0 :out)
+  1 (0 A side effect of the medication be 2 side-effects-insignificant 2 \. 0)
+    2 (I already have 9 10 11 \, so I think the new medicine is worth a try \. Could you prescribe me some ?) (0 :out)
+
+  1 (0 NIL GIST 0 side effects 3 medication 0)
+    2 (I think it\'s worth giving it a try \. Could you prescribe me some stronger pain medication ?) (0 :out)
+
+  1 (0)
+    2 (You know\, I\'m in a lot of pain\, and the Lortab just isn\'t working \. I think maybe I need something
+       stronger for my pain \.) (0 :out)
+
+)) ; END *response-tree-medication-stronger-request*
+
+
+
 (READRULES '*response-tree-treatment-chemotherapy*
 '(
   1 (0 Chemotherapy is a treatment option 0)

@@ -10,6 +10,10 @@
 '(event-schema :header (((set-of ^me ^you) ask-for-stronger-pain-medication.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ?g1 (^me want.v (that (^me know.v (ans-to '(Can I have a stronger pain medication ?)))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Can I have a stronger pain medication ?))

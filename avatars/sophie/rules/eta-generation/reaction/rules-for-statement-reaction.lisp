@@ -26,7 +26,7 @@
     2 *medicine-reaction* (0 :subtree)
   1 (0 sleeping poorly 0 \.)
     2 *sleep-poorly-reaction* (0 :subtree)
-  1 (0 medication 4 working 0 \.)
+  1 (0 medication 4 work 0 \.)
     2 *medicine-working-reaction* (0 :subtree)
   1 (0 energy 0 \.)
     2 *energy-reaction* (0 :subtree)

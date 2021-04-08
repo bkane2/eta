@@ -194,6 +194,8 @@
 '(
   1 (0 hair 0)
     2 ((A side effect of the medication is hair loss \.) (Medicine-side-effects)) (0 :gist)
+  1 (0 side-effect-addiction 0)
+    2 ((A side effect of the medication is addiction \.) (Medicine-side-effects)) (0 :gist)
   1 (0 side-effect-neuropathy 0)
     2 ((A side effect of the medication is neuropathy \.) (Medicine-side-effects)) (0 :gist)
   1 (0 side-effect-nausea 0)
@@ -745,6 +747,14 @@
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
   1 (0 different 2 medicine-gen 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
+
+  ; It might take a couple weeks to tell
+  1 (0 take 5 med-time-gen 4 med-help 0)
+    2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
+  1 (0 take 5 med-time-gen 4 med-notice 0)
+    2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
+  1 (0 med-wait 5 med-time-gen 0)
+    2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
 
   1 (0)
     2 *general-input* (0 :subtree)

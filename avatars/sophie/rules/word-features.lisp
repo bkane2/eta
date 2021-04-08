@@ -66,7 +66,7 @@
   (married marry marriage spouse partner husband wife)
   (before prior lead)
   (feeling feel doing)
-  (work working help helping treat treating effective)
+  (work works working help helping treat treating effective)
   (want-gen want need)
   (more-info learn hear tell say more additional elaborate)
   (predict tell say know)
@@ -88,13 +88,13 @@
   (recreational drugs marijuana weed)
 
   ; Side effects
-  (side-effect-addiction addiction addicted high)
+  (side-effect-addiction addiction addicted high dependent withdrawal crave craving cravings)
   (side-effect-fatigue fatigue fatigued exhaustion exhausted sleepiness sleepy sleep tiredness tired energy drowsy insomnia)
   (side-effect-appetite appetite eating eat hunger hungry)
   (side-effect-nausea nausea vomiting vomit sick sickness)
   (side-effect-neuropathy neuropathy numb numbness tingle tingling)
   (side-effects-insignificant side-effect-fatigue side-effect-appetite)
-  (side-effects-moderate side-effects-nausea diarrhea)
+  (side-effects-moderate side-effect-nausea diarrhea)
   (side-effects-significant hair side-effect-neuropathy side-effect-addiction blood infection)
 
   ; Chemotherapy
@@ -132,9 +132,12 @@
   (med-take take taking get getting use using on prescribed)
   (med-past took taken used gotten prescribed)
   (med-time every time times hour hours minute minutes day days week weeks)
+  (med-time-gen while period med-time)
   (med-better better stronger effective heavier)
   (med-for for work)
   (med-help care help helping helpful better effective work working)
+  (med-notice notice tell detect feel)
+  (med-wait wait give try use)
   (med-increase maximize maximizing increase increasing upping)
   (med-dosage much many milligrams grams)
 

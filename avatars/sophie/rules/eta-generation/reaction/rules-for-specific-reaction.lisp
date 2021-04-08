@@ -58,16 +58,20 @@
 ; (0 side effect 3 medication 0)
 '(
   1 (Addiction is not a side effect of the medication \.)
+    2 *ask-for-stronger-pain-medication* (100 :schema)
     2 (I didn\'t know that\. It\'s good to know that stronger pain medication is an option without risking addiction \.) (0 :out)
   1 (A side effect of the medication be 2 side-effects-significant 2 \.)
-    2 (I think I should hold off for now and think about it more \.) (0 :out)
+    2 (I don\'t want to risk any issues with 8 9 10 \. I think I should hold off for now and think about it more \.) (0 :out)
   1 (A side effect of the medication be 2 side-effects-moderate 2 \.)
+    2 *ask-for-stronger-pain-medication* (100 :schema)
     2 (I think I should try the medicine and see if I have problems with 8 9 10 \.) (0 :out)
   1 (A side effect of the medication be 2 side-effects-insignificant 2 \.)
+    2 *ask-for-stronger-pain-medication* (100 :schema)
     2 (I already have 8 9 10 \, so I think the new medicine is worth a try\.) (0 :out)
 
   1 (0)
-    2 (I see\. Well\, I think it\'s worth giving it a try\.) (0 :out)
+    2 *ask-for-stronger-pain-medication* (100 :schema)
+    2 (I think it\'s worth giving it a try\.) (0 :out)
 
 )) ; END *medicine-side-effects-reaction*
 
@@ -123,6 +127,8 @@
 
 
 (READRULES '*medicine-reaction*
+; (0 stronger pain medication 0 help me sleep 0)
+
 '(
   ;; 1 (0 you will give me more medicine 0)
   ;;   2 (Great\, thank you !) (0 :out)
@@ -198,19 +204,19 @@
 '(
   1 (I should take 1 med-narcotic \.)
     2 *ask-about-narcotic-addiction* (100 :schema)
-    2 (I think having the stronger pain medication would help\.) (0 :out)
+    2 (I think having the stronger pain medication would help \.) (0 :out)
   1 (I should take stronger pain medication \.)
     2 *ask-about-pain-medication-side-effects* (100 :schema)
-    2 (I think having the stronger pain medication would help\.) (0 :out)
+    2 (I think having the stronger pain medication would help \.) (0 :out)
   1 (I can give you stronger pain medication \.)
-    2 (Thank you very much\, I hope that will help with the pain\.) (0 :out)
+    2 (Thank you very much\, I hope that will help with the pain \.) (0 :out)
   1 (I cannot give you stronger pain medication \.)
-    2 (I see\. For now I\'ll stick with my current medication\, but will let you know if the pain starts getting worse\.) (0 :out)
+    2 (I see \. For now I\'ll stick with my current medication\, but will let you know if the pain starts getting worse \.) (0 :out)
 
   1 (I can give you a refill of pain medication \.)
     2 (Thanks\, appreciate it \!) (0 :out)
   1 (I cannot give you a refill of pain medication \.)
-    2 (Okay\. I will try to do without it\, but if the pain gets worse I\'m going to call you back for more pain medication\.) (0 :out)
+    2 (Okay\. I will try to do without it\, but if the pain gets worse I\'m going to call you back for more pain medication \.) (0 :out)
 
   1 (0)
     2 (Okay\, I see \.) (0 :out)
@@ -220,20 +226,24 @@
 
 
 (READRULES '*medicine-working-reaction*
-; (0 medication 4 working 0 \.)
+; (0 medication 4 work 0 \.)
 ; (0 take 3 different \.)
 '(
   1 (I should take something different \.)
     2 *ask-about-pain-medication-side-effects* (0 :schema)
   1 (I should take med-narcotic \.)
     2 *ask-about-narcotic-addiction* (100 :schema)
-    2 (I think having the stronger pain medication would help\.) (0 :out)
+    2 (I think having the stronger pain medication would help \.) (0 :out)
   1 (I should take stronger pain medication \.)
     2 *ask-about-pain-medication-side-effects* (100 :schema)
-    2 (I think having the stronger pain medication would help\.) (0 :out)
+    2 (I think having the stronger pain medication would help \.) (0 :out)
+
+  1 (I should wait to see if the pain medication works \.)
+    2 (Okay\, for now I\'ll keep taking the Lortab\, and create a follow up appointment if it doesn\'t
+       work after a few weeks \.) (0 :out)
 
   1 (0)
-    2 (I think for now I will wait to see if the lortab starts helping more\.) (0 :out)
+    2 (I think for now I will wait to see if the lortab starts helping more \.) (0 :out)
 )) ; END *medicine-working-reaction*
 
 

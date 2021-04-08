@@ -11,6 +11,8 @@
     2 (*response-tree-prognosis*) (0 :subtrees)
   1 (What are the side effects of stronger pain medication 1)
     2 (*response-tree-medication*) (0 :subtrees)
+  1 (Can I have a stronger pain medication 1)
+    2 (*response-tree-medication-stronger-request*) (0 :subtrees)
   1 (What do my test results mean 1)
     2 (*response-tree-test-results*) (0 :subtrees)
   1 (Do I need chemotherapy 1)
@@ -70,10 +72,8 @@
        Do you know why I keep waking up like this ?) (100 :out)
     2 (Do you know what the specific cause of my poor sleep is ?) (0 :out)
   1 (How will I know if my pain medication is working 1)
-    2 (I just started on my new pain medication recently \. How long will it be before I know if it\'s working ?) (0 :out)
-  1 (Can I have a stronger pain medication 1)
-    2 (You know\, I\'m in a lot of pain\, and the Lortab just isn\'t working \. I think maybe I need something
-       stronger for my pain \.) (0 :out)
+    2 (I just started on my new pain medication fairly recently\, a couple weeks after radiation \.
+       How long will it be before I know if it\'s working ?) (0 :out)
   1 (Should I get comfort care 1)
     2 (You know\, I really just prefer to be comfortable at this point \. Do you think I should
        start considering comfort care ?) (0 :out)

@@ -36,6 +36,8 @@
     2 (^me know.v (ans-to '(Has the cancer gotten worse ?))) (0 :ulf)
 
   1 (0 A side effect of the medication is 0)
+    2 (0 A side effect of the medication be 2 side-effects-significant 2 \. 0)
+      3 (^me know.v (ans-to '(Can I have a stronger pain medication ?))) (0 :ulf)
     2 (^me know.v (ans-to '(What are the side effects of stronger pain medication ?))) (0 :ulf)
 
   1 (0 A side effect of chemotherapy is 0)
