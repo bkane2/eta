@@ -637,14 +637,18 @@
   1 (0 different 2 medicine-gen 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
 
-  ; Sure, I can give you a refill of pain medication
-  1 (0 affirm 0)
+  ; Yes / No
+  1 (0 POS 0)
     2 ((I can give you a refill of pain medication \.) (Medicine-request)) (0 :gist)
+  1 (0 POSADV 0)
+    2 (- 0 POSADV NEG 0)
+      3 ((I can give you a refill of pain medication \.) (Medicine-request)) (0 :gist)
+    2 ((I cannot give you a refill of pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 no 1 problem 0)
     2 ((I can give you a refill of pain medication \.) (Medicine-request)) (0 :gist)
-
-  ; No
   1 (0 NEG 0)
+    2 ((I cannot give you a refill of pain medication \.) (Medicine-request)) (0 :gist)
+  1 (0 NEGADV 0)
     2 ((I cannot give you a refill of pain medication \.) (Medicine-request)) (0 :gist)
 
   1 (0)
@@ -675,14 +679,18 @@
   1 (0 different 2 medicine-gen 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
 
-  ; Sure, I can give you a stronger pain medication
-  1 (0 affirm 0)
+  ; Yes / No
+  1 (0 POS 0)
     2 ((I can give you stronger pain medication \.) (Medicine-request)) (0 :gist)
+  1 (0 POSADV 0)
+    2 (- 0 POSADV NEG 0)
+      3 ((I can give you stronger pain medication \.) (Medicine-request)) (0 :gist)
+    2 ((I cannot give you stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 no 1 problem 0)
     2 ((I can give you stronger pain medication \.) (Medicine-request)) (0 :gist)
-
-  ; No
   1 (0 NEG 0)
+    2 ((I cannot give you stronger pain medication \.) (Medicine-request)) (0 :gist)
+  1 (0 NEGADV 0)
     2 ((I cannot give you stronger pain medication \.) (Medicine-request)) (0 :gist)
 
   1 (0)
@@ -1040,12 +1048,17 @@
   1 (0 aux 1 you be able 1 tell 5 more 0)
     2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
 
-  1 (0 affirm 0)
+  ; Yes / No
+  1 (0 POS 0)
     2 (- 0 NEG sure 0)
       3 ((A stronger pain medication will help me sleep \.) (Medicine-request)) (0 :gist)
-  1 (3 probably 0)
-    2 ((A stronger pain medication will help me sleep \.) (Medicine-request)) (0 :gist)
+  1 (0 POSADV 0)
+    2 (- 0 POSADV NEG 0)
+      3 ((A stronger pain medication will help me sleep \.) (Medicine-request)) (0 :gist)
+    2 ((A stronger pain medication will not help me sleep \.) (Medicine-request)) (0 :gist)
   1 (0 NEG 0)
+    2 ((A stronger pain medication will not help me sleep \.) (Medicine-request)) (0 :gist)
+  1 (0 NEGADV 0)
     2 ((A stronger pain medication will not help me sleep \.) (Medicine-request)) (0 :gist)
 
   1 (0)
