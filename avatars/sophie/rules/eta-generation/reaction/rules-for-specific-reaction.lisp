@@ -276,7 +276,10 @@
     2 *ask-about-prognosis* (0 :schema)
 
   1 (0)
-    2 (That\'s all very difficult to hear\. At this point I just want to spend time with family and prepare myself for the worst\.) (0 :out)
+    2 (I\'m not entirely sure I fully understand what this means for my future\, but I want to be prepared for the worst
+       and to spend time with family \.) (100 :out)
+    2 (I see \.) (100 :out)
+    2 (I suppose these things can be hard to predict \.) (0 :out)
 
 )) ; END *prognosis-reaction*
 
@@ -319,8 +322,12 @@
   1 (The test results show that my cancer has spread \.)
     2 *ask-about-prognosis* (0 :schema)
 
+  1 (You are not sure what my test results mean \.)
+    2 *ask-about-test-results* (100 :schema)
+    2 *ask-about-test-results* (100 :schema)
+
   1 (0)
-    2 (Oh\, I see\.) (0 :out)
+    2 (Oh\, I see \.) (0 :out)
 
 )) ; END *test-results-reaction*
 

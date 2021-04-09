@@ -94,8 +94,16 @@
   1 (0 Do I know what the tests say 0)
     2 (I don\'t really understand the test results \. Can you explain them ?) (0 :out)
 
+  1 (0 You are not sure what my test results mean 0)
+    2 (Sorry\, I assumed you were sent the test results\, from when I had my second CT scan a couple weeks after radiation \.
+       I was told that the tumor is still there\, but I wasn\'t sure how to interpret that \. They mentioned something
+       about possible metastasis \. Could you explain what that means in simple terms ?) (100 :out)
+    2 (Could you try your best to explain the test results to me ?) (0 :out)
+
   1 (0)
-    2 (Could you explain to me what my test results mean ?) (0 :out)
+    2 (Let\'s talk about my test results\. I received my test results yesterday\, but I didn\'t really understand them \.
+       Could you explain to me what my test results mean ?) (100 :out)
+    2 (I still don\'t quite understand the test results\. Could you please explain in simpler terms ?) (0 :out)
 )) ; END *response-tree-test-results*
 
 
