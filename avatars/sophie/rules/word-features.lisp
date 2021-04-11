@@ -32,6 +32,7 @@
   (prescribe prescribes prescribed prescribed)
   (elaborate continue describe)
   (can could)
+  (might could)
   (scale rate rating)
   (part parts section sections area areas)
   (take taking)
@@ -79,6 +80,8 @@
   (elapsed-time-plur years months)
   (elapsed-time year month elapsed-time-plur)
   (body-part lung lungs bone bones chest back shoulder shoulders)
+  (appreciate like love enjoy)
+  (avatar-items shirt sweater pants clothes clothing style glasses hat hair haircut furniture voice)
 
   ; Medical history
   (quit quitting stop stopping stopped forgo forgoing)

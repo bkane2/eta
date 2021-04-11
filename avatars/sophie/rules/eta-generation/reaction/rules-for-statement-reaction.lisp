@@ -79,6 +79,8 @@
 '(
   1 (It is nice to meet me \.)
     2 (Thank you \, it\'s nice to meet you too \.) (100 :out)
+  1 (You like my 6 \.)
+    2 (Thanks \, I appreciate it \. I think we should stay on topic\, though \.) (0 :out)
   ; If doctor is just giving an indication to keep talking, react silently and continue
   1 (Continue talking \.)
     2 () (0 :out)

@@ -5,9 +5,11 @@
 
 (READRULES '*general-input*
 '(
-  ; Generic greeting
+  ; Generic remarks
   1 (0 nice to meet you 0)
     2 ((It is nice to meet me \.)) (0 :gist)
+  1 (0 I 1 appreciate 2 avatar-items 0)
+    2 ((You like my 6 \.)) (0 :gist)
   ; If asked if anyone is here with you
   1 (0 here anyone-here-with-you 0)
     2 *appointment-question* (0 :subtree)

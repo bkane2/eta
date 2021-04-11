@@ -243,7 +243,7 @@
        work after a few weeks \.) (0 :out)
 
   1 (0)
-    2 (I think for now I will wait to see if the lortab starts helping more \.) (0 :out)
+    2 (I see \.) (0 :out)
 )) ; END *medicine-working-reaction*
 
 

@@ -786,6 +786,8 @@
     2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
   1 (0 med-wait 5 med-time-gen 0)
     2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
+  1 (0 might 1 be 4 med-time-gen 0)
+    2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
 
   1 (0)
     2 *general-input* (0 :subtree)
