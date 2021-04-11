@@ -12,7 +12,7 @@
        What\'s the best option for making sure this is possible ?) (0 :out)
 
   1 (0)
-    2 (What are my choices at this point ?) (0 :out)
+    2 (I want to talk a bit about my treatment options now \. What are my choices at this point ?) (0 :out)
 
 )) ; END *response-tree-treatment-options*
 
@@ -276,6 +276,10 @@
     2 (Those are not the words I wanted to hear \. I mean\, I was bracing for the worst\, since I could tell by the
        pain that it\'s bad \. But to hear that the cancer has spread is quite depressing \. What does
        it all mean for me ?) (0 :out)
+
+  1 (0 The prognosis is that I may live for several elapsed-time 0)
+    2 (I\'m not sure whether that\'s a good thing or bad thing \. Could you be more specific about how long
+       you think I have left ?) (0 :out)
 
   1 (0)
     2 (What do you think this means for me in the future ?) (100 :out)

@@ -260,6 +260,7 @@
     2 (That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy that 9 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for several elapsed-time \.)
+    2 *ask-about-prognosis* (100 :schema)
     2 (That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy those 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for a elapsed-time \.)
@@ -269,6 +270,9 @@
   1 (The prognosis is that I cannot be cured \.)
     2 *ask-about-prognosis* (100 :schema)
     2 (I guess I need to make peace with it \.) (0 :out)
+
+  1 (The prognosis is that I will survive \.)
+    2 (My previous doctor didn\'t seem so optimistic\, so that\'s quite relieving that you think I\'ll likely get better \.) (0 :out)
 
   1 (The prognosis is that my cancer should be treated with chemotherapy \.)
     2 *ask-about-prognosis* (0 :schema)

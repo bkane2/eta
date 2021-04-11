@@ -48,6 +48,9 @@
   (provoke provokes provoking provoked)
   (cause causing causes caused trigger provoke)
   (recently lately)
+  (chance chances)
+  (low small minimal)
+  (recover recovery survive survival fine)
   (cure curable recover recovery solution fix miracle)
   (alone yourself)
   (dose doses dosage dosages)
@@ -155,6 +158,7 @@
   ; Prognosis
   (spread spreading metastasized metastatic)
   (cancer-increase increase spread)
+  (prog-future will going)
 
   ; Sleep
   (sleep-prob problem insomnia)

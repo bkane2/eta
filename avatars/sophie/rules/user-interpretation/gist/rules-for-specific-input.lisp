@@ -810,6 +810,8 @@
     2 ((The prognosis is that I may live for 2 4 \.) (Prognosis)) (0 :gist)
   1 (0 number-vague 2 elapsed-time 0)
     2 ((The prognosis is that I may live for several 4 \.) (Prognosis)) (0 :gist)
+  1 (0 elapsed-time ahead 3 you 0)
+    2 ((The prognosis is that I may live for several 2 \.) (Prognosis)) (0 :gist)
   1 (0 a 2 elapsed-time 0)
     2 ((The prognosis is that I may live for a 4 \.) (Prognosis)) (0 :gist)
 
@@ -824,7 +826,15 @@
     2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
   1 (0 lose 1 battle 0)
     2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
+  1 (0 chance 5 recover 3 low 0)
+    2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
+  1 (0 you 3 will 4 NEG recover 0)
+    2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
 
+  ; You'll be fine
+  1 (0 you 3 prog-future 4 recover 0)
+    2 ((The prognosis is that I will survive \.) (Prognosis)) (0 :gist)
+  
   ; TODO: fix issue with extracting multiple time gist clauses from this:
   ; Good question. It’s hard to tell. If you were to read a book people would say with treatment people live about up to two years. That being said, we have patients in our practice that live much longer.  And that being said, we have patients in our practice that don’t live that long. And it really depends on the aggressiveness of your disease.  So, back in the day when we didn’t have treatments for lung cancer people would pass away within less than six months. That was the norm in an untreated lung cancer patient. And now we have patients living several years.  And the good part, if there is a silver lining in the treatment of lung cancer, is that there are so many new treatments coming out. And that my hope is that my patients currently being treated for lung
   ; cancer, these things that come out as time goes on. Because the hard part about any of these chemos is they don’t work forever.
