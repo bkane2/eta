@@ -1019,9 +1019,9 @@
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
 
   ; I don't know
-  1 (0 NEG sure 0)
+  1 (0 NEG 1 sure 0)
     2 ((You are not sure what my test results mean \.)) (0 :gist)
-  1 (0 NEG know 0)
+  1 (0 NEG 1 know 0)
     2 ((You are not sure what my test results mean \.)) (0 :gist)
 
   1 (0)

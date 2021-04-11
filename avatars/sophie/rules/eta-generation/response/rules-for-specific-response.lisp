@@ -95,7 +95,7 @@
     2 (I don\'t really understand the test results \. Can you explain them ?) (0 :out)
 
   1 (0 You are not sure what my test results mean 0)
-    2 (Sorry\, I assumed you were sent the test results\, from when I had my second CT scan a couple weeks after radiation \.
+    2 (Oh\, sorry\, I assumed you were sent the test results\, from when I had my second CT scan a couple weeks after radiation \.
        I was told that the tumor is still there\, but I wasn\'t sure how to interpret that \. They mentioned something
        about possible metastasis \. Could you explain what that means in simple terms ?) (100 :out)
     2 (Could you try your best to explain the test results to me ?) (0 :out)
