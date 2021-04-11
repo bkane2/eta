@@ -11,6 +11,12 @@
     2 (Keeping a high quality of life for the rest of my time is the most important thing to me right now \.
        What\'s the best option for making sure this is possible ?) (0 :out)
 
+  1 (0 Do I want to try to fight the cancer 0)
+    2 (My main priority is just to be comfortable for the time I have left\, but I\'m willing
+       to try to fight the cancer if you think it will help \.) (100 :out)
+    2 (I want to try to fight it if you think it would be best\, but my main priority is just
+       being comfortable \.) (0 :out)
+
   1 (0)
     2 (I want to talk a bit about my treatment options now \. What are my choices at this point ?) (0 :out)
 

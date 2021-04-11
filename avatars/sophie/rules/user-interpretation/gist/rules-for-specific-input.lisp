@@ -1035,7 +1035,7 @@
 
 (READRULES '*treatment-option-input*
 ; (What are my options for treatment ?)
-; (What happens if I do not do chemotherapy ?)
+; (What are my treatment options if I do not do chemotherapy ?)
 '(
   ; Comfort care is an option
   1 (0 palliative care 0)

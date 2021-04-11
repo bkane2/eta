@@ -93,7 +93,8 @@
       3 (I didn\'t know that was possible\. But it makes sense\.) (0 :out)
     2 (If I do chemotherapy\, I would prefer a port or IV \. I don\'t like needles\.) (0 :out)
   1 (A side effect of chemotherapy is 6 \.)
-    2 *ask-how-chemotherapy-works* (0 :schema)
+    2 *ask-how-chemotherapy-works* (100 :schema)
+    2 (I see \. I think it might be worth giving it a try \.) (0 :out)
 
   1 (0)
     2 (Ah\, I see\. I\'ll have to read more about chemotherapy\.) (0 :out)
@@ -176,7 +177,8 @@
 '(
   1 (0)
     2 *ask-about-chemotherapy-side-effects* (100 :schema)
-    2 *ask-how-chemotherapy-works* (0 :schema)       
+    2 *ask-how-chemotherapy-works* (100 :schema)       
+    2 (I see \. I think it might be worth giving it a try \.) (0 :out)
 
 )) ; END *chemotherapy-reaction*
 
@@ -354,6 +356,17 @@
     2 *ask-how-comfort-care-works* (0 :schema)
 
   1 (0)
-    2 (I will have to think about what you said more\.) (0 :out)
+    2 (I will have to think about what you said more \.) (0 :out)
 
 )) ; END *treatment-option-reaction*
+
+
+
+(READRULES '*treatment-goals-reaction*
+; (0 cancer-fight 0)
+; (0 cancer-live 0)
+'(
+  1 (Do I want to try to fight the cancer ?)
+    2 *ask-about-treatment-options* (0 :schema)
+    
+)) ; END *treatment-goals-reaction*

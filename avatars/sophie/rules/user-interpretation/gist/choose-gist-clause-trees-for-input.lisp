@@ -101,7 +101,7 @@
       2 (*cancer-worse-input*) (0 :subtrees)
    1 (Are you sure the cancer has not gotten worse ?)
       2 (*cancer-worse-verification-input*) (0 :subtrees)
-   1 (What happens if I do not do chemotherapy ?)
+   1 (What are my treatment options if I do not do chemotherapy ?)
       2 (*treatment-option-input*) (0 :subtrees)
    1 (How does comfort care work ?)
       2 (*comfort-care-input*) (0 :subtrees)

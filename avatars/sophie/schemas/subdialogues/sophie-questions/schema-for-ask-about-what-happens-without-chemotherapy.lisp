@@ -12,7 +12,7 @@
 
 :episodes (
 
-?e1 (^me paraphrase-to.v ^you '(What happens if I do not do chemotherapy ?))
+?e1 (^me paraphrase-to.v ^you '(What are my treatment options if I do not do chemotherapy ?))
  
 ?e2 (^you reply-to.v ?e1)
 

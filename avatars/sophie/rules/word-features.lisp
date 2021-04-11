@@ -55,6 +55,7 @@
   (cure curable recover recovery solution fix miracle)
   (alone yourself)
   (dose doses dosage dosages)
+  (try trying attempt attempting)
 
   ; General
   (affirm pos posadv)
@@ -102,6 +103,10 @@
   (side-effects-insignificant side-effect-fatigue side-effect-appetite)
   (side-effects-moderate side-effect-nausea diarrhea)
   (side-effects-significant hair side-effect-neuropathy side-effect-addiction blood infection)
+
+  ; Treatment goals
+  (cancer-fight fight fighting battle battling treat treating cure curing)
+  (cancer-live live living survive surviving cure curing remission)
 
   ; Chemotherapy
   (chemotherapy-injection injection injections vein veins needle needles)

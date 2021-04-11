@@ -12,7 +12,7 @@
 ; (What is my prognosis ?)
 ; (What do my test results mean ?)
 ; (What are my options for treatment ?)
-; (What happens if I do not do chemotherapy ?)
+; (What are my treatment options if I do not do chemotherapy ?)
 ; (Do you think chemotherapy will help ?)
 ; (Do you think radiation will help ?)
 ; (I would like a refill of medicine \.)

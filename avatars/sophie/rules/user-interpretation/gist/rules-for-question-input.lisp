@@ -28,6 +28,7 @@
 ; - tell-family
 ; - test-results
 ; - treatment-option
+; - treatment-goals
 
 
 (READRULES '*cancer-worse-question*
@@ -535,3 +536,18 @@
 (READRULES '*treatment-option-question*
 '(
 )) ; END *treatment-option-question*
+
+
+
+(READRULES '*treatment-goals-question*
+; (0 cancer-fight 0)
+; (0 cancer-live 0)
+'(
+  ; Do you want to try to fight the cancer ?
+  1 (0 you 2 have 2 cancer-fight 0)
+    2 ((Do I want to try to fight the cancer ?) (Treatment-options)) (0 :gist)
+  1 (0 you 2 want 3 cancer-fight 0)
+    2 ((Do I want to try to fight the cancer ?) (Treatment-options)) (0 :gist)
+  1 (0 you 2 want 3 cancer-live 0)
+    2 ((Do I want to try to fight the cancer ?) (Treatment-options)) (0 :gist)
+)) ; END *treatment-goals-question*
