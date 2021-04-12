@@ -45,7 +45,7 @@
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
   1 (0 do 1 pron 5 drink 0)
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
-  1 (0 be-aux 1 pron 5 drink 0)
+  1 (0 AUX-BASE 1 pron 5 drink 0)
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
    
    ; How often do you smoke?
@@ -53,31 +53,31 @@
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)
   1 (0 do 1 pron 5 smoke 0)
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)
-  1 (0 be-aux 1 pron 5 smoke 0)
+  1 (0 AUX-BASE 1 pron 5 smoke 0)
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)
   
   ; What is your family's history with mental health ?
-  1 (0 be-aux 1 family 5 history 5 ment-health 0)
+  1 (0 AUX-BASE 1 family 5 history 5 ment-health 0)
     2 ((Does my family have a history of mental illness ?) (Medical-history)) (0 :gist)
   1 (0 have 8 family 3 experienced 5 ment-health 0)
     2 ((Does my family have a history of mental illness ?) (Medical-history)) (0 :gist)
   1 (0 history 3 ment-health 0)
     2 ((Does my family have a history of mental illness ?) (Medical-history)) (0 :gist)
-  1 (0 family 1 be-aux 5 history 5 ment-health 0)
+  1 (0 family 1 AUX-BASE 5 history 5 ment-health 0)
     2 ((Does my family have a history of mental illness ?) (Medical-history)) (0 :gist)
     
   ; Are your parents still alive?
-  1 (0 be-aux 1 parent 3 alive 0)
+  1 (0 AUX-BASE 1 parent 3 alive 0)
     2 ((How did my parents die ?) (Medical-history)) (0 :gist)
-  1 (0 be-aux 1 parent 3 die 0)
+  1 (0 AUX-BASE 1 parent 3 die 0)
     2 ((How did my parents die ?) (Medical-history)) (0 :gist)
-  1 (0 wh_ 2 be-aux 3 parent 3 die 0)
+  1 (0 wh_ 2 AUX-BASE 3 parent 3 die 0)
     2 ((How did my parents die ?) (Medical-history)) (0 :gist)
    
   ; Have you ever taken any other drugs?
-  1 (0 be-aux 1 pron 3 recreational 0)
+  1 (0 AUX-BASE 1 pron 3 recreational 0)
     2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
-  1 (0 pron 1 be-aux 3 recreational 0)
+  1 (0 pron 1 AUX-BASE 3 recreational 0)
     2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
   1 (0 pron 3 history 3 recreational 0)
     2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
@@ -215,7 +215,7 @@
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
   1 (1 wh_ diagnosis-tests 6)
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
-  1 (1 be-aux 2 you know 3 diagnosis-tests 0)
+  1 (1 AUX-BASE 2 you know 3 diagnosis-tests 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
 
   ; How did you get your diagnosis?
@@ -237,9 +237,9 @@
 (READRULES '*energy-question*
 ; (0 energy 0)
 '(
-  1 (0 be-aux 2 you 2 ment-health 2 about 0)
+  1 (0 AUX-BASE 2 you 2 ment-health 2 about 0)
     2 ((Is something harming your mental health ?) (Energy)) (0 :gist)
-  1 (0 be-aux 5 ment-health 5)
+  1 (0 AUX-BASE 5 ment-health 5)
     2 ((How is my mental health ?) (Energy)) (0 :gist)
   1 (0 trouble 1 concentrate 0)
     2 ((Have I had trouble concentrating ?) (Energy)) (0 :gist)
@@ -305,21 +305,25 @@
     2 ((How were you prescribed your current pain medication ?) (Medicine-working)) (0 :gist)
 
   ; Is the pain medication working?
-  1 (0 be-aux 3 medicine-taking 3 med-help 3 pain 0)
+  1 (0 AUX-BASE 3 medicine-taking 3 med-help 3 pain 0)
     2 ((Is the pain medication working at all ?) (Medicine-working)) (0 :gist)
-  1 (0 be-aux 0 medicine-taking 3 do anything 0)
+  1 (0 AUX-BASE 0 medicine-taking 3 do anything 0)
     2 ((Is the pain medication working at all ?) (Medicine-working)) (0 :gist)
-  1 (0 be-aux 0 medicine-taking 0 med-help 3 at all 0)
+  1 (0 AUX-BASE 0 medicine-taking 0 med-help 3 at all 0)
     2 ((Is the pain medication working at all ?) (Medicine-working)) (0 :gist)
-  1 (0 be-aux 0 medicine-taking 0 med-help 0)
+  1 (0 AUX-BASE 0 medicine-taking 0 med-help 0)
     2 ((Is the pain medication working ?) (Medicine-working)) (0 :gist)
   1 (0 how 0 medicine-taking 0 med-help 0)
     2 ((How is the pain medication working ?) (Medicine-working)) (0 :gist)
 
   ; Do you want stronger pain medication?
-  1 (0 do 1 you 3 want-gen 3 med-better 1 medicine-taking 0)
+  1 (0 AUX-BASE 1 you 3 want-gen 3 med-better 1 medicine-taking 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
-  1 (0 do 1 you 3 want-gen 3 med-narcotic 0)
+  1 (0 AUX-BASE 1 you 3 want-gen 3 med-narcotic 0)
+    2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
+  1 (0 AUX-BASE 1 you 3 think-gen 5 med-better 1 medicine-taking 0)
+    2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
+  1 (0 AUX-BASE 1 you 3 think-gen 5 med-narcotic 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
   1 (0 wh_ 5 think-gen 5 med-take 1 med-better 1 medicine-taking 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
@@ -343,9 +347,9 @@
     2 ((I should take a narcotic \.) (Medicine-request)) (0 :gist)
 
   ; Do you have a history with narcotics?
-  1 (0 be-aux 3 med-past 3 med-narcotic 0)
+  1 (0 AUX-BASE 3 med-past 3 med-narcotic 0)
     2 ((What is my history with med-narcotic ?) (Medical-history)) (0 :gist)
-  1 (0 be-aux 3 history 3 med-narcotic 0)
+  1 (0 AUX-BASE 3 history 3 med-narcotic 0)
     2 ((What is my history with med-narcotic ?) (Medical-history)) (0 :gist)
 
 )) ; END *medicine-question*

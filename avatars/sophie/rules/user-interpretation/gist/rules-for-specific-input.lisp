@@ -114,11 +114,11 @@
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
   1 (0 do 1 pron 5 drink 0)
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
-  1 (0 be-aux 1 pron 5 drink 0)
+  1 (0 AUX-BASE 1 pron 5 drink 0)
     2 ((What is my history with alcohol ?) (Medical-history)) (0 :gist)
   
   ; What is your history with smoking?
-  1 (0 be-aux 1 pron 5 smoke 0)
+  1 (0 AUX-BASE 1 pron 5 smoke 0)
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)
   1 (0 do 1 pron 5 smoke 0)
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)
@@ -126,27 +126,27 @@
     2 ((What is my history with smoking ?) (Medical-history)) (0 :gist)
   
   ; What is your family's history with mental health ?
-  1 (0 be-aux 1 family 5 history 5 ment-health 0)
+  1 (0 AUX-BASE 1 family 5 history 5 ment-health 0)
     2 ((Does my family have a history of mental illness ?) (Medical-history)) (0 :gist)
   1 (0 have 8 family 3 experienced 5 ment-health 0)
     2 ((Does my family have a history of mental illness ?) (Medical-history)) (0 :gist)
   1 (0 history 3 ment-health 0)
     2 ((Does my family have a history of mental illness ?) (Medical-history)) (0 :gist)
-  1 (0 family 1 be-aux 5 history 5 ment-health 0)
+  1 (0 family 1 AUX-BASE 5 history 5 ment-health 0)
     2 ((Does my family have a history of mental illness ?) (Medical-history)) (0 :gist)
   
   ; Are your parents still alive?
-  1 (0 be-aux 1 parent 3 alive 0)
+  1 (0 AUX-BASE 1 parent 3 alive 0)
     2 ((How did my parents die ?) (Medical-history)) (0 :gist)
-  1 (0 be-aux 1 parent 3 die 0)
+  1 (0 AUX-BASE 1 parent 3 die 0)
     2 ((How did my parents die ?) (Medical-history)) (0 :gist)
-  1 (0 wh_ 2 be-aux 3 parent 3 die 0)
+  1 (0 wh_ 2 AUX-BASE 3 parent 3 die 0)
     2 ((How did my parents die ?) (Medical-history)) (0 :gist)
   
   ; Have you ever taken any other drugs?
-  1 (0 be-aux 1 pron 3 recreational 0)
+  1 (0 AUX-BASE 1 pron 3 recreational 0)
     2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
-  1 (0 pron 1 be-aux 3 recreational 0)
+  1 (0 pron 1 AUX-BASE 3 recreational 0)
     2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
   1 (0 pron 3 history 3 recreational 0)
     2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
@@ -359,7 +359,7 @@
 ; (Will an antidepressant help me with my pain ?)
 ; (Should I try medication before I try therapy ?)
 '(
-  1 (0 be-aux 3 ment-health 3 recently 0)
+  1 (0 AUX-BASE 3 ment-health 3 recently 0)
     2 ((How is my mental health ?) (Energy)) (0 :gist)
   1 (0 how 5 think-gen 0)
     2 ((How is my mental health ?) (Energy)) (0 :gist)
@@ -418,6 +418,8 @@
     2 (*medicine-question* (have you thought about a stronger pain medication ?)) (0 :subtree+clause)
   1 (0 a 2 med-better 2 medication 0)
     2 (*medicine-question* (have you thought about a stronger pain medication ?)) (0 :subtree+clause)
+  1 (0 some 2 med-better 2 medication 0)
+    2 (*medicine-question* (have you thought about a stronger pain medication ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -456,13 +458,13 @@
   1 (0 wh_ 2 med-take 0)
     2 (*medicine-question* (what medicine are you taking ?)) (0 :subtree+clause)
   ; When you take it does it take care of the pain?
-  1 (0 be-aux 3 med-help 3 pain 0)
+  1 (0 AUX-BASE 3 med-help 3 pain 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 3 med-help 1 at all 0)
+  1 (0 AUX-BASE 3 med-help 1 at all 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 3 med-help 1 little 0)
+  1 (0 AUX-BASE 3 med-help 1 little 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 1 it 3 do anything 0)
+  1 (0 AUX-BASE 1 it 3 do anything 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
 
   1 (0 SELF 2 sorry 0)
@@ -738,13 +740,13 @@
     2 (*medicine-question* (are you taking 2 ?)) (0 :subtree+clause)
 
   ; When you take it does it take care of the pain?
-  1 (0 be-aux 3 med-help 3 pain 0)
+  1 (0 AUX-BASE 3 med-help 3 pain 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 3 med-help 1 at all 0)
+  1 (0 AUX-BASE 3 med-help 1 at all 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 3 med-help 1 little 0)
+  1 (0 AUX-BASE 3 med-help 1 little 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 1 it 3 do anything 0)
+  1 (0 AUX-BASE 1 it 3 do anything 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
 
   ; You should take morphine
@@ -889,17 +891,17 @@
     2 (*medicine-question* (what medicine are you taking ?)) (0 :subtree+clause)
 
   ; When you take it does it take care of the pain?
-  1 (0 be-aux 3 med-help 3 pain 0)
+  1 (0 AUX-BASE 3 med-help 3 pain 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 3 med-help 1 at acd Documll 0)
+  1 (0 AUX-BASE 3 med-help 1 at acd Documll 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 3 med-help 1 little 0)
+  1 (0 AUX-BASE 3 med-help 1 little 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 1 it 3 do anything 0)
+  1 (0 AUX-BASE 1 it 3 do anything 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
   
   ; How is your anxiety or depression?
-  1 (0 be-aux 3 ment-health 3 recently 0)
+  1 (0 be 3 ment-health 3 recently 0)
     2 (*energy-question* (how is your mental health ?)) (0 :subtree+clause)
   1 (0 how 5 think-gen 0)
     2 (*energy-question* (how is your mental health ?)) (0 :subtree+clause)
@@ -909,7 +911,7 @@
     2 (*energy-question* (how is your mental health ?)) (0 :subtree+clause)
 
   ; You may be sleeping poorly because of anxiety/depression.
-  1 (0 be-aux 0 because 2 ment-health 0)
+  1 (0 AUX 0 because 2 ment-health 0)
     2 ((I am sleeping poorly because of my mental health \.) (Sleeping-poorly)) (0 :gist)
   1 (0 ment-health 3 cause 0)
     2 ((I am sleeping poorly because of my mental health \.) (Sleeping-poorly)) (0 :gist)
@@ -917,9 +919,9 @@
   ; You may be sleeping poorly because of pain.
   1 (0 medicine-gen 1 neg 1 work 0)
     2 ((I am sleeping poorly because the pain medication is no longer working \.) (Sleeping-poorly)) (0 :gist)
-  1 (0 be-aux 0 because 2 pain 0)
+  1 (0 AUX 0 because 2 pain 0)
     2 ((I am sleeping poorly because of my pain \.) (Sleeping-poorly)) (0 :gist)
-  1 (0 be-aux 1 pain 0)
+  1 (0 AUX 1 pain 0)
     2 ((I am sleeping poorly because of my pain \.) (Sleeping-poorly)) (0 :gist)
   1 (0 pain 3 cause 0)
     2 ((I am sleeping poorly because of my pain \.) (Sleeping-poorly)) (0 :gist)
@@ -958,9 +960,13 @@
 
   ; Can you tell me more
   1 (0 aux 1 you 1 tell 5 more 0)
-    2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+    2 (- 0 about 2 pain 0)
+      3 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+    2 (*pain-question* (can you tell me about your pain ?)) (0 :subtree+clause)
   1 (0 aux 1 you be able 1 tell 5 more 0)
-    2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+    2 (- 0 about 2 pain 0)
+      3 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+    2 (*pain-question* (can you tell me about your pain ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -1078,13 +1084,13 @@
     2 (*medicine-question* (what medicine are you taking ?)) (0 :subtree+clause)
 
   ; When you take it does it take care of the pain?
-  1 (0 be-aux 3 med-help 3 pain 0)
+  1 (0 AUX-BASE 3 med-help 3 pain 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 3 med-help 1 at acd Documll 0)
+  1 (0 AUX-BASE 3 med-help 1 at acd Documll 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 3 med-help 1 little 0)
+  1 (0 AUX-BASE 3 med-help 1 little 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
-  1 (0 be-aux 1 it 3 do anything 0)
+  1 (0 AUX-BASE 1 it 3 do anything 0)
     2 (*medicine-question* (does your pain medicine help with the pain ?)) (0 :subtree+clause)
 
   ; Can you tell me more
