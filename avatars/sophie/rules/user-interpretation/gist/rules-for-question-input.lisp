@@ -300,6 +300,10 @@
   1 (0 what other medicine 3 you 2 med-take 0)
     2 ((What medicine am I taking ?) (Medicine)) (0 :gist)
 
+  ; How have you tried the new pain medication already? 
+  1 (0 how 1 have 1 you 5 medicine-taking 0)
+    2 ((How were you prescribed your current pain medication ?) (Medicine-working)) (0 :gist)
+
   ; Is the pain medication working?
   1 (0 be-aux 3 medicine-taking 3 med-help 3 pain 0)
     2 ((Is the pain medication working at all ?) (Medicine-working)) (0 :gist)

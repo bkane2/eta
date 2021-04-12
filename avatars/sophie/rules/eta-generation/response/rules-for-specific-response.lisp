@@ -170,6 +170,8 @@
     2 (I think something stronger for the pain would be good \. What would the side effects be for a different pain medication ?) (0 :out)
   1 (0 What medicine am I taking 0)
     2 (I am just taking the lortab for pain right now \.) (0 :out)
+  1 (0 How were you prescribed your current pain medication 0)
+    2 (I was prescribed the Lortab by my previous doctor\, a couple weeks after radiation \.) (0 :out)
 
   1 (0 What dosage of pain medication am I taking 0)
     2 (I\'ve been taking a pill of the lortab every three hours \. About five pills each day \. I\'m not sure what the exact dosage is \.) (0 :out)
