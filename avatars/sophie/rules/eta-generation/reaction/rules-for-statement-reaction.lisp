@@ -72,6 +72,8 @@
     2 *treatment-goals-reaction* (0 :subtree)
   1 (0 cancer-live 0)
     2 *treatment-goals-reaction* (0 :subtree)
+  1 (0 cancer-goals 0)
+    2 *treatment-goals-reaction* (0 :subtree)
  
   1 (0)
     2 *general-reaction* (0 :subtree)

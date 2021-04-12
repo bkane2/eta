@@ -33,11 +33,6 @@
     2 *diagnosis-details-question* (0 :subtree)
   1 (0 diagnosis-non-symptom 0)
     2 *diagnosis-details-question* (0 :subtree)
-  ; If asked about general treatment goals/priorities
-  1 (0 cancer-fight 0)
-    2 *treatment-goals-question* (0 :subtree)
-  1 (0 cancer-live 0)
-    2 *treatment-goals-question* (0 :subtree)
   ; If asked about radiation treatment
   1 (0 radiation 0)
     2 *radiation-question* (0 :subtree)
@@ -64,6 +59,13 @@
     2 *comfort-care-question* (0 :subtree)
   1 (0 hospice 0)
     2 *comfort-care-question* (0 :subtree)
+  ; If asked about general treatment goals/priorities
+  1 (0 cancer-fight 0)
+    2 *treatment-goals-question* (0 :subtree)
+  1 (0 cancer-live 0)
+    2 *treatment-goals-question* (0 :subtree)
+  1 (0 cancer-goals 0)
+    2 *treatment-goals-question* (0 :subtree)
 
     
   ; Interjections/prompts to continue

@@ -356,7 +356,9 @@
     2 *ask-how-comfort-care-works* (0 :schema)
 
   1 (0)
-    2 (I will have to think about what you said more \.) (0 :out)
+    2 *ask-about-treatment-options* (100 :schema)
+    2 (I will have to think about what you said more \. I have some more specific questions
+       about treatment\, though \.) (0 :out)
 
 )) ; END *treatment-option-reaction*
 
@@ -365,8 +367,12 @@
 (READRULES '*treatment-goals-reaction*
 ; (0 cancer-fight 0)
 ; (0 cancer-live 0)
+; (0 cancer-goals 0)
 '(
   1 (Do I want to try to fight the cancer ?)
+    2 *ask-about-treatment-options* (0 :schema)
+
+  1 (What are my treatment goals ?)
     2 *ask-about-treatment-options* (0 :schema)
     
 )) ; END *treatment-goals-reaction*

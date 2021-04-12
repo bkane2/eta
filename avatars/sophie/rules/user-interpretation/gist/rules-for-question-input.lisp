@@ -558,4 +558,15 @@
     2 ((Do I want to try to fight the cancer ?) (Treatment-options)) (0 :gist)
   1 (0 you 2 want 3 cancer-live 0)
     2 ((Do I want to try to fight the cancer ?) (Treatment-options)) (0 :gist)
+
+  ; What are your goals ?
+  1 (0 wh_ 2 be 3 your 3 cancer-goals 0)
+    2 ((What are my treatment goals ?) (Treatment-options)) (0 :gist)
+  1 (0 wh_ 3 cancer-goals 3 AUX-BASE 1 you 0)
+    2 ((What are my treatment goals ?) (Treatment-options)) (0 :gist)
+  1 (0 wh_ 3 be 3 important 2 you 0)
+    2 ((What are my treatment goals ?) (Treatment-options)) (0 :gist)
+  1 (0 wh_ 3 AUX-BASE 2 you 3 cancer-goals 0)
+    2 ((What are my treatment goals ?) (Treatment-options)) (0 :gist)
+
 )) ; END *treatment-goals-question*

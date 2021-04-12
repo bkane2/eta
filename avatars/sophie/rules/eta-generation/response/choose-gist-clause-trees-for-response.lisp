@@ -75,7 +75,7 @@
     2 (I just started on my new pain medication fairly recently\, a couple weeks after radiation \.
        How long will it be before I know if it\'s working ?) (0 :out)
   1 (Should I get comfort care 1)
-    2 (You know\, I really just prefer to be comfortable at this point \. Do you think I should
+    2 (You know\, my main priority is to be comfortable at this point \. Do you think I should
        start considering comfort care ?) (0 :out)
   1 (What should I tell my family 1)
     2 (I haven\'t told my family everything yet \. I wanted to wait to talk to you first \.

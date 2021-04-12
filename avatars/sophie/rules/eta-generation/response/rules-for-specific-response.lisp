@@ -16,6 +16,14 @@
        to try to fight the cancer if you think it will help \.) (100 :out)
     2 (I want to try to fight it if you think it would be best\, but my main priority is just
        being comfortable \.) (0 :out)
+      
+  1 (0 What are my treatment goals 0)
+    2 (I think my priority is to be comfortable for the time I have left\, and to be able to enjoy my remaining
+       years with my family \. However\, I\'m open to try fighting the cancer if you think I have a chance \.) (100 :out)
+    2 (I really just want to be as comfortable as possible for the time I have left \.) (0 :out)
+
+  1 (0 NIL GIST 0 treatment option 0)
+    2 (Sorry\, I didn\'t really understand \. Could you please repeat my treatment options one more time ?) (0 :out)
 
   1 (0)
     2 (I want to talk a bit about my treatment options now \. What are my choices at this point ?) (0 :out)
@@ -229,6 +237,27 @@
 ; (How does chemotherapy work 1)
 '(
   1 (0 A side effect of chemotherapy is 0)
+    2 (0 low blood 0)
+      3 (I think I will have to do some more research on those side effects before choosing \.
+         How does chemotherapy usually work ?) (0 :out)
+    2 (0 neuropathy 0)
+      3 (I think I will have to do some more research on those side effects before choosing \.
+         How does chemotherapy usually work ?) (0 :out)
+    2 (0 hair loss 0)
+      3 (Hair loss sounds unpleasant\, but I would be willing to put up with it if it gives me a chance of improving \.
+         How does chemotherapy usually work ?) (0 :out)
+    2 (0 diarrhea 0)
+      3 (Diarrhea sounds unpleasant\, but I would be willing to put up with it if it gives me a chance of improving \.
+         How does chemotherapy usually work ?) (0 :out)
+    2 (0 nausea 0)
+      3 (I already have nausea\, so I think chemotherapy might be worth it if it helps improve my condition \.
+         How does chemotherapy usually work ?) (0 :out)
+    2 (0 fatigue 0)
+      3 (I already have fatigue\, so I think chemotherapy might be worth it if it helps improve my condition \.
+         How does chemotherapy usually work ?) (0 :out)
+    2 (0 loss of appetite 0)
+      3 (My appetite is already pretty poor\, so I think chemotherapy might be worth it if it helps improve my condition \.
+         How does chemotherapy usually work ?) (0 :out)
     2 (Okay \. How does chemotherapy usually work ?) (0 :out)
 
   1 (0)

@@ -870,6 +870,10 @@
   ; It's hard to predict
   1 (0 hard 2 to 2 predict 0)
     2 ((The prognosis is hard to predict \.) (Prognosis)) (0 :gist)
+  1 (0 bad 1 at 3 guess 0)
+    2 ((The prognosis is hard to predict \.) (Prognosis)) (0 :gist)
+  1 (0 NEG good 1 at 3 guess 0)
+    2 ((The prognosis is hard to predict \.) (Prognosis)) (0 :gist)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -1064,6 +1068,18 @@
   ; Maintaining a good quality of life is an option
   1 (0 quality 2 life 0)
     2 ((Maintaining good quality of life is a treatment option \.) (Comfort-care)) (0 :gist)
+
+  ; Depends on what your goals are
+  1 (0 wh_ 2 your 5 cancer-goals 0)
+    2 (*treatment-goals-question* (what are your treatment goals ?)) (0 :subtree+clause)
+  1 (0 wh_ 3 cancer-goals 2 you 2 have 0)
+    2 (*treatment-goals-question* (what are your treatment goals ?)) (0 :subtree+clause)
+  1 (0 wh_ 2 be 3 important 3 you 0)
+    2 (*treatment-goals-question* (what are your treatment goals ?)) (0 :subtree+clause)
+  1 (0 depend 7 your 2 cancer-goals 0)
+    2 (*treatment-goals-question* (what are your treatment goals ?)) (0 :subtree+clause)
+  1 (0 depend 7 cancer-goals 2 you 0)
+    2 (*treatment-goals-question* (what are your treatment goals ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)

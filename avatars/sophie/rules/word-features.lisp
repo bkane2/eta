@@ -56,6 +56,9 @@
   (alone yourself)
   (dose doses dosage dosages)
   (try trying attempt attempting)
+  (bad horrible terrible)
+  (guess guessing)
+  (depend depends conditional)
 
   ; General
   (affirm pos posadv)
@@ -106,6 +109,7 @@
   ; Treatment goals
   (cancer-fight fight fighting battle battling treat treating cure curing)
   (cancer-live live living survive surviving cure curing remission)
+  (cancer-goals goal goals objective objectives priority priorities value values valuing)
 
   ; Chemotherapy
   (chemotherapy-injection injection injections vein veins needle needles)
