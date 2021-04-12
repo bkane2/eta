@@ -61,6 +61,9 @@
   1 (0 You 3 think I need chemotherapy 0)
     2 (^me know.v (ans-to '(Do I need chemotherapy ?))) (0 :ulf)
 
+  1 (0 You think we should talk to my oncologist about chemotherapy 0)
+    2 (^me know.v (ans-to '(Do I need chemotherapy ?))) (0 :ulf)
+
   1 (0 You 3 think I need comfort care 0)
     2 (^me know.v (ans-to '(Should I get comfort care ?))) (0 :ulf)
 
@@ -68,6 +71,9 @@
     2 (^me know.v (ans-to '(Can I have a stronger pain medication ?))) (0 :ulf)
 
   1 (0 I should take something different 0)
+    2 (^me know.v (ans-to '(Can I have a stronger pain medication ?))) (0 :ulf)
+  
+  1 (0 I should wait to see if the pain medication works 0)
     2 (^me know.v (ans-to '(Can I have a stronger pain medication ?))) (0 :ulf)
 
   1 (0 I 2 give you a refill of pain medication 0)

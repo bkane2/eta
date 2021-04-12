@@ -59,6 +59,8 @@
   (bad horrible terrible)
   (guess guessing)
   (depend depends conditional)
+  (less lower low decrease decreased)
+  (improve improving)
 
   ; General
   (affirm pos posadv)
@@ -98,7 +100,7 @@
 
   ; Side effects
   (side-effect-addiction addiction addicted high dependent withdrawal crave craving cravings)
-  (side-effect-fatigue fatigue fatigued exhaustion exhausted sleepiness sleepy sleep tiredness tired energy drowsy insomnia)
+  (side-effect-fatigue fatigue fatigued exhaustion exhausted sleepiness sleepy sleep tiredness tired drowsy insomnia)
   (side-effect-appetite appetite eating eat hunger hungry)
   (side-effect-nausea nausea vomiting vomit sick sickness)
   (side-effect-neuropathy neuropathy numb numbness tingle tingling)
@@ -115,6 +117,7 @@
   (chemotherapy-injection injection injections vein veins needle needles)
   (chemotherapy-IV IV tube tubes)
   (mediport infusaport port)
+  (chemotherapy-consult consult consulting ask asking discuss discussing talk talking)
   
   ; Diagnosis details
   (symptom-weight weight skinny skinnier heavy heavier fat)

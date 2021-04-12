@@ -23,6 +23,8 @@
     2 (*response-tree-comfort-care*) (0 :subtrees)
   1 (What are my options for treatment 1)
     2 (*response-tree-treatment-options*) (0 :subtrees)
+  1 (What are the side effects of chemotherapy 1)
+    2 (*response-tree-chemotherapy-side-effects*) (0 :subtrees)
 
   ; Subtrees for elaborating answers
   1 (My pain has recently been getting worse 1)
@@ -46,8 +48,6 @@
     2 (I see \. Would this help me with me pain ?) (0 :out)
   1 (Should I try medication before I try therapy 1)
     2 (I am not sure \. Do you think there\'s any medication I can try first ?) (0 :out)
-  1 (What are the side effects of chemotherapy 1)
-    2 (I hear about people getting sick and losing hair during chemotherapy \. What are some of the side effects ?) (0 :out)
   1 (Are you sure that I do not need comfort care 1)
     2 (Are you sure I don\'t need hospice ? At this point I would really just prefer to be comfortable \.) (0 :out)
   1 (Can I get addicted to narcotics 1)

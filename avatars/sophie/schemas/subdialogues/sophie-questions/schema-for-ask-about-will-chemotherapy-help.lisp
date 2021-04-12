@@ -10,6 +10,10 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-will-chemotherapy-help.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ?g1 (^me want.v (that (^me know.v (ans-to '(Do I need chemotherapy ?)))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Do you think chemotherapy will help ?))

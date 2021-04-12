@@ -285,6 +285,21 @@
 
 
 
+(READRULES '*response-tree-chemotherapy-side-effects*
+; (What are the side effects of chemotherapy 1)
+'(
+  1 (0 You think we should talk to my oncologist about chemotherapy 0)
+    2 (I agree it would be best to revisit chemotherapy after talking to my oncologist \. However\, I still want
+       to learn a bit more about it \. What are some of the side effects ?) (0 :out)
+
+  1 (0)
+    2 (I hear about people getting sick and losing hair during chemotherapy \. What are some of the side effects ?) (100 :out)
+    2 (What are some of the side effects of chemotherapy ?) (0 :out)
+
+)) ; END *response-tree-chemotherapy-side-effects*
+
+
+
 (READRULES '*response-tree-prognosis*
 ; (what is 1 prognosis 1)
 '(

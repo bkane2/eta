@@ -212,6 +212,8 @@
     2 ((A side effect of the medication is diarrhea \.) (Medicine-side-effects)) (0 :gist)
   1 (0 side-effect-fatigue 0)
     2 ((A side effect of the medication is fatigue \.) (Medicine-side-effects)) (0 :gist)
+  1 (0 less 1 energy 0)
+    2 ((A side effect of the medication is fatigue \.) (Medicine-side-effects)) (0 :gist)
   1 (0 side-effect-appetite 0)
     2 ((A side effect of the medication is loss of appetite \.) (Medicine-side-effects)) (0 :gist)
 
@@ -546,6 +548,9 @@
     2 *comfort-care-input* (0 :subtree)
   1 (0 hospice 0)
     2 *comfort-care-input* (0 :subtree)
+
+  1 (0 chemotherapy-consult 4 oncologist 0)
+    2 ((You think we should talk to my oncologist about chemotherapy \.) (Chemotherapy)) (0 :gist)
     
   1 (0 POS 0)
     2 (- 0 NEG sure 0)
@@ -781,7 +786,7 @@
   1 (0 different 2 medicine-gen 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
 
-  ; It might take a couple weeks to tell
+  ; It might take a couple days to tell
   1 (0 take 5 med-time-gen 4 med-help 0)
     2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
   1 (0 take 5 med-time-gen 4 med-notice 0)
@@ -789,6 +794,16 @@
   1 (0 med-wait 5 med-time-gen 0)
     2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
   1 (0 might 1 be 4 med-time-gen 0)
+    2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
+  1 (0 you 5 feeling 2 better 5 med-time-gen 0)
+    2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
+  1 (0 you 5 feeling 2 less 1 pain 5 med-time-gen 0)
+    2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
+  1 (0 you 5 improve 5 med-time-gen 0)
+    2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
+  1 (0 you 5 pain 3 decrease 5 med-time-gen 0)
+    2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
+  1 (0 you 5 pain 3 go away 5 med-time-gen 0)
     2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
 
   1 (0)
