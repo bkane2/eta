@@ -427,6 +427,10 @@
 (READRULES '*sleep-question*
 ; (0 sleep 0)
 '(
+  ; What's going through your head while you're sleeping?
+  1 (0 wh_ 5 sleep-thought 5 sleep 0)
+    2 ((What is on my mind when I try to sleep ?) (Sleep)) (0 :gist)
+
   ; Have you been sleeping okay?
   1 (0 be you 2 sleep 1 okay 0)
     2 ((Have I been sleeping okay ?) (Sleep)) (0 :gist)
@@ -444,10 +448,6 @@
   ; Do you sleep during the day?
   1 (0 sleep 2 during 3 day 0)
     2 ((Do I sleep during the day ?) (Sleep)) (0 :gist)
-
-  ; What's going through your head while you're sleeping?
-  1 (0 wh_ 5 sleep-thought 5 sleep 0)
-    2 ((What is on my mind when I try to sleep ?) (Sleep)) (0 :gist)
 
   ; What happens when you try to sleep?
   1 (0 wh_ 2 happen 4 sleep 0)
