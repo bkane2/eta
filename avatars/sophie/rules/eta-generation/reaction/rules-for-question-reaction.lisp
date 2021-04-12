@@ -17,6 +17,8 @@
     2 *say-pain-worse* (0 :schema)
   1 (Did my pain come back ?)
     2 *say-pain-worse* (0 :schema)
+  1 (Has the pain become worse ?)
+    2 *say-pain-worse* (0 :schema)
 
   ; Questions about how you got your diagnosis
   1 (How did I get my diagnosis ?)

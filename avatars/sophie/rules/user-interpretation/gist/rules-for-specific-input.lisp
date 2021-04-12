@@ -535,6 +535,9 @@
   1 (0 how 1 frequently 0 wake)
     2 (*sleep-question* (how often are you waking up at night ?)) (0 :subtree+clause)
 
+  1 (0 ment-health 0)
+    2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -925,13 +928,17 @@
   
   ; How is your anxiety or depression?
   1 (0 be 3 ment-health 3 recently 0)
-    2 (*energy-question* (how is your mental health ?)) (0 :subtree+clause)
+    2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
   1 (0 how 5 think-gen 0)
-    2 (*energy-question* (how is your mental health ?)) (0 :subtree+clause)
+    2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
   1 (0 how 3 ment-health 5)
-    2 (*energy-question* (how is your mental health ?)) (0 :subtree+clause)
+    2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
   1 (0 wh_ 5 think-gen 0)
-    2 (*energy-question* (how is your mental health ?)) (0 :subtree+clause)
+    2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
+  1 (0 AUX 2 you 6 ment-health 0)
+    2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
+  1 (0 AUX 2 possible 2 you 6 ment-health 0)
+    2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
 
   ; You may be sleeping poorly because of anxiety/depression.
   1 (0 AUX 0 because 2 ment-health 0)
@@ -1108,6 +1115,10 @@
     2 (*treatment-goals-question* (what are your treatment goals ?)) (0 :subtree+clause)
   1 (0 depend 7 cancer-goals 2 you 0)
     2 (*treatment-goals-question* (what are your treatment goals ?)) (0 :subtree+clause)
+
+  ; We need to get another study
+  1 (0 diagnosis-more 3 diagnosis-tests 0)
+    2 ((You need more tests before talking about treatment options \.) (Treatment-options)) (0 :gist)
 
   1 (0)
     2 *general-input* (0 :subtree)

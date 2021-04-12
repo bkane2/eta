@@ -22,6 +22,10 @@
        years with my family \. However\, I\'m open to try fighting the cancer if you think I have a chance \.) (100 :out)
     2 (I really just want to be as comfortable as possible for the time I have left \.) (0 :out)
 
+  1 (0 You need more tests before talking about treatment options 0)
+    2 (I understand that some more tests might be necessary before deciding on treatment \. I still want to hear
+       about my potential options\, though \.) (0 :out)
+
   1 (0 NIL GIST 0 treatment option 0)
     2 (Sorry\, I didn\'t really understand \. Could you please repeat my treatment options one more time ?) (0 :out)
 
@@ -91,7 +95,8 @@
     2 (I usually have trouble staying asleep \. Sometimes I wake up in the middle of the night and notice an ache in my
        back and near my chest \. That\'s when I have to take pain medication to fall back asleep \.) (0 :out)
   1 (0 Is your mental health keeping you awake 0)
-    2 (My anxiety can sometimes make it difficult to fall asleep\, but usually it\'s my pain that keeps me awake \.) (0 :out)
+    2 (I have been feeling a bit of anxiety\, which can sometimes make it difficult to fall asleep\, but usually it\'s
+       my pain that keeps me awake \.) (0 :out)
 
 )) ; END *response-tree-sleep*
 
@@ -117,7 +122,8 @@
   1 (0)
     2 (Let\'s talk about my test results\. I received my test results yesterday\, but I didn\'t really understand them \.
        Could you explain to me what my test results mean ?) (100 :out)
-    2 (I still don\'t quite understand the test results\. Could you please explain in simpler terms ?) (0 :out)
+    2 (I still don\'t quite understand the test results\. Could you please explain in simple terms ?) (0 :out)
+
 )) ; END *response-tree-test-results*
 
 
@@ -154,6 +160,9 @@
     2 (It hurts whenever I take a deep breath \. It used to hurt to swallow during radiation\, but that isn\'t as bad now \.) (0 :out)
   1 (0 Did my pain come back 0)
     2 (My pain came back a couple weeks after I finished radiation \. It\'s been getting worse recently \.) (0 :out)
+
+  1 (0 Has the pain become worse 0)
+    2 (The pain seems to have become worse recently \.) (0 :out)
 
 )) ; END *response-tree-pain*
 

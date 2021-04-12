@@ -357,6 +357,11 @@
   1 (Comfort care is a treatment option \.)
     2 *ask-how-comfort-care-works* (0 :schema)
 
+  1 (You need more tests before talking about treatment options \.)
+    2 *ask-about-treatment-options* (100 :schema)
+    2 (I understand that some further tests might be necessary \. I\'ll try to get that done
+       before discussing treatment options \.) (0 :out)
+
   1 (0)
     2 *ask-about-treatment-options* (100 :schema)
     2 (I will have to think about what you said more \. I have some more specific questions

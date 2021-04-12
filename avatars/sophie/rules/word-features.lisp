@@ -47,7 +47,7 @@
   (trigger triggers triggered triggering)
   (provoke provokes provoking provoked)
   (cause causing causes caused trigger provoke)
-  (recently lately)
+  (recently recent lately)
   (chance chances)
   (low small minimal)
   (recover recovery survive survival fine)
@@ -61,6 +61,7 @@
   (less lower low decrease decreased)
   (improve improving)
   (wondering asking unsure)
+  (option options)
 
   ; General
   (cancer-illness cancer disease condition illness)
@@ -88,6 +89,7 @@
   (body-part lung lungs bone bones chest back shoulder shoulders)
   (appreciate like love enjoy)
   (avatar-items shirt sweater pants clothes clothing style glasses hat hair haircut furniture voice)
+  (tag-question right correct)
 
   ; Medical history
   (quit quitting stop stopping stopped forgo forgoing)
@@ -125,7 +127,8 @@
   (symptom-appetite appetite eating)
   (diagnosis-symptom symptom symptoms weight skinny skinnier appetite eating constipation constipated)
   (diagnosis-non-symptom headache headaches chill chills fever fevers nausea eyesight eyes)
-  (diagnosis-tests diagnosis test tests result results)
+  (diagnosis-tests diagnosis test tests result results study studies)
+  (diagnosis-more more another further additional)
 
   ; Mental health
   (ment-health mental depression depressed anxiety anxious worry worried worrying anxiousness unease uneasy schizophrenia)

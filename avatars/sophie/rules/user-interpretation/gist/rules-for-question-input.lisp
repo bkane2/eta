@@ -218,6 +218,10 @@
   1 (1 AUX-BASE 2 you know 3 diagnosis-tests 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
 
+  ; You had tests recently, right?
+  1 (0 you 3 diagnosis-tests 3 recently 0)
+    2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
+
   ; How did you get your diagnosis?
   1 (0 what 2 bring you 0)
     2 ((How did I get my diagnosis ?) (Diagnosis-details)) (0 :gist)
@@ -396,6 +400,10 @@
       3 ((Does it hurt to breath ?) (Pain-description)) (0 :gist)
     2 (0)
       3 ((Does it hurt to do anything ?) (Pain-description)) (0 :gist)
+
+  ; Is the pain worse?
+  1 (0 AUX-BASE 3 pain 3 worse 0)
+    2 ((Has the pain become worse ?) (Pain-description)) (0 :gist)
 
 )) ; END *pain-question*
 

@@ -93,6 +93,8 @@
     2 ((NIL Question ?)) (0 :gist)
   1 (0 aux np_ 1); tag question
     2 ((NIL Question ?)) (0 :gist)
+  1 (0 tag-question); tag question
+    2 ((NIL Question ?)) (0 :gist)
   1 (0 tell me 0); declarative question
     2 ((NIL Question ?)) (0 :gist)
   ;; 1 (0)
