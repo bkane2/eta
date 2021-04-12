@@ -56,6 +56,8 @@
     2 *comfort-care-reaction* (0 :subtree)
   1 (0 tell 1 family 0 \.)
     2 *tell-family-reaction* (0 :subtree)
+  1 (0 family 1 know-gen 0 \.)
+    2 *tell-family-reaction* (0 :subtree)
   1 (0 side effect 3 medication 0)
     2 *medicine-side-effects-reaction* (0 :subtree)
   1 (0 cancer 2 gotten worse 0)

@@ -7,9 +7,8 @@
   (pain hurt hurting)
   (medicine medicines medication medications drug drugs pill pills med meds dose)
   (drive drove driving)
-  (illness cancer disease condition)
   (mention say)
-  (tell say inform notify)
+  (tell told say inform informed notify notified)
   (chemotherapy chemo chemotherapies)
   (know aware understand)
   (bring brings)
@@ -61,11 +60,13 @@
   (depend depends conditional)
   (less lower low decrease decreased)
   (improve improving)
+  (wondering asking unsure)
 
   ; General
+  (cancer-illness cancer disease condition illness)
   (affirm pos posadv)
   (anyone-here-with-you here with alone by)
-  (know-gen know sure)
+  (know-gen know sure aware understand)
   (think-gen think thoughts thought feel feelings feeling believe)
   (frequently frequent often more much)
   (sleep bed bedtime wake waking awake insomnia night nighttime)
@@ -178,5 +179,8 @@
   (sleep-prob problem insomnia)
   (sleep-thought thought thoughts head mind brain)
   (sleep-awake awake up)
+
+  ; Telling family
+  (family-pron family they)
 
 ))

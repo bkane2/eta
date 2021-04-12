@@ -88,6 +88,7 @@
 ; (0 side effect 0 chemotherapy 0 \.)
 ; (0 way 1 to get 2 chemotherapy 0 \.)
 '(
+
   1 (One way to get chemotherapy is 0)
     2 (0 two chemotherapy 0)
       3 (I didn\'t know that was possible\. But it makes sense\.) (0 :out)
@@ -311,8 +312,9 @@
 (READRULES '*tell-family-reaction*
 ; (0 tell 1 family 0 \.)
 '(
+  
   1 (0)
-    2 (Okay\. It will be difficult\, but my family and I will have to be strong\.) (0 :out)
+    2 (Okay\. It will be difficult\, but my family and I will have to be strong \.) (0 :out)
 
 )) ; END *tell-family-reaction*
 

@@ -23,6 +23,11 @@
     2 *appointment-question* (0 :subtree)
   1 (0 live 3 alone 0)
     2 *appointment-question* (0 :subtree)
+  ; If asked if family know about cancer
+  1 (0 family 2 know-gen 0)
+    2 *tell-family-question* (0 :subtree)
+  1 (0 family 3 tell 0)
+    2 *tell-family-question* (0 :subtree)
   ; If asked to elaborate about pain
   1 (0 pain 0)
     2 *pain-question* (0 :subtree)

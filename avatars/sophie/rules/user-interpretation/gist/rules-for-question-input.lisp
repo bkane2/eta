@@ -163,8 +163,8 @@
   1 (0 aux 1 you 2 live 2 alone 0)
     2 ((Do I live alone ?)) (0 :gist)
 
-  1 (0)
-    2 ((NIL Gist)) (0 :gist)
+  ;; 1 (0)
+  ;;   2 ((NIL Gist)) (0 :gist)
 
 )) ; END *appointment-question*
 
@@ -252,8 +252,8 @@
   1 (0 therapy 0)
     2 ((I should see a therapist \.) (Energy)) (0 :gist)
 
-  1 (0)
-    2 ((NIL Gist)) (0 :gist)
+  ;; 1 (0)
+  ;;   2 ((NIL Gist)) (0 :gist)
 
 )) ; END *energy-question*
 
@@ -530,7 +530,19 @@
 
 
 (READRULES '*tell-family-question*
+; (0 family 2 know-gen 0)
+; (0 family 3 tell 0)
 '(
+  ; Do your family know about your cancer / Have your family been told about your cancer ?
+  1 (0 AUX-BASE 3 family 2 know-gen 5 cancer-illness 0)
+    2 ((Do my family know about my cancer ?) (Tell-family)) (0 :gist)
+  1 (0 AUX-BASE 3 family 3 tell 5 cancer-illness 0)
+    2 ((Do my family know about my cancer ?) (Tell-family)) (0 :gist)
+  1 (0 wh_ 3 AUX-BASE 3 family 2 know-gen 5 cancer-illness 0)
+    2 ((Do my family know about my cancer ?) (Tell-family)) (0 :gist)
+  1 (0 wh_ 3 AUX-BASE 3 family 3 tell 5 cancer-illness 0)
+    2 ((Do my family know about my cancer ?) (Tell-family)) (0 :gist)
+
 )) ; END *tell-family-question*
 
 

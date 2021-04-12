@@ -55,6 +55,8 @@
   ; Questions about chemotherapy
   1 (Did my doctor mention chemotherapy ?)
     2 *ask-if-need-chemotherapy* (0 :schema)
+  1 (What chemotherapy details are you asking about ?)
+    2 *ask-how-chemotherapy-works* (0 :schema)
 
   ; Questions about sleep
   1 (Have I been sleeping okay ?)
@@ -133,6 +135,11 @@
     2 (No\, no one in my family has any history of mental illness \.)  (0 :out)
   1 (How did my parents die ?)
     2 *discuss-parent-deaths* (0 :schema)
+
+  ; Questions about talking with family
+  1 (Do my family know about my cancer ?)
+    2 *ask-what-to-tell-family* (100 :schema)
+    2 (My family knows that I have cancer already\, but not much else \.) (0 :out)
                            
   1 (0)
     2 *reaction-to-question-minor* (0 :subtree)

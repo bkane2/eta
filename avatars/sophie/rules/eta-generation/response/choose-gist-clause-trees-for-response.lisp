@@ -25,6 +25,8 @@
     2 (*response-tree-treatment-options*) (0 :subtrees)
   1 (What are the side effects of chemotherapy 1)
     2 (*response-tree-chemotherapy-side-effects*) (0 :subtrees)
+  1 (What should I tell my family 1)
+    2 (*response-tree-tell-family*) (0 :subtrees)
 
   ; Subtrees for elaborating answers
   1 (My pain has recently been getting worse 1)
@@ -77,9 +79,6 @@
   1 (Should I get comfort care 1)
     2 (You know\, my main priority is to be comfortable at this point \. Do you think I should
        start considering comfort care ?) (0 :out)
-  1 (What should I tell my family 1)
-    2 (I haven\'t told my family everything yet \. I wanted to wait to talk to you first \.
-       What should I say to them ?) (0 :out)
 
   ; Direct rules for elaborating answers
   ; NOTE: if there are ever multiple contexts where these are warranted with different

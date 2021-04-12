@@ -57,9 +57,9 @@
     2 ((My cancer has not gotten worse \.) (Cancer-worse)) (0 :gist)
   1 (0 NEG 1 think-gen 0)
     2 ((My cancer has not gotten worse \.) (Cancer-worse)) (0 :gist)
-  1 (0 illness 2 NEG 2 worse 0)
+  1 (0 cancer-illness 2 NEG 2 worse 0)
     2 ((My cancer has not gotten worse \.) (Cancer-worse)) (0 :gist)
-  1 (0 illness 2 worse 0)
+  1 (0 cancer-illness 2 worse 0)
     2 ((My cancer has gotten worse \.) (Cancer-worse)) (0 :gist)
 
   1 (0)
@@ -85,9 +85,9 @@
     2 ((My cancer has not gotten worse \.) (Cancer-worse)) (0 :gist)
   1 (0 NEG 1 think-gen 0)
     2 ((My cancer has not gotten worse \.) (Cancer-worse)) (0 :gist)
-  1 (0 illness 2 NEG 2 worse 0)
+  1 (0 cancer-illness 2 NEG 2 worse 0)
     2 ((My cancer has not gotten worse \.) (Cancer-worse)) (0 :gist)
-  1 (0 illness 2 worse 0)
+  1 (0 cancer-illness 2 worse 0)
     2 ((My cancer has gotten worse \.) (Cancer-worse)) (0 :gist)
 
   1 (0)
@@ -315,6 +315,10 @@
     2 ((One way to get chemotherapy is to get two chemotherapies together \.) (Chemotherapy-details)) (0 :gist)
   1 (0 two 2 chemotherapy 0)
     2 ((One way to get chemotherapy is to get two chemotherapies together \.) (Chemotherapy-details)) (0 :gist)
+
+  ; What specifically are you wondering about ?
+  1 (0 wh_ 3 be 3 you 3 wondering 0)
+    2 ((What chemotherapy details are you asking about ?) (Chemotherapy-details)) (0 :gist)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -950,9 +954,9 @@
     2 ((I am sleeping poorly because of a side effect from a medication \.) (Sleeping-poorly)) (0 :gist)
 
   ; You may be sleeping poorly because your cancer has gotten worse.
-  1 (0 illness 2 spread 0)
+  1 (0 cancer-illness 2 spread 0)
     2 ((I am sleeping poorly because the cancer has spread \.) (Test-results)) (0 :gist)
-  1 (0 illness 2 worse 0)
+  1 (0 cancer-illness 2 worse 0)
     2 ((My cancer has gotten worse \.) (Test-results)) (0 :gist)
 
   ; A stronger pain medication might help.
@@ -999,6 +1003,15 @@
 (READRULES '*tell-family-input*
 ; (What should I tell my family ?)
 '(
+  1 (0 AUX-BASE 3 family-pron 2 know-gen 0)
+    2 (*tell-family-question* (do your family know about your cancer ?)) (0 :subtree+clause)
+  1 (0 AUX-BASE 3 family-pron 3 tell 0)
+    2 (*tell-family-question* (do your family know about your cancer ?)) (0 :subtree+clause)
+  1 (0 wh_ 3 AUX-BASE 3 family-pron 2 know-gen 0)
+    2 (*tell-family-question* (do your family know about your cancer ?)) (0 :subtree+clause)
+  1 (0 wh_ 3 AUX-BASE 3 family-pron 3 tell 0)
+    2 (*tell-family-question* (do your family know about your cancer ?)) (0 :subtree+clause)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -1028,7 +1041,7 @@
   ; The cancer has spread
   1 (0 spread 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
-  1 (0 illness 5 in 3 body-part)
+  1 (0 cancer-illness 5 in 3 body-part)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 tumor 2 in 6 chest 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)

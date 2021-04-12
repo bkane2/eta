@@ -260,6 +260,9 @@
          How does chemotherapy usually work ?) (0 :out)
     2 (Okay \. How does chemotherapy usually work ?) (0 :out)
 
+  1 (0 What chemotherapy details are you asking about 0)
+    2 (I\'m just wondering how the process of chemotherapy works\, and what I\'d have to do for it \.) (0 :out)
+
   1 (0)
     2 (How does chemotherapy usually work ?) (0 :out)
 
@@ -297,6 +300,21 @@
     2 (What are some of the side effects of chemotherapy ?) (0 :out)
 
 )) ; END *response-tree-chemotherapy-side-effects*
+
+
+
+(READRULES '*response-tree-tell-family*
+; (What should I tell my family 1)
+'(
+  1 (0 Do my family know about my cancer 0)
+    2 (My family know about my cancer already\, but they don\'t really know how bad it is\, or what it
+       means for me \. How should I discuss these with them ?) (0 :out)
+
+  1 (0)
+    2 (I haven\'t told my family everything yet \. I wanted to wait to talk to you first \.
+       What should I say to them ?) (0 :out)
+
+)) ; END *response-tree-tell-family*
 
 
 
