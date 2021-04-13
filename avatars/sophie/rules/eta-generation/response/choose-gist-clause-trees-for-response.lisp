@@ -31,6 +31,8 @@
     2 (*response-tree-chemotherapy-side-effects*) (0 :subtrees)
   1 (What should I tell my family 1)
     2 (*response-tree-tell-family*) (0 :subtrees)
+  1 (I feel mildly depressed 1)
+    2 (*response-tree-mental-health*) (0 :subtrees)
 
   ; Subtrees for elaborating answers
   1 (My pain has recently been getting worse 1)
@@ -116,8 +118,6 @@
        have as much energy as I used to \.) (0 :out)
   1 (I have had trouble concentrating 1)
     2 (I have only had trouble concentrating sometimes \.) (0 :out)
-  1 (I feel mildly depressed 1)
-    2 (Well\, I do try to keep carrying on\, but sometimes I just feel down \.) (0 :out)
   1 (I feel anxious about my future 1)
     2 (Sometimes I get some pretty bad anxiety about my future\, and what this all means for me \.) (0 :out)
   1 (I don\'t have allergies to any medicine 1)

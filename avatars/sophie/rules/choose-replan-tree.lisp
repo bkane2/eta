@@ -18,4 +18,6 @@
     2 *ask-about-prognosis* (100 :schema)
   1 (What do my test results mean ?)
     2 *ask-about-test-results* (100 :schema)
+  1 (Can I have a stronger pain medication ?)
+    2 *ask-for-stronger-pain-medication* (100 :schema)
 ))

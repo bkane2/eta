@@ -22,6 +22,7 @@
   (under underneath)
   (lead leading)
   (have having)
+  (difficult hard impossible)
   (trouble troubles problem problems issue issues hard difficulty)
   (concentrate concentrating focus focusing)
   (recommend recommending recommended)
@@ -125,6 +126,7 @@
   (cancer-fight fight fighting battle battling treat treating cure curing)
   (cancer-live live living survive surviving cure curing remission)
   (cancer-goals goal goals objective objectives priority priorities value values valuing)
+  (treatment-option option options possibility)
 
   ; Chemotherapy
   (chemotherapy-injection injection injections vein veins needle needles)

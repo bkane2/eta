@@ -233,7 +233,8 @@
 
   1 (0)
     2 (You know\, I\'m in a lot of pain\, and the Lortab just isn\'t working \. I think maybe I need something
-       stronger for my pain \.) (0 :out)
+       stronger for my pain \.) (100 :out)
+    2 (I think it would be worth trying a new pain medication \. Do you think that would be possible ?) (0 :out)
 
 )) ; END *response-tree-medication-stronger-request*
 
@@ -350,7 +351,7 @@
 
   1 (0 The prognosis is hard to predict 0)
     2 (My last doctor also just said it would be hard to predict \. I think I am ready to hear though \. Could you
-       please just tell me what the worst case looks like ?) (0 :out)
+       please try to tell me what the worst case looks like ?) (0 :out)
 
   1 (0 The test results show that the cancer hasn\'t spread 0)
     2 (My previous doctor didn\'t seem very optimistic \. So what do you think this all means for me ?) (0 :out)
@@ -378,6 +379,18 @@
 
 
 
+(READRULES '*response-tree-mental-health*
+; (I feel mildly depressed 1)
+'(
+  1 (0 I am sleeping poorly because of my mental health 0)
+    2 (I have been feeling a bit anxious recently\, though I think my pain is the main cause of my sleep problems \.) (0 :out)
+
+  1 (0)
+    2 (Well\, I do try to keep carrying on\, but sometimes I just feel down \.) (0 :out)
+)) ; END *response-tree-mental-health*
+
+
+
 (READRULES '*response-tree-questions*
 ; (What are your questions 1)
 '(
@@ -385,7 +398,7 @@
     2 (What questions do you have for me ?) (3 :out)
     2 (What are your questions ?) (3 :out)
     2 (What questions do you want to ask ?) (0 :out)
-    
+
 )) ; END *response-tree-questions*
 
 

@@ -570,6 +570,10 @@
   1 (0 hospice 0)
     2 *comfort-care-input* (0 :subtree)
 
+  ; Chemotherapy might be an option
+  1 (0 chemotherapy 4 be 3 treatment-option 0)
+    2 ((You think I might need chemotherapy \.) (Chemotherapy)) (0 :gist)
+
   1 (0 chemotherapy-consult 4 oncologist 0)
     2 ((You think we should talk to my oncologist about chemotherapy \.) (Chemotherapy)) (0 :gist)
     
@@ -760,7 +764,7 @@
 ; (Why isn\'t the pain medication working anymore ?)
 '(
   ; What medicine are you taking?
-  1 (4 wh_ 1 medicine-gen 0)
+  1 (4 wh_ 3 medicine-gen 0)
     2 (*medicine-question* (what medicine are you taking ?)) (0 :subtree+clause)
   
   ; The Lortab?
@@ -911,6 +915,8 @@
   1 (0 bad 1 at 3 guess 0)
     2 ((The prognosis is hard to predict \.) (Prognosis)) (0 :gist)
   1 (0 NEG good 1 at 3 guess 0)
+    2 ((The prognosis is hard to predict \.) (Prognosis)) (0 :gist)
+  1 (0 difficult 3 answer 0)
     2 ((The prognosis is hard to predict \.) (Prognosis)) (0 :gist)
 
   1 (0)
