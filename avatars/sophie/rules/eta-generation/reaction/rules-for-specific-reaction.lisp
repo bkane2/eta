@@ -176,6 +176,12 @@
 (READRULES '*chemotherapy-reaction*
 ; (0 chemotherapy 0 \.)
 '(
+  1 (You do not think I need chemotherapy 0)
+    2 (You do not think I need chemotherapy because I should get comfort care instead \.)
+      3 *ask-about-comfort-care* (100 :schema)
+      3 (I think holding off on chemotherapy for now makes sense\, given that my priority is just to be comfortable \.) (0 :out)
+    2 (I see \. I think it will be best to hold off on chemotherapy\, at least for now \.) (0 :out)
+
   1 (0)
     2 *ask-about-chemotherapy-side-effects* (100 :schema)
     2 *ask-how-chemotherapy-works* (100 :schema)       
@@ -193,8 +199,9 @@
     2 (Okay\, I see\. I will think about starting chemotherapy right away then\.) (0 :out)
 
   1 (0)
-    2 (Comfort care sounds good\. If I\'m not going to make it\, I want to at least want to be comfortable
-       and spend time with family for as long as possible\.) (0 :out)
+    2 (I\'d like to think some more about starting comfort care \. If I\'m not going to make it\,
+       I want to at least want to be comfortable and spend time with family for as long as possible \.) (100 :out)
+    2 (I think that comfort care is the best option for me right now \.) (0 :out)
 
 )) ; END *comfort-care-reaction*
 
@@ -335,7 +342,7 @@
     2 *ask-about-test-results* (100 :schema)
 
   1 (0)
-    2 (Oh\, I see \.) (0 :out)
+    2 (Okay \.) (0 :out)
 
 )) ; END *test-results-reaction*
 

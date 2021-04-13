@@ -21,6 +21,8 @@
     2 (*response-tree-pain-medication-not-working*) (0 :subtrees)
   1 (How does comfort care work 1)
     2 (*response-tree-comfort-care*) (0 :subtrees)
+  1 (Should I get comfort care 1)
+    2 (*response-tree-comfort-care*) (0 :subtrees)
   1 (What are my options for treatment 1)
     2 (*response-tree-treatment-options*) (0 :subtrees)
   1 (What are the side effects of chemotherapy 1)
@@ -76,9 +78,6 @@
   1 (How will I know if my pain medication is working 1)
     2 (I just started on my new pain medication fairly recently\, a couple weeks after radiation \.
        How long will it be before I know if it\'s working ?) (0 :out)
-  1 (Should I get comfort care 1)
-    2 (You know\, my main priority is to be comfortable at this point \. Do you think I should
-       start considering comfort care ?) (0 :out)
 
   ; Direct rules for elaborating answers
   ; NOTE: if there are ever multiple contexts where these are warranted with different

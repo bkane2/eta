@@ -39,12 +39,21 @@
 (READRULES '*response-tree-comfort-care*
 ; (How does comfort care work 1)
 '(
+  
+  1 (0 You do not think I need chemotherapy because I should get comfort care instead 0)
+    2 (I think holding off on chemotherapy for now makes sense\, given that my priority is just to be comfortable \.
+       So you think I should get comfort care\, then ?) (0 :out)
+
   1 (0 Comfort care is a treatment option 0)
     2 (Comfort care sounds good to me \. What I want is to try to get my life back to normal as much as possible \.
        You know\, spend time with my family\. What do I have to do for that ?) (0 :out)
   1 (0 Have I considered comfort care 0)
     2 (I haven\'t thought about it\, but it sounds like what I really need \. A way to maintain quality of life
        during the time I have left \. Can you tell me about it ?) (0 :out)
+
+  1 (0)
+    2 (You know\, my main priority is to be comfortable at this point \. Do you think I should
+       start considering comfort care ?) (0 :out)
 
 )) ; END *response-tree-comfort-care*
 

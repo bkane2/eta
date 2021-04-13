@@ -10,6 +10,10 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-comfort-care.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ?g1 (^me want.v (that (^me know.v (ans-to '(Should I get comfort care ?)))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Should I get comfort care ?))

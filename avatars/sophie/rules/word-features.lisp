@@ -63,8 +63,15 @@
   (wondering asking unsure)
   (option options)
 
+  ; ASR errors
+  (talking talkin)
+  (asking askin)
+  (ya yes)
+  (dating taking)
+
   ; General
   (cancer-illness cancer disease condition illness)
+  (posadv-affirm certainly course absolutely sure definitely)
   (affirm pos posadv)
   (anyone-here-with-you here with alone by)
   (know-gen know sure aware understand)
@@ -90,6 +97,7 @@
   (appreciate like love enjoy)
   (avatar-items shirt sweater pants clothes clothing style glasses hat hair haircut furniture voice)
   (tag-question right correct)
+  (ask-gen ask asking talk talking)
 
   ; Medical history
   (quit quitting stop stopping stopped forgo forgoing)
@@ -127,7 +135,7 @@
   (symptom-appetite appetite eating)
   (diagnosis-symptom symptom symptoms weight skinny skinnier appetite eating constipation constipated)
   (diagnosis-non-symptom headache headaches chill chills fever fevers nausea eyesight eyes)
-  (diagnosis-tests diagnosis test tests result results study studies)
+  (diagnosis-tests diagnosis test tests result results study studies scan scans)
   (diagnosis-more more another further additional)
 
   ; Mental health
@@ -156,7 +164,7 @@
   (med-time-gen while period med-time)
   (med-better better stronger effective heavier)
   (med-for for work)
-  (med-help care help helping helpful better effective work working)
+  (med-help care help helping helpful better effective work working benefit)
   (med-notice notice tell detect feel)
   (med-wait wait give try use)
   (med-increase maximize maximizing increase increasing upping)

@@ -59,6 +59,9 @@
     2 (^me know.v (ans-to '(Do you think radiation will help ?))) (0 :ulf)
 
   1 (0 You 3 think I need chemotherapy 0)
+    ; TODO: this should infer answer to comfort care as well, rather than just chemotherapy
+    2 (0 You do not think I need chemotherapy because I should get comfort care instead 0)
+      3 (^me know.v (ans-to '(Do I need chemotherapy ?))) (0 :ulf)
     2 (^me know.v (ans-to '(Do I need chemotherapy ?))) (0 :ulf)
 
   1 (0 You think we should talk to my oncologist about chemotherapy 0)
