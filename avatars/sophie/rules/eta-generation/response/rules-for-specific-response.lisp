@@ -330,7 +330,7 @@
 ; (What are the side effects of chemotherapy 1)
 '(
   1 (0 You think we should talk to my oncologist about chemotherapy 0)
-    2 (I agree it would be best to revisit chemotherapy after talking to my oncologist \. However\, I still want
+    2 (I think it would be best to revisit chemotherapy after talking to my oncologist \. However\, I still want
        to learn a bit more about it \. What are some of the side effects ?) (0 :out)
 
   1 (0)
@@ -413,9 +413,20 @@
 (READRULES '*response-tree-questions*
 ; (What are your questions 1)
 '(
+  1 (0 How do I think this conversation is going 0)
+    2 (I think our conversation is going fine \. It\'s just a lot to take in\, though \. Do you have
+       any questions for me at this point ?) (0 :out)
+
+  1 (0 How much information do you want 0)
+    2 (Please give me as much information as you can\, but try to avoid getting too technical \.
+       Don\'t hold anything back\, I think I\'m prepared to hear it \.) (20 :out)
+    2 (Try to give me as much information as you think is appropriate \. I probably won\'t understand
+       technical terms\, so try to explain in basic language \.) (20 :out)
+    2 (Please don\'t hold any information back from me \. Try to explain in simple terms\, though \.) (0 :out)
+
   1 (0)
-    2 (What questions do you have for me ?) (3 :out)
-    2 (What are your questions ?) (3 :out)
+    2 (What questions do you have for me ?) (20 :out)
+    2 (What are your questions ?) (20 :out)
     2 (What questions do you want to ask ?) (0 :out)
 
 )) ; END *response-tree-questions*

@@ -576,6 +576,8 @@
 
   1 (0 chemotherapy-consult 4 oncologist 0)
     2 ((You think we should talk to my oncologist about chemotherapy \.) (Chemotherapy)) (0 :gist)
+  1 (0 information 2 from 2 oncologist 0)
+    2 ((You think we should talk to my oncologist about chemotherapy \.) (Chemotherapy)) (0 :gist)
     
   1 (5 POS 0)
     2 (- 0 NEG sure 0)

@@ -64,6 +64,7 @@
   (wondering asking unsure)
   (option options)
   (grow growing)
+  (conversation discussion)
 
   ; ASR errors
   (talking talkin)

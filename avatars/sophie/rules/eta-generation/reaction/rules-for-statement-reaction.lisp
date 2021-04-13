@@ -96,6 +96,10 @@
   ; otherwise eta will ignore and return to the central conversation)
   1 (Can you ask me some questions ?)
     2 *ask-for-questions* (0 :schema)
+  1 (How much information do I want ?)
+    2 *ask-for-questions* (0 :schema)
+  1 (How do I think this conversation is going ?)
+    2 *ask-for-questions* (0 :schema)
   1 (0 ?)
     ;; 2 (2 ?); too short to be a question
     ;;   3 () (0 :out)
