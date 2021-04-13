@@ -90,7 +90,11 @@
 
 (READRULES '*response-tree-sleep*
 ; (I have not been sleeping well 1)
+; (Why have I not been sleeping well 1)
 '(
+  1 (0 You are sorry that I am sleeping poorly 0)
+    2 (Thanks\, I appreciate the sympathy \. Do you know why this is happening\, though ?) (0 :out)
+
   1 (0 Can I tell you about my sleep instead of test results 0)
     2 (I can give a bit more information about what happens when I try to sleep \. Sometimes I wake up in the
        middle of the night and notice an ache in my back and near my chest \. That\'s when I have to
@@ -114,6 +118,12 @@
     2 (I have been feeling a bit of anxiety\, which can sometimes make it difficult to fall asleep\, but usually it\'s
        my pain that keeps me awake \.) (0 :out)
 
+  1 (0)
+    2 (One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
+       have to take medication for my pain \. I\'m not sure if it\'s only the pain\, but I keep waking up at night \.
+       Do you know why I keep waking up like this ?) (100 :out)
+    2 (Do you know what the specific cause of my poor sleep is ?) (0 :out)
+
 )) ; END *response-tree-sleep*
 
 
@@ -127,7 +137,8 @@
        about possible metastasis \.) (0 :out)
 
   1 (0 Do I know what the tests say 0)
-    2 (I don\'t really understand the test results \. Can you explain them ?) (0 :out)
+    2 (I don\'t really understand the test results \. I was just told that the tumor is still there and something about
+       possible metastasis\, but I wasn\'t sure how to interpret that \. Can you explain them ?) (0 :out)
 
   1 (0 You are not sure what my test results mean 0)
     2 (Oh\, sorry\, I assumed you were sent the test results\, from when I had my second CT scan a couple weeks after radiation \.
@@ -191,6 +202,9 @@
 
   1 (0 Has the pain become worse 0)
     2 (The pain seems to have become worse recently \.) (0 :out)
+  
+  1 (0 Do you have the pain frequently 0)
+    2 (I seem to have the pain most of the time\, though sometimes it\'s worse than others \.) (0 :out)
 
 )) ; END *response-tree-pain*
 

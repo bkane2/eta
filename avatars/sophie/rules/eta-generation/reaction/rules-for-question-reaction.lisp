@@ -19,6 +19,8 @@
     2 *say-pain-worse* (0 :schema)
   1 (Has the pain become worse ?)
     2 *say-pain-worse* (0 :schema)
+  1 (Do you have the pain frequently ?)
+    2 *say-pain-worse* (0 :schema)
   1 (Can I tell you about my pain instead of test results ?)
     2 *say-pain-worse* (100 :schema)
     2 *ask-about-test-results* (0 :schema)

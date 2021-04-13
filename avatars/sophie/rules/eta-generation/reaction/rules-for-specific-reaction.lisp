@@ -308,6 +308,9 @@
     2 *ask-if-cancer-worse* (0 :schema)
   1 (I am sleeping poorly because of my mental health \.)
      2 *discuss-depression* (0 :schema)
+
+  1 (You are sorry that I am sleeping poorly \.)
+    2 *ask-about-poor-sleep* (0 :schema)
     
   1 (0)
     2 (Okay \.) (0 :out)

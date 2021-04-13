@@ -75,6 +75,8 @@
   ; Questions about SOPHIE's abilities/preferences
   1 (0 I 3 ask 1 you 4 question 0)
     2 ((Can you ask me some questions ?)) (0 :gist)
+  1 (0 can I 3 make 1 sure 3 I understand 0)
+    2 ((Can you ask me some questions ?)) (0 :gist)
   1 (0 how much 3 information 3 AUX 1 you 0)
     2 ((How much information do I want ?)) (0 :gist)
   1 (0 how 4 conversation 3 going 0)

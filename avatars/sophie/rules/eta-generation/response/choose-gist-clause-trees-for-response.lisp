@@ -41,6 +41,8 @@
     2 (*response-tree-weight*) (0 :subtrees)
   1 (I have not been sleeping well 1)
     2 (*response-tree-sleep*) (0 :subtrees)
+  1 (Why have I not been sleeping well 1)
+    2 (*response-tree-sleep*) (0 :subtrees)
   1 (I am only taking Lortab to treat my pain 1)
     2 (*response-tree-medication*) (0 :subtrees)
   1 (I am taking Lortab every three hours 1)
@@ -74,11 +76,6 @@
     2 (It seems like my pain is the root of my sleeping problems \. Do you think having
        stronger pain medication would help with that ?) (0 :out)
   ; The following are from the top-level dialogue track
-  1 (Why have I not been sleeping well 1)
-    2 (One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
-       have to take medication for my pain \. I\'m not sure if it\'s only the pain\, but I keep waking up at night \.
-       Do you know why I keep waking up like this ?) (100 :out)
-    2 (Do you know what the specific cause of my poor sleep is ?) (0 :out)
   1 (How will I know if my pain medication is working 1)
     2 (I just started on my new pain medication fairly recently\, a couple weeks after radiation \.
        How long will it be before I know if it\'s working ?) (0 :out)

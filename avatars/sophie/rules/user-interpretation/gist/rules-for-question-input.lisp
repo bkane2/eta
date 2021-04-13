@@ -211,11 +211,11 @@
     2 ((Do I have the symptom of 3 ?) (Symptoms)) (0 :gist)
 
   ; Do you understand your test results?
-  1 (1 wh_ diagnosis-tests diagnosis-tests 6)
+  1 (8 wh_ diagnosis-tests diagnosis-tests 6)
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
-  1 (1 wh_ diagnosis-tests 6)
+  1 (8 wh_ diagnosis-tests 6)
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
-  1 (1 AUX-BASE 2 you know 3 diagnosis-tests 0)
+  1 (8 AUX-BASE 2 you know 3 diagnosis-tests 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
 
   ; You had tests recently, right?
@@ -375,16 +375,24 @@
 
   ; Can you tell me about your pain?
   1 (0 how be 2 pain 0)
-    2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
+    2 (- 0 medicine-gen 0)
+      3 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
+    2 (*medicine-question* (what medication are you taking ?)) (0 :subtree+clause)
   1 (0 more-info 1 about 2 pain 0)
-    2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
+    2 (- 0 medicine-gen 0)
+      3 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
+    2 (*medicine-question* (what medication are you taking ?)) (0 :subtree+clause)
   1 (0 can 2 you 2 describe 2 pain 0)
-    2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
+    2 (- 0 medicine-gen 0)
+      3 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
+    2 (*medicine-question* (what medication are you taking ?)) (0 :subtree+clause)
   1 (0 what 2 medicine-gen 0)
     2 (- 0 dose 0)
       3 (*medicine-question* (what medication are you taking ?)) (0 :subtree+clause)
   1 (0 what pain 1 be you 0)
-    2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
+    2 (- 0 medicine-gen 0)
+      3 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
+    2 (*medicine-question* (what medication are you taking ?)) (0 :subtree+clause)
 
   ; Where does it hurt?
   1 (0 where it 3 pain 0)
@@ -406,6 +414,12 @@
   ; Is the pain worse?
   1 (0 AUX-BASE 3 pain 3 worse 0)
     2 ((Has the pain become worse ?) (Pain-description)) (0 :gist)
+
+  ; Do you have the pain frequently?
+  1 (0 AUX-BASE 3 pain 3 frequently 0)
+    2 ((Do you have the pain frequently ?) (Pain-description)) (0 :gist)
+  1 (0 AUX-BASE 3 pain 3 all 1 time 0)
+    2 ((Do you have the pain frequently ?) (Pain-description)) (0 :gist)
 
 )) ; END *pain-question*
 

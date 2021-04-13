@@ -953,11 +953,13 @@
   ; How is your anxiety or depression?
   1 (0 be 3 ment-health 3 recently 0)
     2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
-  1 (0 how 5 think-gen 0)
+  1 (0 how 3 be 3 think-gen 0)
     2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
   1 (0 how 3 ment-health 5)
     2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
-  1 (0 wh_ 5 think-gen 0)
+  1 (0 wh_ 3 be 3 think-gen 0)
+    2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
+  1 (0 wh_ 5 think-gen 5 mind 0)
     2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
   1 (0 AUX 2 you 6 ment-health 0)
     2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
@@ -1024,6 +1026,8 @@
 
   1 (0)
     2 *general-input* (0 :subtree)
+  1 (0 sorry 0)
+    2 ((You are sorry that I am sleeping poorly \.) (Sleeping-poorly)) (0 :gist)
   1 (0)
     2 ((Nil Gist \: nothing found for why I am sleeping poorly \.)) (0 :gist)
 
@@ -1182,9 +1186,11 @@
 
   ; Can you tell me more
   1 (0 aux 1 you 1 tell 5 more 0)
-    2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+    2 (- 0 medicine-gen 0)
+      3 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
   1 (0 aux 1 you be able 1 tell 5 more 0)
-    2 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+    2 (- 0 medicine-gen 0)
+      3 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
 
   ; Yes / No
   1 (5 POS 0)
