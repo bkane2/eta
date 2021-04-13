@@ -62,6 +62,7 @@
   (improve improving)
   (wondering asking unsure)
   (option options)
+  (grow growing)
 
   ; ASR errors
   (talking talkin)
@@ -97,6 +98,7 @@
   (appreciate like love enjoy)
   (avatar-items shirt sweater pants clothes clothing style glasses hat hair haircut furniture voice)
   (tag-question right correct)
+  (question questions)
   (ask-gen ask asking talk talking)
 
   ; Medical history
@@ -183,7 +185,7 @@
 
   ; Prognosis
   (spread spreading metastasized metastatic)
-  (cancer-increase increase spread)
+  (cancer-increase increase spread grow)
   (prog-future will going)
 
   ; Sleep

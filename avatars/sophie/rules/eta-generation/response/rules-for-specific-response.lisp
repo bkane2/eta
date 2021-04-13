@@ -378,6 +378,18 @@
 
 
 
+(READRULES '*response-tree-questions*
+; (What are your questions 1)
+'(
+  1 (0)
+    2 (What questions do you have for me ?) (3 :out)
+    2 (What are your questions ?) (3 :out)
+    2 (What questions do you want to ask ?) (0 :out)
+    
+)) ; END *response-tree-questions*
+
+
+
 (READRULES '*response-tree-rephrase*
 ; (can 1 rephrase 1 question 1)
 '(

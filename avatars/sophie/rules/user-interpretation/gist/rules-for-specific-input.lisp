@@ -1062,7 +1062,7 @@
     2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
 
   ; The cancer has spread
-  1 (0 spread 0)
+  1 (0 cancer-increase 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 cancer-illness 5 in 3 body-part)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)

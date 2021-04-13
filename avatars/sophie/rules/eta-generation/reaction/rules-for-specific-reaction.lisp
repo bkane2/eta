@@ -310,7 +310,7 @@
      2 *discuss-depression* (0 :schema)
     
   1 (0)
-    2 (I see\.) (0 :out)
+    2 (Okay \.) (0 :out)
 
 )) ; END *sleep-poorly-reaction*
 

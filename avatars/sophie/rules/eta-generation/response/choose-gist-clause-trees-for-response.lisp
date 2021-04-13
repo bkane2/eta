@@ -3,6 +3,8 @@
   ; Subtrees for elaborating questions
   1 (can 1 rephrase 1 question 1)
     2 (*response-tree-rephrase*) (0 :subtrees)
+  1 (What are your questions 1)
+    2 (*response-tree-questions*) (0 :subtrees)
   1 (How does chemotherapy work 1)
     2 (*response-tree-chemotherapy-explanation*) (0 :subtrees)
   1 (Do you think chemotherapy will help 1)

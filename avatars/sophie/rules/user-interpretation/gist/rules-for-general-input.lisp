@@ -72,6 +72,9 @@
   1 (0 cancer-goals 0)
     2 *treatment-goals-question* (0 :subtree)
 
+  ; Questions about SOPHIE's abilities
+  1 (0 I 3 ask 1 you 4 question 0)
+    2 ((Can you ask me some questions ?)) (0 :gist)
     
   ; Interjections/prompts to continue
   ;; 1 (2 okay 2)

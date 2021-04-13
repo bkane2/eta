@@ -94,6 +94,8 @@
     2 () (0 :out)
   ; If no gist clauses were extracted from user, ask them to repeat the question (Repeats at most 2 times in a row,
   ; otherwise eta will ignore and return to the central conversation)
+  1 (Can you ask me some questions ?)
+    2 *ask-for-questions* (0 :schema)
   1 (0 ?)
     ;; 2 (2 ?); too short to be a question
     ;;   3 () (0 :out)
