@@ -1093,6 +1093,12 @@
   1 (0 NEG 1 know 0)
     2 ((You are not sure what my test results mean \.)) (0 :gist)
 
+  ; Doctor still wants to talk about pain or sleep
+  1 (0 pain 0)
+    2 ((Can I tell you about my pain instead of test results ?) (Pain-description)) (0 :gist)
+  1 (0 sleep 0)
+    2 ((Can I tell you about my sleep instead of test results ?) (Sleep)) (0 :gist)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)

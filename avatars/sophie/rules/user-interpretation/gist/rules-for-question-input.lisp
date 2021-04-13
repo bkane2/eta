@@ -378,6 +378,8 @@
     2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
   1 (0 more-info 1 about 2 pain 0)
     2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
+  1 (0 can 2 you 2 describe 2 pain 0)
+    2 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
   1 (0 what 2 medicine-gen 0)
     2 (- 0 dose 0)
       3 (*medicine-question* (what medication are you taking ?)) (0 :subtree+clause)
@@ -459,6 +461,8 @@
 
   ; What happens when you try to sleep?
   1 (0 wh_ 2 happen 4 sleep 0)
+    2 ((What happens when I try to sleep ?) (Sleep)) (0 :gist)
+  1 (0 wh_ 2 you 1 med-notice 4 sleep 0)
     2 ((What happens when I try to sleep ?) (Sleep)) (0 :gist)
 
   ; What do you do before bed?

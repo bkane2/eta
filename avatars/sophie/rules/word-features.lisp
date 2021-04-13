@@ -169,7 +169,7 @@
   (med-better better stronger effective heavier)
   (med-for for work)
   (med-help care help helping helpful better effective work working benefit)
-  (med-notice notice tell detect feel)
+  (med-notice notice tell detect feel observe)
   (med-wait wait give try use)
   (med-increase maximize maximizing increase increasing upping)
   (med-dosage much many milligrams grams)

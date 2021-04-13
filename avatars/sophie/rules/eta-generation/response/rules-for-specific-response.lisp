@@ -91,6 +91,11 @@
 (READRULES '*response-tree-sleep*
 ; (I have not been sleeping well 1)
 '(
+  1 (0 Can I tell you about my sleep instead of test results 0)
+    2 (I can give a bit more information about what happens when I try to sleep \. Sometimes I wake up in the
+       middle of the night and notice an ache in my back and near my chest \. That\'s when I have to
+       take pain medication to fall back asleep \.) (100 :out)
+
   1 (0 Have I been sleeping okay 0)
     2 (I have been having a bit of trouble \. I keep waking up at night \. Most nights I have to take my pain medication
        before falling back to sleep again \.) (0 :out)
@@ -102,7 +107,9 @@
        of anything except for the pain \.) (0 :out)
   1 (0 What happens when I try to sleep 0)
     2 (I usually have trouble staying asleep \. Sometimes I wake up in the middle of the night and notice an ache in my
-       back and near my chest \. That\'s when I have to take pain medication to fall back asleep \.) (0 :out)
+       back and near my chest \. That\'s when I have to take pain medication to fall back asleep \.) (100 :out)
+    2 (Whenever I wake up\, I usually feel an ache in my back and near my chest \. I usually try to take pain medication
+       to help fall back asleep \.) (0 :out)
   1 (0 Is your mental health keeping you awake 0)
     2 (I have been feeling a bit of anxiety\, which can sometimes make it difficult to fall asleep\, but usually it\'s
        my pain that keeps me awake \.) (0 :out)
@@ -128,6 +135,13 @@
        about possible metastasis \. Could you explain what that means in simple terms ?) (100 :out)
     2 (Could you try your best to explain the test results to me ?) (0 :out)
 
+  1 (0 Can I tell you about my pain instead of test results 0)
+    2 (I\'ll think more about my pain medication and talk to you about it another time \. I\'d like to move onto my test
+       results now\, though \. Could you explain what they mean ?) (0 :out)
+  1 (0 Can I tell you about my sleep instead of test results 0)
+    2 (I\'ll think more about my sleep problems and talk to you about it another time \. I\'d like to move onto my test
+       results now\, though \. Could you explain what they mean ?) (0 :out)
+
   1 (0)
     2 (Let\'s talk about my test results\. I received my test results yesterday\, but I didn\'t really understand them \.
        Could you explain to me what my test results mean ?) (100 :out)
@@ -152,6 +166,11 @@
 (READRULES '*response-tree-pain*
 ; (My pain has recently been getting worse 1)
 '(
+  1 (0 Can I tell you about my pain instead of test results 0)
+    2 (I can give a bit more information about my pain \. I used to just feel it in my back and chest\,
+       but it seems to have spread \. Now it\'s in my shoulder blade too\, and on the other side from
+       where it started \.) (0 :out)
+
   1 (0 Can I tell you about my pain 0)
     2 (The pain was pretty much under control for a while\, but in the past week it has been more difficult \.
        it used to be in my back and left side of my chest\, but now it\'s in my shoulder blade too\, and on

@@ -19,6 +19,9 @@
     2 *say-pain-worse* (0 :schema)
   1 (Has the pain become worse ?)
     2 *say-pain-worse* (0 :schema)
+  1 (Can I tell you about my pain instead of test results ?)
+    2 *say-pain-worse* (100 :schema)
+    2 *ask-about-test-results* (0 :schema)
 
   ; Questions about how you got your diagnosis
   1 (How did I get my diagnosis ?)
@@ -75,6 +78,9 @@
     2 *discuss-sleep-routine* (0 :schema)
   1 (Is your mental health keeping you awake ?)
     2 *explain-not-sleeping-well* (0 :schema)
+  1 (Can I tell you about my sleep instead of test results ?)
+    2 *explain-not-sleeping-well* (100 :schema)
+    2 *ask-about-test-results* (0 :schema)
 
   ; Questions about energy
   1 (How is my energy ?)
