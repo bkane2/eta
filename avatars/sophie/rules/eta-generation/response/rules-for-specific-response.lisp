@@ -119,7 +119,7 @@
        my pain that keeps me awake \.) (0 :out)
 
   1 (0)
-    2 (One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
+    2 ([SAD] One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
        have to take medication for my pain \. I\'m not sure if it\'s only the pain\, but I keep waking up at night \.
        Do you know why I keep waking up like this ?) (100 :out)
     2 (Do you know what the specific cause of my poor sleep is ?) (0 :out)
