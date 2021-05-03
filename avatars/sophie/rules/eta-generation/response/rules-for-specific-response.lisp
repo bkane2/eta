@@ -63,14 +63,14 @@
 ; (Why isn\'t the pain medication working anymore 1)
 '(
   1 (0 How is the pain medication working 0)
-    2 (My pain is a little better under the lortab\, but it\'s not really helping as much as it used to \.) (0 :out)
+    2 ([SAD] My pain is a little better under the lortab\, but it\'s not really helping as much as it used to \.) (0 :out)
   1 (0 Is the pain medication working at all 0)
     2 (The lortab is working a little bit\, but not much \.) (0 :out)
   1 (0 Is the pain medication working 0)
-    2 (No\, it\'s not really working anymore \. So I have been taking the pills every three hours instead of every four \.) (0 :out)
+    2 ([SAD] No\, it\'s not really working anymore \. So I have been taking the pills every three hours instead of every four \.) (0 :out)
 
   1 (0)
-    2 (Could you tell me why the pain medication isn\'t working anymore ?) (0 :out)
+    2 ([SAD] Could you tell me why the pain medication isn\'t working anymore ?) (0 :out)
 
 )) ; END *response-tree-pain-medication-not-working*
 
@@ -119,7 +119,7 @@
        my pain that keeps me awake \.) (0 :out)
 
   1 (0)
-    2 ([SAD] One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
+    2 (One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
        have to take medication for my pain \. I\'m not sure if it\'s only the pain\, but I keep waking up at night \.
        Do you know why I keep waking up like this ?) (100 :out)
     2 (Do you know what the specific cause of my poor sleep is ?) (0 :out)
@@ -201,7 +201,7 @@
     2 (My pain came back a couple weeks after I finished radiation \. It\'s been getting worse recently \.) (0 :out)
 
   1 (0 Has the pain become worse 0)
-    2 (The pain seems to have become worse recently \.) (0 :out)
+    2 ([SAD] The pain seems to have become worse recently \.) (0 :out)
   
   1 (0 Do you have the pain frequently 0)
     2 (I seem to have the pain most of the time\, though sometimes it\'s worse than others \.) (0 :out)
@@ -374,12 +374,12 @@
 ; (what is 1 prognosis 1)
 '(
   1 (0 My cancer has gotten worse 0)
-    2 (What does that mean for me ?) (0 :out)
+    2 ([SAD] What does that mean for me ?) (0 :out)
   1 (0 The prognosis is that I cannot be cured 0)
-    2 (I feared as much \, though it\'s still pretty upsetting \. How long do you think I have ?) (0 :out)
+    2 ([SAD] I feared as much \, though it\'s still pretty upsetting \. How long do you think I have ?) (0 :out)
 
   1 (0 The prognosis is that my cancer should be treated with chemotherapy 0)
-    2 (I want to talk about my options in a minute\, but first I just want to know how bad it really is \.
+    2 ([SAD] I want to talk about my options in a minute\, but first I just want to know how bad it really is \.
        How long do you think I have ?) (0 :out)
 
   1 (0 The prognosis is hard to predict 0)
@@ -390,12 +390,12 @@
     2 (My previous doctor didn\'t seem very optimistic \. So what do you think this all means for me ?) (0 :out)
 
   1 (0 The test results show that me cannot be cured 0)
-    2 (That\'s distressing \. I was fearing the worst\, but in the back of my mind I didn\'t think it would all
+    2 ([SAD] That\'s distressing \. I was fearing the worst\, but in the back of my mind I didn\'t think it would all
        happen so quickly \. My family will be distraught \. What I am wondering at this point is\, how much time
        do I have left ?) (0 :out)
 
   1 (0 The test results show that my cancer has spread 0)
-    2 (Those are not the words I wanted to hear \. I mean\, I was bracing for the worst\, since I could tell by the
+    2 ([SAD] Those are not the words I wanted to hear \. I mean\, I was bracing for the worst\, since I could tell by the
        pain that it\'s bad \. But to hear that the cancer has spread is quite depressing \. What does
        it all mean for me ?) (0 :out)
 

@@ -33,12 +33,12 @@
     2 *ask-about-prognosis* (0 :schema)
   1 (My cancer has not gotten worse \.)
     2 *verify-cancer-status* (100 :schema)
-    2 (Okay\. Well\, that makes me feel a little bit better\.) (0 :out)
+    2 ([HAPPY] Okay\. Well\, that makes me feel a little bit better \.) (0 :out)
   1 (You are not sure whether my cancer has gotten worse \.)
-    2 (That\'s not very reassuring\.) (0 :out)
+    2 ([SAD] That\'s not very reassuring \.) (0 :out)
 
   1 (0)
-    2 (I see\.) (0 :out)
+    2 (I see \.) (0 :out)
 
 )) ; END *cancer-worse-reaction*
 
@@ -138,7 +138,7 @@
     2 *ask-about-pain-medication-side-effects* (100 :schema)
     2 (If I continue to have trouble sleeping\, I might call in for stronger pain medication later \.) (0 :out)
   1 (A stronger pain medication will not help me sleep \.)
-    2 (I guess it\'s just something I\'ll have to live with \.) (0 :out)
+    2 ([SAD] I guess it\'s just something I\'ll have to live with \.) (0 :out)
 
   1 (0)
     2 (I see \.) (0 :out)
@@ -219,14 +219,14 @@
     2 *ask-about-pain-medication-side-effects* (100 :schema)
     2 (I think having the stronger pain medication would help \.) (0 :out)
   1 (I can give you stronger pain medication \.)
-    2 (Thank you very much\, I hope that will help with the pain \.) (0 :out)
+    2 ([HAPPY] Thank you very much\, I hope that will help with the pain \.) (0 :out)
   1 (I cannot give you stronger pain medication \.)
     2 (I see \. For now I\'ll stick with my current medication\, but will let you know if the pain starts getting worse \.) (0 :out)
 
   1 (I can give you a refill of pain medication \.)
-    2 (Thanks\, appreciate it \!) (0 :out)
+    2 ([HAPPY] Thanks\, I appreciate it \!) (0 :out)
   1 (I cannot give you a refill of pain medication \.)
-    2 (Okay\. I will try to do without it\, but if the pain gets worse I\'m going to call you back for more pain medication \.) (0 :out)
+    2 ([SAD] Okay\. I will try to do without it\, but if the pain gets worse I\'m going to call you back for more pain medication \.) (0 :out)
 
   1 (0)
     2 (Okay\, I see \.) (0 :out)
@@ -264,25 +264,25 @@
   ; I asked my doctor in Florida about what’s going to happen next, he just did not want to say. 
   ; He said” These things are always hard to predict.” 
   1 (The prognosis is that I may live for number-plur elapsed-time-plur \.)
-    2 (That\'s very difficult to hear\. I thought I would have more time than that\.
+    2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy those 9 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for number elapsed-time \.)
-    2 (That\'s very difficult to hear\. I thought I would have more time than that\.
+    2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy that 9 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for several elapsed-time \.)
     2 *ask-about-prognosis* (100 :schema)
-    2 (That\'s very difficult to hear\. I thought I would have more time than that\.
+    2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy those 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for a elapsed-time \.)
-    2 (That\'s very difficult to hear\. I thought I would have more time than that\.
+    2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy that 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
 
   1 (The prognosis is that I cannot be cured \.)
     2 *ask-about-prognosis* (100 :schema)
-    2 (I guess I need to make peace with it \.) (0 :out)
+    2 ([SAD] I guess I need to make peace with it \.) (0 :out)
 
   1 (The prognosis is that I will survive \.)
-    2 (My previous doctor didn\'t seem so optimistic\, so that\'s quite relieving that you think I\'ll likely get better \.) (0 :out)
+    2 ([HAPPY] My previous doctor didn\'t seem so optimistic\, so that\'s quite relieving that you think I\'ll likely get better \.) (0 :out)
 
   1 (The prognosis is that my cancer should be treated with chemotherapy \.)
     2 *ask-about-prognosis* (0 :schema)
@@ -324,7 +324,7 @@
 '(
   
   1 (0)
-    2 (Okay\. It will be difficult\, but my family and I will have to be strong \.) (0 :out)
+    2 ([SAD] Okay\. It will be difficult\, but my family and I will have to be strong \.) (0 :out)
 
 )) ; END *tell-family-reaction*
 
