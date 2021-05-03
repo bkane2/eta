@@ -5,7 +5,7 @@
 ;;
 
 
-;``````````````````````````````````````````````````````
+;`````````````````````````````````````````````````````
 ; Store a global hash table of schema headers to
 ; the corresponding schema variable names.
 ; NOTE: This is only defined in the eta-schema.lisp file.
@@ -663,6 +663,17 @@
 
 
 
+(defun emotion-tag? (atm)
+;````````````````````````````````````````````````
+; If symbol begins with [ and ends with ], it qualifies as an emotion
+; tag when inside an output list.
+;
+  (if (and (symbolp atm) (equal #\[ (first (explode atm)))
+           (equal #\] (car (last (explode atm))))) t nil)
+) ; END emotion-tag?
+
+
+
 ;``````````````````````````````````````````````````````
 ;
 ; DISCOURSE UTIL
@@ -837,7 +848,7 @@
 
 
 (defun gist-contradiction (current-gist-list gist-clause)
-;`````````````````````````````````````````````````````````
+;`````````````````````````````````````````````````````
 ; Finds gist clauses which contradict one another
 ;
   (let (cont-flag)
@@ -855,7 +866,7 @@
 
 
 (defun remove-contradiction (gist-list)
-;`````````````````````````````````````````````````````````
+;`````````````````````````````````````````````````````
 ; Remove any contradicting gist clauses (get rid of the
 ; latter one, which appears later in the conversation)
 ;
@@ -948,6 +959,18 @@
     (dual
       (presubst resp)))
 ) ; END modify-response
+
+
+
+(defun tag-emotions (resp)
+;````````````````````````````
+; Prepends each response utterance with a default [NEUTRAL] tag unless it
+; already begins with an explicit emotion tag. If *emotions* is NIL, strip
+; all emotion tags from response, otherwise return tagged response.
+;
+  (let ((tagged-resp (if (emotion-tag? (car resp)) resp (cons '[NEUTRAL] resp))))
+    (if *emotions* tagged-resp (cdr tagged-resp))
+)) ; END tag-emotions
 
 
 

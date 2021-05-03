@@ -12,8 +12,8 @@
 ;; *subsystems-specialist* : A list of specialist subsystems registered with Eta.
 ;;                           Supported: |Spatial-Reasoning-System|
 ;;
-;; *emotion-tags* : T to allow insertion of emotion tags (e.g., [SAD]) at beginning of :out directives. If no emotion tag is
-;;                  explicitly specified in the transduction tree, a default [NEUTRAL] tag will be prepended.
+;; *emotion-tags* : T to allow insertion of emotion tags (e.g., [SAD]) at beginning of outputs. If no emotion tag is
+;;                  explicitly specified in the output, a default [NEUTRAL] tag will be prepended.
 ;;                  NIL to disable emotion tags. Any tags at the beginning of :out directives will be stripped.
 ;;
 ;; *dependencies* : T to include Quicklisp dependencies, NIL to only include local packages (note that some applications may not

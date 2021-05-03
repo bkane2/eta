@@ -187,7 +187,7 @@
   ; of the same name in logs_out/ directory.
   (defparameter *read-log* nil)
 
-  ; If *emotions* is T, Eta will allow use of emotion tags at beginning of :out directives.
+  ; If *emotions* is T, Eta will allow use of emotion tags at beginning of outputs.
   (defparameter *emotions* nil)
 
   ; Log contents and pointer corresponding to current position in log.
@@ -678,6 +678,7 @@
           ((eq (car expr) 'quote)
             (setq expr (flatten (second expr)))
             (setq *count* (1+ *count*))
+            (setq expr (tag-emotions expr))
             (if (member '|Audio| *registered-systems-perception*)
               (say-words expr)
               (print-words expr)))
