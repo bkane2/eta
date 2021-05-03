@@ -187,6 +187,9 @@
   ; of the same name in logs_out/ directory.
   (defparameter *read-log* nil)
 
+  ; If *emotions* is T, Eta will allow use of emotion tags at beginning of :out directives.
+  (defparameter *emotions* nil)
+
   ; Log contents and pointer corresponding to current position in log.
   (defparameter *log-contents* nil)
   (defparameter *log-answer* nil)
@@ -256,8 +259,8 @@
 
 
 
-(defun eta (read-log subsystems-perception subsystems-specialist &optional (dependencies t))
-;```````````````````````````````````````````````````````````````````````````````````````````````
+(defun eta (read-log subsystems-perception subsystems-specialist &optional (emotions nil) (dependencies t))
+;```````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
 ; (now largely commented out) and controls the loop for producing,
 ; managing, and executing the dialog plan (mostly, reading & feature-
@@ -270,6 +273,7 @@
   (setq *read-log* read-log)
   (setq *registered-systems-perception* subsystems-perception)
   (setq *registered-systems-specialist* subsystems-specialist)
+  (setq *emotions* emotions)
   (setq *count* 0) ; Number of outputs so far
 
   (when *read-log*

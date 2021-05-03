@@ -107,7 +107,7 @@
   ; Run Eta (safe mode)
   ;`````````````````````````
   (*safe-mode*
-    (handler-case (eta nil *subsystems-perception* *subsystems-specialist* *dependencies*)
+    (handler-case (eta nil *subsystems-perception* *subsystems-specialist* *emotion-tags* *dependencies*)
       (error (c)
         (error-message "Execution of Eta failed due to an internal error.")
         (values 0 c))))
@@ -127,11 +127,11 @@
         (format t "==:: READING LOG ~a ::==~%" log)
         (load "load-eta.lisp")
         (load-avatar-files *avatar*)
-        (eta log *subsystems-perception* *subsystems-specialist* *dependencies*)) logs)))
+        (eta log *subsystems-perception* *subsystems-specialist* *emotion-tags* *dependencies*)) logs)))
 
   ; Run Eta
   ;`````````````````````````
-  (t (eta nil *subsystems-perception* *subsystems-specialist* *dependencies*)))
+  (t (eta nil *subsystems-perception* *subsystems-specialist* *emotion-tags* *dependencies*)))
 
 
 ; Write user gist clauses to file
