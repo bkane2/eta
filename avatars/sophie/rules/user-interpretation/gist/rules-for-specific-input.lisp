@@ -1066,6 +1066,8 @@
   ; There is no cure
   1 (0 NEG 2 cure 0)
     2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
+  1 (0 cannot 2 cure 0)
+    2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
   1 (0 NEG 2 go away 0)
     2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
   1 (0 fight 2 rest 4 life 0)

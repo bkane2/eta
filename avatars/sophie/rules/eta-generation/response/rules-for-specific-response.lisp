@@ -374,34 +374,42 @@
 ; (what is 1 prognosis 1)
 '(
   1 (0 My cancer has gotten worse 0)
-    2 ([SAD] What does that mean for me ?) (0 :out)
+    2 ([SAD] What does that mean for me ?) (100 :out)
+    2 ([SAD] How long do you think I have left ?) (0 :out)
   1 (0 The prognosis is that I cannot be cured 0)
-    2 ([SAD] I feared as much \, though it\'s still pretty upsetting \. How long do you think I have ?) (0 :out)
+    2 ([SAD] I feared as much \, though it\'s still pretty upsetting \. How long do you think I have ?) (100 :out)
+    2 ([SAD] How long specifically do you think I have left ?) (0 :out)
 
   1 (0 The prognosis is that my cancer should be treated with chemotherapy 0)
     2 ([SAD] I want to talk about my options in a minute\, but first I just want to know how bad it really is \.
-       How long do you think I have ?) (0 :out)
+       How long do you think I have ?) (100 :out)
+    2 ([SAD] Before I talk about treatment\, I just want to know how bad it really is \. How long do you think I have ?) (0 :out)
 
   1 (0 The prognosis is hard to predict 0)
     2 (My last doctor also just said it would be hard to predict \. I think I am ready to hear though \. Could you
-       please try to tell me what the worst case looks like ?) (0 :out)
+       please try to tell me what the worst case looks like ?) (100 :out)
+    2 ([SAD] I want you to be honest with me \. How long do you think I have ?) (0 :out)
 
   1 (0 The test results show that the cancer hasn\'t spread 0)
-    2 (My previous doctor didn\'t seem very optimistic \. So what do you think this all means for me ?) (0 :out)
+    2 (My previous doctor didn\'t seem very optimistic \. So what do you think this all means for me ?) (100 :out)
+    2 (What do you think my future will look like\, then ?) (0 :out)
 
   1 (0 The test results show that me cannot be cured 0)
     2 ([SAD] That\'s distressing \. I was fearing the worst\, but in the back of my mind I didn\'t think it would all
        happen so quickly \. My family will be distraught \. What I am wondering at this point is\, how much time
-       do I have left ?) (0 :out)
+       do I have left ?) (100 :out)
+    2 ([SAD] I want you to be honest with me \. How long do you think I have left ?) (0 :out)
 
   1 (0 The test results show that my cancer has spread 0)
     2 ([SAD] Those are not the words I wanted to hear \. I mean\, I was bracing for the worst\, since I could tell by the
        pain that it\'s bad \. But to hear that the cancer has spread is quite depressing \. What does
-       it all mean for me ?) (0 :out)
+       it all mean for me ?) (100 :out)
+    2 ([SAD] I want you to be honest with me \. How long do you think I have left ?) (0 :out)
 
   1 (0 The prognosis is that I may live for several elapsed-time 0)
     2 (I\'m not sure whether that\'s a good thing or bad thing \. Could you be more specific about how long
-       you think I have left ?) (0 :out)
+       you think I have left ?) (100 :out)
+    2 ([SAD] I want you to be honest with me \. How long do you think I have left ?) (0 :out)
 
   1 (0)
     2 (What do you think this means for me in the future ?) (100 :out)

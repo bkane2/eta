@@ -88,7 +88,9 @@
   1 (0 The prognosis is that 0)
     2 (- 0 cancer 1 be treated 0)
       3 (- 0 may live 1 number-vague elapsed-time 0)
-        4 (^me know.v (ans-to '(What is my prognosis ?))) (0 :ulf)
+        4 (- 0 cannot 1 cure 0)
+          5 (- 0 hard 1 predict 0)
+            6 (^me know.v (ans-to '(What is my prognosis ?))) (0 :ulf)
 
   1 (0 I 1 sleeping poorly because 0)
     2 (^me know.v (ans-to '(Why have I not been sleeping well ?))) (0 :ulf)

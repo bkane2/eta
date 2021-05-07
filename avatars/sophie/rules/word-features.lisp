@@ -52,7 +52,7 @@
   (chance chances)
   (low small minimal)
   (recover recovery survive survival fine)
-  (cure curable recover recovery solution fix miracle)
+  (cure cured curable recover recovery solution fix miracle)
   (alone yourself)
   (dose doses dosage dosages)
   (try trying attempt attempting)
