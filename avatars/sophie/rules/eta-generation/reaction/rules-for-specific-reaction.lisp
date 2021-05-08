@@ -136,7 +136,7 @@
   ;;   2 (Great\, thank you !) (0 :out)
   1 (A stronger pain medication will help me sleep \.)
     2 *ask-about-pain-medication-side-effects* (100 :schema)
-    2 (If I continue to have trouble sleeping\, I might call in for stronger pain medication later \.) (0 :out)
+    2 ([SAD] If I continue to have trouble sleeping\, I might call in for stronger pain medication later \.) (0 :out)
   1 (A stronger pain medication will not help me sleep \.)
     2 ([SAD] I guess it\'s just something I\'ll have to live with \.) (0 :out)
 
@@ -151,7 +151,7 @@
 ; (0 pain 0)
 '(
   1 (You are sorry that I am in pain 1)
-    2 (Thanks\, I just hope the pain can be treated \.) (0 :out)
+    2 ([SAD] Thanks\, I just hope the pain can be treated \.) (0 :out)
 
 )) ; END *pain-reaction*
 
@@ -199,7 +199,7 @@
     2 (Okay\, I see\. I will think about starting chemotherapy right away then\.) (0 :out)
 
   1 (0)
-    2 (I\'d like to think some more about starting comfort care \. If I\'m not going to make it\,
+    2 ([SAD] I\'d like to think some more about starting comfort care \. If I\'m not going to make it\,
        I want to at least want to be comfortable and spend time with family for as long as possible \.) (100 :out)
     2 (I think that comfort care is the best option for me right now \.) (0 :out)
 

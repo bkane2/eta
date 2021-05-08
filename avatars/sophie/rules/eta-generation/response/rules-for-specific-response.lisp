@@ -80,9 +80,9 @@
 ; (I am taking Lortab every three hours 1)
 '(
   1 (0 How often am I taking medication 0)
-    2 (I am taking two pills of lortab every three hours now for the past couple of weeks\, since this pain has come back \.) (0 :out)
+    2 ([SAD] I am taking two pills of lortab every three hours now for the past couple of weeks\, since this pain has come back \.) (0 :out)
   1 (0 Does taking medication more frequently help 0)
-    2 (Taking the lortab more often seems to help a little \. I am already taking it every three hours \.) (0 :out)
+    2 ([SAD] Taking the lortab more often seems to help a little \. I am already taking it every three hours \.) (0 :out)
 
 )) ; END *response-tree-lortab-frequency*
 
@@ -93,33 +93,33 @@
 ; (Why have I not been sleeping well 1)
 '(
   1 (0 You are sorry that I am sleeping poorly 0)
-    2 (Thanks\, I appreciate the sympathy \. Do you know why this is happening\, though ?) (0 :out)
+    2 ([SAD] Thanks\, I appreciate the sympathy \. Do you know why this is happening\, though ?) (0 :out)
 
   1 (0 Can I tell you about my sleep instead of test results 0)
-    2 (I can give a bit more information about what happens when I try to sleep \. Sometimes I wake up in the
+    2 ([SAD] I can give a bit more information about what happens when I try to sleep \. Sometimes I wake up in the
        middle of the night and notice an ache in my back and near my chest \. That\'s when I have to
        take pain medication to fall back asleep \.) (100 :out)
 
   1 (0 Have I been sleeping okay 0)
-    2 (I have been having a bit of trouble \. I keep waking up at night \. Most nights I have to take my pain medication
+    2 ([SAD] I have been having a bit of trouble \. I keep waking up at night \. Most nights I have to take my pain medication
        before falling back to sleep again \.) (0 :out)
   1 (0 How often am I waking up at night 0)
     2 (I haven\'t really been keeping track \. Maybe about four or five times in a night \.) (0 :out)
 
   1 (0 What is on my mind when I try to sleep 0)
-    2 (When I actually sleep\, I don\'t really have anything on my mind \. When I have trouble sleeping I usually can\'t think
+    2 ([SAD] When I actually sleep\, I don\'t really have anything on my mind \. When I have trouble sleeping I usually can\'t think
        of anything except for the pain \.) (0 :out)
   1 (0 What happens when I try to sleep 0)
-    2 (I usually have trouble staying asleep \. Sometimes I wake up in the middle of the night and notice an ache in my
+    2 ([SAD] I usually have trouble staying asleep \. Sometimes I wake up in the middle of the night and notice an ache in my
        back and near my chest \. That\'s when I have to take pain medication to fall back asleep \.) (100 :out)
-    2 (Whenever I wake up\, I usually feel an ache in my back and near my chest \. I usually try to take pain medication
+    2 ([SAD] Whenever I wake up\, I usually feel an ache in my back and near my chest \. I usually try to take pain medication
        to help fall back asleep \.) (0 :out)
   1 (0 Is your mental health keeping you awake 0)
-    2 (I have been feeling a bit of anxiety\, which can sometimes make it difficult to fall asleep\, but usually it\'s
+    2 ([SAD] I have been feeling a bit of anxiety\, which can sometimes make it difficult to fall asleep\, but usually it\'s
        my pain that keeps me awake \.) (0 :out)
 
   1 (0)
-    2 (One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
+    2 ([SAD] One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
        have to take medication for my pain \. I\'m not sure if it\'s only the pain\, but I keep waking up at night \.
        Do you know why I keep waking up like this ?) (100 :out)
     2 (Do you know what the specific cause of my poor sleep is ?) (0 :out)
@@ -132,16 +132,16 @@
 ; (What do my test results mean 1)
 '(
   1 (0 What test results am I referring to 0)
-    2 (Oh\, sorry\, I assumed you were sent the results \. I had a second CT scan a couple weeks after radiation \.
+    2 ([SAD] Oh\, sorry\, I assumed you were sent the results \. I had a second CT scan a couple weeks after radiation \.
        I was told that the tumor is still there\, but I wasn\'t sure how to interpret that \. They mentioned something
        about possible metastasis \.) (0 :out)
 
   1 (0 Do I know what the tests say 0)
-    2 (I don\'t really understand the test results \. I was just told that the tumor is still there and something about
+    2 ([SAD] I don\'t really understand the test results \. I was just told that the tumor is still there and something about
        possible metastasis\, but I wasn\'t sure how to interpret that \. Can you explain them ?) (0 :out)
 
   1 (0 You are not sure what my test results mean 0)
-    2 (Oh\, sorry\, I assumed you were sent the test results\, from when I had my second CT scan a couple weeks after radiation \.
+    2 ([SAD] Oh\, sorry\, I assumed you were sent the test results\, from when I had my second CT scan a couple weeks after radiation \.
        I was told that the tumor is still there\, but I wasn\'t sure how to interpret that \. They mentioned something
        about possible metastasis \. Could you explain what that means in simple terms ?) (100 :out)
     2 (Could you try your best to explain the test results to me ?) (0 :out)
@@ -156,7 +156,7 @@
   1 (0)
     2 (Let\'s talk about my test results\. I received my test results yesterday\, but I didn\'t really understand them \.
        Could you explain to me what my test results mean ?) (100 :out)
-    2 (I still don\'t quite understand the test results\. Could you please explain in simple terms ?) (0 :out)
+    2 ([SAD] I still don\'t quite understand the test results\. Could you please explain in simple terms ?) (0 :out)
 
 )) ; END *response-tree-test-results*
 
@@ -183,10 +183,10 @@
        where it started \.) (0 :out)
 
   1 (0 Can I tell you about my pain 0)
-    2 (The pain was pretty much under control for a while\, but in the past week it has been more difficult \.
+    2 ([SAD] The pain was pretty much under control for a while\, but in the past week it has been more difficult \.
        it used to be in my back and left side of my chest\, but now it\'s in my shoulder blade too\, and on
        the other side from where it started \.) (2 :out)
-    2 (The pain doesn\'t really go into other areas \. It\'s dull and constant\, and aches a lot \. It usually
+    2 ([SAD] The pain doesn\'t really go into other areas \. It\'s dull and constant\, and aches a lot \. It usually
        hurts to take deep breathes \.) (0 :out)
 
   1 (0 How do I rate my pain 0)
@@ -198,13 +198,13 @@
   1 (0 Does it hurt to 0)
     2 (It hurts whenever I take a deep breath \. It used to hurt to swallow during radiation\, but that isn\'t as bad now \.) (0 :out)
   1 (0 Did my pain come back 0)
-    2 (My pain came back a couple weeks after I finished radiation \. It\'s been getting worse recently \.) (0 :out)
+    2 ([SAD] My pain came back a couple weeks after I finished radiation \. It\'s been getting worse recently \.) (0 :out)
 
   1 (0 Has the pain become worse 0)
     2 ([SAD] The pain seems to have become worse recently \.) (0 :out)
   
   1 (0 Do you have the pain frequently 0)
-    2 (I seem to have the pain most of the time\, though sometimes it\'s worse than others \.) (0 :out)
+    2 ([SAD] I seem to have the pain most of the time\, though sometimes it\'s worse than others \.) (0 :out)
 
 )) ; END *response-tree-pain*
 
@@ -265,7 +265,7 @@
     2 (I think it\'s worth giving it a try \. Could you prescribe me some stronger pain medication ?) (0 :out)
 
   1 (0)
-    2 (You know\, I\'m in a lot of pain\, and the Lortab just isn\'t working \. I think maybe I need something
+    2 ([SAD] You know\, I\'m in a lot of pain\, and the Lortab just isn\'t working \. I think maybe I need something
        stronger for my pain \.) (100 :out)
     2 (I think it would be worth trying a new pain medication \. Do you think that would be possible ?) (0 :out)
 
@@ -276,7 +276,7 @@
 (READRULES '*response-tree-treatment-chemotherapy*
 '(
   1 (0 Chemotherapy is a treatment option 0)
-    2 (Do you think chemotherapy is really going to help ?) (0 :out)
+    2 ([SAD] Do you think chemotherapy is really going to help ?) (0 :out)
 
   1 (0)
     2 (What about chemotherapy ?) (0 :out)
@@ -359,11 +359,11 @@
 ; (What should I tell my family 1)
 '(
   1 (0 Do my family know about my cancer 0)
-    2 (My family know about my cancer already\, but they don\'t really know how bad it is\, or what it
+    2 ([SAD] My family know about my cancer already\, but they don\'t really know how bad it is\, or what it
        means for me \. How should I discuss these with them ?) (0 :out)
 
   1 (0)
-    2 (I haven\'t told my family everything yet \. I wanted to wait to talk to you first \.
+    2 ([SAD] I haven\'t told my family everything yet \. I wanted to wait to talk to you first \.
        What should I say to them ?) (0 :out)
 
 )) ; END *response-tree-tell-family*
@@ -427,7 +427,7 @@
     2 (I have been feeling a bit anxious recently\, though I think my pain is the main cause of my sleep problems \.) (0 :out)
 
   1 (0)
-    2 (Well\, I do try to keep carrying on\, but sometimes I just feel down \.) (0 :out)
+    2 ([SAD] Well\, I do try to keep carrying on\, but sometimes I just feel down \.) (0 :out)
 )) ; END *response-tree-mental-health*
 
 
