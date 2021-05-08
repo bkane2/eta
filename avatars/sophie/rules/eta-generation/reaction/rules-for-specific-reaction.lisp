@@ -344,7 +344,7 @@
 
   1 (You are not sure what my test results mean \.)
     2 *ask-about-test-results* (100 :schema)
-    2 *ask-about-test-results* (100 :schema)
+    ;; 2 *ask-about-test-results* (100 :schema)
 
   1 (0)
     2 (Okay \.) (0 :out)
