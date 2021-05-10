@@ -26,6 +26,10 @@
     2 (I understand that some more tests might be necessary before deciding on treatment \. I still want to hear
        about my potential options\, though \.) (0 :out)
 
+  1 (0 What do I understand about my treatment options 0)
+    2 (I don\'t really understand my treatment options very well \. Could you explain them a bit more ?) (100 :out)
+    2 (Could you explain the options that I have\, again ?) (0 :out)
+
   1 (0 NIL GIST 0 treatment option 0)
     2 (Sorry\, I didn\'t really understand \. Could you please repeat my treatment options one more time ?) (0 :out)
 
@@ -50,6 +54,10 @@
   1 (0 Have I considered comfort care 0)
     2 (I haven\'t thought about it\, but it sounds like what I really need \. A way to maintain quality of life
        during the time I have left \. Can you tell me about it ?) (0 :out)
+
+  1 (0 Do I understand how comfort care works 0)
+    2 (I\'ve heard of hospice before\, but I don\'t really understand what comfort care means \. Can you explain it ?) (100 :out)
+    2 (I don\'t really have a good idea of what comfort care means \. What is it ?) (0 :out)
 
   1 (0)
     2 (You know\, my main priority is to be comfortable at this point \. Do you think I should
@@ -315,6 +323,10 @@
   1 (0 What chemotherapy details are you asking about 0)
     2 (I\'m just wondering how the process of chemotherapy works\, and what I\'d have to do for it \.) (0 :out)
 
+  1 (0 Do I understand how chemotherapy works 0)
+    2 (I\'ve heard of chemotherapy before\, but I don\'t really understand what it means \. Could you explain it more ?) (100 :out)
+    2 (I don\'t really understand chemotherapy \. Can you explain it ?) (0 :out)
+
   1 (0)
     2 (How does chemotherapy usually work ?) (0 :out)
 
@@ -323,7 +335,6 @@
 
 
 (READRULES '*response-tree-chemotherapy*
-; (How does chemotherapy work 1)
 ; (Do I need chemotherapy 1)
 '(
   1 (0 Did my doctor mention chemotherapy 0)
@@ -411,6 +422,13 @@
        you think I have left ?) (100 :out)
     2 ([SAD] I want you to be honest with me \. How long do you think I have left ?) (0 :out)
 
+  1 (0 Do I understand my prognosis 0)
+    2 ([SAD] I don\'t really understand my prognosis\, I\'m just bracing myself for the worst \. Can you tell me how
+       long you think I have ?) (0 :out)
+  1 (0 How do I feel about my prognosis 0)
+    2 ([SAD] I feel very anxious about my condition \. I feel like it\'s gotten worse \. I want to know what this means
+       for my future \.) (0 :out)
+
   1 (0)
     2 (What do you think this means for me in the future ?) (100 :out)
     2 (How long do you think I have left at this point ?) (100 :out)
@@ -428,7 +446,25 @@
 
   1 (0)
     2 ([SAD] Well\, I do try to keep carrying on\, but sometimes I just feel down \.) (0 :out)
+
 )) ; END *response-tree-mental-health*
+
+
+
+(READRULES '*response-tree-understanding-of-condition*
+; (I know that my cancer has gotten worse\, but I\'m not sure how bad it is 1)
+'(
+  1 (0 What do I understand 0)
+    2 ([SAD] I don\'t really understand it very well \. It feels like my cancer has gotten worse\, but I\'m not
+       sure how bad it is \.) (100 :out)
+    2 ([SAD] It feels like my condition has gotten worse recently\, but I don\'t really know what this means
+       for my future \.) (0 :out)
+  
+  1 (0 How am I feeling about my condition 0)
+    2 ([SAD] It feels like my condition has gotten worse \. But I\'m not yet sure how bad it really is \.) (100 :out)
+    2 ([SAD] I don\'t feel good about my condition at all \. It seems like it\'s gotten worse \.) (0 :out)
+
+)) ; END *response-tree-understanding-of-condition*
 
 
 
@@ -445,6 +481,11 @@
     2 (Try to give me as much information as you think is appropriate \. I probably won\'t understand
        technical terms\, so try to explain in basic language \.) (20 :out)
     2 (Please don\'t hold any information back from me \. Try to explain in simple terms\, though \.) (0 :out)
+
+  1 (0 Am I following what you say 0)
+    2 (I think I\'m following \. It\'s just very difficult to take in \. Do you have any specific questions
+       for me at this point ?) (0 :out)
+    2 (This is a lot of difficult information for me to handle\, but I\'m trying my best to understand \.) (0 :out)
 
   1 (0)
     2 (What questions do you have for me ?) (20 :out)

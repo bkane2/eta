@@ -64,6 +64,8 @@
     2 *ask-if-need-chemotherapy* (0 :schema)
   1 (What chemotherapy details are you asking about ?)
     2 *ask-how-chemotherapy-works* (0 :schema)
+  1 (Do I understand how chemotherapy works ?)
+    2 *ask-how-chemotherapy-works* (0 :schema)
 
   ; Questions about sleep
   1 (Have I been sleeping okay ?)
@@ -129,6 +131,8 @@
   ; Comfort care
   1 (Have I considered comfort care ?)
     2 *ask-how-comfort-care-works* (0 :schema)
+  1 (Do I understand how comfort care works ?)
+    2 *ask-how-comfort-care-works* (0 :schema)
 
   ; Questions about medical history
   1 (What is my history with alcohol ?)
@@ -150,6 +154,24 @@
   1 (Do my family know about my cancer ?)
     2 *ask-what-to-tell-family* (100 :schema)
     2 (My family knows that I have cancer already\, but not much else \.) (0 :out)
+
+  ; Questions about treatment options
+  1 (What do I understand about my treatment options ?)
+    2 *ask-about-treatment-options* (0 :schema)
+
+  ; Questions about prognosis
+  ; TODO: should instantiate a schema where SOPHIE explains her (possibly incorrect) knowledge of
+  ; her prognosis; e.g., "I know you said two to three months, but I feel pretty good now"
+  1 (Do I understand my prognosis ?)
+    2 *ask-about-prognosis* (0 :schema)
+  1 (How do I feel about my prognosis ?)
+    2 *ask-about-prognosis* (0 :schema)
+
+  ; Open-ended questions
+  1 (What do I understand ?)
+    2 *explain-understanding-of-condition* (0 :schema)
+  1 (How am I feeling about my condition ?)
+    2 *explain-understanding-of-condition* (0 :schema)
                            
   1 (0)
     2 *reaction-to-question-minor* (0 :subtree)

@@ -320,6 +320,14 @@
   1 (0 wh_ 3 be 3 you 3 wondering 0)
     2 ((What chemotherapy details are you asking about ?) (Chemotherapy-details)) (0 :gist)
 
+  ; What do you know/think about chemotherapy?
+  1 (0 how 4 you 3 feeling 0)
+    2 (*chemotherapy-question* (what do you think about chemotherapy ?)) (0 :subtree+clause)
+  1 (0 wh_ 4 you 3 think-gen 0)
+    2 (*chemotherapy-question* (what do you think about chemotherapy ?)) (0 :subtree+clause)
+  1 (0 AUX-BASE 3 you 2 understand-gen 0)
+    2 (*chemotherapy-question* (do you understand how chemotherapy works ?)) (0 :subtree+clause)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -565,6 +573,7 @@
   1 (0 hospice 4 instead 0)
     2 ((You do not think I need chemotherapy because I should get comfort care instead \.) (Chemotherapy)) (0 :gist)
 
+  ; Doctor mentions comfort care
   1 (0 palliative care 0)
     2 *comfort-care-input* (0 :subtree)
   1 (0 hospice 0)
@@ -574,11 +583,21 @@
   1 (0 chemotherapy 4 be 3 treatment-option 0)
     2 ((You think I might need chemotherapy \.) (Chemotherapy)) (0 :gist)
 
+  ; We should talk to an oncologist
   1 (0 chemotherapy-consult 4 oncologist 0)
     2 ((You think we should talk to my oncologist about chemotherapy \.) (Chemotherapy)) (0 :gist)
   1 (0 information 2 from 2 oncologist 0)
     2 ((You think we should talk to my oncologist about chemotherapy \.) (Chemotherapy)) (0 :gist)
+
+  ; What do you know/think about chemotherapy?
+  1 (0 how 4 you 3 feeling 0)
+    2 (*chemotherapy-question* (what do you think about chemotherapy ?)) (0 :subtree+clause)
+  1 (0 wh_ 4 you 3 think-gen 0)
+    2 (*chemotherapy-question* (what do you think about chemotherapy ?)) (0 :subtree+clause)
+  1 (0 AUX-BASE 3 you 2 understand-gen 0)
+    2 (*chemotherapy-question* (do you understand how chemotherapy works ?)) (0 :subtree+clause)
     
+  ; Various yes/no answer possibilities
   1 (5 POS 0)
     2 (- 0 NEG sure 0)
       3 ((You think I need chemotherapy \.) (Chemotherapy)) (0 :gist)
@@ -608,11 +627,13 @@
 ; (Should I get comfort care ?)
 ; (How does comfort care work ?)
 '(
+  ; TODO: these rules need to be made a bit more explicit.
   1 (0 palliative care 0)
     2 ((You think I need comfort care \.) (Comfort-care)) (0 :gist)
   1 (0 hospice 0)
     2 ((You think I need comfort care \.) (Comfort-care)) (0 :gist)
     
+  ; Various yes/no possibilities 
   1 (5 POS 0)
     2 (- 0 NEG sure 0)
       3 ((You think I need comfort care \.) (Comfort-care)) (0 :gist)
@@ -626,6 +647,14 @@
     2 ((You do not think I need comfort care \.) (Comfort-care)) (0 :gist)
   1 (0 NEG 1 think-gen 0)
     2 ((You do not think I need comfort care \.) (Comfort-care)) (0 :gist)
+
+  ; What do you know/think about comfort care?
+  1 (0 how 4 you 3 feeling 0)
+    2 (*comfort-care-question* (what do you think about comfort care ?)) (0 :subtree+clause)
+  1 (0 wh_ 4 you 3 think-gen 0)
+    2 (*comfort-care-question* (what do you think about comfort care ?)) (0 :subtree+clause)
+  1 (0 AUX-BASE 3 you 2 understand-gen 0)
+    2 (*comfort-care-question* (do you understand how comfort care works ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -921,6 +950,18 @@
   1 (0 difficult 3 answer 0)
     2 ((The prognosis is hard to predict \.) (Prognosis)) (0 :gist)
 
+  ; What do you know/think about your prognosis?
+  1 (0 how 4 you 3 feeling 0)
+    2 (*prognosis-question* (what do you think about your prognosis ?)) (0 :subtree+clause)
+  1 (0 wh_ 4 you 3 think-gen 0)
+    2 (*prognosis-question* (what do you think about your prognosis ?)) (0 :subtree+clause)
+  1 (0 AUX-BASE 3 you 2 understand-gen 0)
+    2 (*prognosis-question* (do you understand your prognosis ?)) (0 :subtree+clause)
+  1 (0 AUX-BASE 3 you 2 tell 6 understand-gen 0)
+    2 (*prognosis-question* (do you understand your prognosis ?)) (0 :subtree+clause)
+  1 (0 tell 4 understand-gen 0)
+    2 (*prognosis-question* (do you understand your prognosis ?)) (0 :subtree+clause)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -1157,6 +1198,14 @@
   ; We need to get another study
   1 (0 diagnosis-more 3 diagnosis-tests 0)
     2 ((You need more tests before talking about treatment options \.) (Treatment-options)) (0 :gist)
+
+  ; What do you know/think about your options?
+  1 (0 how 4 you 3 feeling 0)
+    2 (*treatment-option-question* (what do you think about the treatment options ?)) (0 :subtree+clause)
+  1 (0 wh_ 4 you 3 think-gen 0)
+    2 (*treatment-option-question* (what do you think about the treatment options ?)) (0 :subtree+clause)
+  1 (0 AUX-BASE 3 you 2 understand-gen 0)
+    2 (*treatment-option-question* (do you understand your treatment options ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)

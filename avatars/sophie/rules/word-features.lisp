@@ -78,7 +78,9 @@
   (affirm pos posadv)
   (anyone-here-with-you here with alone by)
   (know-gen know sure aware understand)
-  (think-gen think thoughts thought feel feelings feeling believe)
+  (think-gen think thinking thoughts thought feel feelings feeling believe)
+  (understand-gen know-gen think-gen follow following comprehend comprehending)
+  (opinion-gen opinions thought thoughts value values need needs preference preferences)
   (frequently frequent often more much)
   (sleep bed bedtime wake waking awake insomnia night nighttime)
   (family parents siblings sibling grandparents)
@@ -126,8 +128,8 @@
   ; Treatment goals
   (cancer-fight fight fighting battle battling treat treating cure curing)
   (cancer-live live living survive surviving cure curing remission)
-  (cancer-goals goal goals objective objectives priority priorities value values valuing)
-  (treatment-option option options possibility)
+  (cancer-goals goal goals objective objectives priority priorities preference preferences value values valuing)
+  (treatment-option option options possibility possibilities treatments treatment)
 
   ; Chemotherapy
   (chemotherapy-injection injection injections vein veins needle needles)

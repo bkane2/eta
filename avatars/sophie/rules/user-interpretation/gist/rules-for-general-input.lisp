@@ -64,6 +64,9 @@
     2 *comfort-care-question* (0 :subtree)
   1 (0 hospice 0)
     2 *comfort-care-question* (0 :subtree)
+  ; Treatment options (general)
+  1 (0 treatment-option 0)
+    2 *treatment-option-question* (0 :subtree)
   ; If asked about general treatment goals/priorities
   1 (0 cancer-fight 0)
     2 *treatment-goals-question* (0 :subtree)
@@ -73,14 +76,8 @@
     2 *treatment-goals-question* (0 :subtree)
 
   ; Questions about SOPHIE's abilities/preferences
-  1 (0 I 3 ask 1 you 4 question 0)
-    2 ((Can you ask me some questions ?)) (0 :gist)
-  1 (0 can I 3 make 1 sure 3 I understand 0)
-    2 ((Can you ask me some questions ?)) (0 :gist)
-  1 (0 how much 3 information 3 AUX 1 you 0)
-    2 ((How much information do I want ?)) (0 :gist)
-  1 (0 how 4 conversation 3 going 0)
-    2 ((How do I think this conversation is going ?)) (0 :gist)
+  1 (0)
+    2 *open-ended-question* (0 :subtree)
     
   ; Interjections/prompts to continue
   ;; 1 (2 okay 2)

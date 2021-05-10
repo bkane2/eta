@@ -29,6 +29,7 @@
 ; - test-results
 ; - treatment-option
 ; - treatment-goals
+; - open-ended-question
 
 
 (READRULES '*cancer-worse-question*
@@ -215,7 +216,7 @@
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
   1 (8 wh_ diagnosis-tests 6)
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
-  1 (8 AUX-BASE 2 you know 3 diagnosis-tests 0)
+  1 (8 AUX-BASE 2 you understand-gen 3 diagnosis-tests 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
 
   ; You had tests recently, right?
@@ -512,6 +513,9 @@
   1 (0 think 3 chemotherapy 0)
     2 ((What are my feelings about chemotherapy ?) (Chemotherapy)) (0 :gist)
 
+  1 (0 AUX-BASE 3 you 2 understand-gen 4 chemotherapy 0)
+    2 ((Do I understand how chemotherapy works ?) (Chemotherapy)) (0 :gist)
+
 )) ; END *chemotherapy-question*
 
 
@@ -521,10 +525,15 @@
 ; (0 hospice 0)
 '(
   ; Have you considered comfort care?
-  1 (1 aux pron 4 thought 4 comfort-care-word 0)
+  1 (1 AUX-BASE pron 4 thought 4 comfort-care-word 0)
     2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
-  1 (1 aux 4 mention 4 comfort-care-word 0)
+  1 (1 AUX-BASE 4 mention 4 comfort-care-word 0)
     2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
+  1 (1 AUX-BASE 4 you 1 feeling 4 comfort-care-word 0)
+    2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
+
+  1 (0 AUX-BASE 3 you 2 understand-gen 6 comfort-care-word 0)
+    2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
 
 )) ; END *comfort-care-question*
 
@@ -545,6 +554,17 @@
 (READRULES '*prognosis-question*
 ; (0 prognosis 0)
 '(
+  1 (0 AUX-BASE 3 you 2 think-gen 6 prognosis 0)
+    2 ((How do I feel about my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 AUX-BASE 3 you 2 feeling 6 prognosis 0)
+    2 ((How do I feel about my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 AUX-BASE 3 you 2 understand-gen 6 prognosis 0)
+    2 ((Do I understand my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 AUX-BASE 3 you 2 tell 6 prognosis 0)
+    2 ((Do I understand my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 tell 4 understand-gen 6 prognosis 0)
+    2 ((Do I understand my prognosis ?) (Prognosis)) (0 :gist)
+
 )) ; END *prognosis-question*
 
 
@@ -580,7 +600,15 @@
 
 
 (READRULES '*treatment-option-question*
+; (0 treatment-option 0)
 '(
+  1 (0 how 4 feeling 4 treatment-option 0)
+    2 ((What are my treatment goals ?) (Treatment-options)) (0 :gist)
+  1 (0 wh_ 4 you 3 think-gen 6 treatment-option 0)
+    2 ((What are my treatment goals ?) (Treatment-options)) (0 :gist)
+  1 (0 AUX-BASE 3 you 2 understand-gen 6 treatment-option 0)
+    2 ((What do I understand about my treatment options ?) (Treatment-option)) (0 :gist)
+
 )) ; END *treatment-option-question*
 
 
@@ -588,6 +616,7 @@
 (READRULES '*treatment-goals-question*
 ; (0 cancer-fight 0)
 ; (0 cancer-live 0)
+; (0 cancer-goals 0)
 '(
   ; Do you want to try to fight the cancer ?
   1 (0 you 2 have 2 cancer-fight 0)
@@ -608,3 +637,36 @@
     2 ((What are my treatment goals ?) (Treatment-options)) (0 :gist)
 
 )) ; END *treatment-goals-question*
+
+
+
+(READRULES '*open-ended-question*
+'(
+  ; signalling a question
+  1 (0 I 3 ask 1 you 4 question 0)
+    2 ((Can you ask me some questions ?)) (0 :gist)
+  1 (0 can I 3 make 1 sure 3 I understand 0)
+    2 ((Can you ask me some questions ?)) (0 :gist)
+
+  ; checking the system's understanding
+  1 (0 tell 0 what 1 you 1 understand-gen 0)
+    2 ((What do I understand ?)) (0 :gist)
+  1 (0 do 1 you 1 understand-gen 3)
+    2 ((What do I understand ?)) (0 :gist)
+  1 (0 wh_ do 1 you 1 understand-gen 3)
+    2 ((What do I understand ?)) (0 :gist)
+
+  ; asking for system's preferences for information
+  1 (0 how much 3 information 3 AUX 1 you 0)
+    2 ((How much information do I want ?)) (0 :gist)
+
+  ; questions about system's feelings
+  1 (0 how 1 you 3 feeling 0)
+    2 ((How am I feeling about my condition ?)) (0 :gist)
+
+  ; meta-questions about conversation
+  1 (0 how 4 conversation 3 going 0)
+    2 ((How do I think this conversation is going ?)) (0 :gist)
+  1 (0 AUX-BASE 3 you 2 understand-gen 0)
+    2 ((Am I following what you say ?)) (0 :gist)
+))

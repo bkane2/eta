@@ -100,6 +100,8 @@
     2 *ask-for-questions* (0 :schema)
   1 (How do I think this conversation is going ?)
     2 *ask-for-questions* (0 :schema)
+  1 (Am I following what you say ?)
+    2 *ask-for-questions* (0 :schema)
   1 (0 ?)
     ;; 2 (2 ?); too short to be a question
     ;;   3 () (0 :out)
