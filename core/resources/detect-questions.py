@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 #
-# Simple script to classify 'open-ended questions', which are characterized by
-# certain forms of wh-questions. This uses a template-based approach using word
-# features, borrowed from Eta's pattern transduction implementation.
+# Simple script to classify questions, which are characterized by certain templates.
+# The templates use word features, borrowed from Eta's pattern transduction implementation.
+# 
+# Call using './detect-questions.py "do you understand"'. An additional argument '-o' can be
+# given, in which case the script will specifically look for open-ended questions. In either
+# case, the script will output 0 for False, and 1 for True.
 #
 # This is currently fairly rudimentary, under the assumption that it's more important
 # to correctly recognize an open-ended question than to avoid classifying a narrow
@@ -11,16 +14,31 @@
 
 import sys
 
+question_templates = [
+  '0 ?',
+  '0 wh_ 2 be 0',
+  '0 wh_ aux 0',
+  '3 aux np_ 0',
+  '0 aux np_ 1',
+  '0 tag_',
+  '0 tell me 0'
+]
+
 open_ended_templates = [
-  'who modal 0',
-  'why 0',
-  'how 0',
-  'wh_ 0 think 0',
-  'wh_ 0 you 5 want 0',
-  'tell 5 me 0 think 0',
-  'aux 5 you 0 think 0',
-  'wh_ 3 be 0 you 5 opinion 0',
-  'wh_ 0' # this will classify any wh-question as open-ended
+  '0 who modal 0',
+  # '0 why 0',
+  # '0 how 0',
+  '0 wh_ 6 think 0',
+  '0 wh_ 6 you 5 want 0',
+  '0 tell 5 me 5 think 0',
+  '0 aux 2 you 5 think 0',
+  '0 wh_ 3 be 5 you 5 opinion 0',
+  '0 aux 2 you 5 opinion 0',
+  # '0 wh_ 0'
+  '0 wh_ 3 aux 5 sound 0',
+  # '0 wh_ 2 be 0',
+  # '0 wh_ aux-base 0',
+  # '0 aux-base you 0'
 ]
 
 word_features = {
@@ -49,9 +67,12 @@ word_features = {
   'deg-adv'    : ['not', 'just', 'very', 'only', 'exactly', 'precisely'],
   'conj'       : ['but', 'and', 'or'],
   'wh_'        : ['wh-det', 'wh-pron', 'why', 'how', 'when', 'where'],
-  'think'      : ['thinking', 'know', 'understand'],
+  'think'      : ['thinking', 'know', 'understand', 'follow', 'following'],
   'tell'       : ['say', 'repeat'],
-  'opinion'    : ['opinions', 'thought', 'thoughts', 'value', 'values', 'need', 'needs', 'preference', 'preferences']
+  'opinion'    : ['opinions', 'thought', 'thoughts', 'value', 'values', 'need', 'needs', 'preference', 'preferences', 'feel', 'feeling'],
+  'you'        : ['your'],
+  'sound'      : ['seem'],
+  'tag_'       : ['right', 'correct']
 }
 
 
@@ -151,11 +172,24 @@ def match(words, pattern, feat_dict = None):
 
 
 
+def is_question(s):
+  """Go through each template for questions, and return True once a first match is found.
+     Note that we assume that open ended questions are a strict subset of questions, so 
+     all open ended templates also apply."""
+  feat_dict = assign_word_features(word_features)
+  for template in question_templates+open_ended_templates:
+    if match(process_str(s), process_str(template, convert_int = True), feat_dict=feat_dict):
+      return True
+  return False
+
+
+
 def is_open_ended(s):
   """Go through each template for open-ended questions, and return True once a first match is found."""
   feat_dict = assign_word_features(word_features)
   for template in open_ended_templates:
     if match(process_str(s), process_str(template, convert_int = True), feat_dict=feat_dict):
+      print(template)
       return True
   return False
 
@@ -163,7 +197,12 @@ def is_open_ended(s):
 
 def main(argv):
   """Print 1 to stdout if the given argument is an open-ended question; 0 otherwise."""
-  if is_open_ended(argv):
+  if len(argv) == 2:
+    if is_open_ended(argv[0]):
+      print(1)
+    else:
+      print(0)
+  elif is_question(argv[0]):
     print(1)
   else:
     print(0)
@@ -171,8 +210,8 @@ def main(argv):
 
 
 if __name__ == '__main__':
-  if len(sys.argv) != 2:
-    exit('Please input single string as command line argument.')
+  if len(sys.argv) < 2 or len(sys.argv) > 3 or (len(sys.argv) == 3 and sys.argv[2] != '-o'):
+    exit('Please input single string, followed by optional "-o" flag, as command line argument.')
   elif not isinstance(sys.argv[1], str):
     exit('Please input single string as command line argument.')
-  main(sys.argv[1])
+  main(sys.argv[1:])
