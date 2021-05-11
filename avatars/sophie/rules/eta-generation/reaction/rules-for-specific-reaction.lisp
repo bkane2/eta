@@ -200,7 +200,7 @@
 
   1 (0)
     2 ([SAD] I\'d like to think some more about starting comfort care \. If I\'m not going to make it\,
-       I want to at least want to be comfortable and spend time with family for as long as possible \.) (100 :out)
+       I want to at least be comfortable and spend time with family for as long as possible \.) (100 :out)
     2 (I think that comfort care is the best option for me right now \.) (0 :out)
 
 )) ; END *comfort-care-reaction*
