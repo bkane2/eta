@@ -60,8 +60,8 @@
     2 (I don\'t really have a good idea of what comfort care means \. What is it ?) (0 :out)
 
   1 (0)
-    2 (You know\, my main priority is to be comfortable at this point \. Do you think I should
-       start considering comfort care ?) (0 :out)
+    2 (You know\, my main priority is to be comfortable at this point \. What would be the best way to accomplish that ?) (100 :out)
+    2 (One thing that I\'ve heard about before is comfort care \. Do you think that\'s an option for me ?) (0 :out)
 
 )) ; END *response-tree-comfort-care*
 
@@ -160,6 +160,11 @@
   1 (0 Can I tell you about my sleep instead of test results 0)
     2 (I\'ll think more about my sleep problems and talk to you about it another time \. I\'d like to move onto my test
        results now\, though \. Could you explain what they mean ?) (0 :out)
+
+  1 (0 The test results show that the radiation is not working 0)
+    2 ([SAD] I could tell the radiation wasn\'t working anymore\, because my pain has been getting worse \. I still don\'t
+       quite understand what the test results mean\, though\. Could you please explain in simple terms ?) (100 :out)
+    2 ([SAD] I still don\'t quite understand the test results\. Could you please explain in simple terms ?) (0 :out)
 
   1 (0)
     2 (Let\'s talk about my test results\. I received my test results yesterday\, but I didn\'t really understand them \.
@@ -421,6 +426,10 @@
     2 (I\'m not sure whether that\'s a good thing or bad thing \. Could you be more specific about how long
        you think I have left ?) (100 :out)
     2 ([SAD] I want you to be honest with me \. How long do you think I have left ?) (0 :out)
+
+  1 (0 The prognosis is that I do not have long left to live 0)
+    2 ([SAD] I know I\'ve been getting worse recently\, but I don\'t feel that bad yet \. How long do you think I really have left ?) (100 :out)
+    2 ([SAD] I don\'t really understand \. Could you tell me specifically how long I have left ?) (0 :out)
 
   1 (0 Do I understand my prognosis 0)
     2 ([SAD] I don\'t really understand my prognosis\, I\'m just bracing myself for the worst \. Can you tell me how

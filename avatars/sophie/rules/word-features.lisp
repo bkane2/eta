@@ -54,6 +54,7 @@
   (recover recovery survive survival fine)
   (cure cured curable recover recovery solution fix miracle)
   (alone yourself)
+  (long longer)
   (dose doses dosage dosages)
   (try trying attempt attempting)
   (bad horrible terrible)
@@ -65,6 +66,7 @@
   (option options)
   (grow growing)
   (conversation discussion)
+  (sound seem)
 
   ; ASR errors
   (talking talkin)
@@ -182,7 +184,8 @@
   (pain-return come back return)
 
   ; Radiation
-  (radiation-help help better alleviate reduce comfort comfortable)
+  (radiation-help help better alleviate reduce comfort comfortable decrease decreasing)
+  (radiation treatment)
 
   ; Comfort care
   (comfort-care-word comfort palliative hospice care)
@@ -190,7 +193,7 @@
 
   ; Prognosis
   (spread spreading metastasized metastatic)
-  (cancer-increase increase spread grow)
+  (cancer-increase increase spread grow grown)
   (prog-future will going)
 
   ; Sleep

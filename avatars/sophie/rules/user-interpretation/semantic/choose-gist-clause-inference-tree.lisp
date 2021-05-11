@@ -90,13 +90,15 @@
       3 (- 0 may live 1 number-vague elapsed-time 0)
         4 (- 0 cannot 1 cure 0)
           5 (- 0 hard 1 predict 0)
-            6 (^me know.v (ans-to '(What is my prognosis ?))) (0 :ulf)
+            6 (- 0 NEG 2 have 1 long 0)
+              7 (^me know.v (ans-to '(What is my prognosis ?))) (0 :ulf)
 
   1 (0 I 1 sleeping poorly because 0)
     2 (^me know.v (ans-to '(Why have I not been sleeping well ?))) (0 :ulf)
 
   1 (0 The test results show that 0)
-    2 (^me know.v (ans-to '(What do my test results mean ?))) (0 :ulf)
+    2 (- 0 radiation 2 NEG working 0)
+      3 (^me know.v (ans-to '(What do my test results mean ?))) (0 :ulf)
 
   1 (0 is a treatment option 0)
     2 (^me know.v (ans-to '(What are my options for treatment ?))) (0 :ulf)

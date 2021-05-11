@@ -92,8 +92,7 @@
   ; If doctor is just giving an indication to keep talking, react silently and continue
   1 (Continue talking \.)
     2 () (0 :out)
-  ; If no gist clauses were extracted from user, ask them to repeat the question (Repeats at most 2 times in a row,
-  ; otherwise eta will ignore and return to the central conversation)
+  ; Meta-questions about conversation
   1 (Can you ask me some questions ?)
     2 *ask-for-questions* (0 :schema)
   1 (How much information do I want ?)
@@ -102,6 +101,12 @@
     2 *ask-for-questions* (0 :schema)
   1 (Am I following what you say ?)
     2 *ask-for-questions* (0 :schema)
+  1 (How does that sound ?)
+    2 (I think what you said makes sense to me \.) (3 :out)
+    2 (I think that sounds fine \.) (3 :out)
+    2 (That makes sense \.) (0 :out)
+  ; If no gist clauses were extracted from user, ask them to repeat the question (Repeats at most 2 times in a row,
+  ; otherwise eta will ignore and return to the central conversation)
   1 (0 ?)
     ;; 2 (2 ?); too short to be a question
     ;;   3 () (0 :out)

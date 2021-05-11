@@ -351,6 +351,10 @@
   1 (0 you 3 med-take 5 med-narcotic 0)
     2 ((I should take a narcotic \.) (Medicine-request)) (0 :gist)
 
+  ; How are you feeling after taking the medication?
+  1 (0 wh_ 1 you 3 feeling 4 medication 0)
+    2 ((How is the pain medication working ?) (Medicine-working)) (0 :gist)
+
   ; Do you have a history with narcotics?
   1 (0 AUX-BASE 3 med-past 3 med-narcotic 0)
     2 ((What is my history with med-narcotic ?) (Medical-history)) (0 :gist)
@@ -669,4 +673,6 @@
     2 ((How do I think this conversation is going ?)) (0 :gist)
   1 (0 AUX-BASE 3 you 2 understand-gen 0)
     2 ((Am I following what you say ?)) (0 :gist)
+  1 (0 how 1 AUX-BASE 1 that sound 0)
+    2 ((How does that sound ?)) (0 :gist)
 ))

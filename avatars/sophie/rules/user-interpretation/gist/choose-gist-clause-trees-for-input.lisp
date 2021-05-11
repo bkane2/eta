@@ -109,6 +109,8 @@
       2 (*comfort-care-verification-input*) (0 :subtrees)
    1 (Will stronger pain medication help me sleep ?)
       2 (*stronger-medicine-help-sleep-input*) (0 :subtrees)
+   1 (I know that my cancer has gotten worse\, but I\'m not sure how bad it is \.)
+      2 (*prognosis-input*) (0 :subtrees)
       
    1 (0)
       2 (*general-input*) (0 :subtrees)

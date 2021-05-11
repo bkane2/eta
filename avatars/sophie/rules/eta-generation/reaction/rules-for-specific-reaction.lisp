@@ -273,6 +273,10 @@
     2 *ask-about-prognosis* (100 :schema)
     2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy those 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
+  1 (The prognosis is that I do not have long left to live \.)
+    2 *ask-about-prognosis* (100 :schema)
+    2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
+       At this point\, I just hope I can enjoy my time left with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for a elapsed-time \.)
     2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy that 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
@@ -305,7 +309,9 @@
 ; (0 sleeping poorly 0 \.)
 '(
   1 (I am sleeping poorly because of a side effect from a medication \.)
-    2 (I see\. If the medicine is going to make me tired no matter what\, I\'d rather at least have the pain controlled\.) (0 :out)
+    2 (I see\. If the medicine is going to make me tired no matter what\, I\'d rather at least have the pain controlled \.) (0 :out)
+  1 (I am sleeping poorly because of my pain \.)
+    2 *ask-if-stronger-medication-will-help-sleep* (0 :schema)
   1 (I am sleeping poorly because the cancer has spread \.)
     2 *ask-if-cancer-worse* (0 :schema)
   1 (I am sleeping poorly because of my mental health \.)
@@ -345,6 +351,9 @@
   1 (You are not sure what my test results mean \.)
     2 *ask-about-test-results* (100 :schema)
     ;; 2 *ask-about-test-results* (100 :schema)
+
+  1 (The test results show that the radiation is not working \.)
+    2 *ask-about-test-results* (100 :schema)
 
   1 (0)
     2 (Okay \.) (0 :out)

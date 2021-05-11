@@ -559,6 +559,10 @@
 ; (Do I need chemotherapy ?)
 ; (Do you think chemotherapy will help ?)
 '(
+  ; If doctor mentions anything about prognosis
+  1 (0 prognosis 0)
+    2 *prognosis-input* (0 :subtree)
+
   ; No, I think you should do comfort care instead
   1 (0 palliative care 0 NEG 1 med-help 0)
     2 ((You do not think I need chemotherapy because I should get comfort care instead \.) (Chemotherapy)) (0 :gist)
@@ -627,6 +631,10 @@
 ; (Should I get comfort care ?)
 ; (How does comfort care work ?)
 '(
+  ; If doctor mentions anything about prognosis
+  1 (0 prognosis 0)
+    2 *prognosis-input* (0 :subtree)
+
   ; TODO: these rules need to be made a bit more explicit.
   1 (0 palliative care 0)
     2 ((You think I need comfort care \.) (Comfort-care)) (0 :gist)
@@ -881,7 +889,11 @@
 
 (READRULES '*prognosis-input*
 ; (What is my prognosis ?)
-'(  
+'(
+  ; Mentions test results explicitly
+  1 (0 diagnosis-tests 0)
+    2 *test-results-input* (0 :subtree)
+  
   ; You have life for about up to two years
   1 (0 number 2 elapsed-time 0)
     2 ((The prognosis is that I may live for 2 4 \.) (Prognosis)) (0 :gist)
@@ -891,6 +903,10 @@
     2 ((The prognosis is that I may live for several 2 \.) (Prognosis)) (0 :gist)
   1 (0 a 2 elapsed-time 0)
     2 ((The prognosis is that I may live for a 4 \.) (Prognosis)) (0 :gist)
+
+  ; You don't have much long left to live
+  1 (0 you 1 NEG 2 have 3 long 2 cancer-live 0)
+    2 ((The prognosis is that I do not have long left to live \.) (Prognosis)) (0 :gist)
 
   ; There is no cure
   1 (0 NEG 2 cure 0)
@@ -1100,6 +1116,11 @@
 (READRULES '*test-results-input*
 ; (What do my test results mean ?)
 '(
+
+  ; You don't have much long left to live
+  1 (0 you 1 NEG 2 have 3 long 2 cancer-live 0)
+    2 ((The prognosis is that I do not have long left to live \.) (Prognosis)) (0 :gist)
+
   ; The cancer hasn't yet spread
   1 (0 NEG 2 cancer-increase 0)
     2 ((The test results show that the cancer hasn\'t spread \.) (Test-results)) (0 :gist)
@@ -1123,6 +1144,10 @@
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 tumor 2 in 6 chest 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
+  
+  ; The radiation doesn't seem to be helping
+  1 (0 radiation 2 NEG 3 radiation-help 0)
+    2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
 
   ; You have stage 4 cancer
   1 (0 stage four 0)
