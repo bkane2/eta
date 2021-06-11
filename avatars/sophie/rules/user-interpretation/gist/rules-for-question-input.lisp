@@ -282,6 +282,10 @@
   ; How are you on the [medication]?
   1 (0 how 1 be you 2 feeling 2 med-take 2 medicine-taking 0)
     2 ((How is the pain medication working ?) (Medicine-working)) (0 :gist)
+  1 (0 how 1 be you 2 feeling 2 recently 0)
+    2 ((How is the pain medication working ?) (Medicine-working)) (0 :gist)
+  1 (0 AUX-BASE 1 you 3 think-gen 3 medicine-taking 3 med-help 0)
+    2 ((How is the pain medication working ?) (Medicine-working)) (0 :gist)
 
   ; Does taking the medicine more frequently help?
   1 (0 medicine-taking 3 frequently 5 med-help 0)
@@ -361,6 +365,14 @@
   1 (0 AUX-BASE 3 history 3 med-narcotic 0)
     2 ((What is my history with med-narcotic ?) (Medical-history)) (0 :gist)
 
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 ((Do I have a question about my medicine ?) (Medicine)) (0 :gist)
+  1 (0 question-word 2 you 2 have 0)
+    2 ((Do I have a question about my medicine ?) (Medicine)) (0 :gist)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 ((Do I have a question about my medicine ?) (Medicine)) (0 :gist)
+
 )) ; END *medicine-question*
 
 
@@ -394,6 +406,10 @@
   1 (0 what 2 medicine-gen 0)
     2 (- 0 dose 0)
       3 (*medicine-question* (what medication are you taking ?)) (0 :subtree+clause)
+  1 (0 med-better 1 medicine-taking 0)
+    2 (*medicine-question* (do you want a stronger pain medication ?)) (0 :subtree+clause)
+  1 (0 medicine-taking 0 med-help 0)
+    2 (*medicine-question* (is your pain medication working ?)) (0 :subtree+clause)
   1 (0 what pain 1 be you 0)
     2 (- 0 medicine-gen 0)
       3 ((Can I tell you about my pain ?) (Pain-description)) (0 :gist)
@@ -498,6 +514,18 @@
   1 (0 your 2 ment-health 4 you 2 sleep-awake 0)
     2 ((Is your mental health keeping you awake ?) (Sleep)) (0 :gist)
 
+  ; Is coffee keeping you up at night?
+  1 (0 be 3 coffee 4 you 2 sleep-awake 0)
+    2 ((Is coffee keeping you awake ?) (Sleep)) (0 :gist)
+  1 (0 coffee 4 cause 2 you 2 sleep-awake 0)
+    2 ((Is coffee keeping you awake ?) (Sleep)) (0 :gist)
+  1 (0 sleep-awake 4 because 4 coffee 0)
+    2 ((Is coffee keeping you awake ?) (Sleep)) (0 :gist)
+  1 (0 sleep-awake 4 cause 4 coffee)
+    2 ((Is coffee keeping you awake ?) (Sleep)) (0 :gist)
+  1 (0 AUX-BASE 3 frequently 6 coffee 0)
+    2 ((Is coffee keeping you awake ?) (Sleep)) (0 :gist)
+  
 )) ; END *sleep-question*
 
 
@@ -514,11 +542,19 @@
     2 ((Did my doctor mention chemotherapy ?) (Chemotherapy)) (0 :gist)
 
   ; What do you think about chemotherapy?
-  1 (0 think 3 chemotherapy 0)
+  1 (0 think-gen 3 chemotherapy 0)
     2 ((What are my feelings about chemotherapy ?) (Chemotherapy)) (0 :gist)
 
   1 (0 AUX-BASE 3 you 2 understand-gen 4 chemotherapy 0)
     2 ((Do I understand how chemotherapy works ?) (Chemotherapy)) (0 :gist)
+
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 ((Do I have a question about chemotherapy ?) (Chemotherapy)) (0 :gist)
+  1 (0 question-word 2 you 2 have 0)
+    2 ((Do I have a question about chemotherapy ?) (Chemotherapy)) (0 :gist)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 ((Do I have a question about chemotherapy ?) (Chemotherapy)) (0 :gist)
 
 )) ; END *chemotherapy-question*
 
@@ -538,6 +574,14 @@
 
   1 (0 AUX-BASE 3 you 2 understand-gen 6 comfort-care-word 0)
     2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
+
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 ((Do I have a question about comfort care ?) (Comfort-care)) (0 :gist)
+  1 (0 question-word 2 you 2 have 0)
+    2 ((Do I have a question about comfort care ?) (Comfort-care)) (0 :gist)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 ((Do I have a question about comfort care ?) (Comfort-care)) (0 :gist)
 
 )) ; END *comfort-care-question*
 
@@ -562,6 +606,22 @@
     2 ((How do I feel about my prognosis ?) (Prognosis)) (0 :gist)
   1 (0 AUX-BASE 3 you 2 feeling 6 prognosis 0)
     2 ((How do I feel about my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 tell 1 me 7 fear-words 0)
+    2 ((What scares me about my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 elaborate 4 fear-words 0)
+    2 ((What scares me about my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 wh_ 1 make 1 you 3 frightened 0)
+    2 ((What scares me about my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 wh_ 1 frightens 1 you 0) 
+    2 ((What scares me about my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 wh_ be 3 frightening 0)
+    2 ((What scares me about my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 wh_ 1 you 1 think-gen 3 frightening 0)
+    2 ((What scares me about my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 wh_ be 3 fear-words 0)
+    2 ((What scares me about my prognosis ?) (Prognosis)) (0 :gist)
+  1 (0 wh_ cause you 4 fear-words 0)
+    2 ((What scares me about my prognosis ?) (Prognosis)) (0 :gist)
   1 (0 AUX-BASE 3 you 2 understand-gen 6 prognosis 0)
     2 ((Do I understand my prognosis ?) (Prognosis)) (0 :gist)
   1 (0 AUX-BASE 3 you 2 tell 6 prognosis 0)
@@ -569,8 +629,15 @@
   1 (0 tell 4 understand-gen 6 prognosis 0)
     2 ((Do I understand my prognosis ?) (Prognosis)) (0 :gist)
 
-)) ; END *prognosis-question*
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 ((Do I have a question about my prognosis ?)) (0 :gist)
+  1 (0 question-word 2 you 2 have 0)
+    2 ((Do I have a question about my prognosis ?)) (0 :gist)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 ((Do I have a question about my prognosis ?)) (0 :gist)
 
+)) ; END *prognosis-question*
 
 
 (READRULES '*sleep-poorly-question*
@@ -599,6 +666,17 @@
 
 (READRULES '*test-results-question*
 '(
+  1 (0 you 2 think-gen 4 diagnostic-tests 0) 
+    2 ((How do I feel about my test results ?) (Test-Results)) (0 :gist)
+
+    ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 ((Do I have a question about my test results ?)) (0 :gist)
+  1 (0 question-word 2 you 2 have 0)
+    2 ((Do I have a question about my test results ?)) (0 :gist)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 ((Do I have a question about my test results ?)) (0 :gist)
+
 )) ; END *test-results-question*
 
 
@@ -606,12 +684,20 @@
 (READRULES '*treatment-option-question*
 ; (0 treatment-option 0)
 '(
-  1 (0 how 4 feeling 4 treatment-option 0)
+  1 (0 how 4 think-gen 4 treatment-option 0)
     2 ((What are my treatment goals ?) (Treatment-options)) (0 :gist)
   1 (0 wh_ 4 you 3 think-gen 6 treatment-option 0)
     2 ((What are my treatment goals ?) (Treatment-options)) (0 :gist)
   1 (0 AUX-BASE 3 you 2 understand-gen 6 treatment-option 0)
     2 ((What do I understand about my treatment options ?) (Treatment-option)) (0 :gist)
+
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 ((Do I have a question about my treatment options?)) (0 :gist)
+  1 (0 question-word 2 you 2 have 0)
+    2 ((Do I have a question about my treatment options?)) (0 :gist)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 ((Do I have a question about my treatment options?)) (0 :gist)
 
 )) ; END *treatment-option-question*
 
@@ -652,6 +738,14 @@
   1 (0 can I 3 make 1 sure 3 I understand 0)
     2 ((Can you ask me some questions ?)) (0 :gist)
 
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 ((Do I have a question ?)) (0 :gist)
+  1 (0 question-word 2 you 2 have 0)
+    2 ((Do I have a question ?)) (0 :gist)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 ((Do I have a question ?)) (0 :gist)
+
   ; checking the system's understanding
   1 (0 tell 0 what 1 you 1 understand-gen 0)
     2 ((What do I understand ?)) (0 :gist)
@@ -663,10 +757,34 @@
   ; asking for system's preferences for information
   1 (0 how much 3 information 3 AUX 1 you 0)
     2 ((How much information do I want ?)) (0 :gist)
+  1 (0 how much 3 information 3 I 3 you 0)
+    2 ((How much information do I want ?)) (0 :gist)
 
   ; questions about system's feelings
   1 (0 how 1 you 3 feeling 0)
     2 ((How am I feeling about my condition ?)) (0 :gist)
+  1 (0 tell 5 fear-words 0)
+    2 ((What scares me about my condition ?)) (0 :gist)
+  1 (0 elaborate 4 fear-words 0)
+    2 ((What scares me about my condition ?)) (0 :gist)
+  1 (0 wh_ 1 make 1 you 3 frightened 0)
+    2 ((What scares me about my condition ?)) (0 :gist)
+  1 (0 wh_ 1 frightens 1 you 0) 
+    2 ((What scares me about my condition ?)) (0 :gist)
+  1 (0 wh_ be 3 frightening 0)
+    2 ((What scares me about my condition ?)) (0 :gist)
+  1 (0 wh_ 1 you 1 think-gen 3 frightening 0)
+    2 ((What scares me about my condition ?)) (0 :gist)
+  1 (0 wh_ be 3 fear-words 0)
+    2 ((What scares me about my condition ?)) (0 :gist)
+  1 (0 wh_ cause you 4 fear-words 0)
+    2 ((What scares me about my condition ?)) (0 :gist)
+  1 (0 be 1 you 1 frightened 5 appointment 0)
+    2 ((Was I nervous for this appointment ?)) (0 :gist)  
+  1 (0 be 3 appointment 1 frightening 0)
+    2 ((Was I nervous for this appointment ?)) (0 :gist)
+  1 (0 AUX 3 appointment 1 frighten 1 you 0)
+    2 ((Was I nervous for this appointment ?)) (0 :gist)
 
   ; meta-questions about conversation
   1 (0 how 4 conversation 3 going 0)

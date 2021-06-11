@@ -11,6 +11,12 @@
     2 (*response-tree-treatment-chemotherapy*) (0 :subtrees)
   1 (what is 1 prognosis 1)
     2 (*response-tree-prognosis*) (0 :subtrees)
+  1 (Should I get a second opinion on my prognosis 1)
+    2 (*response-tree-prognosis*) (0 :subtrees)
+  1 (Can I trust your prognosis 1)
+    2 (*response-tree-prognosis-denial*) (0 :subtrees)
+  1 (Can I outlive your prognosis 1)
+    2 (*response-tree-prognosis-bargaining*) (0 :subtrees)
   1 (What are the side effects of stronger pain medication 1)
     2 (*response-tree-medication*) (0 :subtrees)
   1 (Can I have a stronger pain medication 1)
@@ -27,12 +33,16 @@
     2 (*response-tree-comfort-care*) (0 :subtrees)
   1 (What are my options for treatment 1)
     2 (*response-tree-treatment-options*) (0 :subtrees)
+  1 (Do you think experimental therapies will help 1)
+    2 (*response-tree-treatment-options*) (0 :subtrees)
   1 (What are the side effects of chemotherapy 1)
     2 (*response-tree-chemotherapy-side-effects*) (0 :subtrees)
   1 (What should I tell my family 1)
     2 (*response-tree-tell-family*) (0 :subtrees)
   1 (I feel mildly depressed 1)
     2 (*response-tree-mental-health*) (0 :subtrees)
+  1 (I feel anxious about my future 1)
+    2 (*response-tree-anxiety*) (0 :subtrees)
 
   ; Subtrees for elaborating answers
   1 (My pain has recently been getting worse 1)
@@ -77,11 +87,12 @@
   1 (Will stronger pain medication help me sleep 1)
     2 (It seems like my pain is the root of my sleeping problems \. Do you think having
        stronger pain medication would help with that ?) (0 :out)
+  
   ; The following are from the top-level dialogue track
   1 (How will I know if my pain medication is working 1)
     2 (I just started on my new pain medication fairly recently\, a couple weeks after radiation \.
        How long will it be before I know if it\'s working ?) (0 :out)
-
+  
   ; Direct rules for elaborating answers
   ; NOTE: if there are ever multiple contexts where these are warranted with different
   ; surface utterances, these need to be pulled out into separate subtrees. For now,
@@ -117,8 +128,6 @@
        have as much energy as I used to \.) (0 :out)
   1 (I have had trouble concentrating 1)
     2 (I have only had trouble concentrating sometimes \.) (0 :out)
-  1 (I feel anxious about my future 1)
-    2 (Sometimes I get some pretty bad anxiety about my future\, and what this all means for me \.) (0 :out)
   1 (I don\'t have allergies to any medicine 1)
     2 (No\, I don\'t believe I have any allergies \.) (0 :out)
   1 (I am taking blood pressure medicine 1)

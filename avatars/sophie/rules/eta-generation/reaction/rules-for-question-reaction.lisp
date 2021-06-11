@@ -44,6 +44,10 @@
     2 *ask-about-test-results* (0 :schema)
   1 (Do I know what the tests say ?)
     2 *ask-about-test-results* (0 :schema)
+  1 (How do I feel about my test results ?)
+    2 *ask-about-test-results* (0 :schema)
+  1 (Do I have a question about my test results ?)
+    2 *ask-about-test-results* (0 :schema)
 
   ; Questions about radiation treatment
   1 (Did I get radiation treatment ?)
@@ -66,6 +70,8 @@
     2 *ask-how-chemotherapy-works* (0 :schema)
   1 (Do I understand how chemotherapy works ?)
     2 *ask-how-chemotherapy-works* (0 :schema)
+  1 (Do I have a question about chemotherapy ?)
+    2 *ask-about-chemotherapy-side-effects* (0 :schema)
 
   ; Questions about sleep
   1 (Have I been sleeping okay ?)
@@ -81,6 +87,8 @@
   1 (What is my sleep routine ?)
     2 *discuss-sleep-routine* (0 :schema)
   1 (Is your mental health keeping you awake ?)
+    2 *explain-not-sleeping-well* (0 :schema)
+  1 (Is coffee keeping you awake ?)
     2 *explain-not-sleeping-well* (0 :schema)
   1 (Can I tell you about my sleep instead of test results ?)
     2 *explain-not-sleeping-well* (100 :schema)
@@ -127,11 +135,15 @@
     2 *ask-about-pain-medication-side-effects* (0 :schema)
   1 (Do I need more medicine ?)
     2 *ask-for-lortab-refill* (0 :schema)
+  1 (Do I have a question about my medicine ?)
+    2 *ask-why-pain-medication-not-working*
 
   ; Comfort care
   1 (Have I considered comfort care ?)
     2 *ask-how-comfort-care-works* (0 :schema)
   1 (Do I understand how comfort care works ?)
+    2 *ask-how-comfort-care-works* (0 :schema)
+  1 (Do I have a question about comfort care ?)
     2 *ask-how-comfort-care-works* (0 :schema)
 
   ; Questions about medical history
@@ -146,7 +158,7 @@
     2 *mention-taking-lortab* (0 :schema)
   1 (Does my family have a history of mental illness ?)
     2 *discuss-history-mental-illness* (100 :schema)
-    2 (No\, no one in my family has any history of mental illness \.)  (0 :out)
+    2 (No\, no one in my family has any history of mental illness \.) (0 :out)
   1 (How did my parents die ?)
     2 *discuss-parent-deaths* (0 :schema)
 
@@ -158,21 +170,34 @@
   ; Questions about treatment options
   1 (What do I understand about my treatment options ?)
     2 *ask-about-treatment-options* (0 :schema)
+  1 (Do I have a question about my treatment options ?)
+    2 *ask-about-will-experimental-therapies-help* (0 :schema)
+  1 (What are my treatment goals ?)
+    2 *ask-how-comfort-care-works* (0 :schema)
 
   ; Questions about prognosis
   ; TODO: should instantiate a schema where SOPHIE explains her (possibly incorrect) knowledge of
   ; her prognosis; e.g., "I know you said two to three months, but I feel pretty good now"
   1 (Do I understand my prognosis ?)
-    2 *ask-about-prognosis* (0 :schema)
+    2 *ask-about-prognosis* (0 :schema) 
+    2 *ask-if-can-trust-prognosis* (0 :schema)
   1 (How do I feel about my prognosis ?)
     2 *ask-about-prognosis* (0 :schema)
+  1 (What scares me about my prognosis ?)
+    2 *ask-about-prognosis* (0 :schema)
+  1 (Do I have a question about my prognosis ?)
+    2 *ask-for-second-opinion* (0 :schema)
 
-  ; Open-ended questions
+  ; Open-ended questions 
   1 (What do I understand ?)
     2 *explain-understanding-of-condition* (0 :schema)
   1 (How am I feeling about my condition ?)
     2 *explain-understanding-of-condition* (0 :schema)
-                           
+  1 (What scares me about my condition ?)
+    2 *explain-understanding-of-condition* (0 :schema)    
+  1 (Was I nervous for this appointment ?)
+    2 *mention-anxiety* (0 :schema)
+  
   1 (0)
     2 *reaction-to-question-minor* (0 :subtree)
 ))
@@ -184,9 +209,9 @@
 '(
   ; Questions about daughter
   1 (Where does my daughter work ?)
-    2 (She works as a school nurse in the county school system\. She\'s very diligent\. They gave her an award last year\, but I\'m blanking on the name of it\.) (0 :out)
+    2 (She works as a nurse in the county school system\. She\'s very diligent\. They gave her an award last year\, but I\'m blanking on the name of it\.) (0 :out)
   1 (Where does my son work ?)
-    2 (He\'s in construction management\, out over in utica\. He supervised the team that built the new firehouse there last year\.) (0 :out)
+    2 (He\'s in construction management\, out over in Utica\. He supervised the team that built the new firehouse there last year\.) (0 :out)
   1 (How old is my daughter ?)
     2 (She\'s thirty four\. Turning thirty five in a few months\.) (0 :out)
   1 (How old is my son ?)
@@ -194,9 +219,9 @@
   1 (Do I have any grandchildren ?)
     2 (Yes\, one grandson\. He\'s starting middle school this year and is absolutely thrilled about it\.) (0 :out)
   1 (Do I have any children ?)
-    2 (Yes\, I\'m staying with my daughter and her husband here in rochester\, but I have a son out in utica as well\.) (0 :out)
+    2 (Yes\, I\'m staying with my daughter and her husband here in rochester\, but I have a son out in Utica as well\.) (0 :out)
   1 (Do I live alone ?)
-    2 (I live with my daughter and her husband while I\'m here in rochester \.) (0 :out)
+    2 (I live with my daughter and her husband while I\'m here in Rochester \.) (0 :out)
   1 (Am I married ?)
     2 (I was for about twenty years\. But as we got older and the kids went off to college\, things just didn\'t work out as well as we thought they would\. We separated about ten years ago and divorced two years later\.) (0 :out)
   1 (How am I doing today ?)

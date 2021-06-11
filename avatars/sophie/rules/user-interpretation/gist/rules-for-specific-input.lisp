@@ -217,6 +217,7 @@
   1 (0 side-effect-appetite 0)
     2 ((A side effect of the medication is loss of appetite \.) (Medicine-side-effects)) (0 :gist)
 
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -328,6 +329,14 @@
   1 (0 AUX-BASE 3 you 2 understand-gen 0)
     2 (*chemotherapy-question* (do you understand how chemotherapy works ?)) (0 :subtree+clause)
 
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 (*chemotherapy-question* (Do you have a question about chemotherapy?)) (0 :subtree+clause)
+  1 (0 question-word 2 you 2 have 0)
+    2 (*chemotherapy-question* (Do you have a question about chemotherapy?)) (0 :subtree+clause)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 (*chemotherapy-question* (Do you have a question about chemotherapy?)) (0 :subtree+clause)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -418,6 +427,8 @@
   ; how is that working for you?
   1 (0 how be 3 med-help 0)
     2 (*medicine-question* (how are you feeling on the lortab ?)) (0 :subtree+clause)
+  1 (0 how 3 be 1 think-gen 0)
+    2 (*medicine-question* (how are you feeling on the lortab ?)) (0 :subtree+clause)
 
   ; Possibly too general, might need refining
   1 (0 med-narcotic 0)
@@ -434,6 +445,14 @@
     2 (*medicine-question* (have you thought about a stronger pain medication ?)) (0 :subtree+clause)
   1 (0 some 2 med-better 2 medication 0)
     2 (*medicine-question* (have you thought about a stronger pain medication ?)) (0 :subtree+clause)
+
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
+  1 (0 question-word 2 you 2 have 0)
+    2 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -511,6 +530,12 @@
   1 (0 NEG 1 think-gen 0)
     2 ((You do not think I need radiation \.) (Radiation)) (0 :gist)
 
+  ; Doctor mentions chemotherapy or comfort care
+  1 (0 chemotherapy 0)
+    2 *chemotherapy-input* (0 :subtree)
+  1 (0 comfort-care-word 0)
+    2 *comfort-care-input* (0 :subtree)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -546,6 +571,9 @@
   1 (0 ment-health 0)
     2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
 
+  1 (0 coffee 0)
+    2 (*sleep-question* (is coffee keeping you awake ?)) (0 :subtree+clause)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -580,7 +608,7 @@
   ; Doctor mentions comfort care
   1 (0 palliative care 0)
     2 *comfort-care-input* (0 :subtree)
-  1 (0 hospice 0)
+  1 (0 comfort-care-word 0)
     2 *comfort-care-input* (0 :subtree)
 
   ; Chemotherapy might be an option
@@ -601,6 +629,14 @@
   1 (0 AUX-BASE 3 you 2 understand-gen 0)
     2 (*chemotherapy-question* (do you understand how chemotherapy works ?)) (0 :subtree+clause)
     
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 (*chemotherapy-question* (Do you have a question about chemotherapy ?)) (0 :subtree+clause)
+  1 (0 question-word 2 you 2 have 0)
+    2 (*chemotherapy-question* (Do you have a question about chemotherapy ?)) (0 :subtree+clause)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 (*chemotherapy-question* (Do you have a question about chemotherapy ?)) (0 :subtree+clause)
+
   ; Various yes/no answer possibilities
   1 (5 POS 0)
     2 (- 0 NEG sure 0)
@@ -618,6 +654,9 @@
   1 (0 NEG 1 med-help 0)
     2 ((You do not think I need chemotherapy \.) (Chemotherapy)) (0 :gist)
 
+  1 (0 cancer-goals 0)
+    2 (*treatment-option-question* (what are your treatment goals ?)) (0 :subtree+clause)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -634,6 +673,13 @@
   ; If doctor mentions anything about prognosis
   1 (0 prognosis 0)
     2 *prognosis-input* (0 :subtree)
+
+  1 (0 NEG 1 painful 0)
+    2 ((Comfort care should alleviate my pain \.) (Comfort-care)) (0 :gist)
+  1 (0 pain-alleviate 1 pain 0)
+    2 ((Comfort care should alleviate my pain \.) (Comfort-care)) (0 :gist)
+  1 (0 make comfortable 0)
+    2 ((Comfort care should alleviate my pain \.) (Comfort-care)) (0 :gist)
 
   ; TODO: these rules need to be made a bit more explicit.
   1 (0 palliative care 0)
@@ -664,6 +710,21 @@
   1 (0 AUX-BASE 3 you 2 understand-gen 0)
     2 (*comfort-care-question* (do you understand how comfort care works ?)) (0 :subtree+clause)
 
+  ; Doctor explicitly mentions chemotherapy
+  1 (0 chemotherapy 0)
+    2 *chemotherapy-input* (0 :subtree)
+
+  1 (0 cancer-goals 0)
+    2 (*treatment-option-question* (what are your treatment goals ?)) (0 :subtree+clause)
+
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 (*comfort-care-question* (Do you have a question about comfort care ?)) (0 :subtree+clause)
+  1 (0 question-word 2 you 2 have 0)
+    2 (*comfort-care-question* (Do you have a question about comfort care ?)) (0 :subtree+clause)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 (*comfort-care-question* (Do you have a question about comfort care ?)) (0 :subtree+clause)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -678,12 +739,17 @@
 '(
   1 (5 POS 0)
     2 ((You do not think I need comfort care \.) (Comfort-care)) (0 :gist)
+  1 (0 affirm 0)
+    2 ((You do not think I need comfort care \.) (Comfort-care)) (0 :gist)
   1 (0 I 1 think-gen so 0)
     2 ((You do not think I need comfort care \.) (Comfort-care)) (0 :gist)
   1 (5 no 0)
     2 ((You think I need comfort care \.) (Comfort-care)) (0 :gist)
   1 (0 NEG 1 think-gen 0)
     2 ((You think I need comfort care \.) (Comfort-care)) (0 :gist)
+
+  1 (0 cancer-goals 0)
+    2 (*treatment-option-question* (what are your treatment goals ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -907,7 +973,13 @@
   ; You don't have much long left to live
   1 (0 you 1 NEG 2 have 3 long 2 cancer-live 0)
     2 ((The prognosis is that I do not have long left to live \.) (Prognosis)) (0 :gist)
-
+  1 (0 you 2 NEG 2 much 1 left 0)
+    2 ((The prognosis is that I do not have long left to live \.) (Prognosis)) (0 :gist)
+  1 (0 you 2 NEG 2 much 3 cancer-live 0)
+    2 ((The prognosis is that I do not have long left to live \.) (Prognosis)) (0 :gist)
+  1 (0 you 2 NEG 2 have 1 much 1 elapsed-time-plur 0)
+    2 ((The prognosis is that I do not have long left to live \.) (Prognosis)) (0 :gist)
+  
   ; There is no cure
   1 (0 NEG 2 cure 0)
     2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
@@ -966,17 +1038,74 @@
   1 (0 difficult 3 answer 0)
     2 ((The prognosis is hard to predict \.) (Prognosis)) (0 :gist)
 
-  ; What do you know/think about your prognosis?
+  ; You should/should not get a second opinion.
+  1 (0 second opinion 0)
+    2 (0 good idea 0)
+      3 (- 0 NEG 1 good idea 0)
+        4 (- 0 good idea 1 NEG 0)
+          5 ((You should obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
+    2 ((You should not obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
+    2 (0 beneficial 0)
+      3 (- 0 NEG 1 beneficial 0)
+        4 ((You should obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
+      3 ((You should not obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
+    2 (0 should 0)
+      3 (- 0 should NEG 0)
+        4 (- 0 NEG should 0)
+          5 ((You should obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
+      3 ((You should not obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
+    2 (0 bad 0)
+      3 (- 0 NEG bad 0)
+        4 (- 0 bad NEG 0)
+          5 ((You should not obtain a second opinon about the prognosis \.) (Prognosis)) (0 :gist)
+      3 ((You should obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
+    2 (0 change 0)
+      3 (- 0 NEG change 0)
+        4 (- 0 NEGADV change 0)
+          4 ((You should obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
+      3 ((You should obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
+    2 (0 up to you 0)
+      3 ((It is up to you whether you obtain a second opinion \.) (Prognosis)) (0 :gist)
+    2 (0 what 2 you 1 think-gen 0)
+      3 ((It is up you whether you obtain a second opinion \.) (Prognosis)) (0 :gist)
+    2 (0 depends on 1 you 0)
+      3 ((It is up to you whether you obtain a second opinion \.) (Prognosis)) (0 :gist)
+
+  ; What do you know/think about your prognosis?/What scares you about your prognosis?
   1 (0 how 4 you 3 feeling 0)
     2 (*prognosis-question* (what do you think about your prognosis ?)) (0 :subtree+clause)
   1 (0 wh_ 4 you 3 think-gen 0)
     2 (*prognosis-question* (what do you think about your prognosis ?)) (0 :subtree+clause)
+  1 (0 tell 5 fear-words 0)
+    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+  1 (0 elaborate 4 fear-words 0)
+    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+  1 (0 wh_ 1 make 1 you 3 frightened 0)
+    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+  1 (0 wh_ 1 frightens 1 you 0) 
+    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+  1 (0 wh_ be 3 frightening 0)
+    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+  1 (0 wh_ 1 you 1 think-gen 3 frightening 0)
+    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+  1 (0 wh_ be 3 fear-words 0)
+    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+  1 (0 wh_ cause you 4 fear-words 0)
+    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
   1 (0 AUX-BASE 3 you 2 understand-gen 0)
     2 (*prognosis-question* (do you understand your prognosis ?)) (0 :subtree+clause)
   1 (0 AUX-BASE 3 you 2 tell 6 understand-gen 0)
     2 (*prognosis-question* (do you understand your prognosis ?)) (0 :subtree+clause)
   1 (0 tell 4 understand-gen 0)
     2 (*prognosis-question* (do you understand your prognosis ?)) (0 :subtree+clause)
+
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 (*prognosis-question* (Do you have a question about your prognosis ?)) (0 :subtree+clause)
+  1 (0 question-word 2 you 2 have 0)
+    2 (*prognosis-question* (Do you have a question about your prognosis ?)) (0 :subtree+clause)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 (*prognosis-question* (Do you have a question about your prognosis ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -985,7 +1114,286 @@
 
 )) ; END *prognosis-input*
 
+(READRULES '*prognosis-denial-input*
+; (Can I trust your prognosis ?)
+'(
 
+  ; Your uncle Fred is an unusual case.
+  1 (0 uncle 0)
+    2 (0 unusual 0)
+      3 (- 0 NEG 1 unusual 0)
+        4 ((The majority of people have an accurate prognosis \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((The majority of people do not have an accurate prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 seldom 0)
+      3 (- 0 NEG 1 seldom 0)
+        4 ((The majority of people have an accurate prognosis \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((The majority of people do not have an accurate prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 exception 0)
+      3 (- 0 NEG 2 exception 0)
+        4 ((The majority of people have an accurate prognosis \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((The majority of people do not have an accurate prognosis \.) (Prognosis-Understanding)) (0 :gist)
+
+  ; Yes / No
+  1 (0 POS 0)
+    2 (- 0 NEG sure 0)
+      3 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 posadv-affirm 0)
+    2 (- 0 posadv-affirm NEG 0)
+      3 (- 0 NEG posadv-affirm 0)
+        4 ((My understanding of my prognosis is correct \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 NEG 0)
+    2 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 NEGADV 0)
+    2 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 tag-question 0)
+    2 (- 0 NEG tag-question 0)
+      3 ((My understanding of my prognosis is correct \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 incorrect 0)
+    2 (- 0 NEG incorrect 0)
+      3 ((My understanding of my prognosis is correct \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 unusual 0)
+    2 (- 0 NEG unusual 0)
+      3 ((My understanding of my prognosis is correct \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 seldom 0)
+    2 (- 0 NEG seldom 0)
+      3 (- 0 seldom NEG 0)
+        4 ((My understanding of my prognosis is correct \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+
+  ; My understanding of my prognosis may be correct.
+  1 (0 hard 2 to 2 predict 0)
+    2 ((My understanding of my prognosis may be correct \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 bad 1 at 3 guess 0)
+    2 ((My understanding of my prognosis may be correct \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 NEG good 1 at 3 guess 0)
+    2 ((My understanding of my prognosis may be correct \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 difficult 3 answer 0)
+    2 ((My understanding of my prognosis may be correct \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 might 3 tag-question 0)
+    2 ((My understanding of my prognosis may be correct \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 maybe 3 tag-question 0)
+    2 ((My understanding of my prognosis may be correct \.) (Prognosis-Understanding)) (0 :gist)
+  
+  1 (0)
+    2 *general-input* (0 :subtree)
+  1 (0)
+    2 ((NIL Gist \: nothing found for denial of prognosis \.)) (0 :gist)
+
+)) ; END *prognosis-denial-input*
+
+(READRULES '*prognosis-bargaining-input*
+; (Can I outlive my prognosis ?) 
+'(
+
+  ; Quitting smoking won't change your prognosis
+  1 (0 quit 2 smoke 0)
+    2 (0 NEG 0)
+      3 ((Quitting smoking will not make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 NEGADV 0)
+      3 ((Quitting smoking will not make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 POS 0)
+      3 ((Quitting smoking will make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 posadv-affirm 0)
+      3 (- 0 posadv-affirm NEG 0)
+        4 (- 0 NEG posadv-affirm 0)
+          5 ((Quitting smoking will make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((Quitting smoking will not make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 might 0)
+      3 ((Quitting smoking might make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 maybe 0) 
+      3 ((Quitting smoking might make my prognosis better  \. ) (Prognosis-Understanding)) (0 :gist)
+    2 (0 make-better 2 odds 0)
+      3 ((Quitting smoking might make my prognosis better  \. ) (Prognosis-Understanding)) (0 :gist)
+
+  
+  ; You will/will not live to attend your grandson's graduation
+  1 (0 grandson 0)
+    2 (0 NEG 0)
+      3 ((I will not live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 NEGADV 0)
+      3 ((I will not live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 POS 0)
+      3 ((I will live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 posadv-affirm 0)
+      3 (- 0 posadv-affirm NEG 0)
+        4 (- 0 NEG posadv-affirm 0)
+          5 ((I will live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((I will not live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 might 0)
+      3 ((I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 maybe 0) 
+      3 ((I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 try 0)
+      3 ((I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+
+  ; How you feel right now does not predict your future
+  1 (0 wh_ 3 feeling 0)
+    2 (0 might 1 change 0)
+      3 (- 0 change 2 odds 0)
+        4 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+      3 (- 0 change 2 prognosis 0)
+        4 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((My health right now improves my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 NEG 0)
+      3 (0 NEG 1 predict 0)
+        4 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+      3 (0 NEG 3 predictor 0)
+        4 (- 0 bad predictor 0)
+          5 ((My health right now improves my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+        4 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+      3 (0 NEG 2 change 0)
+        4 (- 0 change 2 odds 0)
+          5 ((My health right now improves my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+        4 (- 0 change 2 prognosis 0)
+          5 ((My health right now improves my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+        4 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 worse 0)
+      3 (- 0 NEG 3 worse 0)
+        4 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((My health right now improves my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  
+  ; Being healthy all your life/now won't improve your prognosis
+  1 (0 healthy 0)
+    2 (0 now 0)
+      3 (0 might 1 change 0)
+        4 (- 0 change 2 odds 0)
+          5 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+        4 (- 0 change 2 prognosis 0)
+          5 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+        4 ((My health right now improves my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+      3 (0 NEG 0)
+        4 (0 NEG 1 predict 0)
+          5 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+        4 (0 NEG 3 predictor 0)
+          5 (- 0 bad predictor 0)
+            6 ((My health right now improves my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+          5 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+        4 (0 NEG 2 change 0)
+          5 (- 0 change 2 odds 0)
+            6 ((My health right now improves my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+          5 (- 0 change 2 prognosis 0)
+            6 ((My health right now improves my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+          5 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 worse 0)
+      3 (- 0 NEG 3 worse 0)
+        4 ((My health right now does not change my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((My health right now improves my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 past 0)
+      3 (0 might 0)
+        4 (0 might 1 change 0)
+          5 ((A history of good health will not make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)  
+        4 ((A history of good health might make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+      3 (0 maybe 0) 
+        4 ((A history of good health might make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+      3 (0 make-better 2 odds 0)
+        4 ((A history of good health might make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+      3 (0 NEG 0)
+        4 ((A history of good health will not make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+      3 (0 NEGADV 0)
+        4 ((A history of good health will not make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+      3 (0 POS 0)
+        4 ((A history of good health will make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+      3 (0 posadv-affirm 0)
+        4 (- 0 posadv-affirm NEG 0)
+          5 (- 0 NEG posadv-affirm 0)
+            6 ((A history of good health will make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+        4 ((A history of good health will not make my prognosis better  \.) (Prognosis-Understanding)) (0 :gist)
+      
+
+  ; Yes / No
+  1 (0 POS 0)
+    2 (- 0 NEG sure 0)
+      3 ((I will outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 posadv-affirm 0)
+    2 (- 0 posadv-affirm NEG 0)
+      3 (- 0 NEG posadv-affirm 0)
+        4 ((I will not outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((I will outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 NEG 0)
+    2 ((I will outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 NEGADV 0)
+    2 ((I will outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 tag-question 0)
+    2 (- 0 NEG tag-question 0)
+      3 ((I will not outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((I will outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 incorrect 0)
+    2 (- 0 NEG incorrect 0)
+      3 ((I will not outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((I will outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 unusual 0)
+    2 (- 0 NEG unusual 0)
+      3 ((I will not outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((I will outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 seldom 0)
+    2 (- 0 NEG seldom 0)
+      3 (- 0 seldom NEG 0)
+        4 ((I will not outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((I will outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 usual 0)
+    2 (- 0 NEG usual 0)
+      3 ((I will outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((I will not outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+
+  ; I may outlive your prognosis.
+  1 (0 hard 2 to 2 predict 0)
+    2 ((I may outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 bad 1 at 3 guess 0)
+    2 ((I may outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 NEG good 1 at 3 guess 0)
+    2 ((I may outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 difficult 3 answer 0)
+    2 ((I may outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 might 3 tag-question 0)
+    2 ((I may outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 maybe 3 tag-question 0)
+    2 ((I may outlive my prognosis \.) (Prognosis-Understanding)) (0 :gist)
+  
+
+  1 (0)
+    2 *general-input* (0 :subtree)
+  1 (0)
+    2 ((NIL Gist \: nothing found for bargaining of prognosis \.)) (0 :gist)
+
+)) ; END *prognosis-bargaining-input*
+
+(READRULES 'experimental-therapy-input*
+; (Do you think experimental therapies will help ?)
+'(
+
+  ; Experimental treatments will/will not/might make my prognosis better .
+  1 (0 NEG 0)
+    2 ((Experimental treatments will not make my prognosis better  \.) (Experimental-Treatment)) (0 :gist)
+  1 (0 NEGADV 0)
+    2 ((Experimental treatments will not make my prognosis better  \.) (Experimental-Treatment)) (0 :gist)
+  1 (0 POS 0)
+    2 ((Experimental treatments will make my prognosis better  \.) (Experimental-Treatment)) (0 :gist)
+  1 (0 posadv-affirm 0)
+    2 (- 0 posadv-affirm NEG 0)
+      3 (- 0 NEG posadv-affirm 0)
+        4 ((Experimental treatments will make my prognosis better  \.) (Experimental-Treatment)) (0 :gist)
+    2 ((Experimental treatments will not make my prognosis better  \.) (Experimental-Treatment)) (0 :gist)
+  1 (0 might 0)
+    2 ((Experimental treatments might make my prognosis better  \.) (Experimental-Treatment)) (0 :gist)
+  1 (0 maybe 0) 
+    2 ((Experimental treatments might make my prognosis better  \.) (Experimental-Treatment)) (0 :gist)
+  1 (0 make-better 2 odds 0)
+    2 ((Experimental treatments might make my prognosis better  \.) (Experimental-Treatment)) (0 :gist)
+  1 (0 try 0)
+    2 (- 0 NEG try 0)
+      3 ((Experimental treatments might make my prognosis better  \.) (Experimental-Treatment)) (0 :gist)
+    2 ((Experimental treatments might make my prognosis better  \.) (Experimental-Treatment)) (0 :gist)
+
+  1 (0)
+    2 *general-input* (0 :subtree)
+  1 (0)
+    2 ((NIL Gist \: nothing found for experimental treatments \.)) (0 :gist)
+
+)) ; END *experimental-therapy-input*
 
 (READRULES '*sleep-poorly-input*
 ; (Why 1 I not 1 sleeping well ?)
@@ -1071,6 +1479,9 @@
   1 (0 wh_ 3 sleep-thought 0)
     2 (*sleep-question* (what is on your mind when you try to sleep ?)) (0 :subtree+clause)
 
+  1 (0 coffee 0)
+    2 (*sleep-question* (is coffee keeping you awake ?)) (0 :subtree+clause)
+
   ; Can you tell me more
   1 (0 aux 1 you 1 tell 5 more 0)
     2 (- 0 about 2 pain 0)
@@ -1080,11 +1491,16 @@
     2 (- 0 about 2 pain 0)
       3 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
     2 (*pain-question* (can you tell me about your pain ?)) (0 :subtree+clause)
+  1 (0 aux 1 you 1 elaborate 0)
+    2 (- 0 about 2 pain 0)
+      3 (*sleep-question* (what happens when you try to sleep ?)) (0 :subtree+clause)
+    2 (*pain-question* (can you tell me about your pain ?)) (0 :subtree+clause)
+
+  1 (0 sorry 0)
+    2 ((You are sorry that I am sleeping poorly \.) (Sleeping-poorly)) (0 :gist)
 
   1 (0)
     2 *general-input* (0 :subtree)
-  1 (0 sorry 0)
-    2 ((You are sorry that I am sleeping poorly \.) (Sleeping-poorly)) (0 :gist)
   1 (0)
     2 ((Nil Gist \: nothing found for why I am sleeping poorly \.)) (0 :gist)
 
@@ -1144,6 +1560,8 @@
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 tumor 2 in 6 chest 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
+  1 (0 cancer-illness 5 worse 0) 
+    2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   
   ; The radiation doesn't seem to be helping
   1 (0 radiation 2 NEG 3 radiation-help 0)
@@ -1172,6 +1590,18 @@
     2 ((Can I tell you about my pain instead of test results ?) (Pain-description)) (0 :gist)
   1 (0 sleep 0)
     2 ((Can I tell you about my sleep instead of test results ?) (Sleep)) (0 :gist)
+
+  ; How do you feel about your test results?
+  1 (0 you 2 think-gen 0)
+    2 (*test-results-question* (how do you feel about your test results ?)) (0 :subtree+clause)
+
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
+  1 (0 question-word 2 you 2 have 0)
+    2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)
@@ -1232,6 +1662,14 @@
   1 (0 AUX-BASE 3 you 2 understand-gen 0)
     2 (*treatment-option-question* (do you understand your treatment options ?)) (0 :subtree+clause)
 
+  ; asking if system has any questions
+  1 (0 you 2 have 2 question-word 0)
+    2 (*treatment-option-question* (Do you have a question about your treatment options ?)) (0 :subtree+clause)
+  1 (0 question-word 2 you 2 have 0)
+    2 (*treatment-option-question* (Do you have a question about your treatment options ?)) (0 :subtree+clause)
+  1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 (*treatment-option-question* (Do you have a question about your treatment options ?)) (0 :subtree+clause)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -1281,6 +1719,10 @@
     2 ((A stronger pain medication will not help me sleep \.) (Medicine-request)) (0 :gist)
   1 (0 NEGADV 0)
     2 ((A stronger pain medication will not help me sleep \.) (Medicine-request)) (0 :gist)
+
+  ; How do you feel on your medication?
+  1 (0 AUX-BASE 3 you 4 think-gen 0)
+    2 (*medicine-question* (How are you feeling on the medicine ?)) (0 :subtree+clause)
 
   1 (0)
     2 *general-input* (0 :subtree)
