@@ -190,6 +190,9 @@
   ; If *emotions* is T, Eta will allow use of emotion tags at beginning of outputs.
   (defparameter *emotions* nil)
 
+  ; If *mark-opportunities* is T, Eta will allow use of opportunity tags in outputs.
+  (defparameter *mark-opportunities* nil)
+
   ; Log contents and pointer corresponding to current position in log.
   (defparameter *log-contents* nil)
   (defparameter *log-answer* nil)
@@ -259,7 +262,7 @@
 
 
 
-(defun eta (read-log subsystems-perception subsystems-specialist &optional (emotions nil) (dependencies t))
+(defun eta (read-log subsystems-perception subsystems-specialist &optional (emotions nil) (mark-opportunities nil) (dependencies t))
 ;```````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
 ; (now largely commented out) and controls the loop for producing,
@@ -274,6 +277,7 @@
   (setq *registered-systems-perception* subsystems-perception)
   (setq *registered-systems-specialist* subsystems-specialist)
   (setq *emotions* emotions)
+  (setq *mark-opportunities* mark-opportunities)
   (setq *count* 0) ; Number of outputs so far
 
   (when *read-log*
@@ -678,6 +682,7 @@
           ((eq (car expr) 'quote)
             (setq expr (flatten (second expr)))
             (setq *count* (1+ *count*))
+            (setq expr (tag-opportunities expr))
             (setq expr (tag-emotions expr))
             (if (member '|Audio| *registered-systems-perception*)
               (say-words expr)

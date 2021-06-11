@@ -16,6 +16,10 @@
 ;;                  explicitly specified in the output, a default [NEUTRAL] tag will be prepended.
 ;;                  NIL to disable emotion tags. Any tags at the beginning of :out directives will be stripped.
 ;;
+;; *opportunity-tags* : T to allow insertion of opportunity tags (e.g., [OPPORTUNITY]) at beginning of outputs to
+;;                      signal to an external feedback system that the user has an opportunity for a particular type
+;;                      of response. NIL to disable opportunity tags.
+;;
 ;; *dependencies* : T to include Quicklisp dependencies, NIL to only include local packages (note that some applications may not
 ;;                  work without Quicklisp dependencies).
 ;;
@@ -33,6 +37,7 @@
 (defparameter *subsystems-perception* '(|Terminal| |Audio|))
 (defparameter *subsystems-specialist* '())
 (defparameter *emotion-tags* T)
+(defparameter *opportunity-tags* T)
 (defparameter *dependencies* NIL)
 (defparameter *safe-mode* NIL)
 ;; (defparameter *session-number* 1)

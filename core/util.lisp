@@ -665,12 +665,21 @@
 
 (defun emotion-tag? (atm)
 ;````````````````````````````````````````````````
-; If symbol begins with [ and ends with ], it qualifies as an emotion
-; tag when inside an output list.
+; If symbol is equal to [SAD], [HAPPY], or [NEUTRAL],
+; it qualifies as an emotion tag when inside an output list.
 ;
-  (if (and (symbolp atm) (equal #\[ (first (explode atm)))
-           (equal #\] (car (last (explode atm))))) t nil)
+  (if (and (symbolp atm) (member atm '([SAD] [HAPPY] [NEUTRAL]))) t nil)
 ) ; END emotion-tag?
+
+
+
+(defun opportunity-tag? (atm)
+;````````````````````````````````````````````````
+; If symbol is equal to [OPPORTUNITY] or [NOOPPORTUNITY],
+; it qualifies as an opportunity tag when inside an output list.
+;
+  (if (and (symbolp atm) (member atm '([OPPORTUNITY] [NOOPPORTUNITY]))) t nil)
+) ; END opportunity-tag?
 
 
 
@@ -965,12 +974,24 @@
 (defun tag-emotions (resp)
 ;````````````````````````````
 ; Prepends each response utterance with a default [NEUTRAL] tag unless it
-; already begins with an explicit emotion tag. If *emotions* is NIL, strip
+; already has an explicit emotion tag. If *emotions* is NIL, strip
 ; all emotion tags from response, otherwise return tagged response.
 ;
-  (let ((tagged-resp (if (emotion-tag? (car resp)) resp (cons '[NEUTRAL] resp))))
-    (if *emotions* tagged-resp (cdr tagged-resp))
+  (let ((tagged-resp (if (some #'emotion-tag? resp) resp (cons '[NEUTRAL] resp))))
+    (if *emotions* tagged-resp (remove-if #'emotion-tag? tagged-resp))
 )) ; END tag-emotions
+
+
+
+(defun tag-opportunities (resp)
+;```````````````````````````````
+; Prepends each response utterance with a default [NOOPPORTUNITY] tag unless it
+; already has an explicit opportunity tag. If *mark-opportunities* is NIL, strip
+; all opportunity tags from response, otherwise return tagged response.
+;
+  (let ((tagged-resp (if (some #'opportunity-tag? resp) resp (cons '[NOOPPORTUNITY] resp))))
+    (if *mark-opportunities* tagged-resp (remove-if #'opportunity-tag? tagged-resp))
+)) ; END tag-opportunities
 
 
 
