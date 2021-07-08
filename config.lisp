@@ -40,5 +40,5 @@
 (defparameter *opportunity-tags* T)
 (defparameter *dependencies* NIL)
 (defparameter *safe-mode* NIL)
-;; (defparameter *session-number* 1)
+(defparameter *session-number* 1)
  
