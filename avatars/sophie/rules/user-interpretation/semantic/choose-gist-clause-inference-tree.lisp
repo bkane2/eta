@@ -106,4 +106,16 @@
   1 (0 A stronger pain medication 3 help me sleep 0)
     2 (^me know.v (ans-to '(Will stronger pain medication help me sleep ?))) (0 :ulf)
 
+  1 (0 My understanding of my prognosis 0)
+    2 (^me know.v (ans-to '(Can I trust your prognosis ?))) (0 :ulf)
+
+  1 (0 The majority of people 2 have an accurate prognosis 0)
+    2 (^me know.v (ans-to '(Can I trust your prognosis ?))) (0 :ulf)
+
+  1 (0 I should tell my family the full truth about the prognosis 0)
+    2 (^me know.v (ans-to '(What should I tell my family ?))) (0 :ulf)
+  
+  1 (0 I should reassure my family about the prognosis \.)
+    2 (^me know.v (ans-to '(What should I tell my family ?))) (0 :ulf)
+
 ))

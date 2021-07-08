@@ -136,7 +136,7 @@
   1 (Do I need more medicine ?)
     2 *ask-for-lortab-refill* (0 :schema)
   1 (Do I have a question about my medicine ?)
-    2 *ask-why-pain-medication-not-working*
+    2 *ask-why-pain-medication-not-working* (0 :schema)
 
   ; Comfort care
   1 (Have I considered comfort care ?)
@@ -166,6 +166,13 @@
   1 (Do my family know about my cancer ?)
     2 *ask-what-to-tell-family* (100 :schema)
     2 (My family knows that I have cancer already\, but not much else \.) (0 :out)
+  1 (Do I want you to be present when I tell my family about the prognosis ?)
+    2 *ask-what-to-tell-family* (100 :schema)
+    2 (I can\'t tell you how much I appreciate the offer\, but I think I should break the news to them myself \.) (0 :out)
+  1 (How much do I want my family to know about the prognosis ?)
+    2 *ask-what-to-tell-family* (100 :schema)
+    2 (Now that I think about it more\, my son and daughter both should probably know as much as I do about the prognosis\, since I may need their help as the cancer progresses\.
+       My grandson\, though\, he\'s only in middle school\, and I\'d like to protect him for as long as I can\.) (0 :out)
 
   ; Questions about treatment options
   1 (What do I understand about my treatment options ?)
@@ -173,6 +180,7 @@
   1 (Do I have a question about my treatment options ?)
     2 *ask-about-will-experimental-therapies-help* (0 :schema)
   1 (What are my treatment goals ?)
+    2 *ask-about-treatment-options* (0 :schema)
     2 *ask-how-comfort-care-works* (0 :schema)
 
   ; Questions about prognosis

@@ -35,7 +35,8 @@
     2 (Sorry\, I didn\'t really understand \. Could you please repeat my treatment options one more time ?) (0 :out)
 
   1 (0)
-    2 (I want to talk a bit about my treatment options now \. What are my choices at this point ?) (0 :out)
+    2 (First\, I\'d like to know a bit about my treatment options \. What are my choices at this point ?) (0 :out)
+    2 (What are the treatment options for a prognosis like mine ?) (0 :out)
 
 )) ; END *response-tree-treatment-options*
 
@@ -78,10 +79,12 @@
     2 (I don\'t really have a good idea of what comfort care means \. What is it ?) (0 :out)
 
   1 (0 Do I have a question about comfort care 0)
-    2 (Comfort care is new to me \. I\'m curious as to how it works \. Will I be in pain ?) (0 :out)
+    2 (Comfort care is new to me \. I\'m curious as to how it works \. Will I be in pain ?) (100 :out)
     2 (I don\'t know too much about comfort care \. Is it painful ?) (0 :out)
 
-
+  1 (0 Comfort care should alleviate my pain 0)
+    2 ([HAPPY] I\'m happy to hear that\. To be honest\, my priorities right now are just to remain free of pain and spend time with my family \. In that case\, 
+       do you think comfort care would be the best option for me ?) (0 :out)
 
   1 (0)
     2 (You know\, my main priority is to be comfortable at this point \. What would be the best way to accomplish that ?) (100 :out)
@@ -191,12 +194,12 @@
        results now\, though \. Could you explain what they mean ?) (0 :out)
 
   1 (0 The test results show that the radiation is not working 0)
-    2 ([SAD] I could tell the radiation wasn\'t working anymore\, because my pain has been getting worse \. I still don\'t
+    2 ([SAD] I could tell the radiation wasn\'t working anymore\, because my pain has been getting worse these past weeks \. I still don\'t
        quite understand what the test results mean\, though\. Could you please explain in simple terms ?) (100 :out)
     2 ([SAD] I still don\'t quite understand the test results\. Could you please explain in simple terms ?) (0 :out)
 
   1 (0 How do I feel about my test results 0)
-    2 ([SAD] I could tell something was off even before today because of my difficulty sleeping and my discomfort during the day \. But I\'m still not quite sure how worried I should be \.
+    2 ([SAD] I could tell something was off even before today because I've been having some difficult sleeping and pain during the day \. But I\'m still not quite sure how worried I should be \.
       Could you try your best to explain the test results to me ?) (0 :out)
     2 ([SAD] I had a feeling because of my pain that my test results would not be pleasant \. But I\'m still not sure whether I understand them \. Could you please explain in the simplest terms you can ?) (0 :out)
 
@@ -206,9 +209,10 @@
     2 ([SAD] I\'m still a little foggy on what metastasis means \. Would you mind explaining it to me again ?) (0 :out)
 
   1 (0)
-    2 (Let\'s talk about my test results\. I received my test results yesterday\, but I didn\'t really understand them \.
-       Could you explain to me what my test results mean ?) (100 :out)
-    2 ([SAD] I still don\'t quite understand the test results\. Could you please explain in simple terms ?) (0 :out)
+    2 (Truth be told\, I\'ve already scanned the results\, but don\'t understand what they are telling me\. It all seems very complicated \.
+       Could you explain to me what they mean ?) (100 :out)
+    2 ([SAD] I still don\'t quite understand the test results\. Could you please explain in simple terms ?) (100 :out)
+    2 (I still am not sure I understand the results \. Do you mind explaining it to me again ?) (0 :out)
 
 )) ; END *response-tree-test-results*
 
@@ -418,9 +422,17 @@
 ; (What should I tell my family 1)
 '(
   1 (0 Do my family know about my cancer 0)
-    2 ([SAD] My family know about my cancer already\, but they don\'t really know how bad it is\, or what it
+    2 ([SAD] My family knows about my cancer already\, but they don\'t really know how bad it is\, or what it
        means for me \. How should I discuss these with them ?) (0 :out)
 
+  1 (0 Do I want you to be present when I tell my family about the prognosis 0)
+    2 (Thank you\, but with everyone\'s schedules I think it would be hard to find time for us all to meet with you \. I can tell them myself\.
+       I just want to know if you have any advice on breaking such hard news \.) (0 :out)
+
+  1 (0 How much do I want my family to know about the prognosis 0)
+    2 (I don\'t really know\. I certainly don\'t want to burden my family with the knowledge of a prognosis they can\'t do much about\, but 
+       I also think they\'d want to hear the whole truth\. And\, I may need their help more and more as the cancer progresses \. What do you think I should do ?) (0 :out)
+    
   1 (0)
     2 ([SAD] I haven\'t told my family everything yet \. I wanted to wait to talk to you first \.
        What should I say to them ?) (0 :out)
@@ -531,10 +543,22 @@
     2 (Are you sure my prognosis is correct ?) (0 :out)
 )) ; END *response-tree-prognosis-denial*
 
-(READRULES '*response-tree-prognosis-bargaining*
-; (Can I outlive your prognosis ?)
+(READRULES '*response-tree-bargaining-habits*
+; (Can I outlive your prognosis if I have healthy habits?)
 '(
+  1 (0 The majority of people have an accurate prognosis 0)
+    2 (I guess you\'re right \. But maybe there\'s a reason some people can beat their prognoses and others can\'t ? When my uncle Fred was battling his cancer\, 
+       he swore by healthy eating and taking a daily walk \. If I keep in good shape\, will that improve my chances ?) (0 :out)
+
+  1 (0 The majority of people do not have an accurate prognosis 0)
+    2 (Well\, it\'s nice to hear that I might have a bit more time than I thought \. When my uncle Fred was battling his cancer\, he swore by healthy eating and taking a daily walk \.
+       If I keep in good shape\, will that improve my chances ?) (0 :out)
   
+)) ; END *response-tree-bargaining-habits*
+
+(READRULES '*response-tree-bargaining-now*
+; (Can I outlive your prognosis if I am healthy now?)
+'(
   1 (0 Do I understand my prognosis 0)
     2 (I know my test results say that I don\'t have a lot of time \. But I still feel pretty good right now \. ) (0 :out)
     2 (The tests say one thing \, but I feel okay right now \. Is there a chance I may be able to beat this ?) (0 :out)
@@ -549,41 +573,38 @@
   1 (0 My understanding of my prognosis is correct 0)
     2 (Oh\, that\'s great to hear \. I have to say\, for someone with such a bleak prognosis\, I\'m actually feeling pretty great\. Is there a chance I may be able to beat this ?) (0 :out)
 
-  1 (0 The majority of people have an accurate prognosis 0)
-    2 (I guess you\'re right \. But maybe there\'s a reason some people can beat their prognoses and others can\'t ? When my uncle Fred was battling his cancer\, 
-       he swore by healthy eating and taking a daily walk \. If I keep in good shape\, will that improve my chances ?) (0 :out)
-
-  1 (0 The majority of people do not have an accurate prognosis 0)
-    2 (Well\, it\'s nice to hear that I might have a bit more time than I thought \. When my uncle Fred was battling his cancer\, he swore by healthy eating and taking a daily walk \.
-       If I keep in good shape\, will that improve my chances ?) (0 :out)
-
-  1 (0 Quitting smoking will not make my prognosis better 0)
-    2 ([SAD] Oh \. That\'s too bad \. I\'m glad that I quit though \. After all \, I have my grandson to think about \. Speaking of my grandson \,
-        I know the test results say one thing \, but if I eat right and stay healthy \, do you think I \'ll live to see his graduation ? He\'s in middle school
-        right now \. \. \. ) (0 :out)
-
-  1 (0 Quitting smoking might make my prognosis better 0)
-    2 (Thank you \. It\'s good to hear that might help \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but if I 
-        eat right and stay healthy \, do you think I \'ll live to see his graduation ? He\'s in middle school right now \. \. \. ) (0 :out)
-  
-  1 (0 Quitting smoking will make my prognosis better 0)
-    2 (Thank you \. It\'s good to hear that will help \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but if I 
-        eat right and stay healthy \, do you think I \'ll live to see his graduation ? He\'s in middle school right now \. \. \. ) (0 :out)
-  
-  1 (0 A history of good health will make my prognosis better 0)
-    2 (Thank you \. It\'s good to hear that will help \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but if I 
-       keep up my health \, do you think I \'ll live to see his graduation ? He\'s in middle school right now \. \. \. ) (0 :out)
-
-  1 (0 A history of good health might make my prognosis better 0)
-    2 (Thank you \. It\'s good to hear that might help \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but if I 
-        keep up my health \, do you think I \'ll live to see his graduation ? He\'s in middle school right now \. \. \. ) (0 :out)
 
   1 (0)
-    2 (I quit smoking as soon as I heard my diagnosis \. Does that help at all ?) (100 :out)
-    2 (I\'ve always been healthy my entire life \. Does that improve my chances ?) (100 :out)
     2 (Do you think I could turn around ? Maybe I\'ll feel different in a few months \.) (100 :out)
+    2 (I\'ve always been healthy my entire life \. Does that improve my chances ?) (100 :out)
+)) ; END *response-tree-bargaining-now*
 
-)) ; END *response-tree-prognosis-bargaining*
+(READRULES '*response-tree-bargaining-graduation*
+; (Can I outlive your prognosis until the graduation of my grandson?)
+'(
+  
+  1 (0 Quitting smoking will not make my prognosis better 0)
+    2 ([SAD] Oh \. That\'s too bad \. I\'m glad that I quit though \. After all \, I have my grandson to think about \. Speaking of my grandson \,
+        I know the test results say one thing \, but do you think I \'ll live to see his graduation ? He\'s in middle school
+        right now \.) (0 :out)
+
+  1 (0 Quitting smoking might make my prognosis better 0)
+    2 (Thank you \. That\'s good to hear \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
+         do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
+  
+  1 (0 Quitting smoking will make my prognosis better 0)
+    2 (Thank you \. That\'s good to hear \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
+         do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
+  
+  1 (0 Healthy habits will help me outlive my prognosis 0)
+    2 (Thank you \. It\'s good to hear that will help \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
+        do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
+
+  1 (0 Healthy habits may help me outlive my prognosis 0)
+    2 (Thank you \. It\'s good to hear that might help \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
+         do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
+
+)) ; END *response-tree-bargaining-grandson*
 
 (READRULES '*response-tree-mental-health*
 ; (I feel mildly depressed 1)

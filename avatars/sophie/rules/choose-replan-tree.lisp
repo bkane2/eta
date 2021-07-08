@@ -16,6 +16,8 @@
   1 (What is my prognosis ?)
     2 *ask-about-prognosis* (100 :schema)
     ;; 2 *ask-about-prognosis* (100 :schema)
+  1 (Can I trust your prognosis ?)
+    2 *ask-if-can-outlive-prognosis-quit-smoke* (100 :schema)
   1 (What do my test results mean ?)
     2 *ask-about-test-results* (100 :schema)
   1 (Can I have a stronger pain medication ?)

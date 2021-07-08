@@ -15,8 +15,12 @@
     2 (*response-tree-prognosis*) (0 :subtrees)
   1 (Can I trust your prognosis 1)
     2 (*response-tree-prognosis-denial*) (0 :subtrees)
-  1 (Can I outlive your prognosis 1)
-    2 (*response-tree-prognosis-bargaining*) (0 :subtrees)
+  1 (Can I outlive your prognosis if I have healthy habits 1)
+    2 (*response-tree-bargaining-habits*) (0 :subtrees)
+  1 (Can I outlive your prognosis if I am healthy now 1)
+    2 (*response-tree-bargaining-now*) (0 :subtrees)
+  1 (Can I outlive your prognosis until the graduation of my grandson 1)
+    2 (*response-tree-bargaining-graduation*) (0 :subtrees)
   1 (What are the side effects of stronger pain medication 1)
     2 (*response-tree-medication*) (0 :subtrees)
   1 (Can I have a stronger pain medication 1)
@@ -81,13 +85,15 @@
   1 (Do you think radiation will help 1)
     2 (Do you think radiation is really going to help at this point ?) (0 :out)
   1 (What are my treatment options if I do not do chemotherapy 1)
-    2 (What are my treatment options if I don\'t do chemotherapy ?) (0 :out)
+    2 (I\'m not sure I\'m ready to start another treatment right now \. Are there any other options if I don\'t do chemotherapy ?) (0 :out)
   1 (I would like a refill of medicine 1)
     2 (I need a refill of my Lortab \.) (0 :out)
   1 (Will stronger pain medication help me sleep 1)
     2 (It seems like my pain is the root of my sleeping problems \. Do you think having
        stronger pain medication would help with that ?) (0 :out)
-  
+  1 (Can I outlive your prognosis if I quit smoking 1)
+    2 (I quit smoking as soon as I heard my diagnosis \. Does that help at all ?) (0 :out)
+
   ; The following are from the top-level dialogue track
   1 (How will I know if my pain medication is working 1)
     2 (I just started on my new pain medication fairly recently\, a couple weeks after radiation \.

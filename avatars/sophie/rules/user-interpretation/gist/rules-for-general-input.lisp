@@ -75,6 +75,9 @@
   1 (0 cancer-goals 0)
     2 *treatment-goals-question* (0 :subtree)
 
+  1 (0 positive-words 0)
+    2 ((Doctor expresses positive sentiment \.)) (0 :gist)
+
   ; Questions about SOPHIE's abilities/preferences
   1 (0)
     2 *open-ended-question* (0 :subtree)

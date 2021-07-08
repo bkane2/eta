@@ -9,7 +9,7 @@
   (drive drove driving)
   (appointment meeting consultation session)
   (mention say)
-  (tell told say inform informed notify notified)
+  (tell told say inform informed notify notified talk talking convey conveying)
   (chemotherapy chemo chemotherapies)
   (know aware understand)
   (bring brings)
@@ -72,7 +72,7 @@
   (less lower low decrease decreased)
   (improve improving)
   (make-better better help improve boost)
-  (odds chances prospects likelihood probability possibility potential)
+  (odds chance prospects likelihood probability possibility potential)
   (wondering asking unsure)
   (option options)
   (grow growing)
@@ -80,6 +80,17 @@
   (sound seem)
   (coffee caffeine)
   (anything something)
+  (like same similar identical comparable)
+  (now present today)
+  (hopeful-words hope hopeful confident optimistic believe upbeat)
+  (happy-words happy pleased delighted glad)
+  (positive-words hopeful-words happy-words good)
+  (spend spending devote devoting)
+  (honest truthful forthcoming forthright frank open candid direct straight straightforward upfront)
+  (available present there around attendence)
+  (reassure comfort soothe)
+  (fact facts truth)
+  (everything all full whole entire)
 
   ; ASR errors
   (talking talkin)
@@ -96,22 +107,22 @@
   (think-gen think thinking thoughts thought feel feelings feeling believe find)
   (understand-gen know-gen think-gen follow following comprehend comprehending)
   (opinion-gen opinions thought thoughts value values need needs preference preferences)
-  (frequently frequent often more much)
+  (frequently frequent often much)
   (sleep bed bedtime wake waking awake insomnia night nighttime)
   (family parents siblings sibling grandparents)
   (parent parents mother father mom dad)
-  (child children grandchild grandchildren son daughter)
+  (child children grandchild grandson grandchildren son daughter)
   (married marry marriage spouse partner husband wife)
   (before prior lead)
   (feeling feel doing)
   (work works working help helping treat treating effective)
-  (want-gen want wanting need needing)
+  (want-gen want wanting need needs needing desire desiring)
   (more-info learn hear tell say more additional elaborate)
   (predict tell say know)
   (number one number-plur)
   (number-plur two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen)
   (number-vague few some many several couple)
-  (elapsed-time-plur years months)
+  (elapsed-time-plur years months time)
   (elapsed-time year month elapsed-time-plur)
   (body-part lung lungs bone bones chest back shoulder shoulders)
   (appreciate like love enjoy)
@@ -122,13 +133,15 @@
   (ask-gen ask asking talk talking)
   (incorrect wrong mistaken)
   (unusual rare infrequent atypical unlikely impossible special odd abnormal peculiar irregular)
-  (usual likely common probable possible)
+  (usual likely common probable typical normal regular usually commonly typically normally regularly)
   (seldom rarely never infrequently)
   (exception anamoly outlier oddity deviation abnormality peculiarity irregularity)
+  (left remaining)
 
   ; Medical history
   (quit quitting stop stopping stopped forgo forgoing)
   (smoke smokes smoking smoked cigarettes cigarette tobacco)
+  (smoke-words quit smoke)
   (drink drinking drank wine alcohol beer drunk inebriated)
   (taken-drug taken take used use smoke)
   (history background past experience)
@@ -203,13 +216,14 @@
   (pain-return come back return)
   (painful unpleasant distressing)
   (pain unpleasantness suffering agony affliction discomfort hurt)
-  (pain-alleviate manage control alleviate reduce ease relieve lessen diminish allay assuage palliate moderate mollify)
+  (make-worse worse worsen harm hurt)
+  (pain-alleviate manage control alleviate reduce ease relieve lessen diminish allay assuage palliate moderate mollify improve relieving improving lessening palliating alleviating controlling managing)
 
   ; Radiation
   (radiation-help help better alleviate reduce comfort comfortable decrease decreasing)
 
   ; Comfort care
-  (comfort-care-word comfort palliative hospice care)
+  (comfort-care-word comfort palliative hospice care palliation)
   (palliative comfort)
 
   ; Prognosis
@@ -220,16 +234,23 @@
   (predictor indicator sign signal indication pointer hint)
   (second other another different)
   (idea thought)
-  (beneficial helpful useful worth great good best worthwhile)
-  (should must)
+  (beneficial helpful useful worth great good best worthwhile better)
+  (should must ought)
 
   ; Prognosis Understanding
   (treatment treatments drugs drug therapy therapies trials trial studies study)
   (experimental clinical new) 
-  (healthy health fit shape condition strong)
+  (healthy health fit shape condition strong good)
   (now today second moment present)
   (past history last former previous previously former)
-  (uncle fred relative)
+  (uncle fred relative people patients he him)
+  (prognosis-more long more further)
+
+  ; Prognosis Bargaining
+  (person-pl people patients cases)
+  (most majority all preponderance)
+  (few little couple)
+  (grad-words grandson graduation graduate)
 
   ; Sleep
   (sleep-prob problem insomnia)
@@ -237,6 +258,8 @@
   (sleep-awake awake up)
 
   ; Telling family
-  (family-pron family they)
+  (family-pron family they them)
+  (love care appreciate)
+  (gentle kind considerate understanding supportive)
 
 ))

@@ -22,6 +22,9 @@
   ;;   2 (*have-subdialogue* ((Could you tell me about some of the side effects of that ?)
   ;;                          ((Can you tell me about the side effects ?)))) (100 :schema+args)
 
+  1 (It is nice to meet me \.)
+    2 (Thank you \, it\'s nice to meet you too \.) (100 :out)
+    
   1 (0 stronger pain medication 0 help me sleep 0)
     2 *medicine-reaction* (0 :subtree)
   1 (0 sleeping poorly 0 \.)
@@ -38,6 +41,8 @@
     2 *medicine-request-reaction* (0 :subtree)
   1 (0 med-narcotic 0 \.)
     2 *medicine-request-reaction* (0 :subtree)
+  1 (0 family 0 \.)
+    2 *tell-family-reaction* (0 :subtree)
   1 (0 test results 0 \.)
     2 *test-results-reaction* (0 :subtree)
   1 (0 prognosis 0 \.)
@@ -54,10 +59,6 @@
     2 *chemotherapy-reaction* (0 :subtree)
   1 (0 comfort care 0 \.)
     2 *comfort-care-reaction* (0 :subtree)
-  1 (0 tell 1 family 0 \.)
-    2 *tell-family-reaction* (0 :subtree)
-  1 (0 family 1 know-gen 0 \.)
-    2 *tell-family-reaction* (0 :subtree)
   1 (0 side effect 3 medication 0)
     2 *medicine-side-effects-reaction* (0 :subtree)
   1 (0 cancer 2 gotten worse 0)
@@ -76,7 +77,9 @@
     2 *treatment-goals-reaction* (0 :subtree)
   1 (0 cancer-goals 0)
     2 *treatment-goals-reaction* (0 :subtree)
- 
+  1 (0 positive 0)
+    2 *positive-reaction* (0 :subtree)
+
   1 (0)
     2 *general-reaction* (0 :subtree)
 ))
@@ -118,7 +121,7 @@
     2 (Okay\.) (8 :out)
     2 (Sure\.) (8 :out)
     2 (Uh huh\.) (0 :out)
-))
+)); END *general-reaction*
 
 
 

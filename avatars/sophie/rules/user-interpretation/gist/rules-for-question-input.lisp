@@ -651,14 +651,40 @@
 ; (0 family 3 tell 0)
 '(
   ; Do your family know about your cancer / Have your family been told about your cancer ?
-  1 (0 AUX-BASE 3 family 2 know-gen 5 cancer-illness 0)
+  1 (0 AUX-BASE 3 family-pron 2 know-gen 5 cancer-illness 0)
     2 ((Do my family know about my cancer ?) (Tell-family)) (0 :gist)
-  1 (0 AUX-BASE 3 family 3 tell 5 cancer-illness 0)
+  1 (0 AUX-BASE 3 family-pron 3 tell 5 cancer-illness 0)
     2 ((Do my family know about my cancer ?) (Tell-family)) (0 :gist)
-  1 (0 wh_ 3 AUX-BASE 3 family 2 know-gen 5 cancer-illness 0)
+  1 (0 wh_ 3 AUX-BASE 3 family-pron 2 know-gen 5 cancer-illness 0)
     2 ((Do my family know about my cancer ?) (Tell-family)) (0 :gist)
-  1 (0 wh_ 3 AUX-BASE 3 family 3 tell 5 cancer-illness 0)
+  1 (0 wh_ 3 AUX-BASE 3 family-pron 3 tell 5 cancer-illness 0)
     2 ((Do my family know about my cancer ?) (Tell-family)) (0 :gist)
+
+  ; How much do I want my family to know about the prognosis ?
+  1 (0 wh_ 4 do 2 want-gen 2 family-pron 2 know-gen 0)
+    2 ((How much do I want my family to know about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 how 1 much 2 do 2 want-gen 2 family-pron 2 know-gen 0)
+    2 ((How much do I want my family to know about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 wh_ 4 do 2 want-gen 2 tell 2 family-pron 0)
+    2 ((How much do I want my family to know about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 how 1 much 2 do 2 want-gen 2 tell 2 family-pron 0)
+    2 ((How much do I want my family to know about the prognosis ?) (Tell-family)) (0 :gist)
+
+  ; Do I want you to be present when I tell my family about the prognosis ?
+  1 (0 want-gen 4 available 0)
+    2 ((Do I want you to be present when I tell my family about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 want-gen 4 with 0)
+    2 ((Do I want you to be present when I tell my family about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 want-gen 4 joint 2 appointment 0)
+    2 ((Do I want you to be present when I tell my family about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 want-gen 4 in 1 person 2 appointment 0)
+    2 ((Do I want you to be present when I tell my family about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 want-gen 4 appointment 2 with 2 family 0)
+    2 ((Do I want you to be present when I tell my family about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 want-gen 4 appointment 2 together 0)
+    2 ((Do I want you to be present when I tell my family about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 make 2 appointment 0)
+    2 ((Do I want you to be present when I tell my family about the prognosis ?) (Tell-family)) (0 :gist)
 
 )) ; END *tell-family-question*
 
