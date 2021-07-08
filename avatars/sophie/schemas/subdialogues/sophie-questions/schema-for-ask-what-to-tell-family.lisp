@@ -10,6 +10,10 @@
 '(event-schema :header (((set-of ^me ^you) ask-what-to-tell-family.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ?g1 (^me want.v (that (^me know.v (ans-to '(What should I tell my family ?)))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(What should I tell my family ?))
