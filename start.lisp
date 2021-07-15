@@ -4,7 +4,13 @@
 ;; Starts Eta using the configuration specified in config.lisp
 ;;
 
-(load "./config.lisp")
+; Load the config file corresponding to the session's agent-id.
+; TODO: could modify this to auto-generate a default config file if one doesn't exist for the agent-id.
+(load
+  (if (and (boundp '*agent-id*) *agent-id* (or (stringp *agent-id*) (numberp *agent-id*))
+           (probe-file (format nil "config/~a.lisp" *agent-id*)))
+    (format nil "config/~a.lisp" *agent-id*)
+    (format nil "config/config.lisp")))
 
 
 (defun get-io-path (fname)
