@@ -7,14 +7,23 @@
 (load "./config.lisp")
 
 
+(defun get-io-path (fname)
+;``````````````````````````
+; Yields IO path for avatar instance.
+;
+  (concatenate 'string *io-path* fname)
+) ; END get-io-path
+
+
 (defun clean-io-files ()
 ;``````````````````````````
-; Overwrites all io files used by Eta with blank files
+; Overwrites all io files used by Eta with blank files.
 ;
   (ensure-directories-exist "./io/")
-  (ensure-directories-exist "./io/in/")
-  (ensure-directories-exist "./io/out/")
-  (ensure-directories-exist "./io/user-log/")
+  (ensure-directories-exist *io-path*)
+  (ensure-directories-exist (get-io-path "in/"))
+  (ensure-directories-exist (get-io-path "out/"))
+  (ensure-directories-exist (get-io-path "user-log/"))
   (when *read-log-mode*
     (ensure-directories-exist "./logs/")
     (ensure-directories-exist "./logs/logs/")
@@ -25,9 +34,9 @@
   ;       output files are only created for non-terminal and non-audio systems
   (mapcar (lambda (system)
   (let ((fname-in (if (not (member system '(|Terminal|)))
-                  (concatenate 'string "./io/in/" (string system) ".lisp")))
+                  (concatenate 'string (get-io-path "in/") (string system) ".lisp")))
         (fname-out (if (not (member system '(|Terminal| |Audio|)))
-                  (concatenate 'string "./io/out/" (string system) ".lisp"))))
+                  (concatenate 'string (get-io-path "out/") (string system) ".lisp"))))
     (if fname-in
     (with-open-file (outfile fname-in :direction :output :if-exists
                                       :supersede :if-does-not-exist :create)))
@@ -37,19 +46,19 @@
   (append *subsystems-perception* *subsystems-specialist*))
 
   ; Delete the contents of user-log files
-  (with-open-file (outfile "./io/user-log/text.txt" :direction :output :if-exists
-                                                    :supersede :if-does-not-exist :create))
-  (with-open-file (outfile "./io/user-log/gist.txt" :direction :output :if-exists
-                                                    :supersede :if-does-not-exist :create))
-  (with-open-file (outfile "./io/user-log/ulf.txt" :direction :output :if-exists
-                                                   :supersede :if-does-not-exist :create))
+  (with-open-file (outfile (get-io-path "user-log/text.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  (with-open-file (outfile (get-io-path "user-log/gist.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  (with-open-file (outfile (get-io-path "user-log/ulf.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
 
   ; Delete the content of the sessionInfo.lisp file after reading
-  (with-open-file (outfile "./io/sessionInfo.lisp" :direction :output :if-exists
-                                                   :supersede :if-does-not-exist :create))
+  (with-open-file (outfile (get-io-path "sessionInfo.lisp")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
   ; Delete the content of output.txt, if it exists, otherwise create
-  (with-open-file (outfile "./io/output.txt" :direction :output :if-exists 
-                                             :supersede :if-does-not-exist :create))                                                                        
+  (with-open-file (outfile (get-io-path "output.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))                                                                      
 ) ; END clean-io-files
 
 
@@ -81,12 +90,25 @@
 ) ; END load-avatar-files
 
 
+
+
+
+; Set IO path based on agent ID (using basic path if no ID is defined)
+(defparameter *io-path*
+  (if (and (boundp '*agent-id*) *agent-id* (or (stringp *agent-id*) (numberp *agent-id*)))
+    (format nil "./io/~a/" *agent-id*)
+    (format nil "./io/")))
+
+
+
+
+
 ; If live mode, load *user-id* from sessionInfo file (if it exists).
 ; Otherwise, manually set *user-id* (or prompt user for input).
 ;````````````````````````````````````````````````````````````````
 (defparameter *user-id* nil)
-(if (probe-file "./io/sessionInfo.lisp")
-  (load "./io/sessionInfo.lisp"))
+(if (probe-file (get-io-path "sessionInfo.lisp"))
+  (load (get-io-path "sessionInfo.lisp")))
 (when (not *user-id*)
   (defparameter *user-id* "_test")
   ;; (format t "~%~%Enter user-id ~%")

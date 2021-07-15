@@ -2594,17 +2594,3 @@
       (error))
     (t (setq *error-check* (1+ *error-check*))))
 ) ; END error-check
-
-
-
-(defun error-message (str mode)
-;````````````````````````````````
-; Print error message to the console, and if in live mode, to output.txt
-;
-  (format t "~a~%" str)
-  (if mode
-    (with-open-file (outfile "./io/output.txt" :direction :output
-                                            :if-exists :append
-                                            :if-does-not-exist :create)
-      (format outfile "~%#: ~a" str)))
-) ; END error-message

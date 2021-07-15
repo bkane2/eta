@@ -44,19 +44,17 @@
   ; TODO: there has to be a better way of doing this...
   (when (= *output-listen-prompt* 1)
     (setq *output-count* (1+ *output-count*))
-    (with-open-file (outfile "./io/output.txt" :direction :output
-                                               :if-exists :append
-                                               :if-does-not-exist :create)
+    (with-open-file (outfile (get-io-path "output.txt")
+      :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~%*~D: dummy" *output-count*))
     (setq *output-listen-prompt* 2))
 
   ; Read from Audio input
   (setq *input* nil)
-  (load "./io/in/Audio.lisp")
+  (load (get-io-path "in/Audio.lisp"))
   (if *input*
-    (with-open-file (outfile "./io/in/Audio.lisp" :direction :output
-                                                  :if-exists :supersede
-                                                  :if-does-not-exist :create)))
+    (with-open-file (outfile (get-io-path "in/Audio.lisp")
+      :direction :output :if-exists :supersede :if-does-not-exist :create)))
   (mapcar (lambda (wff)
       ; If say-to.v argument given in string form, parse it into list form
       (if (and (equal (butlast wff) '(^you say-to.v ^me)) (stringp (car (last wff))))
@@ -75,7 +73,7 @@
 ; to return nil (nil itself cannot be used, since otherwise the program
 ; would be unable to distinguish from cases where no input is given yet)
 ;
-  (let ((fname (concatenate 'string "./io/in/" (string system) ".lisp")))
+  (let ((fname (concatenate 'string (get-io-path "in/") (string system) ".lisp")))
   (setq *input* nil)
   (cond
     ; If :block t is given, loop until non-nil input
@@ -85,9 +83,8 @@
     ; Otherwise, load file once
     (t (load fname)))
   (if *input*
-    (with-open-file (outfile fname :direction :output
-                                   :if-exists :supersede
-                                   :if-does-not-exist :create)))
+    (with-open-file (outfile fname
+      :direction :output :if-exists :supersede :if-does-not-exist :create)))
   (if (equal *input* 'None) nil *input*)
 )) ; END read-subsystem
 
@@ -98,10 +95,9 @@
 ; Writes output/"query" ULF propositions to io/out/<system>.lisp.
 ; output should be a list of propositions.
 ;
-  (let ((fname (concatenate 'string "./io/out/" (string system) ".lisp")))
-    (with-open-file (outfile fname :direction :output
-                                   :if-exists :supersede
-                                   :if-does-not-exist :create)
+  (let ((fname (concatenate 'string (get-io-path "out/") (string system) ".lisp")))
+    (with-open-file (outfile fname
+      :direction :output :if-exists :supersede :if-does-not-exist :create)
       (format outfile "(setq *output* '~s)" output))
 )) ; END write-subsystem
 
@@ -112,11 +108,9 @@
 ; Logs some user data in the corresponding log file (i.e., text, gist, or ulf).
 ; Temporarily disable pretty-printing so each line in the log file corresponds to a single turn.
 ;
-  (let ((fname (concatenate 'string "./io/user-log/" (string-downcase (string logfile)) ".txt")))
+  (let ((fname (concatenate 'string (get-io-path "user-log/") (string-downcase (string logfile)) ".txt")))
     (setq *print-pretty* nil)
-    (with-open-file (outfile fname :direction :output
-                                   :if-exists :append
-                                   :if-does-not-exist :create)
+    (with-open-file (outfile fname :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~a~%" content))
     (setq *print-pretty* t)
 )) ; END user-log
@@ -158,9 +152,8 @@
     (setq *output-count* (1+ *output-count*))
 	  
     ; Output words
-    (with-open-file (outfile "./io/output.txt" :direction :output
-                                               :if-exists :append
-                                               :if-does-not-exist :create)
+    (with-open-file (outfile (get-io-path "output.txt")
+      :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~%#~D: ~a" *output-count* wordstring))
 
     ; Also write ETA's words to standard output:
@@ -285,3 +278,16 @@
           (format outfile "(\"~a\" ~S \"~a\" ~a)~%"
             (first turn-tuple) (second turn-tuple) (format nil "~{~a~^ ~}" answer-new) feedback-new)))))
 ) ; END verify-log
+
+
+
+(defun error-message (str mode)
+;````````````````````````````````
+; Print error message to the console, and if in live mode, to output.txt
+;
+  (format t "~a~%" str)
+  (if mode
+    (with-open-file (outfile (get-io-path "output.txt")
+      :direction :output :if-exists :append :if-does-not-exist :create)
+      (format outfile "~%#: ~a" str)))
+) ; END error-message
