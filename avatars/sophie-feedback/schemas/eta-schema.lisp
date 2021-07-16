@@ -19,7 +19,7 @@
   ?e1 (:repeat-until (?e1 finished2.a)
 
     ; Prompt the user for a spatial question.
-    ?e2 (^you say-to.v ^me ?words)
+    ?e2 (^you say-to.v ^me ?input)
 
     ; Either (3a) user requests goodbye, (3b) user gives some other input.
     ?e3 (:try-in-sequence
@@ -27,7 +27,7 @@
       ; (3a)
       (:if (^you say-bye.v)
 
-        ; Store the fact that ?e1 is finished and react.
+        ; Store the fact that ?e1 is finished.
         ?e4 (^me commit-to-STM.v (that (?e1 finished2.a))))
 
       ; (3b)
@@ -84,14 +84,5 @@
 (mapcar #'(lambda (x) 
       (store-topic-keys (first x) (second x) '*eta-schema*))
   '(
-    (?e10 (sleep-poorly))
-    (?e20 (^medicine-working))
-    (?e30 (^medicine-request))
-    (?e35 (test-results))
-    (?e40 (prognosis))
-    (?e50 (treatment-option))
-    (?e60 (chemotherapy))
-    (?e70 (comfort-care))
-    (?e80 (tell-family))
   )
 ) ; END mapcar #'store-topic-keys
