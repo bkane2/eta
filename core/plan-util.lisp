@@ -642,6 +642,14 @@
       ; Attach wff to episode name (likely not used, but for convenience's sake)
       (setf (get ep-name 'wff) match)
 
+      ; Remove the matched predicate from context if a telic predicate, i.e., assume
+      ; something like (^you say-to.v ^me ...) is no longer relevant after matched once.
+      ; TODO: I'm not sure if this is a safe or realistic assumption to make... but it's
+      ; currently necessary to prevent the program from automatically looping in the case
+      ; where a :repeat-until episode consists of the user saying something and the agent
+      ; replying, since the say-to.v in the schema will keep matching the same fact in context.
+      (if (member (second match) *verbs-telic*) (remove-old-contextual-fact match))
+
       ; Advance the plan
       (advance-plan plan)))
 ) ; END inquire-truth-of-next-episode
