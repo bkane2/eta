@@ -617,24 +617,30 @@
 ; TODO: in addition to updating the plan accordingly, this should
 ; return t if the inquiry was a success, or nil otherwise.
 ; 
-  (let (curr-step ep-var ep-name wff)
+  (let (curr-step ep-var ep-name wff match)
   
     ; Get current expected step, expected wff, and episode var
     (setq curr-step (plan-curr-step plan))
     (setq ep-var (plan-step-ep-name curr-step))
     (setq wff (plan-step-wff curr-step))
 
-    ; Inquire about truth of wff in context
-    (when (get-from-context wff)
+    ; Inquire about truth of wff in context; use first match
+    (setq match (get-from-context wff))
+    (when match
+      (setq match (car match))
 
       ; Get episode name corresponding to contextual fact
-      (setq ep-name (get-episode-from-contextual-fact wff))
-
+      (setq ep-name (get-episode-from-contextual-fact match))
+      
       ; Substitute that episode name for the episode variable in the plan
       (nsubst-variable plan ep-name ep-var)
 
+      ; Make all variable substitutions needed to unify wff and match
+      (mapcar (lambda (x y) (if (and (variable? x) y) (nsubst-variable plan y x)))
+        wff match)
+
       ; Attach wff to episode name (likely not used, but for convenience's sake)
-      (setf (get ep-name 'wff) wff)
+      (setf (get ep-name 'wff) match)
 
       ; Advance the plan
       (advance-plan plan)))
