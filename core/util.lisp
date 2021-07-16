@@ -372,9 +372,9 @@
 ; Takes a character list as input. Then tokenize into a list of
 ; upper-case atoms, treating (i) any nonblank character following a
 ; blank, (ii) any non-blank nonalphanumeric character other than
-; #\', #\-, #\_ following an alphanumeric character, and (iii) any
-; alphanumeric character following a nonalphanumeric character other
-; than #\', #\-, #\_, as the start of a new atom.
+; #\', #\-, #\_, #\[, #\] following an alphanumeric character, and
+; (iii) any alphanumeric character following a nonalphanumeric character
+; other than #\', #\-, #\_, #\[, #\] as the start of a new atom.
 ;
   (let (prevch chlist chlists)
     (if (null chars) (return-from parse-chars nil))
@@ -392,10 +392,10 @@
           (and
             (alphanumericp prevch)
             (not (alphanumericp ch))
-            (not (member ch '(#\Space #\' #\- #\_) :test #'char-equal)))
+            (not (member ch '(#\Space #\' #\- #\_ #\[ #\]) :test #'char-equal)))
           (and
             (not (alphanumericp prevch))
-            (not (member prevch '(#\' #\- #\_) :test #'char-equal))
+            (not (member prevch '(#\' #\- #\_ #\[ #\]) :test #'char-equal))
             (alphanumericp ch)))
         ; If so, push the current chlist (if nonempty) onto 
         ; chlists, and start a new chlist containing ch

@@ -1896,6 +1896,7 @@
     (setq sentences (split-sentences words))
     (dolist (sentence sentences)
       (let ((tagged-sentence (mapcar #'tagword sentence)))
+        ;; (format t "~% tagged sentence = ~a" tagged-sentence) ; DEBUGGING
         (setq clause (cdr (choose-result-for tagged-sentence specific-tree)))
         (when (atom (car clause)) (setq clause (list clause))) ; in case no topic-key
         (when clause
