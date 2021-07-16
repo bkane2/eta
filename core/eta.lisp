@@ -1215,7 +1215,8 @@
           (store-semantic-interpretation-characterizing-episode user-ulf ep-name '^you '^me))
 
         ; Add the fact (^you reply-to.v <prev-step-ep-name>) to context (characterizing ep-name)
-        (store-contextual-fact-characterizing-episode `(^you reply-to.v ,prev-step-ep-name) ep-name)
+        (when prev-step-ep-name
+          (store-contextual-fact-characterizing-episode `(^you reply-to.v ,prev-step-ep-name) ep-name))
 
         ; Infer any additional facts from user gist-clauses
         ; TODO: since this is now input-driven inference rather than (gist-clause/LF) interpretation,
@@ -1226,7 +1227,7 @@
         ; TODO: currently this only supports one inferred wff per gist-clause, but it should allow multiple.
         ; NOTE: for now, we assume that each user utterance is described by only one action type,
         ; so the gist clauses are concatenated together first.
-        (setq inferred-wffs (mapcar #'form-inferences-from-gist-clause user-gist-clauses))
+        (setq inferred-wffs (remove nil (mapcar #'form-inferences-from-gist-clause user-gist-clauses)))
 
         (format t "~%Inferred wffs ~a for episode ~a~%" inferred-wffs ep-name) ; DEBUGGING
 
