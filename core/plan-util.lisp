@@ -626,6 +626,7 @@
 
     ; Inquire about truth of wff in context; use first match
     (setq match (get-from-context wff))
+    (if (equal match T) (setq match (list wff)))
     (when match
       (setq match (car match))
 
