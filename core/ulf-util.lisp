@@ -509,12 +509,12 @@
 
 (defun time-adverbial-phrase? (ulf)
 ;```````````````````````````````````
-; Checks if a ULF is a time adverbial phrase, i.e. either (adv-e ...), (word.ps ...),
-; or (word.mod-a (word.ps ...))
+; Checks if a ULF is a time adverbial phrase, i.e. either (adv-e ...), (temporal-word.ps ...),
+; or (word.mod-a (temporal-word.ps ...))
 ;
   (or
-    (ttt:match-expr '(mod-a? (sent-prep? _!)) ulf)
-    (ttt:match-expr '(sent-prep? _!) ulf)
+    (ttt:match-expr '(mod-a? (temporal-sent-prep? _!)) ulf)
+    (ttt:match-expr '(temporal-sent-prep? _!) ulf)
     (ttt:match-expr '(adv-e _!) ulf))
 ) ; END time-adverbial-phrase?
 
@@ -597,6 +597,14 @@
 ;
   (and (atom ulf) (equal (second (sym-split ulf 3)) '.PS))
 ) ; END sent-prep?
+
+
+(defun temporal-sent-prep? (ulf)
+;`````````````````````````````````````
+; Checks if a ULF belongs to a subset of sentential prepositions that indicate temporal relations.
+;
+  (member ulf '(before.ps after.ps while.ps during.ps until.ps))
+) ; END temporal-sent-prep?
 
 
 (defun ps-to-p! (ulf)
