@@ -80,7 +80,10 @@
         (ttt:apply-rule `(/ descr-flag? ,ans-ulf) query-ulf))
       ; Query is TIME type
       ((equal query-type 'TIME)
-        (ttt:apply-rule `(/ time-flag? ,ans-ulf) query-ulf)))))
+        (ttt:apply-rule `(/ time-flag? ,ans-ulf) query-ulf))
+      ; Query is EXPLANATION type
+      ((equal query-type 'EXPLANATION)
+        (ttt:apply-rule `(/ explanation-flag? ,ans-ulf) query-ulf)))))
 
     ; When answer is uncertain, append an adverb indicating uncertainty to answer
     (when uncertain-flag
@@ -138,6 +141,7 @@
     ((ttt:match-expr '(^* ident-flag?) ulf) 'IDENT)
     ((ttt:match-expr '(^* count-flag?) ulf) 'COUNT)
     ((ttt:match-expr '(^* exist-flag?) ulf) 'EXIST)
+    ((ttt:match-expr '(^* explanation-flag?) ulf) 'EXPLANATION)
     (t 'CONFIRM))
 ) ; END get-query-type
 
@@ -186,6 +190,9 @@
       ; Query is TIME type
       ((equal query-type 'TIME)
         (form-ans-time ans-set))
+      ; Query is EXPLANATION type
+      ((equal query-type 'EXPLANATION)
+        (form-ans-explanation ans-set))
       ; Other
       (t
         '(Sorry \, I was unable to find an object that satisfies given constraints \, please rephrase in a simpler way \.))))
@@ -400,6 +407,83 @@
 ) ; END form-ans-time
 
 
+(defun form-ans-explanation (relations)
+; ``````````````````````````````````````
+; TODO
+;
+; e.g. (form-ans-explanation '(((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n)))
+;                              ((the.d (|Twitter| block.n)) on.p (the.d (|McDonald's| block.n))) ))
+;       => (because.ps (set-of ((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n)))
+;                              ((the.d (|Twitter| block.n)) on.p (the.d (|McDonald's| block.n)))))
+;
+; e.g. (form-ans-explanation '(((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n)))))
+;      => (because.ps ((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n))))
+;
+; Why is the twitter block on the texaco block?
+; (setq *input* '(((that ((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n)))) certain-to-degree 1.0)))
+; (setq *input* '(((that  ) certain-to-degree 1.0)))
+;
+;
+;
+;
+;
+; frame size (the size of the salient part of the scene)
+;
+; raw distance (distance between objects)
+; (setq *input* '(((that ((the.d (n+preds (raw.n distance.n) (of.p (set-of (the.d (|Twitter| block.n)) (the.d (|Texaco| block.n)))))) ((pres be.v) (= 1.5))) ) certain-to-degree 1.0)))
+; => "because the distance between the Twitter block and the Texaco block is 1.5"
+; => (because.ps ())
+; scaled raw distance (distance divided by the size of the objects)
+; (setq *input* '(((that ((the.d (n+preds (scaled.n raw.n distance.n) (of.p (set-of (the.d (|Twitter| block.n)) (the.d (|Texaco| block.n)))))) ((pres be.v) (= 1.5))) ) certain-to-degree 1.0)))
+; => "because the distance between the Twitter block and the Texaco block divided by the size of the objects is 1.5"
+; => (because.ps ())
+;
+; horizontal deictic component (horizontal offset of two objects as it appears to the viewer)
+; vertical deictic component (vertical offset of two objects as it appears to the viewer)
+;
+; right of deictic raw (right of deictic score before applying the argument rank rescale)
+; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_deictic_raw.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
+; => "because the Twitter block is to the right of the Texaco block from the perspective of the viewer, before applying the argument rank rescale" (?)
+; => (because.ps ())
+; right of deictic
+; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_deictic.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
+; => "because the Twitter block is to the right of the Texaco block from the perspective of the viewer" (?)
+; => (because.ps ())
+; right of extrinsic raw (same as with deictic)
+; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_extrinsic_raw.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
+; right of extrinsic
+; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_extrinsic.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
+; right of intrinsic raw (same as with deictic)
+; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_intrinsic_raw.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
+; right of intrinsic
+; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_intrinsic.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
+; near raw (nearness score before applying thte argument rank rescale and argument size rescale)
+; (setq *input* '(((that ((the.d (|Twitter| block.n)) near_raw.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
+; => "because the Twitter block is near the Texaco block before applying the argument rank rescale and argument size rescale" (?)
+; => (because.ps ())
+;
+; near
+; touching
+;
+; direction (checks whther an object is in a particular direction from a point)
+; distance decay (1 if the objects coincide, then approaches 0 as objects are mved farther apart)
+; argument size rescale (rescales the score for a relation based on the relative sizes of arguments)
+; argument rank rescale (rescales the score for a relation based on the rank of the current argument object; lower the rank, lower the rescaled value)
+;
+; supported by
+; indirectly supported by
+;
+; larger than
+; taller than
+; centroidwise higher than (relative elevation based on the centers' locations)
+; basewise higher than (relative elevation based on the bottoms' locations)
+; higher than
+; at the same height
+;
+  (list 'because.ps (make-set relations))
+) ; END form-ans-explanation
+
+
 (defun compare-certainty (relation)
 ; ```````````````````````````````````
 ; Compares certainty of relation to the global threshold parameter.
@@ -558,6 +642,9 @@
 
 (defun color-flag? (p)
   (ttt:match-expr '(OF.P (WHAT.D (! COLOR.N (PLUR COLOR.N)))) p))
+
+(defun explanation-flag? (p)
+  (ttt:match-expr '(! WHY.ADV-S) p))
 
 (defun yn-word? (p)
   (member p '(BE.V DO.AUX-S DO.AUX-V CAN.AUX-S CAN.AUX-V)))
