@@ -69,6 +69,8 @@
 
   (reason reasons reasoning justification justifications explanation explanations)
 
+  (adv-explain why how)
+
   (verb-rel-past touched supported connected consisted_of sat adjoined flanked
       faced moved puts changed picked_up rotated placed)
 

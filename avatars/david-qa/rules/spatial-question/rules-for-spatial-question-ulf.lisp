@@ -101,21 +101,21 @@
 ;
 '(
     ; explanation questions
-    1 (why 0 between 0)
-       2 (why be 0 between 0)
+    1 (adv-explain 0 between 0)
+       2 (adv-explain be 0 between 0)
           3 (((*yn-between-question-ulf-tree* 2 3 4 5)) ((why.adv-s 1) ?)) (0 :ulf-recur)
-       2 (why do 0 between 0)
+       2 (adv-explain do 0 between 0)
           3 (((*do-question-ulf-tree* 2 3 4 5)) ((why.adv-s 1) ?)) (0 :ulf-recur)
-    1 (why 0)
-       2 (why be not np-bw 0)
+    1 (adv-explain 0)
+       2 (adv-explain be not np-bw 0)
           3 (((*yn-question-ulf-tree* 2 3 4 5)) ((why.adv-s 1) ?)) (0 :ulf-recur)
-       2 (why be not there 0)
+       2 (adv-explain be not there 0)
           3 (((*exist-question-ulf-tree* 2 3 4 5)) ((why.adv-s 1) ?)) (0 :ulf-recur)
-       2 (why be np-bw 0)
+       2 (adv-explain be np-bw 0)
           3 (((*yn-question-ulf-tree* 2 3 4)) ((why.adv-s 1) ?)) (0 :ulf-recur)
-       2 (why be there 0)
+       2 (adv-explain be there 0)
           3 (((*exist-question-ulf-tree* 2 3 4)) ((why.adv-s 1) ?)) (0 :ulf-recur)
-       2 (why do 0)
+       2 (adv-explain do 0)
           3 (((*do-question-ulf-tree* 2 3)) ((why.adv-s 1) ?)) (0 :ulf-recur)
 
     ; "is/are"-questions
