@@ -143,7 +143,9 @@
     ; Write ETA's words to "./io/output.txt" as a continuous string
     ; (preceded by the output count and a colon)
     (dolist (word wordlist)
-      (push (string word) wordstring)
+      (if (numberp word)
+        (push (write-to-string word) wordstring)
+        (push (string word) wordstring))
       (push " " wordstring))
     (setq wordstring (reverse (cdr wordstring)))
     (setq wordstring (eval (cons 'concatenate (cons ''string wordstring))))
