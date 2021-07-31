@@ -58,8 +58,8 @@
                ; to which Spatial-QA-Server sends the answer (with weighted
                ; alternates); once ; the answer is read off, the file would
                ; be emptied.
-              ?e5 (^me conditionally-say-to.v ^you ?ulf ?ans-relations)
-              ;; ?e5 (^me conditionally-say-to.v you (main-answer.f ?ans+alternates))
+              ?e5 (^me conditionally-paraphrase-to.v ^you ?ulf ?ans-relations)
+              ;; ?e5 (^me conditionally-paraphrase-to.v you (main-answer.f ?ans+alternates))
                ; here ?ans is split off from ?ans+alternates;
                ; "conditionally say to you" would normally expand
                ; into just (^me say-to.v you '?ans); but I'm thinking
