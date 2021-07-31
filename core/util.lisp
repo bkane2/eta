@@ -420,25 +420,53 @@
 ; Converts a string to a list of words/punctuation to output
 ; TEST: "The next step be putting the Twitter block on the Texaco block."
 ; 
-  (let ((char-list (coerce str 'list)) word words)
+  (let ((char-list (coerce str 'list)) word words number-flag res)
     (dolist (c char-list)
       (cond
         ; If space, add accumulated word to word list and clear word
         ((member c '(#\ ) :test #'char-equal)
           (if word (setq words (cons (reverse word) words)))
           (setq word nil))
+        ; If character is digit, ignore periods until the next non-digit
+        ((digit-char-p c)
+          (setq number-flag t)
+          (setq word (cons c word)))
         ; If punctuation, add accumulated word to word list, clear word,
         ; and add punctuation to word list
-        ((member c '(#\. #\, #\' #\") :test #'char-equal)
+        ((member c '(#\, #\' #\") :test #'char-equal)
           (if word (setq words (cons (reverse word) words)))
           (setq word nil)
           (setq words (cons (intern (coerce (list c) 'string)) words)))
+        ; If period, check whether currently reading a number
+        ((and (member c '(#\.) :test #'char-equal) (not number-flag))
+          (if word (setq words (cons (reverse word) words)))
+          (setq word nil)
+          (setq words (cons (intern (coerce (list c) 'string)) words)))
+        ; If non-digit and currently reading a number, add accumulated word
+        ; to word list, splitting off the final period (if any)
+        ((and (not (digit-char-p c)) (not (equal #\. c)) number-flag)
+          (cond
+            ((and word (equal #\. (car word)))
+              (if (cdr word) (setq words (cons (reverse (cdr word)) words)))
+              (setq words (cons (intern ".") words)))
+            (t (setq words (cons (reverse word) words))))
+          (setq word (list c))
+          (setq number-flag  nil))
         ; Otherwise, add current character to accumulated word
         (t
           (setq word (cons c word)))))
+    ; Add any remainder word
+    (cond
+      ((and word (equal #\. (car word)))
+        (if (cdr word) (setq words (cons (reverse (cdr word)) words)))
+        (setq words (cons (intern ".") words)))
+      (word (setq words (cons (reverse word) words))))
+
     ; Read list of word symbols from list of strings.
-    (reverse (mapcar (lambda (w)
+    (setq res (reverse (mapcar (lambda (w)
       (if (listp w) (read-from-string (coerce w 'string)) w)) words)))
+    ; Ensure any numbers are symbols
+    (mapcar (lambda (w) (if (numberp w) (intern (write-to-string w)) w)) res))
 ) ; END str-to-output
 
 
@@ -700,6 +728,9 @@
 
   ; Check if non-empty
   (if (not (get word 'feats)) (return-from tagword (list word)))
+
+  ; Convert to symbol if necessary
+  (if (numberp word) (setq word (intern (write-to-string word))))
 
   (let (words feats feat)
     (setq feats (get word 'feats))
@@ -2280,6 +2311,18 @@
     `(^me say-to.v ^you (quote ,content))
     `(^you say-to.v ^me (quote ,content)))
 ) ; END create-say-to-wff
+
+
+
+(defun create-paraphrase-to-wff (content &key reverse)
+;``````````````````````````````````````````````````````
+; Creates and returns a wff consisting of a (^me paraphrase-to.v ^you '(...))
+; action, or a (^you paraphrase-to.v ^me '(...)) action if :reverse t is given.
+;
+  (if (not reverse)
+    `(^me paraphrase-to.v ^you (quote ,content))
+    `(^you paraphrase-to.v ^me (quote ,content)))
+) ; END create-paraphrase-to-wff
 
 
 

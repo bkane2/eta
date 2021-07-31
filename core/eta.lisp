@@ -927,6 +927,30 @@
             (list :episodes (episode-var) (create-say-to-wff ans)))))
 
       ;````````````````````````````
+      ; Eta: Conditionally paraphrasing
+      ;````````````````````````````
+      ; TODO: I'm not really fond of the way that this is handled currently. It seems like
+      ; getting an answer binding from an external system, and communicating that answer,
+      ; should be two separate steps in the schema.
+      ((setq bindings (bindings-from-ttt-match '(^me conditionally-paraphrase-to.v ^you _! _!1) wff))
+        (setq user-ulf (get-single-binding bindings))
+        (setq bindings (cdr bindings))
+        (setq expr (get-single-binding bindings))
+        ; Generate response gist based on list of relations
+        (cond
+          ((not (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
+            (setq ans '(Could not form final answer \: |Spatial-Reasoning-System| not registered \.)))
+          (t (setq ans (generate-response (eval user-ulf) (eval expr)))))
+        (format t "gist answer to output: ~a~%" ans) ; DEBUGGING
+        ; If in read-log mode, append answer gist to list of new log answers
+        (when *read-log*
+          (setq *log-answer* ans))
+        ; Create paraphrase-to.v subplan from answer
+        (setq new-subplan
+          (init-plan-from-episode-list
+            (list :episodes (episode-var) (create-paraphrase-to-wff ans)))))
+
+      ;````````````````````````````
       ; Eta: Proposing
       ;````````````````````````````
       ((setq bindings (bindings-from-ttt-match '(^me propose1-to.v ^you _!) wff))
