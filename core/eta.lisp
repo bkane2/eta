@@ -2084,15 +2084,15 @@
 ; This is just the top-level call to 'choose-result-for', with
 ; no prior match providing a value of 'parts', i.e., 'parts' = nil;
 ; this is to enable tracing of just the top-level calls
-  (choose-result-for1 tagged-clause nil rule-node)
+  (choose-result-for1 tagged-clause nil rule-node nil)
 ) ; END choose-result-for
 
 
 
 
 
-(defun choose-result-for1 (tagged-clause parts rule-node)
-;`````````````````````````````````````````````````````````
+(defun choose-result-for1 (tagged-clause parts rule-node visited-subtrees)
+;``````````````````````````````````````````````````````````````````````````
 ; This is a generic choice-tree search program, used both for
 ; (i) finding gist clauses in user inputs (starting with selection
 ; of appropriate subtrees as a function of Eta's preceding
@@ -2225,6 +2225,9 @@
 ; in the value pattern are interpreted as references to parts
 ; obtained from the prior match.) 
 ;
+; The function maintains a list of visited subtrees
+; (for a particular path) to avoid entering infinite recursion.
+;
 
   ; First make sure we have the lexical code needed for ULF computation
   (if (not (fboundp 'eval-lexical-ulfs)) (load "eval-lexical-ulfs.lisp"))
@@ -2242,7 +2245,7 @@
             (< *count* (+ (get rule-node 'time-last-used)
                           (get rule-node 'latency))))
       (return-from choose-result-for1
-        (choose-result-for1 tagged-clause parts (get rule-node 'next))))
+        (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees)))
 
     ;; (format t "~% ***1*** Tagwords = ~a ~%" tagged-clause) ; DEBUGGING
     ;; (format t "~% =====2==== Pattern/output to be matched in rule ~a = ~%  ~a and directive = ~a" rule-node pattern directive) ; DEBUGGING
@@ -2263,15 +2266,15 @@
         ; Pattern does not match 'tagged-clause', search siblings recursively
         (if (null newparts)
           (return-from choose-result-for1
-            (choose-result-for1 tagged-clause parts (get rule-node 'next))))
+            (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees)))
 
         ; Pattern matched, try to obtain recursive result from children
         (setq result
-          (choose-result-for1 tagged-clause newparts (get rule-node 'children)))
+          (choose-result-for1 tagged-clause newparts (get rule-node 'children) visited-subtrees))
 
         (if result (return-from choose-result-for1 result)
                    (return-from choose-result-for1
-                      (choose-result-for1 tagged-clause parts (get rule-node 'next)))))
+                      (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees))))
 
       ;`````````````````````
       ; :subtree directive
@@ -2280,8 +2283,14 @@
       ; root name, given as 'pattern'
       ((eq directive :subtree)
         (setf (get rule-node 'time-last-used) *count*)
-        (return-from choose-result-for1
-          (choose-result-for1 tagged-clause parts pattern)))
+        (cond
+          ; If subtree was already visited, skip rule
+          ((member pattern visited-subtrees)
+            (return-from choose-result-for1
+              (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees)))
+          ; Otherwise, go to subtree and add subtree to list of visited subtrees
+          (t (return-from choose-result-for1
+            (choose-result-for1 tagged-clause parts pattern (cons pattern visited-subtrees))))))
 
       ;````````````````````````````
       ; :subtree+clause directive
@@ -2296,8 +2305,14 @@
         (setf (get rule-node 'time-last-used) *count*)
         (setq newclause (instance (second pattern) parts))
         (setq new-tagged-clause (mapcar #'tagword newclause))
-        (return-from choose-result-for1
-          (choose-result-for1 new-tagged-clause nil (car pattern))))
+        (cond
+          ; If subtree was already visited, skip rule
+          ((member (car pattern) visited-subtrees)
+            (return-from choose-result-for1
+              (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees)))
+          ; Otherwise, go to subtree and add subtree to list of visited subtrees
+          (t (return-from choose-result-for1
+            (choose-result-for1 new-tagged-clause nil (car pattern) (cons (car pattern) visited-subtrees))))))
 
       ;````````````````````````
       ; :ulf-recur directive
@@ -2363,7 +2378,7 @@
       ((eq directive :ulf-coref)
         (setq newclause (instance (second pattern) parts))
         (setq new-tagged-clause (mapcar #'tagword newclause))
-        (setq result (choose-result-for1 new-tagged-clause nil (car pattern)))
+        (setq result (choose-result-for1 new-tagged-clause nil (car pattern) visited-subtrees))
         (if (and result (not (equal (car result) :out)))
           (setq result (coref-ulf result)))
         (return-from choose-result-for1 result))
