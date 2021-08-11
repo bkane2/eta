@@ -9,6 +9,12 @@
   ;; 1 (0 [SEP] 0)
   ;;   2 ((An input was found \: 1 and 3 \.)) (0 :gist)
 
+  ; Temporary example for testing
+  1 (0 results 0 NEG understand 0 explain 0 what they mean [SEP] 0)
+    2 (0 [SEP] 0 WH_ worries you the most 0)
+      3 ((The doctor asked an open ended question \.)) (0 :gist)
+    2 ((question-suggestion \: what worries you the most ?)) (0 :gist)
+
   ; Top-level nodes match SOPHIE's responses where we previously had opportunity tags
   1 (WH_ does this mean for my future [SEP] 0)
     ; Second-level nodes detect whether user asked an open-ended question or not
