@@ -376,6 +376,9 @@
 ; (iii) any alphanumeric character following a nonalphanumeric character
 ; other than #\', #\-, #\_, #\[, #\] as the start of a new atom.
 ;
+  ; remove any newline characters from chars
+  (setq chars (remove #\Linefeed (remove #\Return chars)))
+
   (let (prevch chlist chlists)
     (if (null chars) (return-from parse-chars nil))
     ; Form a list of character sublists, each sublist to be made
