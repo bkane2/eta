@@ -2305,14 +2305,9 @@
         (setf (get rule-node 'time-last-used) *count*)
         (setq newclause (instance (second pattern) parts))
         (setq new-tagged-clause (mapcar #'tagword newclause))
-        (cond
-          ; If subtree was already visited, skip rule
-          ((member (car pattern) visited-subtrees)
-            (return-from choose-result-for1
-              (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees)))
-          ; Otherwise, go to subtree and add subtree to list of visited subtrees
-          (t (return-from choose-result-for1
-            (choose-result-for1 new-tagged-clause nil (car pattern) (cons (car pattern) visited-subtrees))))))
+        (return-from choose-result-for1
+          (choose-result-for1 new-tagged-clause nil (car pattern)
+            (remove-duplicates (cons (car pattern) visited-subtrees)))))
 
       ;````````````````````````
       ; :ulf-recur directive
