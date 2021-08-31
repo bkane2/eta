@@ -465,6 +465,9 @@
         (setq words (cons (intern ".") words)))
       (word (setq words (cons (reverse word) words))))
 
+    ; Remove any NIL values from words
+    (setq words (remove nil words))
+
     ; Read list of word symbols from list of strings.
     (setq res (reverse (mapcar (lambda (w)
       (if (listp w) (read-from-string (coerce w 'string)) w)) words)))
