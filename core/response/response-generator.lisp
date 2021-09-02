@@ -409,78 +409,21 @@
 
 (defun form-ans-explanation (relations)
 ; ``````````````````````````````````````
-; TODO
+; Creates a ULF for an explanation query from a list of factor relations, by converting
+; relations to copular expressions and adding 'also.cc' conjunctions (if necessary).
 ;
 ; e.g. (form-ans-explanation '(((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n)))
 ;                              ((the.d (|Twitter| block.n)) on.p (the.d (|McDonald's| block.n))) ))
-;       => (because.ps (set-of ((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n)))
-;                              ((the.d (|Twitter| block.n)) on.p (the.d (|McDonald's| block.n)))))
+;       => (because.ps (((the.d (|Twitter| block.n)) ((pres be.v) (on.p (the.d (|Texaco| block.n))))) also.cc
+;                       ((the.d (|Twitter| block.n)) ((pres be.v) (on.p (the.d (|McDonald's| block.n)))))))
 ;
 ; e.g. (form-ans-explanation '(((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n)))))
-;      => (because.ps ((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n))))
+;      => (because.ps ((the.d (|Twitter| block.n)) ((pres be.v) (on.p (the.d (|Texaco| block.n))))))
 ;
-; Why is the twitter block on the texaco block?
-; (setq *input* '(((that ((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n)))) certain-to-degree 1.0)))
-; (setq *input* '(((that  ) certain-to-degree 1.0)))
-;
-;
-;
-;
-;
-; frame size (the size of the salient part of the scene)
-;
-; raw distance (distance between objects)
-; (setq *input* '(((that ((the.d (n+preds (raw.n distance.n) (of.p (set-of (the.d (|Twitter| block.n)) (the.d (|Texaco| block.n)))))) ((pres be.v) (= 1.5))) ) certain-to-degree 1.0)))
-; => "because the distance between the Twitter block and the Texaco block is 1.5"
-; => (because.ps ())
-; scaled raw distance (distance divided by the size of the objects)
-; (setq *input* '(((that ((the.d (n+preds (scaled.n raw.n distance.n) (of.p (set-of (the.d (|Twitter| block.n)) (the.d (|Texaco| block.n)))))) ((pres be.v) (= 1.5))) ) certain-to-degree 1.0)))
-; => "because the distance between the Twitter block and the Texaco block divided by the size of the objects is 1.5"
-; => (because.ps ())
-;
-; horizontal deictic component (horizontal offset of two objects as it appears to the viewer)
-; vertical deictic component (vertical offset of two objects as it appears to the viewer)
-;
-; right of deictic raw (right of deictic score before applying the argument rank rescale)
-; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_deictic_raw.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
-; => "because the Twitter block is to the right of the Texaco block from the perspective of the viewer, before applying the argument rank rescale" (?)
-; => (because.ps ())
-; right of deictic
-; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_deictic.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
-; => "because the Twitter block is to the right of the Texaco block from the perspective of the viewer" (?)
-; => (because.ps ())
-; right of extrinsic raw (same as with deictic)
-; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_extrinsic_raw.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
-; right of extrinsic
-; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_extrinsic.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
-; right of intrinsic raw (same as with deictic)
-; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_intrinsic_raw.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
-; right of intrinsic
-; (setq *input* '(((that ((the.d (|Twitter| block.n)) to_the_right_of_intrinsic.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
-; near raw (nearness score before applying thte argument rank rescale and argument size rescale)
-; (setq *input* '(((that ((the.d (|Twitter| block.n)) near_raw.p (the.d (|Texaco| block.n))) ) certain-to-degree 1.0)))
-; => "because the Twitter block is near the Texaco block before applying the argument rank rescale and argument size rescale" (?)
-; => (because.ps ())
-;
-; near
-; touching
-;
-; direction (checks whther an object is in a particular direction from a point)
-; distance decay (1 if the objects coincide, then approaches 0 as objects are mved farther apart)
-; argument size rescale (rescales the score for a relation based on the relative sizes of arguments)
-; argument rank rescale (rescales the score for a relation based on the rank of the current argument object; lower the rank, lower the rescaled value)
-;
-; supported by
-; indirectly supported by
-;
-; larger than
-; taller than
-; centroidwise higher than (relative elevation based on the centers' locations)
-; basewise higher than (relative elevation based on the bottoms' locations)
-; higher than
-; at the same height
-;
-  (list 'because.ps (make-set relations))
+  ; NOTE: uses 'also' connective so that we can later cleanly split off factors
+  ;       when generating a response from the gist clause.
+  (list 'because.ps (make-conjunction (mapcar #'prop-to-cop relations) :conj 'ALSO.CC))
+  ;; (list 'because.ps (make-set relations))
 ) ; END form-ans-explanation
 
 

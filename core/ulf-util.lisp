@@ -1084,12 +1084,35 @@
 ) ; END make-set
 
 
+(defun make-conjunction (list &key (conj 'AND.CC))
+;```````````````````````````````````````````````````````````
+; Makes a list of conjunctions of the elements of a list, if multiple elements.
+; i.e., (|A| and.cc |B| and.cc |C| ...)
+; If list has only a single element, just return that element.
+;
+  (if (<= (length list) 1) (car list)
+    (cdr (apply #'append (mapcar (lambda (elem) (list conj elem)) list))))
+) ; END make-conjunction
+
+
 (defun copulative? (v)
 ;``````````````````````
 ; Checks whether v is a copulative verb, e.g. be.v
 ;
   (member v '(be.v))
 ) ; END copulative?
+
+
+(defun prop-to-cop (ulf)
+;`````````````````````````
+; Converts a proposition ULF to a copulative expression, e.g.,
+; (|A| on.p |B|) => (|A| ((pres be.v) (on.p |B|)))
+;
+  (if (relation-prop? ulf)
+    (let ((subj (car ulf)) (rst (cdr ulf)))
+      `(,subj ((pres be.v) ,(if (= 1 (length rst)) (car rst) rst))))
+    ulf)
+) ; END prop-to-cop
 
 
 (defun equal-prop? (prop)
@@ -1132,15 +1155,18 @@
 ;`````````````````````````````
 ; Checks whether a proposition is a relation, i.e. ((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n))),
 ; or ((the.d (|Twitter| block.n)) central.a)
+; TODO: function is messy and should be refactored
 ;
   (and (listp prop) (or
+    ; (|A| red.a) or (|A| (very.mod-a red.a))
     (and
-      (or (np? (first prop)) (nnp? (first prop)) (restricted-variable? (first prop)))
+      (or (np? (first prop)) (nnp? (first prop)) (restricted-variable? (first prop)) (proper-name? (first prop)))
       (or (adj? (second prop))
           (and (listp (second prop)) (mod-a? (first (second prop))) (adj? (second (second prop))))))
+    ; (|A| on.p |B|) or (|A| = |B|) or (|A| (directly.adv-a on.p) |B|)
     (and
-      (or (np? (first prop)) (nnp? (first prop)) (restricted-variable? (first prop)))
-      (or (np? (first prop)) (nnp? (third prop)) (restricted-variable? (third prop)))
+      (or (np? (first prop)) (nnp? (first prop)) (restricted-variable? (first prop)) (proper-name? (first prop)))
+      (or (np? (first prop)) (nnp? (third prop)) (restricted-variable? (third prop)) (proper-name? (third prop)))
       (or (prep? (second prop))
           (and (listp (second prop)) (adv-a? (first (second prop))) (prep? (second (second prop))))
           (equal '= (second prop))))))

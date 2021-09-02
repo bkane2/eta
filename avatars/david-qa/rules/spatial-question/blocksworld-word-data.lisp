@@ -92,6 +92,8 @@
            tenth eleventh twelfth thirteenth fourteenth fifteenth sixteenth
            seventeens eighteenth nineteenth twentieth)
   (diff-adj other different same distinct separate unique)
+  (compare-adj further closer nearer higher lower taller shorter larger smaller
+               longer wider narrower)
   (adj-bw qual-adj rel-adj num-adj sup-adj ord-adj diff-adj)
   (mod-n adj-bw corp)
 
