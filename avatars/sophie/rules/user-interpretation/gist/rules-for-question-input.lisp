@@ -542,7 +542,11 @@
     2 ((Did my doctor mention chemotherapy ?) (Chemotherapy)) (0 :gist)
 
   ; What do you think about chemotherapy?
-  1 (0 think-gen 3 chemotherapy 0)
+  1 (0 wh_ 4 think-gen 4 chemotherapy 0)
+    2 ((What are my feelings about chemotherapy ?) (Chemotherapy)) (0 :gist)
+  1 (0 AUX-BASE 4 want-gen 4 chemotherapy 0)
+    2 ((What are my feelings about chemotherapy ?) (Chemotherapy)) (0 :gist)
+  1 (0 opinion-gen 2 on 2 chemotherapy 0)
     2 ((What are my feelings about chemotherapy ?) (Chemotherapy)) (0 :gist)
 
   1 (0 AUX-BASE 3 you 2 understand-gen 4 chemotherapy 0)
@@ -564,16 +568,32 @@
 ; (0 palliative care 0)
 ; (0 hospice 0)
 '(
+
+  ; Do I understand how comfort care works ?
+  1 (0 AUX-BASE 2 know-gen 3 comfort-care-word 0)
+    2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
+  1 (0 be 2 know 3 comfort-care-word 0)
+    2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
+  1 (0 AUX-BASE 2 heard 3 comfort-care-word )
+    2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
+  1 (0 wh_ 4 know-gen 3 comfort-care-word 0)
+    2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
+  1 (0 wh_ 3 heard 3 comfort-care-word 0)
+    2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
+  1 (0 AUX-BASE 4 mention 4 comfort-care-word 0)
+    2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
+  1 (0 AUX-BASE 3 tell 3 comfort-care-word 0)
+    2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist) 
+  
+  1 (0 AUX-BASE 3 you 2 understand-gen 6 comfort-care-word 0)
+    2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
+
   ; Have you considered comfort care?
   1 (1 AUX-BASE pron 4 thought 4 comfort-care-word 0)
-    2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
-  1 (1 AUX-BASE 4 mention 4 comfort-care-word 0)
     2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
   1 (1 AUX-BASE 4 you 1 feeling 4 comfort-care-word 0)
     2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
 
-  1 (0 AUX-BASE 3 you 2 understand-gen 6 comfort-care-word 0)
-    2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
 
   ; asking if system has any questions
   1 (0 you 2 have 2 question-word 0)
@@ -637,6 +657,28 @@
   1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
     2 ((Do I have a question about my prognosis ?)) (0 :gist)
 
+  ; How much do I want to know about my prognosis ?
+  1 (0 how much 3 information 3 AUX 1 you 0)
+    2 ((How much information do I want about my prognosis ?)) (0 :gist)
+  1 (0 how much 3 information 3 I 3 you 0)
+    2 ((How much information do I want about my prognosis ?)) (0 :gist)
+  1 (0 how much 3 AUX 3 I 3 want-gen 3 know 0)
+    2 ((How much information do I want about my prognosis ?)) (0 :gist)
+  1 (0 how much 3 I 3 tell 3 you 0)
+    2 ((How much information do I want about my prognosis ?)) (0 :gist)
+
+  ; What is the prognosis that was given to me previously ?
+  1 (0 wh_ 4 be 4 prognosis 0)
+    2 ((What is the prognosis that was given to me previously ?) (Prognosis)) (0 :gist)
+  1 (0 tell 4 wh_ 4 prognosis 4 be 0)
+    2 ((What is the prognosis that was given to me previously ?) (Prognosis)) (0 :gist)
+  1 (0 AUX-BASE 4 know-gen 4 prognosis 0)
+    2 ((What is the prognosis that was given to me previously ?) (Prognosis)) (0 :gist)
+  1 (0 MODAL 4 tell 4 prognosis 0)
+    2 ((What is the prognosis that was given to me previously ?) (Prognosis)) (0 :gist)
+  1 (0 NEG 2 prognosis-notification-words 4 prognosis 0)
+    2 ((What is the prognosis that was given to me previously ?) (Prognosis)) (0 :gist)
+
 )) ; END *prognosis-question*
 
 
@@ -685,6 +727,51 @@
     2 ((Do I want you to be present when I tell my family about the prognosis ?) (Tell-family)) (0 :gist)
   1 (0 make 2 appointment 0)
     2 ((Do I want you to be present when I tell my family about the prognosis ?) (Tell-family)) (0 :gist)
+
+  ; Who in my family do I want to tell about the prognosis ?
+  1 (0 who 3 be 3 tell 0)
+    2 ((Who in my family do I want to tell about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 who 2 AUX-BASE 4 want-gen 2 tell 0)
+    2 ((Who in my family do I want to tell about the prognosis ?) (Tell-family)) (0 :gist)
+  1 (0 who 6 want-gen 3 tell 0)
+    2 ((Who in my family do I want to tell about the prognosis ?) (Tell-family)) (0 :gist)
+
+  ; How much do I want to know about my test results ?
+  1 (0 how much 3 information 3 AUX 1 you 0)
+    2 ((How much information do you want about your test results ?)) (0 :gist)
+  1 (0 how much 3 information 3 I 3 you 0)
+    2 ((How much information do you want about your test results ?)) (0 :gist)
+  1 (0 how much 3 AUX 3 I 3 want-gen 3 know 0)
+    2 ((How much information do you want about your test results ?)) (0 :gist)
+  1 (0 how much 3 I 3 tell 3 you 0)
+    2 ((How much information do you want about your test results ?)) (0 :gist)
+
+  ; You will help me and my family through the treatment process \.
+  1 (0 doctor-pron 4 be 2 available 2 you 4 care 0)
+    2 (You will help me and my family through the treatment process \.) (0 :gist)
+  1 (0 doctor-pron 4 be 2 available 2 you 4 difficult 1 time 0)
+    2 (You will help me and my family through the treatment process \.) (0 :gist)
+  1 (0 doctor-pron 4 be 2 available 2 family-pron 0)
+    2 (You will help me and my family through the treatment process \.) (0 :gist)
+  1 (0 doctor-pron 4 be 2 available 2 help 0)
+    2 (You will help me and my family through the treatment process \.) (0 :gist)
+  1 (0 doctor-pron 4 med-help 6 family 0)
+    2 (You will help me and my family through the treatment process \.) (0 :gist)
+  1 (0 doctor-pron 4 be 2 available 2 every 1 step 2 way 0)
+    2 (You will help me and my family through the treatment process \.) (0 :gist)
+
+  ; I should plan to spend my remaining time with my family after I tell them about the prognosis \.
+  1 (0 make 2 time 4 family-pron 0)
+    2 (I should plan to spend my remaining time with my family after I tell them about the prognosis \.) (0 :gist)
+  1 (0 give 4 family-pron 4 visit 2 you 0)
+    2 (I should plan to spend my remaining time with my family after I tell them about the prognosis \.) (0 :gist)
+  1 (0 spend 4 time 4 family-pron 0)
+    2 (I should plan to spend my remaining time with my family after I tell them about the prognosis \.) (0 :gist)
+  1 (0 family 2 spend 2 time 4 you 0)
+    2 (I should plan to spend my remaining time with my family after I tell them about the prognosis \.) (0 :gist)
+  1 (0 make 2 most 4 time 4 with 2 family-pron 0)
+    2 (I should plan to spend my remaining time with my family after I tell them about the prognosis \.) (0 :gist)
+
 
 )) ; END *tell-family-question*
 
@@ -775,9 +862,9 @@
   ; checking the system's understanding
   1 (0 tell 0 what 1 you 1 understand-gen 0)
     2 ((What do I understand ?)) (0 :gist)
-  1 (0 do 1 you 1 understand-gen 3)
+  1 (0 do 1 you 1 understand-gen 0)
     2 ((What do I understand ?)) (0 :gist)
-  1 (0 wh_ do 1 you 1 understand-gen 3)
+  1 (0 wh_ do 1 you 1 understand-gen 0)
     2 ((What do I understand ?)) (0 :gist)
 
   ; asking for system's preferences for information

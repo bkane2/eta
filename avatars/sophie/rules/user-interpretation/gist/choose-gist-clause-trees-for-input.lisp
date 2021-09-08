@@ -5,24 +5,32 @@
 (READRULES '*gist-clause-trees-for-input*
 '(
    ; Direct gist clauses from schema
+   
+   ; Outdated Sleep/Pain Schemas
    1 (Why 1 I not 1 sleeping well ?)
       2 (*sleep-poorly-input*) (0 :subtrees)
    1 (How will I know if my pain medication is working ?)
       2 (*medicine-working-input*) (0 :subtrees)
    1 (Can I have a stronger pain medication ?)
       2 (*medicine-stronger-request-input*) (0 :subtrees)
+
+   ; Module 1: Test Results, Prognosis, Tell Family
    1 (What do my test results mean ?)
       2 (*test-results-input*) (0 :subtrees)
    1 (What is my prognosis ?)
       2 (*prognosis-input*) (0 :subtrees)
+   1 (Why do I have cancer ?)
+      2 (*reason-for-cancer-input*) (0 :subtrees)
+   1 (What should I tell my family ?)
+      2 (*tell-family-input*) (0 :subtrees)
+
+   ; Module 2: Treatment Options, Chemotherapy, Comfort Care
    1 (What are my options for treatment ?)
       2 (*treatment-option-input*) (0 :subtrees)
    1 (Do I need chemotherapy ?)
       2 (*chemotherapy-input*) (0 :subtrees)
    1 (Should I get comfort care ?)
       2 (*comfort-care-input*) (0 :subtrees)
-   1 (What should I tell my family ?)
-      2 (*tell-family-input*) (0 :subtrees)
 
    ; Gist clauses from potential sub-dialogues
    1 (My pain has recently been getting worse \.)
