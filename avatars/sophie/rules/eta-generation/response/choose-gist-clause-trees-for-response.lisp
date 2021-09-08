@@ -47,6 +47,11 @@
     2 (*response-tree-mental-health*) (0 :subtrees)
   1 (I feel anxious about my future 1)
     2 (*response-tree-anxiety*) (0 :subtrees)
+  1 (Why do I have cancer 1)
+    2 (*response-tree-reason-for-cancer*) (0 :subtrees)
+  1 (Can I outlive your prognosis if I quit smoking 1)
+    2 (*response-tree-bargaining-quit-smoking*) (0 :subtrees)
+
 
   ; Subtrees for elaborating answers
   1 (My pain has recently been getting worse 1)
@@ -91,9 +96,7 @@
   1 (Will stronger pain medication help me sleep 1)
     2 (It seems like my pain is the root of my sleeping problems \. Do you think having
        stronger pain medication would help with that ?) (0 :out)
-  1 (Can I outlive your prognosis if I quit smoking 1)
-    2 (I quit smoking as soon as I heard my diagnosis \. Does that help at all ?) (0 :out)
-
+  
   ; The following are from the top-level dialogue track
   1 (How will I know if my pain medication is working 1)
     2 (I just started on my new pain medication fairly recently\, a couple weeks after radiation \.

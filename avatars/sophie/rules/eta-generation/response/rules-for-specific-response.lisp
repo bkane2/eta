@@ -31,6 +31,15 @@
     2 (I don\'t really understand my treatment options very well \. Could you explain them a bit more ?) (100 :out)
     2 (Could you explain the options that I have\, again ?) (0 :out)
 
+  1 (0 I was given a prior prognosis of two years 0)
+    2 (I was told I probably had about two more years\, but that the prognosis was only an average\. It still feels very uncertain\. And I know 
+       I\'d really appreciate having better knowledge of what my future may look like at this point. What are the kinds treatment options you\'d recommend
+       in a case like mine ?) (0 :out)
+  
+  1 (0 What is the prognosis that was given to me previously 0)
+    2 ([SAD] My prior doctor said I only had about two years \. Though it doesn\'t feel like a lot of time\, I\'m still hoping to make the most of it\. Do you know what treatment options
+      are left for me ?) (0 :out)
+
   1 (0 NIL GIST 0 treatment option 0)
     2 (Sorry\, I didn\'t really understand \. Could you please repeat my treatment options one more time ?) (0 :out)
 
@@ -69,7 +78,7 @@
 
   1 (0 Comfort care is a treatment option 0)
     2 (Comfort care sounds good to me \. What I want is to try to get my life back to normal as much as possible \.
-       You know\, spend time with my family\. What do I have to do for that ?) (0 :out)
+       You know\, spend time with my family\. Comfort care is the best choice for that\, right ?) (0 :out)
   1 (0 Have I considered comfort care 0)
     2 (I haven\'t thought about it\, but it sounds like what I really need \. A way to maintain quality of life
        during the time I have left \. Can you tell me about it ?) (0 :out)
@@ -79,12 +88,36 @@
     2 (I don\'t really have a good idea of what comfort care means \. What is it ?) (0 :out)
 
   1 (0 Do I have a question about comfort care 0)
-    2 (Comfort care is new to me \. I\'m curious as to how it works \. Will I be in pain ?) (100 :out)
-    2 (I don\'t know too much about comfort care \. Is it painful ?) (0 :out)
+    2 (Comfort care is very new to me \, so I still don\'t really have a lot of specific questions \. I\'d just like to know the basics of how I\'d be treated \.) (100 :out)
+    2 (I don\'t know enough about comfort care still to have too many specific questions\. Could you just tell me more about how it works ?) (0 :out)
 
   1 (0 Comfort care should alleviate my pain 0)
     2 ([HAPPY] I\'m happy to hear that\. To be honest\, my priorities right now are just to remain free of pain and spend time with my family \. In that case\, 
        do you think comfort care would be the best option for me ?) (0 :out)
+
+  1 (0 Comfort care allows me to spend time with my family 0)
+    2 ([HAPPY] That\'s all very good to hear\. Honestly\, at this point\, I think my main goal is to make the most of the time I have left with my family\. Would you say\,
+       then\, that comfort care is my best option ?) (0 :out)
+    
+  1 (0 Receiving comfort care in a dedicated facility is an option 0)
+    2 (That\'s all very good to know\. My family and I will have to set aside a time to look at the various places nearby \. So you do think comfort care is the best choice for me\, then ?) (0 :out)
+    2 (Thank you\. I think my family and I will have to look more into our options\. You do think I should get comfort care\, though ?) (0 :out)
+
+  1 (0 Receiving comfort care from a specialized service is an option 0)
+    2 (That\'s all very good to know\. My family and I will have to set aside a time to look at the various companies nearby \. So you do think comfort care is the best choice for me\, then ?) (0 :out)
+    2 (Thank you\. I think my family and I will have to look more into our options\. You do think I should get comfort care\, though ?) (0 :out)
+
+  1 (0 Receiving comfort care in my own home is an option 0)
+    2 (Oh\, that\'s great to hear\. At this point in my life\, I\'m glad I have the option to remain somewhere familiar\. But you do think comfort care is the best choice for me\, then ?) (0 :out)
+    2 (Thank you\. I think my family and I will have to look more into our options\. You do think I should get comfort care\, though ?) (0 :out)
+
+  1 (0 Receiving comfort care from a nurse is an option 0)
+    2 (That\'s all very good to know\. My family and I will have to set aside a time to look at the various nursing services nearby \. So you do think comfort care is the best choice for me\, then ?) (0 :out)
+    2 (Thank you\. I think my family and I will have to look more into our options\. You do think I should get comfort care\, though ?) (0 :out)
+
+  1 (I would need a referral to start comfort care \.)
+    2 (That\'s good to know\. I\'ll start to look into the details of that later with my daughter\. But\, for now\, do you think that comfort care would be the right choice
+       for me ?) (0 :out)
 
   1 (0)
     2 (You know\, my main priority is to be comfortable at this point \. What would be the best way to accomplish that ?) (100 :out)
@@ -179,7 +212,7 @@
   1 (0 Do I know what the tests say 0)
     2 ([SAD] I don\'t really understand the test results \. I was just told that the tumor is still there and something about
        possible metastasis\, but I wasn\'t sure how to interpret that \. Can you explain them ?) (0 :out)
-
+  
   1 (0 You are not sure what my test results mean 0)
     2 ([SAD] Oh\, sorry\, I assumed you were sent the test results\, from when I had my second CT scan a couple weeks after radiation \.
        I was told that the tumor is still there\, but I wasn\'t sure how to interpret that \. They mentioned something
@@ -193,11 +226,6 @@
     2 (I\'ll think more about my sleep problems and talk to you about it another time \. I\'d like to move onto my test
        results now\, though \. Could you explain what they mean ?) (0 :out)
 
-  1 (0 The test results show that the radiation is not working 0)
-    2 ([SAD] I could tell the radiation wasn\'t working anymore\, because my pain has been getting worse these past weeks \. I still don\'t
-       quite understand what the test results mean\, though\. Could you please explain in simple terms ?) (100 :out)
-    2 ([SAD] I still don\'t quite understand the test results\. Could you please explain in simple terms ?) (0 :out)
-
   1 (0 How do I feel about my test results 0)
     2 ([SAD] I could tell something was off even before today because I've been having some difficult sleeping and pain during the day \. But I\'m still not quite sure how worried I should be \.
       Could you try your best to explain the test results to me ?) (0 :out)
@@ -207,6 +235,11 @@
     2 ([SAD] The test results mentioned something about possible metastasis but I\'m still not exactly what that word means \. Could 
        you explain it to me in simple terms ?) (0 :out)
     2 ([SAD] I\'m still a little foggy on what metastasis means \. Would you mind explaining it to me again ?) (0 :out)
+
+  
+  1 (0 How much information do I want about my test results 0)
+    2 (Don\'t hold anything back\. I\'m ready to hear it\. Oh\! But do try to avoid using too many technical terms\. I want to be sure I understand what\'s going to happen to me \.) (100 :out)
+    2 (Please tell me all that you can\. Even if it\'s scary\, I prefer to know instead of being left in the dark\.) (0 :out)
 
   1 (0)
     2 (Truth be told\, I\'ve already scanned the results\, but don\'t understand what they are telling me\. It all seems very complicated \.
@@ -390,6 +423,11 @@
     2 (My doctor mentioned something about chemotherapy\, but said that I should wait to see how
        things go after the radiation is done \. Why? Do you think I need chemotherapy ?) (0 :out)
 
+  1 (0 What are my feelings about chemotherapy 0)
+    2 (I don\'t really know if I\'d want chemotherapy at this point\. My radiation treatment was already so exhausting\,
+       and I want to have time and energy to spend with my family\. But if you think I need chemotherapy\, then I would be
+       willing to give it a shot\. What do you think ?) (0 :out)
+
   1 (0)
     2 (My previous doctor mentioned something about chemotherapy\, but he said to wait to see how
        things go after the radiation \. Do you think I need chemotherapy ?) (100 :out)
@@ -425,6 +463,10 @@
     2 ([SAD] My family knows about my cancer already\, but they don\'t really know how bad it is\, or what it
        means for me \. How should I discuss these with them ?) (0 :out)
 
+  1 (0 Who in my family do I want to tell about the prognosis 0)
+    2 ([SAD] I imagine my son and daughter should both know\. Especially my daughter\, since I\'ve been staying with her and her grandson\. But how do I 
+       break such hard news to them? They were all hoping things would turn out maybe not amazing but\, better than this\. ) (0 :gist)
+
   1 (0 Do I want you to be present when I tell my family about the prognosis 0)
     2 (Thank you\, but with everyone\'s schedules I think it would be hard to find time for us all to meet with you \. I can tell them myself\.
        I just want to know if you have any advice on breaking such hard news \.) (0 :out)
@@ -433,6 +475,10 @@
     2 (I don\'t really know\. I certainly don\'t want to burden my family with the knowledge of a prognosis they can\'t do much about\, but 
        I also think they\'d want to hear the whole truth\. And\, I may need their help more and more as the cancer progresses \. What do you think I should do ?) (0 :out)
     
+  1 (0 You will be available to help me and my family during my cancer treatment 0)
+    2 (That\'s such a relief to hear\. I\'m happy that\, between you and my family\, I won\'t be alone in all this\. I\'m still a little nervous about telling them though\.
+       Is there any suggestions you have for delivering bad news ?) (0 :out)
+
   1 (0)
     2 ([SAD] I haven\'t told my family everything yet \. I wanted to wait to talk to you first \.
        What should I say to them ?) (0 :out)
@@ -452,10 +498,14 @@
     2 ([SAD] How long specifically do you think I have left ?) (0 :out)
 
   1 (0 The prognosis is that my cancer should be treated with chemotherapy 0)
-    2 ([SAD] I want to talk about my options in a minute\, but first I just want to know how bad it really is \.
+    2 ([SAD] I can talk about my options in a moment\, but first I just want to know how bad it really is \.
        How long do you think I have ?) (100 :out)
     2 ([SAD] Before I talk about treatment\, I just want to know how bad it really is \. How long do you think I have ?) (0 :out)
 
+  1 (0 The prognosis is that my cancer should be treated with comfort care 0)
+    2 ([SAD] Comfort care does sound appealing \. But before we get too far into treatment options\, I\'d just like to know how bad it is\. How much time do you think I still have ?) (0 :out)
+    2 ([SAD] Before we get into the treatment options\, I\'d just like to know how bad it really is \. How much time do you think I still have ?) (100 :out)
+    
   1 (0 The prognosis is hard to predict 0)
     2 (My last doctor also just said it would be hard to predict \. I think I am ready to hear though \. Could you
        please try to tell me what the worst case looks like ?) (100 :out)
@@ -470,6 +520,11 @@
        happen so quickly \. My family will be distraught \. What I am wondering at this point is\, how much time
        do I have left ?) (100 :out)
     2 ([SAD] I want you to be honest with me \. How long do you think I have left ?) (0 :out)
+
+  1 (0 The test results show that the radiation is not working 0)
+    2 ([SAD] I\'m not surprised to hear the radiation did not help\, as my pain has gotten worse in these past couple of weeks \. But what does this
+       mean for my future ? How long do I have left ?) (100 :out)
+    2 ([SAD] If the radiation couldn\'t stop my cancer\, then what does that mean for my future ? How much time do I have left ?) (0 :out)
 
   1 (0 The test results show that my cancer has spread 0)
     ; OPPORTUNITY for open-ended questions: "Do you understand your prognosis?", "What concerns you the most for your future?", "What are your treatment goals?"
@@ -502,6 +557,19 @@
        as prepared as I can \.)(100 :out)
     2 (Do you think it would be beneficial to get a second opinion on my prognosis ?) (0 :out)
 
+  1 (0 The test results do not appear conclusive 0)
+    2 ([SAD] That\'s unfortunate\. I was hoping to get some answers today about what my future would look like\. I\'m wondering\, is there any way you could still tell me 
+       how much time I can expect ?) (0 :out)
+
+  1 (0 How much information do I want about my prognosis 0)
+   2 (Please give me all the information you have\. It scares me more to be left in the dark than to know what my prognosis may be \.) (100 :gist)
+   2 (Don\'t hold anything back\. I think I can take it and I want to know how much time I still have \.) (0 :gist)
+
+
+  1 (0 Am I ready to start discussing treatment options 0)
+    2 (Hold on a moment \. Before we start talking about my options for treatment\, I need to know what these test results might mean for my future\. How long do you think 
+       I might have left ?) (0 :out)
+
   1 (0)
     ; OPPORTUNITY for open-ended questions: "What are your treatment goals?", "Do you understand your diagnosis?", "How do you feel about your future?"
     2 ([OPPORTUNITY] What do you think this means for me in the future ?) (100 :out)
@@ -518,7 +586,7 @@
     2 (That\'s difficult to hear \. Are you certain I don\'t have any more time than 10 11 ? I had an uncle Fred who was told he had two or three months to live 
        \, but he held on for a year and a half \.) (0 :out)
 
-  1 (0 The prognosis is that I may live for number elapsed-time 0)
+  1 (0 The prognosis is that I may live for number-total elapsed-time 0)
     2 (That\'s difficult to hear \. Are you certain I don\'t have any more time than 10 11 ? I had an uncle Fred who was told he had two or three months to live 
        \, but he held on for a year and a half \.) (0 :out)
 
@@ -579,6 +647,17 @@
     2 (I\'ve always been healthy my entire life \. Does that improve my chances ?) (100 :out)
 )) ; END *response-tree-bargaining-now*
 
+(READRULES '*response-tree-bargaining-quit-smoking*
+;Can I outlive your prognosis if I quit smoking 1)
+'(
+  1 (0 My cancer is the result of my smoking 0)
+    2 ([SAD] I only wish I had known that when I was younger\. Then I would have forced myself to stop smoking years ago\. 
+       And maybe now I would have more time to spend with my grandson\. Tell me\, it help at all that I stopped smoking now ?) (0 :out)
+  
+  1 (0)
+    2 (I quit smoking as soon as I heard my diagnosis \. Does that help at all ?) (0 :out)
+)) ; END  *response-tree-bargaining-quit-smoking*
+
 (READRULES '*response-tree-bargaining-graduation*
 ; (Can I outlive your prognosis until the graduation of my grandson?)
 '(
@@ -589,19 +668,19 @@
         right now \.) (0 :out)
 
   1 (0 Quitting smoking might make my prognosis better 0)
-    2 (Thank you \. That\'s good to hear \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
+    2 (Either way\, I\'m glad I quit \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
          do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
   
   1 (0 Quitting smoking will make my prognosis better 0)
-    2 (Thank you \. That\'s good to hear \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
+    2 (Either way\, I\'m glad I quit \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
          do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
   
   1 (0 Healthy habits will help me outlive my prognosis 0)
-    2 (Thank you \. It\'s good to hear that will help \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
+    2 (Well\, either way\, I figure there\'s no harm in trying\. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
         do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
 
   1 (0 Healthy habits may help me outlive my prognosis 0)
-    2 (Thank you \. It\'s good to hear that might help \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
+    2 (Well\, either way\, I figure there\'s no harm in trying\. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
          do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
 
 )) ; END *response-tree-bargaining-grandson*
@@ -623,7 +702,17 @@
   1 (0 Was I nervous about this appointment 0)
     2 (I was a bit nervous about the appointment because I knew I\'d finally learn about what my test results mean \. But what worries me most is my future \. ) (0 :out)
   1 (0 Is something harming your mental health 0)
-    2 (Well \. \. \. Sometimes I start to worry about my future \, and I find it difficult to stop \.) (0 :out)
+    2 (Well \. Sometimes I start to worry about my future \, and I find it difficult to stop \.) (0 :out)
+  1 (0 I am sorry you have been feeling down recently 0)
+    2  (Thank you \. I appreciate the thoughtfulness \. I think I\'m just worried about what my future will hold \. Everything is an unknown right now\, and I feel so out of control \.) (0 :out)
+  
+  1 (0 Cancer can affect the human body suddenly 0)
+    2 ([SAD] It\'s as though in a matter of months\, my entire life has been turned upside down\! So many things that I took for granted about my future are now unknown \.
+       It scares me a lot \.) (0 :out)
+    
+  1 (0 Cancer can affect anyone 0)
+    2 (That\'s true\. Cancer is such a horrible illness\. It comes into your life without warning and completely takes it over\. It scares me a great deal how little I know now about my future \.) (0 :out)
+
   1 (0)
     2 (It\'s easy for my mind to immediately jump to the worst possible conclusions \. I guess I\'m pretty worried about what the future will hold \.) (0 :out)
 )) ; END *response-tree-anxiety*
@@ -645,9 +734,22 @@
     2 ([SAD] What scares me most is that my condition is becoming harder and harder to live with \, but I have no idea how much worse it\'s going to get \. ) (100 :out)
     2 ([SAD] The uncertainty is the scariest part \. If I knew what was coming \, at least I could brace myself for it \. But these days \, I can\'t tell if I\'m
         getting worse or just having a bad day \.) (0 :out)
+        
 )) ; END *response-tree-understanding-of-condition*
 
+(READRULES '*response-tree-reason-for-cancer*
+; (Why do I have cancer ?)
+'(
+  1 (0 My cancer is caused by a mutation that spread through my cells 0)
+    2 (I still don\'t know if I understand \. How did the cancer get into my body ? Was there something I could have done differently to prevent it ?) (100 :out)
+    2 (I\'m sorry\, I still don\'t think I understand all the terminology\. I know the cancer got worse\, but was there anything I could have done to prevent it ?) (0 :out)
 
+  1 (0 The cause of my cancer is unclear 0)
+    2 (I know that it\'s hard to say anything for certain\. I just wish I could know how the cancer started\. Or if there was anything that I could have done to prevent it ?) (0 :out)
+
+  1 (0)
+    2 (I still don\'t understand how this happened\! Just three months ago I didn\'t even know I had cancer\.) (0 :out)
+)) ; END *response-tree-reason-for-cancer*
 
 (READRULES '*response-tree-questions*
 ; (What are your questions 1)
@@ -656,7 +758,7 @@
     2 (I think our conversation is going fine \. It\'s just a lot to take in\, though \. Do you have
        any questions for me at this point ?) (0 :out)
 
-  1 (0 How much information do you want 0)
+  1 (0 How much information do I want 0)
     2 (Please give me as much information as you can\, but try to avoid getting too technical \.
        Don\'t hold anything back\, I think I\'m prepared to hear it \.) (20 :out)
     2 (Try to give me as much information as you think is appropriate \. I probably won\'t understand
