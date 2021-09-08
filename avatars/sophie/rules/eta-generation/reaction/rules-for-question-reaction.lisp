@@ -48,6 +48,8 @@
     2 *ask-about-test-results* (0 :schema)
   1 (Do I have a question about my test results ?)
     2 *ask-about-test-results* (0 :schema)
+  1 (How much information do I want about my test results ?)
+    2 *ask-about-test-results* (0 :schema)
 
   ; Questions about radiation treatment
   1 (Did I get radiation treatment ?)
@@ -72,6 +74,8 @@
     2 *ask-how-chemotherapy-works* (0 :schema)
   1 (Do I have a question about chemotherapy ?)
     2 *ask-about-chemotherapy-side-effects* (0 :schema)
+  1 (What are my feelings about chemotherapy ?)
+    2 *ask-if-need-chemotherapy* (0 :schema)
 
   ; Questions about sleep
   1 (Have I been sleeping okay ?)
@@ -173,6 +177,9 @@
     2 *ask-what-to-tell-family* (100 :schema)
     2 (Now that I think about it more\, my son and daughter both should probably know as much as I do about the prognosis\, since I may need their help as the cancer progresses\.
        My grandson\, though\, he\'s only in middle school\, and I\'d like to protect him for as long as I can\.) (0 :out)
+  1 (Who in my family do I want to tell about the prognosis ?)
+    2 *ask-what-to-tell-family* (100 :schema)
+    2  (I\'d have to tell my son\, and certainly my daughter \. I\'m currently staying with both her and my grandson here in Rochester \, and I imagine I\'ll probably lean on her a lot more as the cancer progresses \.) (0 :out)
 
   ; Questions about treatment options
   1 (What do I understand about my treatment options ?)
@@ -182,6 +189,13 @@
   1 (What are my treatment goals ?)
     2 *ask-about-treatment-options* (0 :schema)
     2 *ask-how-comfort-care-works* (0 :schema)
+  1 (What is the prognosis that was given to me previously ?)
+    2 *ask-about-treatment-options* (0 :schema)
+    2 (I was told I probably wouldn\'t have a long time left\, maybe two or three years at best\.) (0 :out)
+  1 (Am I ready to start discussing treatment options ?)
+    2 *ask-about-prognosis* (0 :schema)
+  1 (How much information do I want about my prognosis ?)
+    2 *ask-about-prognosis* (0 :schema)
 
   ; Questions about prognosis
   ; TODO: should instantiate a schema where SOPHIE explains her (possibly incorrect) knowledge of

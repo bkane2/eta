@@ -125,6 +125,11 @@
     2 *ask-about-medication-before-therapy* (100 :schema)
     2 (Okay\. I\'ll give the therapy a shot\.) (0 :out)
 
+  1 (I am sorry you have been feeling down recently \.)
+    2 *mention-anxiety* (100 :schema)
+    2 (Thank you for the kind words \. They mean a lot to me right now \. I think that things will get better though as I spend more time around my family \. Especially my sweet grandson \.) (0 :gist)
+
+
 )) ; END *energy-reaction*
 
 
@@ -161,6 +166,7 @@
 (READRULES '*radiation-reaction*
 ; (0 radiation 0)
 '(
+  
   1 (0)
     2 *ask-about-will-chemotherapy-help* (0 :schema)
 
@@ -205,6 +211,21 @@
 
   1 (You think I need comfort care \.)
     2 ([HAPPY] Great\. I also think comfort care is the best option for me right now \.) (0 :out)
+
+  1 (I would need a referral to start comfort care \.)
+    2 *ask-about-comfort-care* (0 :schema)
+
+  1 (Receiving comfort care in a dedicated facility is an option \.)
+    2 *ask-about-comfort-care* (0 :schema)
+
+  1 (Receiving comfort care from a specialized service is an option \.)
+    2 *ask-about-comfort-care* (0 :schema)
+
+  1 (Receiving comfort care in my own home is an option \.)
+    2 *ask-about-comfort-care* (0 :schema)
+
+  1 (Receiving comfort care from a nurse is an option \.)
+    2 *ask-about-comfort-care* (0 :schema)
 
   1 (0)
     ; OPPORTUNITY for open-ended question: "Can you tell me a little more about your treatment goals?", "What worries you most for the future?"
@@ -273,11 +294,11 @@
   ; I asked my doctor in Florida about what’s going to happen next, he just did not want to say. 
   ; He said” These things are always hard to predict.” 
   ; OPPORTUNITY: After SOPHIE expresses her fear, the doctor could ask her "What scares you the most about your future?" or "Were you nervous for this appointment?"
-  1 (The prognosis is that I may live for number-plur elapsed-time-plur \.)
+  1 (I may live for number-plur elapsed-time-plur \.)
     2 *ask-if-can-trust-prognosis* (100 :schema)
     2 ([SAD] [OPPORTUNITY] That\'s very difficult to hear\. I thought I would have more time than that\.
       At this point\, I just hope I can enjoy those 9 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
-  1 (The prognosis is that I may live for number elapsed-time \.)
+  1 (The prognosis is that I may live for number-total elapsed-time \.)
     2 *ask-if-can-trust-prognosis* (100 :schema)
     2 ([SAD] [OPPORTUNITY] That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy that 9 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
@@ -296,8 +317,6 @@
     2 ([SAD] [OPPORTUNITY] That\'s very difficult to hear\. I thought I would have more time than that\.
       At this point\, I just hope I can enjoy that 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
     
-
-
   1 (The prognosis is that I cannot be cured \.)
     2 *ask-about-prognosis* (100 :schema)
     2 *ask-about-will-experimental-therapies-help* (100 :schema)
@@ -309,12 +328,14 @@
 
   1 (The prognosis is that my cancer should be treated with chemotherapy \.)
     2 *ask-about-prognosis* (0 :schema)
+  1 (The prognosis is that my cancer should be treated with comfort care \.)
+    2 *ask-about-prognosis* (0 :schema)
   1 (The prognosis is hard to predict \.)
     2 *ask-about-prognosis* (0 :schema)
 
   1 (My understanding of my prognosis is incorrect \.)
     2 *ask-if-can-outlive-prognosis-health-now* (100 :schema) 
-    2 ([SAD] Oh \. \. \. That is hard to hear \. I\'m afraid of what the future may bring \, but at least I\'ll be able to spend 
+    2 ([SAD] Oh \. That is hard to hear \. I\'m afraid of what the future may bring \, but at least I\'ll be able to spend 
        this remaining time with my family \. ) (0 :out)
 
   1 (My understanding of my prognosis is correct \.)
@@ -437,13 +458,28 @@
 
 (READRULES '*tell-family-reaction*
 ; (0 tell 1 family 0 \.)
+; (Comfort care allows me to spend time with my family \.)
 '(
+
+  1 (Comfort care allows me to spend time with my family \.)
+    2 *ask-about-comfort-care* (0 :schema)
   
-  1 (I should tell my family the full truth about the prognosis \.)
+  1 (I should tell my family the full truth about my cancer \.)
     2 ([SAD] Okay \. It will be hard to give them such bleak news\, but they deserve to know the truth \.) (0 :out)
-  1 (I should reassure my family about the prognosis \.)
-    2 (Certainly\. I\'ll try to be gentle with them\, even if the news is bleak. They deserve to know how much I love them \.) (100 :out)
+  1 (I should reassure my family about my cancer \.)
+    2 (Certainly\. I\'ll try to be gentle with them\, even if the news is bleak\. They deserve to know how much I love them \.) (100 :out)
     2 (Of course\. I\'ll do my best to soften the blow\.) (0 :out)
+
+  1 (You will be available to help me and my family during my cancer treatment \.)
+    2 *ask-what-to-tell-family* (0 :schema)
+    2 (Thank you\. I can\'t tell you how happy I am to know I have you by my side throughout all this\.) (0 :out)
+
+  1 (You will help me and my family through the treatment process \.)
+    2 (Thank you\. Knowing that you\'ll be by our side throughout all this is a huge weight off my shoulders \.) (100 :out)
+    2 (Thank you\. I appreciate having someone else in my corner so to speak \.) (0 :out)
+  1 (I should plan to spend my remaining time with my family after I tell them about the prognosis \.)
+    2 (Yes\, I\'ll certainly have to talk to them about how we\'re going to make the most of our remaining time \.) (100 :out)
+    2 (That\'s right\! After all\, that\'s why I moved up to New York\, to spend as much time with them as possible\.) (0 :out)
 
   1 (0)
     2 ([SAD] Okay\. It will be difficult\, but my family and I will have to be strong \.) (0 :out)
@@ -455,9 +491,9 @@
 '(
   
   1 (0)
-    2 (I\'m happy to hear that too \.) (100 :out)
-    2 (I\'m pleased as well \.) (100 :out)
-    2 (Great \.) (0 :out)
+    2 (Excellent \!) (100 :out)
+    2 (Good to hear \.) (100 :out)
+    2 (Great \!) (0 :out)
 
 )) ; END *positive-reaction*
 
@@ -465,6 +501,10 @@
 (READRULES '*test-results-reaction*
 ; (0 test results 0 \.)
 '(
+  
+  1 (The test results do not appear conclusive \.)
+    2 *ask-about-prognosis* (0 :schema)
+
   1 (The test results show that the cancer hasn\'t spread \.)
     2 *ask-about-prognosis* (0 :schema)
   1 (The test results show that I cannot be cured \.)
@@ -477,7 +517,7 @@
     ;; 2 *ask-about-test-results* (100 :schema)
 
   1 (The test results show that the radiation is not working \.)
-    2 *ask-about-test-results* (100 :schema)
+    2 *ask-about-prognosis* (100 :schema)
 
   1 (0)
     2 (Okay \.) (100 :out)
@@ -529,3 +569,36 @@
     2 *ask-about-treatment-options* (0 :schema)
     
 )) ; END *treatment-goals-reaction*
+
+(READRULES '*reason-for-cancer-reaction*
+; (0 cause 0)
+; (0 wish 4 not 1 cancer 0)
+; (0 sorry 4 cancer 0)
+'(
+  1 (You wish that I do not have cancer \.)
+    2 (I know I wish that I had more time\, but I suppose I should just make the best of what I have\. I certainly appreciate all the help you\'ve been giving me along the way\.) (100 :out)
+    2 (I wish with all my heart that I had more time\, but I imagine I\'ve just got to make the best of what I have\. Thank you for your help with everything though\.) (0 :out)
+
+  1 (You are sorry that I have cancer \.)
+    2 (Thank you\. I only wish I had more time with my grandson\. But who knows\, there\'s always at least a chance I may get more time with him \.) (100 :out)
+    2 (Thank you\. I appreciate all you\'ve been doing to help me\. I\'ll try to do the best I can with the time I have left\.) (0 :out)
+
+  1 (My cancer is the result of my smoking \.)
+    2 *ask-if-can-outlive-prognosis-quit-smoke* (0 :schema)
+    2 ([SAD] I never should have smoked when I was younger \. I\'ll have to tell my grandson before I go to never smoke a cigarette in his life \. I only wish I had more time with him \.) (100 :out)
+
+  1 (My cancer is caused by a mutation that spread through my cells \.)
+    2 *ask-why-have-cancer* (0 :schema)
+
+  1 (The cause of my cancer is unclear \.)
+    2 *ask-why-have-cancer* (100 :schema)
+    2 (I know it\'s hard to say for sure\. And I suppose\, in the end\, it won\'t change anything if I have cancer for one reason or another\. 
+       All I can do is make the most of the time I have left \.) (0 :gist)
+
+  1 (Cancer can affect anyone \.)
+    2 *mention-anxiety* (0 :schema)
+
+  1 (Cancer can affect the human body suddenly \.)
+    2 *mention-anxiety* (0 :schema)
+
+)) ; END *reason-for-cancer-reaction*
