@@ -72,9 +72,11 @@
 ;; NOTE: may be obviated by previous replies.
 ?e20 ((set-of ^me ^you) ask-about-prognosis.v)
 
+;; 3. (reason-for-cancer)
+?e30 ((set-of ^me ^you) ask-why-have-cancer.v)
 
-;; 3. (tell-family)
-?e30 ((set-of ^me ^you) ask-what-to-tell-family.v)
+;; 4. (tell-family)
+?e40 ((set-of ^me ^you) ask-what-to-tell-family.v)
 
 
 ?e300 (^me say-to.v ^you '(Thank you for taking the time to meet with me today\. It was difficult to talk about my future\, but comforting to
@@ -131,6 +133,7 @@
   '(
     (?e10 (test-results))
     (?e20 (prognosis))
-    (?e30 (tell-family))
+    (?e30 (reason-for-cancer))
+    (?e40 (tell-family))
   )
 ) ; END mapcar #'store-topic-keys
