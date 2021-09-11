@@ -2600,7 +2600,7 @@
 
 )) ; END *stronger-medicine-help-sleep-input*
 
-READRULES '*reason-for-cancer-input*
+(READRULES '*reason-for-cancer-input*
 '(
   ; You wish that I do not have cancer \.
   1 (0 doctor-pron 4 wish 4 be 1 different 0)
