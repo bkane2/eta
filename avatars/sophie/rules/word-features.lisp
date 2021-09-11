@@ -202,7 +202,7 @@
   (diagnosis-more more another further additional)
 
   ; Mental health
-  (ment-health mental depression depressed anxiety anxious worry worried worrying anxiousness unease uneasy schizophrenia)
+  (ment-health mental depression depressed anxiety anxious worry worried worrying anxiousness unease uneasy schizophrenia down)
   (energy mood concentrate ment-health med-ment-health health illness)
   (antidepressant SSRI Prozac fluoxetine sertraline Zoloft Celexa citalopram Lexapro escitalopram paroxetine Paxil Pexeva)
   (therapy therapist counseling counselor)
