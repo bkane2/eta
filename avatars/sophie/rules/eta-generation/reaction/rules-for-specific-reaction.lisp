@@ -477,6 +477,7 @@
   1 (You will help me and my family through the treatment process \.)
     2 (Thank you\. Knowing that you\'ll be by our side throughout all this is a huge weight off my shoulders \.) (100 :out)
     2 (Thank you\. I appreciate having someone else in my corner so to speak \.) (0 :out)
+
   1 (I should plan to spend my remaining time with my family after I tell them about the prognosis \.)
     2 (Yes\, I\'ll certainly have to talk to them about how we\'re going to make the most of our remaining time \.) (100 :out)
     2 (That\'s right\! After all\, that\'s why I moved up to New York\, to spend as much time with them as possible\.) (0 :out)
@@ -584,8 +585,8 @@
     2 (Thank you\. I appreciate all you\'ve been doing to help me\. I\'ll try to do the best I can with the time I have left\.) (0 :out)
 
   1 (My cancer is the result of my smoking \.)
-    2 *ask-if-can-outlive-prognosis-quit-smoke* (0 :schema)
-    2 ([SAD] I never should have smoked when I was younger \. I\'ll have to tell my grandson before I go to never smoke a cigarette in his life \. I only wish I had more time with him \.) (100 :out)
+    ;; 2 *ask-if-can-outlive-prognosis-quit-smoke* (100 :schema)
+    2 ([SAD] I never should have smoked when I was younger \. I\'ll have to tell my grandson before I go to never smoke a cigarette in his life \. I only wish I had more time with him \.) (0 :out)
 
   1 (My cancer is caused by a mutation that spread through my cells \.)
     2 *ask-why-have-cancer* (0 :schema)
