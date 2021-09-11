@@ -11,7 +11,7 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(Why do I have cancer ?))))))
+  ?g1 (^me want.v (that (^me know.v (ans-to '(Why do I have cancer ?)))))
 )
 
 :episodes (
