@@ -713,6 +713,9 @@
   1 (0 Cancer can affect anyone 0)
     2 (That\'s true\. Cancer is such a horrible illness\. It comes into your life without warning and completely takes it over\. It scares me a great deal how little I know now about my future \.) (0 :out)
 
+  1 (0 I am sorry you have been feeling down recently 0)
+    2 (I appreciate the kind words\. Truth be told\, I spend a lot of time worried about the future \. Everything is out of my control right now\, and it feels like there so little I can do about it\.) (0 :out)
+
   1 (0)
     2 (It\'s easy for my mind to immediately jump to the worst possible conclusions \. I guess I\'m pretty worried about what the future will hold \.) (0 :out)
 )) ; END *response-tree-anxiety*
