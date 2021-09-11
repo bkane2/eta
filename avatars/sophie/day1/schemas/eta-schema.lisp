@@ -56,11 +56,8 @@
 
 :episodes (
 
-?e1 (^me say-to.v ^you '(Hi\, my name is Sophie\. I am a computer character\. I may sound choppy\, but I am still able to have
-                        a conversation with you\. Three months ago\, I was diagnosed with lung cancer\, and moved back into the area from 
-                        Florida to be closer to my grandson\. I tried radiation up until about six weeks ago \. In the last couple days \, 
-                        I was given a CT scan to figure how far the cancer has progressed \. I\'m here today because I want to know what 
-                        the results are and what they mean for my future \.))
+?e1 (^me say-to.v ^you '(Hi\, my name is Sophie\. In the last couple days \, I was given a CT scan to figure how far my cancer has progressed \. 
+                        I\'m here today because I want to know what the results are and what they mean for my future \.))
 ;; TODO: maybe accomodate potential user reply here (with low certainty, so Eta doesn't wait too long for it)
 
 
