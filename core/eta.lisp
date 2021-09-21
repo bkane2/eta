@@ -254,8 +254,7 @@
   (setf (ds-kb *ds*) (make-hash-table :test #'equal))
 
   ; Initialize timegraph
-  (if *dependencies*
-    (setf (ds-tg *ds*) (timegraph:make-timegraph)))
+  (construct-timegraph)
 ) ; END init-ds
 
 

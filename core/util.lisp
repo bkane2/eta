@@ -1344,6 +1344,38 @@
 
 
 
+(defun store-init-time-of-episode (ep-name &key time-record)
+;``````````````````````````````````````````````````````````````
+; Stores the initialization time of episode (assumed to be current time,
+; unless a time record structure is given as time-record) in both memory
+; and the timegraph structure.
+;
+  (if (null time-record) (setq time-record (get-time)))
+  ; Store temporal propositions related to episode in memory
+  (store-in-memory `(NOW* during ,ep-name))
+  (store-in-memory `(,time-record during ,ep-name))
+  ; Store episode in timegraph, with lower bound
+  (add-episode-to-timegraph ep-name)
+  (update-lower-bound-timegraph ep-name time-record)
+) ; END store-init-time-of-episode
+
+
+
+(defun store-end-time-of-episode (ep-name &key time-record)
+;``````````````````````````````````````````````````````````````
+; Stores the end time of episode (assumed to be current time, unless a time
+; record structure is given as time-record) in both memory and the timegraph structure.
+;
+  (if (null time-record) (setq time-record (get-time)))
+  ; Update temporal propositions related to episode in memory
+  (remove-from-memory `(NOW* during ,ep-name))
+  (store-in-memory `(,time-record during ,ep-name))
+  ; Add upper bound to episode in timegraph
+  (update-upper-bound-timegraph ep-name time-record)
+) ; END store-end-time-of-episode
+
+
+
 ;``````````````````````````````````````````````````````
 ;
 ; CONTEXT UTIL
@@ -1454,12 +1486,8 @@
 ;
 ; Returns the episode name that was created.
 ;
-  (let (ep-name timestamp)
-    (setq ep-name (episode-name))
-    (setq timestamp (get-time))
-    ; Store temporal propositions related to episode in memory
-    (store-in-memory `(NOW* during ,ep-name))
-    (store-in-memory `(,timestamp during ,ep-name))
+  (let ((ep-name (episode-name)))
+    (store-init-time-of-episode ep-name)
     ; Store each fact in memory and context
     (cond
       ((= 1 (length wffs))
@@ -1482,19 +1510,18 @@
 ;
 ; TODO: should we add (<timestamp> during E1), or (<timestamp> ends E1)?
 ;
-  (let ((facts (get-from-context pred-patt)) ep-wffs ep-names timestamp)
+  (let ((facts (get-from-context pred-patt)) ep-wffs ep-names time-record)
     (if (and facts (not (listp facts)))
       (setq facts (list pred-patt)))
     ; Remove each matching fact from context
     (dolist (fact facts)
-      (setq timestamp (get-time))
+      (setq time-record (get-time))
       ; Get all formulas with fact and ** operator, and extract ep-names
       (setq ep-wffs (append (get-from-memory `(,fact ** ?e)) (get-from-memory `(,fact * ?e))))
       (setq ep-names (apply #'append (mapcar #'last ep-wffs)))
       ; For each ep-name, remove NOW* fact from memory and add ending timestamp
       (dolist (ep-name ep-names)
-        (remove-from-memory `(NOW* during ,ep-name))
-        (store-in-memory `(,timestamp during ,ep-name)))
+        (store-end-time-of-episode ep-name :time-record time-record))
       ; Remove fact from context
       (remove-from-context fact)))
 ) ; END remove-old-contextual-fact
@@ -1537,6 +1564,15 @@
 ;
   (get-record-structure canonical-name)
 ) ; END record-structure!
+
+
+
+(defun get-slot-record-structure (slot record)
+;```````````````````````````````````````````````
+; Returns the value of a particular key in a record structure (or nil if it doesn't exist).
+;
+  (cadr (member slot record))
+) ; END get-slot-record-structure
 
 
 

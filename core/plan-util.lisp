@@ -490,6 +490,8 @@
 
     ; Generate a constant for the episode and destructively substitute in plan
     (setq ep-name (episode-name))
+    ; TODO: use episode-relations formulas to assert relations in timegraph
+    (store-init-time-of-episode ep-name)
     (nsubst-variable plan ep-name ep-var)
 
     ;; (format t "action list after substituting ~a for ~a:~%" ep-name ep-var)
