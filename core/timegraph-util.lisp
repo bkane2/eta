@@ -49,7 +49,7 @@
       (setq month (get-slot-record-structure :month time-record))
       (setq year (get-slot-record-structure :year time-record))
       (when (and year month day hour minute sec nsec)
-        (local-time:encode-timestamp nsec sec minute hour day month year))))
+        (timegraph:encode-timestamp nsec sec minute hour day month year))))
 ) ; END time-record-structure-to-timestamp
 
 
