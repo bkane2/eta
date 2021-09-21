@@ -650,7 +650,7 @@
   (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
          superstep ep-name1 user-ep-name user-ulf n user-gist-clauses user-gist-passage
-         prev-step prev-step-ep-name prev-step-wff utterance query
+         prev-step prev-step-ep-name prev-step-wff utterance query eta-ulf
          proposal-gist main-clause info topic suggestion ans perceptions
          perceived-actions sk-var sk-name concept-name concept-schema goal-name goal-schema)
 
@@ -677,15 +677,32 @@
             (setq new-subplan nil))
           ; Primitive say-to.v act: drop the quote, say it, increment the
           ; *count* variable, advance the 'rest-of-plan' pointer, and
-          ; store the turn in the dialogue history
+          ; log the turn in the conversation history
           ((eq (car expr) 'quote)
             (setq expr (flatten (second expr)))
             (setq *count* (1+ *count*))
             (setq expr (tag-opportunities expr))
             (setq expr (tag-emotions expr))
+
+            ; Inherit any gists/semantics from parent episode, if any
+            (setq ep-name1 (get-parent-ep-name subplan))
+            (when ep-name1
+              (mapcar (lambda (gist) (store-gist-clause-characterizing-episode gist ep-name '^me '^you))
+                (get-gist-clauses-characterizing-episode ep-name1))
+              (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
+                (get-semantic-interpretations-characterizing-episode ep-name1)))
+
+            ; Check both episode and parent episode for gists/ulfs
+            (log-turn (list expr
+                (get-gist-clauses-characterizing-episode ep-name)
+                (get-semantic-interpretations-characterizing-episode ep-name))
+              :agent (if (boundp '*agent-id*) *agent-id* 'eta))
+
+            ; Output words
             (if (member '|Audio| *registered-systems-perception*)
               (say-words expr)
               (print-words expr)))
+
           ; Nonprimitive say-to.v act (e.g. (^me say-to.v ^you (that (?e be.v finished.a)))):
           ; Should probably be illegal action specification since we can use 'tell.v' for
           ; inform acts. For the moment however, handle equivalently to tell.v.
@@ -718,6 +735,12 @@
             ; Store gist-clause that Eta is paraphrasing
             (store-gist expr (get ep-name 'topic-keys) (ds-gist-kb-eta *ds*))
             (store-gist-clause-characterizing-episode expr ep-name '^me '^you)
+
+            ; Inherit any semantics from parent episode, if any
+            (setq ep-name1 (get-parent-ep-name subplan))
+            (when ep-name1
+              (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
+                (get-semantic-interpretations-characterizing-episode ep-name1)))
 
             ; Use previous user reply as context for response generation
             (setq prev-step (find-prev-step-of-type subplan '^you '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
@@ -915,7 +938,10 @@
         (cond
           ((not (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
             (setq ans '(Could not form final answer \: |Spatial-Reasoning-System| not registered \.)))
-          (t (setq ans (generate-response (eval user-ulf) (eval expr)))))
+          (t (let ((tuple (generate-response (eval user-ulf) (eval expr))))
+            (setq ans (first tuple))
+            (setq eta-ulf (second tuple))
+            (store-semantic-interpretation-characterizing-episode eta-ulf ep-name '^me '^you))))
         (format t "answer to output: ~a~%" ans) ; DEBUGGING
         ; If in read-log mode, append answer to list of new log answers
         (when *read-log*
@@ -939,7 +965,10 @@
         (cond
           ((not (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
             (setq ans '(Could not form final answer \: |Spatial-Reasoning-System| not registered \.)))
-          (t (setq ans (generate-response (eval user-ulf) (eval expr)))))
+          (t (let ((tuple (generate-response (eval user-ulf) (eval expr))))
+            (setq ans (first tuple))
+            (setq eta-ulf (second tuple))
+            (store-semantic-interpretation-characterizing-episode eta-ulf ep-name '^me '^you))))
         (format t "gist answer to output: ~a~%" ans) ; DEBUGGING
         ; If in read-log mode, append answer gist to list of new log answers
         (when *read-log*
@@ -1191,8 +1220,6 @@
           (t
             (format t "~%*** SAY-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST OR VARIABLE" expr)))
 
-        (user-log 'text words)
-
         ; Use previous speech act as context for interpretation
         (setq prev-step (find-prev-step-of-type plan '^me '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
         (when prev-step
@@ -1217,8 +1244,6 @@
         (setq user-gist-clauses
           (form-gist-clauses-from-input words (car (last prev-step-gist-clauses))))
 
-        (user-log 'gist user-gist-clauses)
-
         ; Remove contradicting user gist-clauses (if any)
         (setq user-gist-clauses (remove-contradiction user-gist-clauses))
         (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
@@ -1231,7 +1256,7 @@
         (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
         (format t "~%Obtained ulfs ~a for episode ~a" user-ulfs ep-name) ; DEBUGGING
 
-        (user-log 'ulf (resolve-references user-ulfs))
+        (log-turn (list words user-gist-clauses (resolve-references user-ulfs)) :agent 'user)
 
         ; Store the semantic interpretations in memory
         (dolist (user-ulf user-ulfs)

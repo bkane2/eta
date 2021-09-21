@@ -25,7 +25,7 @@
 ; certainties (of form ((that ?rel) certain-to-degree ?cert)).
 ; In the case where relations is nil, we rely on presupposition handling to generate the appropriate response.
 ;
-  (let ((query-type (get-query-type query-ulf)) ans-tuple ans-ulf output-ulf uncertain-flag poss-ans)
+  (let ((query-type (get-query-type query-ulf)) ans-tuple ans-ulf output-ulf uncertain-flag poss-ans response)
 
     ; Simplify format of relations to (?rel ?cert) pairs
     (setq relations (mapcar (lambda (relation) (list (second (first relation)) (third relation))) relations))
@@ -103,10 +103,12 @@
     (format t "output ULF: ~a~%" output-ulf) ; DEBUGGING
 
     ; Convert output ULF to an english string and output (or output an error if the output ULF is nil)
-    (if output-ulf
+    (setq response (if output-ulf
       (append (if poss-ans '(I\'m not sure that I understood the question correctly \, but))
         (ulf-to-english (normalize-output output-ulf)))
       '(Sorry \, I was unable to find an object that satisfies given constraints \, please rephrase in a simpler way \.)))
+
+    (list response output-ulf))
 ) ; END generate-response
 
 

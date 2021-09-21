@@ -117,6 +117,28 @@
 
 
 
+(defun log-turn (turn &key (agent 'user))
+;`````````````````````````````````````````
+; Logs some a turn (a tuple (text gists ulfs)) in the conversation-log directory.
+; Temporarily disable pretty-printing so each line in the log file corresponds to a single turn.
+;
+  (let ((fname-text (concatenate 'string (get-io-path "conversation-log/") "text.txt"))
+        (fname-gist (concatenate 'string (get-io-path "conversation-log/") "gist.txt"))
+        (fname-ulf  (concatenate 'string (get-io-path "conversation-log/") "ulf.txt"))
+        (text (first turn)) (gists (second turn)) (ulfs (third turn))
+        (agent-name (string-upcase (string agent))))
+    (setq *print-pretty* nil)
+    (with-open-file (outfile fname-text :direction :output :if-exists :append :if-does-not-exist :create)
+      (format outfile "~a : ~s~%" agent-name text))
+    (with-open-file (outfile fname-gist :direction :output :if-exists :append :if-does-not-exist :create)
+      (format outfile "~a : ~s~%" agent-name (remove nil gists)))
+    (with-open-file (outfile fname-ulf  :direction :output :if-exists :append :if-does-not-exist :create)
+      (format outfile "~a : ~s~%" agent-name (remove nil ulfs)))
+    (setq *print-pretty* t)
+)) ; END log-turn
+
+
+
 (defun print-words (wordlist)
 ;``````````````````````````````
 ; This is intended for the keyboard-based mode of interaction,

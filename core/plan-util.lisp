@@ -602,6 +602,17 @@
 
 
 
+(defun get-parent-ep-name (plan)
+;`````````````````````````````````
+; If plan is a subplan of a step, get the episode name
+; corresponding to that step.
+;
+  (let ((superstep (plan-subplan-of plan)))
+    (if superstep (plan-step-ep-name superstep)))
+) ; END get-parent-ep-name
+
+
+
 (defun has-next-step? (plan) 
 ;`````````````````````````````
 ; Returns t if plan has another step, nil otherwise.

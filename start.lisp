@@ -29,7 +29,7 @@
   (ensure-directories-exist *io-path*)
   (ensure-directories-exist (get-io-path "in/"))
   (ensure-directories-exist (get-io-path "out/"))
-  (ensure-directories-exist (get-io-path "user-log/"))
+  (ensure-directories-exist (get-io-path "conversation-log/"))
   (when *read-log-mode*
     (ensure-directories-exist "./logs/")
     (ensure-directories-exist "./logs/logs/")
@@ -51,12 +51,12 @@
                                       :supersede :if-does-not-exist :create)))))
   (append *subsystems-perception* *subsystems-specialist*))
 
-  ; Delete the contents of user-log files
-  (with-open-file (outfile (get-io-path "user-log/text.txt")
+  ; Delete the contents of conversation-log files
+  (with-open-file (outfile (get-io-path "conversation-log/text.txt")
     :direction :output :if-exists :supersede :if-does-not-exist :create))
-  (with-open-file (outfile (get-io-path "user-log/gist.txt")
+  (with-open-file (outfile (get-io-path "conversation-log/gist.txt")
     :direction :output :if-exists :supersede :if-does-not-exist :create))
-  (with-open-file (outfile (get-io-path "user-log/ulf.txt")
+  (with-open-file (outfile (get-io-path "conversation-log/ulf.txt")
     :direction :output :if-exists :supersede :if-does-not-exist :create))
 
   ; Delete the content of the sessionInfo.lisp file after reading

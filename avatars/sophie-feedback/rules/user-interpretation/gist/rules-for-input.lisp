@@ -16,6 +16,7 @@
       3 ((The doctor asked an open ended question \.)) (0 :gist)
     ; If doctor did not ask an open-ended question, gist-clause stores suggestion
     2 ((Question-Suggestion \: what worries you the most ?)) (0 :gist)
+  
   1 (What is 1 prognosis [SEP] 0)
     2 (0 [SEP] 0 Do you understand your prognosis 0)
       3 ((The doctor asked an open ended question \.)) (0 :gist)
@@ -26,12 +27,14 @@
     2 (0 [SEP] 0 How do you feel about your prognosis 0)
       3 ((The doctor asked an open ended question \.)) (0 :gist)
     2 ((Question-Suggestion \: Do you understand your prognosis ? How much information do you want about your prognosis ? What concerns you the most for your future ?)) (0 :gist)
+
   1 (Can I trust your prognosis [SEP] 0) 
     2 (0 [SEP] 0 Do you understand your prognosis 0)
       3 ((The doctor asked an open ended question \.)) (0 :gist)
     2 (0 [SEP] 0 How do you feel about your prognosis 0)
       3 ((The doctor asked an open ended question \.)) (0 :gist)
     2 ((Question-Suggestion \: Do you understand your prognosis ? What concerns you the most for your future ?)) (0 :gist)
+
   1 (What are my options for treatment [SEP] 0)
     2 (0 [SEP] 0 What scares you about your condition 0)
       3 ((The doctor asked an open ended question \.)) (0 :gist)
@@ -97,6 +100,7 @@
     2 (0 [SEP] 0 You will be available to help me and my family during my cancer treatment 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
     2 ((Empathy-Suggestion \: Do you want me to be present when you tell your family about the prognosis ? I\'ll be there for you throughout the whole process \.)) (0 :gist)
+
   1 (I know that my cancer has gotten worse\, but I\'m not sure how bad it is [SEP] 0)
     2 (0 [SEP] 0 How do you feel about your prognosis 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
@@ -107,6 +111,7 @@
     2 (0 [SEP] 0 Were you nervous about this meeting 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
     2 ((Empathy-Suggestion \: How much do you want to know about your prognosis ? Were you nervous about this meeting ?)) (0 :gist)
+
   1 (Why have I not been sleeping well [SEP] 0)
     2 (0 [SEP] 0 Is your mental health keeping you awake 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
@@ -119,6 +124,7 @@
     2 (0 [SEP] 0 I am sorry that you are sleeping poorly 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
     2 ((Empathy-Suggestion \: What goes through your mind when you try to sleep ? Do you feel pain at night ? I\'m sorry that you\'ve been sleeping poorly \.)) (0 :gist)
+
   1 (My pain has recently been getting worse [SEP] 0)
     2 (0 [SEP] 0 I am sorry that you are in pain 0) 
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
@@ -135,6 +141,7 @@
     2 (0 [SEP] 0 Do you have the pain frequently 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
     2 ((Empathy-Suggestion \: I am sorry that you are in pain \. Can you tell me about your pain ? Has the pain become worse ?)) (0 :gist)
+
   1 (I feel mildly depressed [SEP] 0)
     2 (0 [SEP] 0 How is your mental health 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
@@ -147,6 +154,7 @@
     2 (0 [SEP] 0 Were you nervous for this appointment 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
     2 (Empathy-Suggestion \: How have you been recently? Were you nervous for this appointment ?) (0 :gist)
+
   1 (I feel anxious about my future [SEP] 0)
     2 (0 [SEP] 0 How is your mental health 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
@@ -163,6 +171,7 @@
     2 (0 [SEP] 0 You should take an antidepressant 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
     2 (Empathy-Suggestion \: How is your mental health? Were you nervous for this appointment ?) (0 :gist)
+    
   1 (Why do I have cancer [SEP] 0)
     2 (0 [SEP] 0 I wish that you do not have cancer 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
