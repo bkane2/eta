@@ -67,6 +67,10 @@
   (rotate rotates rotated)
   (place places placed)
 
+  (reason reasons reasoning justification justifications explanation explanations)
+
+  (adv-explain why how)
+
   (verb-rel-past touched supported connected consisted_of sat adjoined flanked
       faced moved puts changed picked_up rotated placed)
 
@@ -88,6 +92,8 @@
            tenth eleventh twelfth thirteenth fourteenth fifteenth sixteenth
            seventeens eighteenth nineteenth twentieth)
   (diff-adj other different same distinct separate unique)
+  (compare-adj further closer nearer higher lower taller shorter larger smaller
+               longer wider narrower)
   (adj-bw qual-adj rel-adj num-adj sup-adj ord-adj diff-adj)
   (mod-n adj-bw corp)
 
@@ -101,8 +107,14 @@
   (be is are was were)
   (verb-rel touch support connect consist_of sit adjoin flank face
       move put change pick_up rotate place)
+  (verb-answer answer answered say said tell told mention mentioned claim claimed 
+      reply replied respond responded think thought believe believed know knew)
+  (verb-explain explain justify elaborate)
+
+  (noun-explain answer answers response responses reply replies)
 
   (aux-bw do modal)
+  (wh-explanation why how)
   
   (adv-e-number first second third fourth fifth sixth seventh eighth ninth tenth)
   (adv-e previously before originally initially currently now recently ever since last finally adv-e-number)

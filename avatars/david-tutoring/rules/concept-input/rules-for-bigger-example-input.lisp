@@ -16,5 +16,5 @@
 '(
   ; User replies with some form of 'no'
   1 (1 NEG 4)
-    2 ((I do not want to make a bigger example of the concept \.)) (0 :gist)
+    2 ((You do not want to make a bigger example of the concept \.)) (0 :gist)
 ))

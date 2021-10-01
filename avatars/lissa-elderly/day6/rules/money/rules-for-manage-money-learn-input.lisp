@@ -20,30 +20,30 @@
 '( 
   ; Questions
   1 (0 how 1 you 1 make money ?)
-    2 (How can you make money ?) (0 :gist)
+    2 (How can I make money ?) (0 :gist)
   1 (0 how 2 you 1 managing money ?)
-    2 (How did you learn about making money ?) (0 :gist)
+    2 (How did I learn about making money ?) (0 :gist)
   1 (0 what 2 travel 2 you 1 enjoy 0 ?)
-    2 (How did you learn about making money ?) (0 :gist)
+    2 (How did I learn about making money ?) (0 :gist)
   1 (0 wh_ 2 travel 2 you 1 enjoy 0 ?)
-    2 (How did you learn about making money ?) (0 :gist)
+    2 (How did I learn about making money ?) (0 :gist)
 
   ; Specific answers
   1 (0 family 0)
-    2 ((I learned managing money from 2 \.) (manage-money-learn)) (0 :gist)
+    2 ((You learned managing money from 2 \.) (Manage-money-learn)) (0 :gist)
   1 (0 friend 0)
-    2 ((I learned managing money from 2 \.) (manage-money-learn)) (0 :gist)
+    2 ((You learned managing money from 2 \.) (Manage-money-learn)) (0 :gist)
   1 (0 university 0)
-    2 ((I learned managing money from 2 \.) (manage-money-learn)) (0 :gist)
+    2 ((You learned managing money from 2 \.) (Manage-money-learn)) (0 :gist)
   1 (0 read 0)
-    2 ((I learned managing money from 2 \.) (manage-money-learn)) (0 :gist)
+    2 ((You learned managing money from 2 \.) (Manage-money-learn)) (0 :gist)
   1 (0 video 0)
-    2 ((I learned managing money from 2 \.) (manage-money-learn)) (0 :gist)
+    2 ((You learned managing money from 2 \.) (Manage-money-learn)) (0 :gist)
   1 (0 life 0)
-    2 ((I learned managing money from experience \.) (manage-money-learn)) (0 :gist)
+    2 ((You learned managing money from experience \.) (Manage-money-learn)) (0 :gist)
 
   1 (0)
-      2 ((NIL Gist \: nothing found for how I learned about managing money \.) (manage-money-learn)) (0 :gist)
+      2 ((NIL gist \: Nothing found for how you learned about managing money \.) (Manage-money-learn)) (0 :gist)
 ))
 
 
@@ -51,19 +51,19 @@
 '( 
   1 (0 family 0)
     2 (Right\, most people learned how to manage their money from family\. 
-       It is reasonable that you learned it from 2 \.) (100 :out)
+       it is reasonable that you learned it from 2 \.) (100 :out)
   1 (0 friend 0)
     2 (Right\, friends affect us in many ways\. 
-       When your friend told me the way he deals with his money\, you decided to try it too\.) (100 :out)
+       when my friend told me the way he deals with his money\, I decided to try it too\.) (100 :out)
   1 (0 university 0)
-    2 (Learning from 2 is convincing\. You think it is a credible way to get information\.) (100 :out)
+    2 (Learning from 2 is convincing\. I think it is a credible way to get information\.) (100 :out)
   1 (0 video 0)
-    2 (Learning from 2 is convenient\. But I should distinguish whether it is credible\.) (100 :out)
+    2 (Learning from 2 is convenient\. But you should distinguish whether it is credible\.) (100 :out)
   1 (0 read 0)
-    2 (Learning from 2 is convenient\. But I should distinguish whether it is credible\.) (100 :out)
+    2 (Learning from 2 is convenient\. But you should distinguish whether it is credible\.) (100 :out)
   1 (0 life 0)
     2 (Right\, actually\, most people learn to manage their money from their daily life\.) (100 :out) 
     
-  1 (0 NIL Gist 0) 
+  1 (0 NIL gist 0) 
     2 (Okay\. Sounds like a good way to learn managing money\.) (100 :out)
 ))

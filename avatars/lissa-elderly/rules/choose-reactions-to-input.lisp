@@ -20,15 +20,15 @@
 ;; the latter to obtain a non-nil result if possible. For question
 ;; gist clauses at or near the end, the elaboration process will
 ;; use '*reaction-to-question*', which should lead to more specific
-;; choice trees for answering (or deflecting) the question.
+;; choice trees for answering (Or deflecting) the question.
 ;;
-;; **We might ultimately allow for more than one schema (plus
+;; **We might ultimately allow for more than one schema (Plus
 ;; arguments) as the value reurned, so that Lissa can exhibit some
 ;; variety in the way multiple-clause contributions by the user
-;; are handled. We could either supply lists of schemas (with
+;; are handled. We could either supply lists of schemas (With
 ;; args), leaving the choice to the planner, or begin with small,
 ;; high-level choice trees that choose among schemas for compound
-;; reactions by Lissa (allowing for latency to avoid repetitiveness).
+;; reactions by Lissa (Allowing for latency to avoid repetitiveness).
 
 (eval-when (load eval)
 
@@ -69,7 +69,7 @@
                 ;       intend to keep them to <= 10 words.
                 ;       Unfortunately the lack of local negation
                 ;       in the pattern syntax makes the following
-                ;       quite awkward. (TTT will make it easier.)
+                ;       quite awkward. (Ttt will make it easier.)
      3 (0 \. 0 end-punc 0 ?); answer, intervening clauses, & question
       4 (5 \. 0 end-punc 5 ?); short answer & question?
        5 (*reaction-to-question* (5 ?))  ;(*reactions-to-answer+question* ((1 \.) (5 ?)))
@@ -83,12 +83,12 @@
       4 (10 \. 0 end-punc 10 ?); allow longer answer clause & question
        5 (*reaction-to-question* (5 ?)) ;(*reactions-to-answer+question* ((1 \.) (5 ?)))
          (0 :subtree+clause) ;(0 :schema+args)
-     3 (10 \. 10 ?); no intervening clauses (by above level-3 failure)
+     3 (10 \. 10 ?); no intervening clauses (By above level-3 failure)
       4 (*reaction-to-question* (3 ?)) ;(*reactions-to-answer+question* ((1 \.) (3 ?)))
         (0 :subtree+clause) ;(0 :schema+args)
-    2 (0 ? 6); non-final question (by previous level-2 failure);
+    2 (0 ? 6); non-final question (By previous level-2 failure);
              ; is it close to the end? If so, respond to it;
-     3 (0 \. 0 end-punc 0 ? 6); initial clause, & intervening one(s)?
+     3 (0 \. 0 end-punc 0 ? 6); initial clause, & intervening one(S)?
       4 (5 \. 0 end-punc 5 ? 6); short answer & question?
        5 (*reaction-to-question* (5 ?)) ; (*reactions-to-answer+question* ((1 \.) (5 ?)))
          (0 :subtree+clause) ;(0 :schema+args)
@@ -101,11 +101,11 @@
       4 (10 \. 0 end-punc 10 ? 6); allow longer answer clause & question
        5 (*reaction-to-question* (5 ?)) ;(*reactions-to-answer+question* ((1 \.) (5 ?)))
          (0 :subtree+clause) ;(0 :schema+args)
-     3 (10 \. 10 ? 6); no intervening clauses (by above level-3 failure)
+     3 (10 \. 10 ? 6); no intervening clauses (By above level-3 failure)
       4 (*reaction-to-question* (3 ?)) ;(*reactions-to-answer+question* ((1 \.) (3 ?)))
         (0 :subtree+clause) ;(0 :schema+args)
 
-   ; No question among the gist clauses (by earlier level-1 failure)
+   ; No question among the gist clauses (By earlier level-1 failure)
    1 (5 \. 0); short initial answer? Respond just to that
     2 (*reaction-to-assertion* (1 \.))
       (0 :subtree+clause)

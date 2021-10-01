@@ -5,7 +5,7 @@
 ;;
 
 
-;``````````````````````````````````````````````````````
+;`````````````````````````````````````````````````````
 ; Store a global hash table of schema headers to
 ; the corresponding schema variable names.
 ; NOTE: This is only defined in the eta-schema.lisp file.
@@ -138,6 +138,54 @@
     (append (butlast l (- (length l) n)) (list e) (last l (- (length l) n 1)))
     l)
 ) ; END replace-n
+
+
+
+(defun >inf (x y)
+;``````````````````
+; > with symbol 'inf interpreted as infinity, and 'ninf' as negative infinity.
+;
+  (cond
+    ((equal x 'inf)
+      (cond ((equal y 'inf) nil) ((equal y 'ninf) t) (t t)))
+    ((equal x 'ninf)
+      (cond ((equal y 'inf) nil) ((equal y 'ninf) nil) (t nil)))
+    (t
+      (cond ((equal y 'inf) nil) ((equal y 'ninf) t) (t (> x y)))))
+) ; END >inf
+
+
+
+(defun >=inf (x y)
+;``````````````````
+; >= with symbol 'inf interpreted as infinity, and 'ninf' as negative infinity.
+;
+  (cond
+    ((equal x 'inf)
+      (cond ((equal y 'inf) t) ((equal y 'ninf) t) (t t)))
+    ((equal x 'ninf)
+      (cond ((equal y 'inf) nil) ((equal y 'ninf) t) (t nil)))
+    (t
+      (cond ((equal y 'inf) nil) ((equal y 'ninf) t) (t (>= x y)))))
+) ; END >=inf
+
+
+
+(defun <inf (x y)
+;``````````````````
+; < with symbol 'inf interpreted as infinity, and 'ninf' as negative infinity.
+;
+  (not (>=inf x y))
+) ; END <inf
+
+
+
+(defun <=inf (x y)
+;``````````````````
+; <= with symbol 'inf interpreted as infinity, and 'ninf' as negative infinity.
+;
+  (not (>inf x y))
+) ; END <=inf
 
 
 
@@ -280,6 +328,23 @@
 
 
 
+(defun list-split (l sym)
+;```````````````````````````
+; Given a list, split into multiple lists based on delimiter sym.
+; e.g., (list-split '(a b c d b e f) 'b) => '((a) (c d) (e f))
+;
+  (labels
+    ((list-split-recur (l sym temp)
+      (cond
+        ((equal (car l) sym)
+          (append (list (reverse temp)) (list-split-recur (cdr l) sym nil)))
+        ((null l) (list (reverse temp)))
+        (t (list-split-recur (cdr l) sym (cons (car l) temp))))))
+  (list-split-recur l sym nil))
+) ; END list-split
+
+
+
 (defun sym-contains (sym char)
 ;```````````````````````````````
 ; Returns true if a symbol contains the character given by char.
@@ -295,6 +360,120 @@
 ;
   (maphash (lambda (k v) (format t "k: ~a~%  v: ~a~%" k v)) ht)
 ) ; END print-hash
+
+
+
+(defun parse-chars (chars) 
+;```````````````````````````
+; Parses a list of chars by forming a list of character sublists,
+; where each sublist is made into an atom (taking into account
+; special characters)
+;
+; Takes a character list as input. Then tokenize into a list of
+; upper-case atoms, treating (i) any nonblank character following a
+; blank, (ii) any non-blank nonalphanumeric character other than
+; #\', #\-, #\_, #\[, #\] following an alphanumeric character, and
+; (iii) any alphanumeric character following a nonalphanumeric character
+; other than #\', #\-, #\_, #\[, #\] as the start of a new atom.
+;
+  ; remove any newline characters from chars
+  (setq chars (remove #\Linefeed (remove #\Return chars)))
+
+  (let (prevch chlist chlists)
+    (if (null chars) (return-from parse-chars nil))
+    ; Form a list of character sublists, each sublist to be made
+    ; into an atom; (the list & sublists will at first be backward,
+    ; and so have to be reversed before interning & output)
+    (setq prevch #\Space)
+    (dolist (ch chars)
+      ; Do we have the start of a new word?
+      (if
+        (or
+          (and
+            (char-equal prevch #\Space) 
+            (not (char-equal ch #\Space)))
+          (and
+            (alphanumericp prevch)
+            (not (alphanumericp ch))
+            (not (member ch '(#\Space #\' #\- #\_ #\[ #\]) :test #'char-equal)))
+          (and
+            (not (alphanumericp prevch))
+            (not (member prevch '(#\' #\- #\_ #\[ #\]) :test #'char-equal))
+            (alphanumericp ch)))
+        ; If so, push the current chlist (if nonempty) onto 
+        ; chlists, and start a new chlist containing ch
+        (progn (if chlist (push (reverse chlist) chlists))
+          (setq chlist (list (char-upcase ch))))
+        ; If not, push ch (if nonblank) onto the current chlist
+        (if (not (char-equal ch #\Space))
+          (push (char-upcase ch) chlist)))
+      (setq prevch ch))
+        
+    ; Push the final chlist (if nonempty) onto chlists (in reverse)
+    (if chlist (push (reverse chlist) chlists))
+    ; Return the reverse of chlists, where each sublist has been
+    ; interned into an atom
+    (reverse (mapcar (lambda (x) (intern (coerce x 'string))) chlists))
+)) ; END parse-chars
+
+
+
+(defun str-to-output (str)
+; ``````````````````````````
+; Converts a string to a list of words/punctuation to output
+; TEST: "The next step be putting the Twitter block on the Texaco block."
+; 
+  (let ((char-list (coerce str 'list)) word words number-flag res)
+    (dolist (c char-list)
+      (cond
+        ; If space, add accumulated word to word list and clear word
+        ((member c '(#\ ) :test #'char-equal)
+          (if word (setq words (cons (reverse word) words)))
+          (setq word nil))
+        ; If character is digit, ignore periods until the next non-digit
+        ((digit-char-p c)
+          (setq number-flag t)
+          (setq word (cons c word)))
+        ; If punctuation, add accumulated word to word list, clear word,
+        ; and add punctuation to word list
+        ((member c '(#\, #\' #\") :test #'char-equal)
+          (if word (setq words (cons (reverse word) words)))
+          (setq word nil)
+          (setq words (cons (intern (coerce (list c) 'string)) words)))
+        ; If period, check whether currently reading a number
+        ((and (member c '(#\.) :test #'char-equal) (not number-flag))
+          (if word (setq words (cons (reverse word) words)))
+          (setq word nil)
+          (setq words (cons (intern (coerce (list c) 'string)) words)))
+        ; If non-digit and currently reading a number, add accumulated word
+        ; to word list, splitting off the final period (if any)
+        ((and (not (digit-char-p c)) (not (equal #\. c)) number-flag)
+          (cond
+            ((and word (equal #\. (car word)))
+              (if (cdr word) (setq words (cons (reverse (cdr word)) words)))
+              (setq words (cons (intern ".") words)))
+            (t (setq words (cons (reverse word) words))))
+          (setq word (list c))
+          (setq number-flag  nil))
+        ; Otherwise, add current character to accumulated word
+        (t
+          (setq word (cons c word)))))
+    ; Add any remainder word
+    (cond
+      ((and word (equal #\. (car word)))
+        (if (cdr word) (setq words (cons (reverse (cdr word)) words)))
+        (setq words (cons (intern ".") words)))
+      (word (setq words (cons (reverse word) words))))
+
+    ; Remove any NIL values from words
+    (setq words (remove nil words))
+
+    ; Read list of word symbols from list of strings.
+    (setq res (reverse (mapcar (lambda (w)
+      (if (listp w) (read-from-string (coerce w 'string)) w)) words)))
+    ; Ensure any numbers are symbols
+    (mapcar (lambda (w) (if (numberp w) (intern (write-to-string w)) w)) res))
+) ; END str-to-output
 
 
 
@@ -391,10 +570,11 @@
 ; TODO: needs cleaning
 ;
   (and (listp list) (every (lambda (l)
-      (and (listp l) (= 2 (length l)) (numberp (second l))
-          (or (np? (first l)) (symbolp (first l))
-              (and (listp (first l)) (symbolp (car (first l))))
-              (and (listp (first l)) (np? (car (first l)))))))
+      (and (listp l) (= 3 (length l)) (numberp (third l)) (equal (second l) 'certain-to-degree)
+          (listp (first l)) (equal (first (first l)) 'that)
+          (or (np? (second (first l))) (symbolp (second (first l)))
+              (and (listp (second (first l))) (symbolp (car (second (first l)))))
+              (and (listp (second (first l))) (np? (car (second (first l))))))))
     list))
 ) ; END answer-list?
 
@@ -517,6 +697,26 @@
 
 
 
+(defun emotion-tag? (atm)
+;````````````````````````````````````````````````
+; If symbol is equal to [SAD], [HAPPY], or [NEUTRAL],
+; it qualifies as an emotion tag when inside an output list.
+;
+  (if (and (symbolp atm) (member atm '([SAD] [HAPPY] [NEUTRAL]))) t nil)
+) ; END emotion-tag?
+
+
+
+(defun opportunity-tag? (atm)
+;````````````````````````````````````````````````
+; If symbol is equal to [OPPORTUNITY] or [NOOPPORTUNITY],
+; it qualifies as an opportunity tag when inside an output list.
+;
+  (if (and (symbolp atm) (member atm '([OPPORTUNITY] [NOOPPORTUNITY]))) t nil)
+) ; END opportunity-tag?
+
+
+
 ;``````````````````````````````````````````````````````
 ;
 ; DISCOURSE UTIL
@@ -534,6 +734,9 @@
 
   ; Check if non-empty
   (if (not (get word 'feats)) (return-from tagword (list word)))
+
+  ; Convert to symbol if necessary
+  (if (numberp word) (setq word (intern (write-to-string word))))
 
   (let (words feats feat)
     (setq feats (get word 'feats))
@@ -691,7 +894,7 @@
 
 
 (defun gist-contradiction (current-gist-list gist-clause)
-;`````````````````````````````````````````````````````````
+;`````````````````````````````````````````````````````
 ; Finds gist clauses which contradict one another
 ;
   (let (cont-flag)
@@ -709,7 +912,7 @@
 
 
 (defun remove-contradiction (gist-list)
-;`````````````````````````````````````````````````````````
+;`````````````````````````````````````````````````````
 ; Remove any contradicting gist clauses (get rid of the
 ; latter one, which appears later in the conversation)
 ;
@@ -791,6 +994,8 @@
 
 (defun modify-response (resp)
 ;``````````````````````````````
+; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
+; (\bme\b|\bmy\b|\bI\b|\bmine\b|\byou\b|\byour\b|\byours\b|\byou\\'re\b)
 ; A set of word-level operations, formerly part of the main (doolittle)
 ; program, to prepare choice-packet-derived responses for proper output.
 ; Changes YOU ARE to YOU ARE2 in preparation for replacement of YOU ARE2
@@ -803,8 +1008,33 @@
 
 
 
+(defun tag-emotions (resp)
+;````````````````````````````
+; Prepends each response utterance with a default [NEUTRAL] tag unless it
+; already has an explicit emotion tag. If *emotions* is NIL, strip
+; all emotion tags from response, otherwise return tagged response.
+;
+  (let ((tagged-resp (if (some #'emotion-tag? resp) resp (cons '[NEUTRAL] resp))))
+    (if *emotions* tagged-resp (remove-if #'emotion-tag? tagged-resp))
+)) ; END tag-emotions
+
+
+
+(defun tag-opportunities (resp)
+;```````````````````````````````
+; Prepends each response utterance with a default [NOOPPORTUNITY] tag unless it
+; already has an explicit opportunity tag. If *mark-opportunities* is NIL, strip
+; all opportunity tags from response, otherwise return tagged response.
+;
+  (let ((tagged-resp (if (some #'opportunity-tag? resp) resp (cons '[NOOPPORTUNITY] resp))))
+    (if *mark-opportunities* tagged-resp (remove-if #'opportunity-tag? tagged-resp))
+)) ; END tag-opportunities
+
+
+
 (defun dual (sentence)
 ;``````````````````````
+; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
 ; Replaces 'I' by 'you', 'you' by 'I', 'my' by 'your', etc.
 ;
   (cond
@@ -831,6 +1061,7 @@
 
 (defun presubst (response)
 ;`````````````````````````````
+; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
 ; This function is applied to eta's responses before 
 ; their "dual" is formed and printed out. It helps avoid 
 ; outputs like
@@ -902,19 +1133,6 @@
 
 
 
-(defun store-turn (agent words gist-clauses semantics ht)
-;````````````````````````````````````````````````````````````
-; Given a hash table of different kinds of dialogue histories,
-; store a turn (consisting of surface words, gist clauses, and
-; semantic interpretations) in respective history lists.
-;
-  (push (list agent words) (gethash 'words ht))
-  (push (list agent gist-clauses) (gethash 'gist-clauses ht))
-  (push (list agent semantics) (gethash 'semantics ht))
-) ; END store-turn
-
-
-
 (defun print-gist-kb (&key filename)
 ;`````````````````````````````````````
 ; Prints all gist clauses in the gist-kb for a user.
@@ -938,23 +1156,223 @@
 (defun print-history ()
 ;```````````````````````
 ; Pretty-prints the discourse history in order.
+; TODO: gist-clauses and LFs are now explicitly stored in memory, so
+; this needs to be reworked making use of the timegraph and/or temporal
+; relations between these episodes in memory.
 ;
-  (let ((ht (ds-dialogue-history *ds*)) (i 1))
-    (mapcar (lambda (turn-words turn-gist-clauses turn-semantics)
-      (let ((agent (first turn-words)) (words (second turn-words))
-            (gist-clauses (second turn-gist-clauses)) (semantics (second turn-semantics)))
-        (if (or (null gist-clauses) (not (listp (car gist-clauses))))
-          (setq gist-clauses (list gist-clauses)))
-        (format t "~a. ~a : ~a~%" i agent words)
-        (mapcar (lambda (gist-clause)
-          (format t "   gist: ~a~%" (if gist-clause gist-clause "None"))) gist-clauses)
-        (mapcar (lambda (ulf)
-          (format t "   ulf: ~a~%" (if ulf ulf "None"))) semantics))
-      (setq i (1+ i)))
-    (reverse (gethash 'words ht))
-    (reverse (gethash 'gist-clauses ht))
-    (reverse (gethash 'semantics ht))))
+  ;; (let ((ht (ds-dialogue-history *ds*)) (i 1))
+  ;;   (mapcar (lambda (turn-words turn-gist-clauses turn-semantics)
+  ;;     (let ((agent (first turn-words)) (words (second turn-words))
+  ;;           (gist-clauses (second turn-gist-clauses)) (semantics (second turn-semantics)))
+  ;;       (if (or (null gist-clauses) (not (listp (car gist-clauses))))
+  ;;         (setq gist-clauses (list gist-clauses)))
+  ;;       (format t "~a. ~a : ~a~%" i agent words)
+  ;;       (mapcar (lambda (gist-clause)
+  ;;         (format t "   gist: ~a~%" (if gist-clause gist-clause "None"))) gist-clauses)
+  ;;       (mapcar (lambda (ulf)
+  ;;         (format t "   ulf: ~a~%" (if ulf ulf "None"))) semantics))
+  ;;     (setq i (1+ i)))
+  ;;   (reverse (gethash 'words ht))
+  ;;   (reverse (gethash 'gist-clauses ht))
+  ;;   (reverse (gethash 'semantics ht))))
 ) ; END print-history
+
+
+
+;``````````````````````````````````````````````````````
+;
+; MEMORY UTIL
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun print-memory (&key verbose key)
+;````````````````````````````````````````
+; Prints facts in the memory. When verbose is given as true,
+; print all keys and associated facts as well. If key is given,
+; print only the list of facts stored under that key.
+;
+  (let (l1 l2)
+    (maphash (lambda (k v)
+      (if (equal v t) (setq l1 (cons k l1))
+        (setq l2 (cons (list k v) l2)))) (ds-memory *ds*))
+    (mapcar (lambda (f)
+      (format t "~a~%" f)) l1)
+    (when (or verbose key)
+      (format t "------------------------------------ ~%")
+      (mapcar (lambda (f)
+        (if (or (null key) (equal (first f) key))
+          (format t "~a: ~a~%~%" (first f) (second f)))) l2)))
+) ; END print-memory
+
+
+
+(defun store-in-memory (wff)
+;```````````````````````````````
+; Stores a wff in memory.
+; 
+  (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)))
+    (store-fact wff (ds-memory *ds*)))
+) ; END store-in-memory
+
+
+
+(defun get-from-memory (pred-patt)
+;````````````````````````````````````
+; Retrieves a fact from memory.
+;
+  (get-matching-facts pred-patt (ds-memory *ds*))
+) ; END get-from-memory
+
+
+
+(defun get-from-memory-characterizing-episode (pred-patt ep-name)
+;``````````````````````````````````````````````````````````````````
+; Given an episode name, find all facts in memory characterizing (or partially characterizing)
+; that episode, and return the ones matching pred-patt.
+; 
+  (let (facts matches)
+    (setq facts (mapcar #'first
+      (append (get-from-memory `(?p ** ,ep-name)) (get-from-memory `(?p * ,ep-name)))))
+    (dolist (fact facts)
+      (when (fact-matches-p pred-patt fact)
+        (setq matches (cons fact matches))))
+    matches
+)) ; END get-from-memory-characterizing-episode
+
+
+
+(defun get-episode-from-contextual-fact (pred-patt)
+;```````````````````````````````````````````````````````````````````
+; Given a fact, find the episode-name that that fact characterizes (or
+; partially characterizes). The fact must be currently true in context
+; for the corresponding episode to be returned.
+;
+  (let (ep-names)
+    (setq ep-names (mapcar #'third
+      (append (get-from-memory `(,pred-patt ** ?e)) (get-from-memory `(,pred-patt * ?e)))))
+    ; Remove any episodes that aren't currently true in context
+    (setq ep-names
+      (remove-if-not (lambda (ep-name) (get-from-memory `(NOW* during ,ep-name))) ep-names))
+    ; If there are multiple episodes, return the first one in the list
+    ; TODO: this should be modified to return the most temporally recent episode (using timegraph
+    ; or direct episode relations in memory) eventually.
+    (car ep-names)
+)) ; END get-episode-from-contextual-fact
+
+
+
+(defun get-utterances-characterizing-episode (ep-name)
+;``````````````````````````````````````````````````````````````````
+; Given an episode name, find all surface utterances characterizing it.
+;
+  (unwrap-utterances (get-from-memory-characterizing-episode 'say-to.v ep-name))
+) ; END get-utterances-characterizing-episode
+
+
+
+(defun get-gist-clauses-characterizing-episode (ep-name)
+;``````````````````````````````````````````````````````````````````
+; Given an episode name, find all gist-clauses characterizing it.
+; NOTE: split any gist-clauses with [SEP] delimiters into multiple gist-clauses;
+; currently does nothing but useful if multiple gist-clauses need to be concatenated
+; before storage and split later.
+;
+  (apply #'append (mapcar (lambda (clause) (list-split clause '[SEP])) 
+    (unwrap-gist-clauses (get-from-memory-characterizing-episode 'paraphrase-to.v ep-name))))
+) ; END get-gist-clauses-characterizing-episode
+
+
+
+(defun get-semantic-interpretations-characterizing-episode (ep-name)
+;``````````````````````````````````````````````````````````````````
+; Given an episode name, find all semantic interpretations characterizing it.
+;
+  (unwrap-semantic-interpretations (get-from-memory-characterizing-episode 'articulate2-to.v ep-name))
+) ; END get-semantic-interpretations-characterizing-episode
+
+
+
+(defun store-gist-clause-characterizing-episode (gist-clause ep-name subj obj)
+;```````````````````````````````````````````````````````````````````````````````
+; Given a gist-clause and episode name, store a paraphrase-to.v fact with given
+; subject and object (e.g. ^me and ^you) partially characterizing the episode.
+; Store the wff in context as well.
+;
+  (when (null gist-clause) (return-from store-gist-clause-characterizing-episode nil))
+  (let ((wff `(,subj paraphrase-to.v ,obj ',gist-clause)))
+    (store-in-memory `(,wff * ,ep-name))
+    (store-in-context wff)
+)) ; END store-gist-clause-characterizing-episode
+
+
+
+(defun store-semantic-interpretation-characterizing-episode (wff ep-name subj obj)
+;```````````````````````````````````````````````````````````````````````````````````
+; Given a wff and episode name, store an articulate2-to.v fact with given
+; subject and object (e.g. ^me and ^you) partially characterizing the episode.
+; Store the wff in context as well.
+;
+  (when (null wff) (return-from store-semantic-interpretation-characterizing-episode nil))
+  (let ((wff `(,subj articulate2-to.v ,obj (that ,wff))))
+    (store-in-memory `(,wff * ,ep-name))
+    (store-in-context wff)
+)) ; END store-semantic-interpretation-characterizing-episode
+
+
+
+(defun remove-from-memory (pred-patt)
+;```````````````````````````````````````
+; Removes a fact from memory.
+;
+  (let ((facts (get-from-memory pred-patt)))
+    (if (and facts (not (listp facts)))
+      (remove-fact pred-patt (ds-memory *ds*))
+      (remove-facts facts (ds-memory *ds*))))
+) ; END remove-from-memory
+
+
+
+(defun find-all-instances-memory (descr)
+;```````````````````````````````````````````
+; Given a lambda description, find all instances
+; from memory (see 'find-all-instances').
+;
+  (find-all-instances descr (ds-memory *ds*))
+) ; END find-all-instances-memory
+
+
+
+(defun store-init-time-of-episode (ep-name &key time-record)
+;``````````````````````````````````````````````````````````````
+; Stores the initialization time of episode (assumed to be current time,
+; unless a time record structure is given as time-record) in both memory
+; and the timegraph structure.
+;
+  (if (null time-record) (setq time-record (get-time)))
+  ; Store temporal propositions related to episode in memory
+  (store-in-memory `(NOW* during ,ep-name))
+  (store-in-memory `(,time-record during ,ep-name))
+  ; Store episode in timegraph, with lower bound
+  (add-episode-to-timegraph ep-name)
+  (update-lower-bound-timegraph ep-name time-record)
+) ; END store-init-time-of-episode
+
+
+
+(defun store-end-time-of-episode (ep-name &key time-record)
+;``````````````````````````````````````````````````````````````
+; Stores the end time of episode (assumed to be current time, unless a time
+; record structure is given as time-record) in both memory and the timegraph structure.
+;
+  (if (null time-record) (setq time-record (get-time)))
+  ; Update temporal propositions related to episode in memory
+  (remove-from-memory `(NOW* during ,ep-name))
+  (store-in-memory `(,time-record during ,ep-name))
+  ; Add upper bound to episode in timegraph
+  (update-upper-bound-timegraph ep-name time-record)
+) ; END store-end-time-of-episode
 
 
 
@@ -966,10 +1384,11 @@
 
 
 
-(defun print-context ()
-;```````````````````````
-; Prints the context (dividing between full propositions, and ones that
-; are stored under some specific key)
+(defun print-context (&key verbose key)
+;```````````````````````````````````````
+; Prints facts in the memory. When verbose is given as true,
+; print all keys and associated facts as well. If key is given,
+; print only the list of facts stored under that key.
 ;
   (let (l1 l2)
     (maphash (lambda (k v)
@@ -977,29 +1396,30 @@
         (setq l2 (cons (list k v) l2)))) (ds-context *ds*))
     (mapcar (lambda (f)
       (format t "~a~%" f)) l1)
-    (format t "~%")
-    (mapcar (lambda (f)
-      (format t "~a: ~a~%~%" (first f) (second f))) l2))
+    (when (or verbose key)
+      (format t "------------------------------------ ~%")
+      (mapcar (lambda (f)
+        (if (or (null key) (equal (first f) key))
+          (format t "~a: ~a~%~%" (first f) (second f)))) l2)))
 ) ; END print-context
 
 
 
 (defun store-in-context (wff)
 ;```````````````````````````````
-; Stores a wff in context. Fact may be quoted, e.g., '(E2 finished.a), in
-; which case the unquoted predicate is stored (although this format is unused
-; in the current schema syntax). Otherwise, evaluate all functions in fact and
-; store in context.
-;
-  (let ((fact (if (equal (car wff) 'quote) (eval wff) wff)))
-    (store-fact fact (ds-context *ds*)))
+; Stores a wff in context.
+; 
+  (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)))
+    (store-fact wff (ds-context *ds*)))
 ) ; END store-in-context
 
 
 
 (defun get-from-context (pred-patt)
 ;````````````````````````````````````
-; Retrieves a fact from context
+; Retrieves a fact from context, by checking whether something matching
+; pred-patt is in the context hash table (i.e., the table containing
+; facts true at NOW*).
 ;
   (get-matching-facts pred-patt (ds-context *ds*))
 ) ; END get-from-context
@@ -1008,9 +1428,12 @@
 
 (defun remove-from-context (pred-patt)
 ;```````````````````````````````````````
-; Removes a fact from context
+; Removes a fact from context.
 ;
-  (remove-facts (get-from-context pred-patt) (ds-context *ds*))
+  (let ((facts (get-from-context pred-patt)))
+    (if (and facts (not (listp facts)))
+      (remove-fact pred-patt (ds-context *ds*))
+      (remove-facts facts (ds-context *ds*))))
 ) ; END remove-from-context
 
 
@@ -1019,8 +1442,101 @@
 ;```````````````````````````````````````````
 ; Given a lambda description, find all instances
 ; from context (see 'find-all-instances').
+;
   (find-all-instances descr (ds-context *ds*))
 ) ; END find-all-instances-context
+
+
+
+(defun store-contextual-fact-characterizing-episode (wff ep-name &key partial)
+;`````````````````````````````````````````````````````````````````````````````````
+; Stores a contextual fact characterizing episode ep-name. e.g., if
+; wff = (^you reply-to.v E1) and ep-name = E2, store <wff> in context
+; and (<wff> ** E2) in memory.
+;
+  (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)))
+    (if partial
+      (store-in-memory `(,wff1 * ,ep-name))
+      (store-in-memory `(,wff1 ** ,ep-name)))
+    (store-in-context wff1)
+    ep-name
+)) ; END store-contextual-fact-characterizing-episode
+
+
+
+(defun store-new-contextual-facts (wffs)
+;`````````````````````````````````````````
+; An episode name, say, E1 is generated for the list of fact(s) given as input.
+; For each wff, we store the following fact in memory:
+;
+; 1. (wff ** E1)    (if a single wff)
+;    (wff * E1)     (if multiple wffs)
+;
+; As well as storing each wff in a special context hash table,
+; containing all wffs which are true at NOW*.
+;
+; Furthermore, we store the following facts in memory:
+;
+; 2. (NOW* during E1)
+; 3. (<timestamp> during E1)
+;
+; where <timestamp> is a record structure of the current system time.
+; Note that we don't necessarily know that <timestamp> is the beginning of E1, but
+; rather just that it marks a point where we know that wff is true.
+;
+; Returns the episode name that was created.
+;
+  (let ((ep-name (episode-name)))
+    (store-init-time-of-episode ep-name)
+    ; Store each fact in memory and context
+    (cond
+      ((= 1 (length wffs))
+        (store-contextual-fact-characterizing-episode (car wffs) ep-name))
+      (t (mapcar (lambda (wff) (store-contextual-fact-characterizing-episode wff ep-name :partial t)) wffs)))
+    ep-name
+)) ; END store-new-contextual-facts
+
+
+
+(defun remove-old-contextual-fact (pred-patt)
+;``````````````````````````````````````````````
+; Removes a fact (or any number of matching facts) from context when that
+; fact is found to be no longer true. To do this, we retrieve the episode
+; name characterized by the wff (generally, a list of episode names), say,
+; E1. We have to remove the fact (NOW* during E1) from memory, and add
+; (<timestamp> during E1), where <timestamp> is a record structure of the
+; current system time. The wff is then removed from context (i.e., the NOW*
+; hash table).
+;
+; TODO: should we add (<timestamp> during E1), or (<timestamp> ends E1)?
+;
+  (let ((facts (get-from-context pred-patt)) ep-wffs ep-names time-record)
+    (if (and facts (not (listp facts)))
+      (setq facts (list pred-patt)))
+    ; Remove each matching fact from context
+    (dolist (fact facts)
+      (setq time-record (get-time))
+      ; Get all formulas with fact and ** operator, and extract ep-names
+      (setq ep-wffs (append (get-from-memory `(,fact ** ?e)) (get-from-memory `(,fact * ?e))))
+      (setq ep-names (apply #'append (mapcar #'last ep-wffs)))
+      ; For each ep-name, remove NOW* fact from memory and add ending timestamp
+      (dolist (ep-name ep-names)
+        (store-end-time-of-episode ep-name :time-record time-record))
+      ; Remove fact from context
+      (remove-from-context fact)))
+) ; END remove-old-contextual-fact
+
+
+
+(defun flush-context ()
+;````````````````````````````````
+; Flushes context of telic verbs (e.g. saying events) which are only
+; "instantaneously" true and are assumed to become false after a predetermined
+; amount of time.
+; These telic verbs are currently recorded manually in 'resources/verbs-telic.lisp'.
+; 
+  (mapcar #'remove-old-contextual-fact *verbs-telic*)
+) ; END flush-context
 
 
 
@@ -1048,6 +1564,15 @@
 ;
   (get-record-structure canonical-name)
 ) ; END record-structure!
+
+
+
+(defun get-slot-record-structure (slot record)
+;```````````````````````````````````````````````
+; Returns the value of a particular key in a record structure (or nil if it doesn't exist).
+;
+  (cadr (member slot record))
+) ; END get-slot-record-structure
 
 
 
@@ -1298,6 +1823,23 @@
 ;```````````````````````````````
   (dolist (fact facts) (remove-fact fact ht))
 ) ; END remove-facts
+
+
+
+(defun fact-matches-p (pred-patt fact)
+;````````````````````````````````````````
+; Returns true if 'fact' matches 'pred-patt' (either the predicate constant of 'fact')
+; or a proposition template containing variables).
+;
+  (or
+    ; pred-patt is either a 0-arity predicate or the predicate constant
+    (and (atom pred-patt)
+         (or (equal pred-patt fact)
+             (and (listp fact) (>= (length fact) 2) (equal pred-patt (second fact)))))
+    ; pred-patt is a proposition of the same arity as fact (possibly with variables)
+    (and (listp pred-patt) (listp fact) (= (length pred-patt) (length fact))
+         (every (lambda (arg-p arg-f) (or (variable? arg-p) (equal arg-p arg-f))) pred-patt fact)))
+) ; END fact-matches-p
 
 
 
@@ -1607,6 +2149,48 @@
 
 
 
+(defun unwrap-utterance (say-to-fact)
+;``````````````````````````````````````
+; Given a fact of the form (?x say-to.v ?y '(<expr>)),
+; return the unquoted surface expression.
+;
+  (eval (fourth say-to-fact))
+) ; END unwrap-utterance
+
+(defun unwrap-utterances (say-to-facts)
+  (mapcar #'unwrap-utterance say-to-facts)
+) ; END unwrap-utterances
+
+
+
+(defun unwrap-gist-clause (gist-fact)
+;``````````````````````````````````````
+; Given a fact of the form (?x paraphrase-to.v ?y '(<gist-clause>)),
+; return the unquoted gist-clause.
+;
+  (eval (fourth gist-fact))
+) ; END unwrap-gist-clause
+
+(defun unwrap-gist-clauses (gist-facts)
+  (reverse (mapcar #'unwrap-gist-clause gist-facts))
+) ; END unwrap-gist-clauses
+
+
+
+(defun unwrap-semantic-interpretation (semantic-fact)
+;``````````````````````````````````````````````````````
+; Given a fact of the form (?x articulate2-to.v ?y (that (<wff>))),
+; return the wff.
+;
+  (second (fourth semantic-fact))
+) ; END unwrap-semantic-interpretation
+
+(defun unwrap-semantic-interpretations (semantic-facts)
+  (mapcar #'unwrap-semantic-interpretation semantic-facts)
+) ; END unwrap-semantic-interpretations
+
+
+
 ;``````````````````````````````````````````````````````
 ;
 ; SCHEMA UTIL
@@ -1688,16 +2272,25 @@
 
 
 
-(defun episode-name (ep-var)
-;``````````````````````````````````
-; Given an episode variable (e.g., '?e1'), generate and return a unique
-; episode name to be substituted in for the variable (e.g., 'EP38').
+(defun episode-name ()
+;`````````````````````````````
+; Return a unique episode name, e.g., E38
 ;
-  (when (not (variable? ep-var))
-    (format t "~%***Attempt to form episode name from ~%   non-question-mark variable ~a~%" ep-var)
-    (return-from episode-name nil))
-  (gensym "EP")
+  (gensym "E")
 ) ; END episode-name
+
+
+
+(defun dual-var (ep-var)
+;`````````````````````````
+; Given an episode variable like ?e1, return the non-fluent dual
+; of that variable, e.g., !e1 (and vice-versa if !e1 is given).
+;
+  (when (variable? ep-var)
+    (if (equal #\? (car (explode ep-var)))
+      (implode (cons #\! (cdr (explode ep-var))))
+      (implode (cons #\? (cdr (explode ep-var))))))
+) ; END dual-var
 
 
 
@@ -1725,7 +2318,7 @@
       (format t "~%***Attempt to form episode and proposition name from~%   non-question-mark variable ~a" dual-var)
       (return-from episode-and-proposition-name nil))
     (setq ep-var dual-var) ; will be used if there's no final period
-    (setq ep-name (gensym "EP"))
+    (setq ep-name (episode-name))
     (when (char-equal #\. (car (last chars))) ; form proposition name
       (setq ep-var (implode (butlast chars))) ; implicit ep-var
       (setq prop-name (implode (append (explode ep-name) '(#\.))))
@@ -1741,7 +2334,8 @@
 ; contents of that section as the value.
 ;
   (let ((schema-ht (make-hash-table :test #'equal)))
-    (dolist (section '(:types :rigid-conds :episodes))
+    (dolist (section '(:header :types :var-roles :rigid-conds :static-conds :preconds
+                       :goals :episodes :episode-relations :necessities :certainties))
       (let ((contents (car (get-keyword-contents schema (list section)))))
         (when contents
           (setf (gethash section schema-ht) contents))))
@@ -1756,534 +2350,21 @@
 ; action, or a (^you say-to.v ^me '(...)) action if :reverse t is given.
 ;
   (if (not reverse)
-    `(^me say-to.v ^you (quote ,(modify-response content)))
+    `(^me say-to.v ^you (quote ,content))
     `(^you say-to.v ^me (quote ,content)))
 ) ; END create-say-to-wff
 
 
 
+(defun create-paraphrase-to-wff (content &key reverse)
 ;``````````````````````````````````````````````````````
+; Creates and returns a wff consisting of a (^me paraphrase-to.v ^you '(...))
+; action, or a (^you paraphrase-to.v ^me '(...)) action if :reverse t is given.
 ;
-; IO UTIL
-;
-;``````````````````````````````````````````````````````
-
-
-
-(defun read-log-contents (log)
-;```````````````````````````````
-; Reads the contents of a given log file and converts to list.
-;
-  (let (result)
-    (with-open-file (logfile log :if-does-not-exist :create)
-      (do ((l (read-line logfile) (read-line logfile nil 'eof)))
-          ((eq l 'eof) "Reached end of file.")
-        (setq result (concatenate 'string result " " l))))
-    (read-from-string (concatenate 'string "(" result ")")))
-) ; END read-log-contents
-
-
-
-(defun write-ulf (ulf)
-;````````````````````````
-; Writes a ulf to the file ulf.lisp, so that it can be used
-; by the blocksworld system.
-;
-  (with-open-file (outfile "./io/ulf.lisp" :direction :output
-                                        :if-exists :supersede
-                                        :if-does-not-exist :create)
-    (format outfile "(setq *next-ulf* ~a)" ulf))
-) ; END write-ulf
-
-
-
-(defun print-words (wordlist)
-;``````````````````````````````
-; This is intended for the keyboard-based mode of interaction,
-; i.e., with *live* = nil.
-;
-  (format t "~%...")
-  (dolist (word wordlist)
-    (princ " ")
-    (princ word)
-    (if (or (member word '(? ! \.))
-            (member (car (last (explode word))) '(#\? #\! #\.)))
-      (format t "~%")))
-) ; END print-words
-
-
-
-(defun say-words (wordlist)
-;````````````````````````````
-; This is intended for th *live* = T mode of operation, i.e., I/O
-; is via the virtual agent; (but the output is printed as well).
-; For terminal mode only, we use 'print-words'.
-;
-  (let (wordstring)
-    ; Write ETA's words to "./io/output.txt" as a continuous string
-    ; (preceded by the output count and a colon)
-    (dolist (word wordlist)
-      (push (string word) wordstring)
-      (push " " wordstring))
-    (setq wordstring (reverse (cdr wordstring)))
-    (setq wordstring (eval (cons 'concatenate (cons ''string wordstring))))
-
-    ; Increment output number
-    (setq *output-count* (1+ *output-count*))
-	  
-    ; Output words
-    (with-open-file (outfile "./io/output.txt" :direction :output
-                                            :if-exists :append
-                                            :if-does-not-exist :create)
-      (format outfile "~%#~D: ~a" *output-count* wordstring))
-
-    ; Also write ETA's words to standard output:
-    (format t "~% ... ")
-    (dolist (word wordlist)
-      (format t "~a " word)
-      (if (or (member word '(? ! \.))
-              (member (car (last (explode word))) '(#\? #\! #\.)))
-        (format t "~%")))
-    (format t "~%")
-)) ; END say-words
-
-
-
-(defun read-words (&optional str) 
-;``````````````````````````````````
-; This is the input reader when ETA is used with argument live =
-; nil (hence also *live* = nil), i.e., with terminal input rather
-; than live spoken input.
-; If optional str parameter given, simply read words from str.
-;
-  (finish-output)
-  (parse-chars (coerce (if str str (read-line)) 'list))
-) ; END read-words
-
-
-
-(defun hear-words (&key (delay nil)) 
-;`````````````````````````````````````
-; This waits until it can load a character sequence from "./io/input.lisp",
-; which will set the value of *next-input*, and then processes *input*
-; in the same way as the result of (read-line) is processed in direct
-; terminal input mode.
-; If some delay (an integer) is given, move on if no words heard after that
-; number of seconds.
-;
-  (let ((s 0))
-    ; Write empty star line to output to prompt avatar to listen
-    ; TODO: there has to be a better way of doing this...
-    (setq *output-count* (1+ *output-count*))
-    (with-open-file (outfile "./io/output.txt" :direction :output
-                                               :if-exists :append
-                                               :if-does-not-exist :create)
-      (format outfile "~%*~D: dummy" *output-count*))
-
-    (setq *next-input* nil)
-    (loop while (and (not *next-input*) (or (not delay) (< s delay))) do
-      (sleep .5)
-      (setq s (+ s .5))
-      (progn
-        (load "./io/input.lisp")
-		    (if *next-input*
-          (progn
-            (format t "~a~%" *next-input*)
-            (with-open-file (outfile "./io/input.lisp" :direction :output 
-                                                       :if-exists :supersede
-                                                       :if-does-not-exist :create))))))
-          
-  (parse-chars (coerce *next-input* 'list))
-)) ; END hear-words
-
-
-
-(defun get-perceptions () 
-;``````````````````````
-; This waits until it can load a list of block perceptions from "./io/perceptions.lisp".
-; This should have a list of relations of the following two forms:
-; ((the.d (|Twitter| block.n)) at-loc.p ($ loc ?x ?y ?z))
-; ((the.d (|Toyota| block.n)) ((past move.v) (from.p-arg ($ loc ?x1 ?y1 ?z1)) (to.p-arg ($ loc ?x2 ?y2 ?z2))))
-;
-  (setq *next-perceptions* nil)
-  (loop while (not *next-perceptions*) do
-    (sleep .5)
-    (progn
-      (load "./io/perceptions.lisp")
-		  (if *next-perceptions*
-        (with-open-file (outfile "./io/perceptions.lisp" :direction :output 
-                                                 :if-exists :supersede
-                                                 :if-does-not-exist :create)))))
-          
-  *next-perceptions*
-) ; END get-perceptions
-
-
-
-(defun get-perceptions-offline () 
-;``````````````````````````````````
-; This is the perceptions reader when ETA is used with argument live =
-; nil (hence also *live* = nil)
-;
-  (finish-output)
-  (format t "enter perceptions below:~%")
-  (finish-output)
-  (read-from-string (read-line))
-) ; END get-perceptions-offline
-
-
-
-(defun load-obj-schemas ()
-;```````````````````````````````````````````````
-; Load core object schemas
-; (in directory 'core/resources/obj-schemas')
-; NOTE: I don't like having this here (loaded during Eta's
-; 'init' function), but it's currently necessary since
-; the equality sets and context are only defined in 'init'.
-;
-(mapcar (lambda (file) (load file))
-    (directory "core/resources/obj-schemas/*.lisp"))
-) ; END load-obj-schemas
-
-
-
-(defun request-goal-rep (wff)
-;`````````````````````````````
-; Writes a formula (containing an indefinite quantifier with a lambda abstract)
-; to the file goal-request.lisp, so that it can be processed by BW system.
-;
-  (with-open-file (outfile "./io/goal-request.lisp" :direction :output
-                                                    :if-exists :supersede
-                                                    :if-does-not-exist :create)
-    (format outfile "(setq *goal-request* '~s)" wff))
-) ; END request-goal-rep
-
-
-
-(defun get-goal-rep ()
-;```````````````````````
-; This waits until it can load a goal representation from "./io/goal-rep.lisp".
-;
-  (setq *goal-rep* nil)
-  (loop while (not *goal-rep*) do
-    (sleep .5)
-    (progn
-      (load "./io/goal-rep.lisp")
-		  (if *goal-rep*
-        (with-open-file (outfile "./io/goal-rep.lisp" :direction :output 
-                                                      :if-exists :supersede
-                                                      :if-does-not-exist :create)))))
-  *goal-rep*
-) ; END get-goal-rep
-
-
-
-(defun planner-input-to-ka (planner-input)
-;```````````````````````````````````````````
-; Converts planner input to the appropriate reified action.
-; e.g.:
-; Failure -> nil
-; None -> (ka (do2.v nothing.pro))
-; (|B1| on.p |B2|) -> (ka (put.v |B1| (on.p |B2|)))
-; ((|B1| on.p |B2|) (|B1| behind.p |B3|))
-;   -> (ka (put.v |B1| (set-of (on.p |B2|) (behind.p |B3|))))
-; (undo (|B1| on.p |B2|)) -> (ka (move.v |B1| (back.mod-a (on.p |B2|))))
-; (clarification (|B1| touching.p |B2|)) -> (ka (make.v |B1| (touching.p |B2|)))
-; (clarification (|B1| ((mod-a (by.p (one.d (half.a block.n)))) to_the_left.a)))
-;   -> (ka (make.v |B1| ((mod-a (by.p (one.d (half.a block.n)))) to_the_left.a)))
-;
-  (cond
-    ((equal planner-input 'Failure) nil)
-    ((equal planner-input 'None)
-      '(ka (do2.v nothing.pro)))
-    ((atom planner-input) nil)
-    ; If single relation, convert to put.v ka
-    ((relation-prop? planner-input)
-      `(ka (put.v ,(car planner-input)
-                  ,(cdr1 planner-input))))
-    ; If multiple relations, convert to put.v ka with plural argument
-    ((every #'relation-prop? planner-input)
-      `(ka (put.v ,(caar planner-input)
-                  ,(make-set (mapcar #'cdr1 planner-input)))))
-    ; If undo step, generate put.v ka and transform to 'move back' ka
-    ((undo-relation-prop? planner-input)
-      (ttt:apply-rule
-          '(/ (put.v _!1 _!2) (move.v _!1 (back.mod-a _!2)))
-        (planner-input-to-ka (second planner-input))))
-    ; If clarification step, generate put.v ka and transform to make.v ka
-    ((clarification-relation-prop? planner-input)
-      (ttt:apply-rule
-          '(/ (put.v _!1 _!2) (make.v _!1 _!2))
-        (planner-input-to-ka (second planner-input)))))
-) ; END planner-input-to-ka
-
-
-
-(defun get-planner-input ()
-;````````````````````````````
-; This waits until it can load a goal representation from "./io/planner-input.lisp".
-; The value of *planner-input* is a list of relations that hold after the proposed
-; action, e.g., ((|B1| to-the-left-of.p |B2|) (|B1| touching.p |B2|))
-; Each relation is assumed to have the same subject.
-;
-  (setq *planner-input* nil)
-  (loop while (not *planner-input*) do
-    (sleep .5)
-    (progn
-      (load "./io/planner-input.lisp")
-		  (if *planner-input*
-        (with-open-file (outfile "./io/planner-input.lisp" :direction :output 
-                                                           :if-exists :supersede
-                                                           :if-does-not-exist :create)))))
-  (planner-input-to-ka *planner-input*)
-) ; END get-planner-input
-
-
-
-(defun get-planner-input-offline () 
-;````````````````````````````````````
-; This is the planner input when ETA is used with argument live =
-; nil (hence also *live* = nil)
-; The input should be a list of relations that hold after the proposed action,
-; e.g., ((|B1| to-the-left-of.p |B2|) (|B1| touching.p |B2|))
-; Each relation is assumed to have the same subject.
-;
-  (finish-output)
-  (format t "enter planner input below:~%")
-  (finish-output)
-  (planner-input-to-ka (read-from-string (read-line)))
-) ; END get-planner-input-offline
-
-
-
-(defun get-answer () 
-;``````````````````````
-; This waits until it can load a list of relations from "./io/answer.lisp".
-;
-  (setq *next-answer* nil)
-  (loop while (not *next-answer*) do
-    (sleep .5)
-    (progn
-      (load "./io/answer.lisp")
-		  (if *next-answer*
-        (with-open-file (outfile "./io/answer.lisp" :direction :output 
-                                                    :if-exists :supersede
-                                                    :if-does-not-exist :create)))))
-          
-  (if (equal *next-answer* 'None) nil
-    *next-answer*)
-) ; END get-answer
-
-
-
-(defun get-answer-offline () 
-;`````````````````````````````
-; This is the answer reader when ETA is used with argument live =
-; nil (hence also *live* = nil)
-;
-  (finish-output)
-  (format t "enter answer relations below:~%")
-  (finish-output)
-  (let ((ans (read-from-string (read-line))))
-    (if (equal ans 'None) nil ans))
-) ; END get-answer-offline
-
-
-
-(defun get-user-try-ka-success () 
-;``````````````````````````````````
-; This waits until it can load a list of relations from "./io/user-try-ka-success.lisp".
-;
-  (setq *user-try-ka-success* nil)
-  (loop while (not *user-try-ka-success*) do
-    (sleep .5)
-    (progn
-      (load "./io/user-try-ka-success.lisp")
-		  (if *user-try-ka-success*
-        (with-open-file (outfile "./io/user-try-ka-success.lisp" :direction :output 
-                                                                 :if-exists :supersede
-                                                                 :if-does-not-exist :create)))))
-          
-  (if (equal *user-try-ka-success* 'Failure) nil
-    *user-try-ka-success*)
-) ; END get-user-try-ka-success
-
-
-
-(defun get-user-try-ka-success-offline () 
-;```````````````````````````````````````````
-; This is the user-try-ka-success reader when ETA is 
-; used with argument live = nil (hence also *live* = nil)
-;
-  (finish-output)
-  (format t "enter user-try-ka-success below:~%")
-  (finish-output)
-  (let ((user-try-ka-success (read-from-string (read-line))))
-    (if (equal user-try-ka-success 'Failure) nil user-try-ka-success))
-) ; END get-user-try-ka-success-offline
-
-
-
-(defun get-answer-string () 
-;````````````````````````````
-; This waits until it can load a character sequence from "./io/answer.lisp",
-; which will set the value of *next-answer*, and then processes it.
-;
-  (setq *next-answer* nil)
-  (loop while (not *next-answer*) do
-    (sleep .5)
-    (progn
-      (load "./io/answer.lisp")
-		  (if *next-answer*
-        (with-open-file (outfile "./io/answer.lisp" :direction :output 
-                                                   :if-exists :supersede
-                                                   :if-does-not-exist :create)))))
-          
-  ;; (parse-chars (if (stringp *next-answer*) (coerce *next-answer* 'list)
-  ;;                                            (coerce (car *next-answer*) 'list)))
-  (cond
-    ((stringp *next-answer*) (list (parse-chars (coerce *next-answer* 'list))))
-    ((listp *next-answer*) (cons (parse-chars (coerce (car *next-answer*) 'list))
-                            (cdr *next-answer*))))
-) ; END get-answer-string
-
-
-
-(defun update-block-coordinates (moves)
-;````````````````````````````````````````
-; Given a list of moves (in sequential order), update *block-coordinates*. Return a list of
-; perceptions, i.e. the given moves combined with the current block coordinates.
-;
-  (mapcar (lambda (move)
-    (setq *block-coordinates* (mapcar (lambda (coordinate)
-        (if (equal (car move) (car coordinate))
-          (list (car coordinate) 'at-loc.p (cadar (cddadr move)))
-          coordinate))
-      *block-coordinates*))) moves)
-  (append *block-coordinates* moves)
-) ; END update-block-coordinates
-
-
-
-(defun verify-log (answer-new turn-tuple filename)
-;```````````````````````````````````````````````````
-; Given Eta's answer for a turn, allow the user to compare to the answer in the log
-; and amend the correctness judgment for that turn. Output to the corresponding
-; filename in log_out/ directory.
-;
-  (let ((filename-out (concatenate 'string "logs/logs_out/" (pathname-name filename)))
-        (answer-old (read-words (third turn-tuple))) (feedback-old (fourth turn-tuple)) feedback-new)
-    ;; (format t "/~a~%\\~a~%" answer-old answer-new)
-    (with-open-file (outfile filename-out :direction :output :if-exists :append :if-does-not-exist :create)
-      (cond
-        ; If answer is the same, just output without modification
-        ((equal answer-old answer-new)
-          (format outfile "(\"~a\" ~S \"~a\" ~a)~%" (first turn-tuple) (second turn-tuple) (third turn-tuple) (fourth turn-tuple)))
-        ; If question was marked as non-historical, also skip
-        ((member (fourth turn-tuple) '(XC XI XP XE))
-          (format outfile "(\"~a\" ~S \"~a\" ~a)~%" (first turn-tuple) (second turn-tuple) (third turn-tuple) (fourth turn-tuple)))
-        ; If "when" question with specific time, also skip
-        ((and (equal "when" (string-downcase (subseq (first turn-tuple) 0 4)))
-              (find-if (lambda (x) (member x '(zero one two three four five six seven eight nine ten eleven twelve thirteen
-                                               fourteen fifteen sixteen seventeen eighteen nineteen twenty thirty forty
-                                               fifty sixty seventy eighty ninety hundred))) answer-old))
-          (format outfile "(\"~a\" ~S \"~a\" ~a)~%" (first turn-tuple) (second turn-tuple) (third turn-tuple) (fourth turn-tuple)))
-        ; Otherwise, check the new output with the user and prompt them to change feedback
-
-        (t
-          (format t " ----------------------------------------------------------~%")
-          (format t "| A CHANGE WAS DETECTED IN LOG '~a':~%" (pathname-name filename))
-          (format t "| * question: ~a~%" (first turn-tuple))
-          (format t "| * old answer: ~a~%" answer-old)
-          (format t "| * old feedback: ~a~%" (fourth turn-tuple))
-          (format t "| * new answer: ~a~%" answer-new)
-          (format t "| > new feedback: ")
-          (finish-output) (setq feedback-new (read-from-string (read-line)))
-          (format t " ----------------------------------------------------------~%")
-          (if (not (member feedback-new '(C I P F E))) (setq feedback-new 'E))
-          (format outfile "(\"~a\" ~S \"~a\" ~a)~%"
-            (first turn-tuple) (second turn-tuple) (format nil "~{~a~^ ~}" answer-new) feedback-new)))))
-) ; END verify-log
-
-
-
-(defun parse-chars (chars) 
-;```````````````````````````
-; Parses a list of chars by forming a list of character sublists,
-; where each sublist is made into an atom (taking into account
-; special characters)
-;
-; Takes a character list as input. Then tokenize into a list of
-; upper-case atoms, treating (i) any nonblank character following a
-; blank, (ii) any non-blank nonalphanumeric character other than
-; #\', #\-, #\_ following an alphanumeric character, and (iii) any
-; alphanumeric character following a nonalphanumeric character other
-; than #\', #\-, #\_, as the start of a new atom.
-;
-  (let (prevch chlist chlists)
-    (if (null chars) (return-from parse-chars nil))
-    ; Form a list of character sublists, each sublist to be made
-    ; into an atom; (the list & sublists will at first be backward,
-    ; and so have to be reversed before interning & output)
-    (setq prevch #\Space)
-    (dolist (ch chars)
-      ; Do we have the start of a new word?
-      (if
-        (or
-          (and
-            (char-equal prevch #\Space) 
-            (not (char-equal ch #\Space)))
-          (and
-            (alphanumericp prevch)
-            (not (alphanumericp ch))
-            (not (member ch '(#\Space #\' #\- #\_) :test #'char-equal)))
-          (and
-            (not (alphanumericp prevch))
-            (not (member prevch '(#\' #\- #\_) :test #'char-equal))
-            (alphanumericp ch)))
-        ; If so, push the current chlist (if nonempty) onto 
-        ; chlists, and start a new chlist containing ch
-        (progn (if chlist (push (reverse chlist) chlists))
-          (setq chlist (list (char-upcase ch))))
-        ; If not, push ch (if nonblank) onto the current chlist
-        (if (not (char-equal ch #\Space))
-          (push (char-upcase ch) chlist)))
-      (setq prevch ch))
-        
-    ; Push the final chlist (if nonempty) onto chlists (in reverse)
-    (if chlist (push (reverse chlist) chlists))
-    ; Return the reverse of chlists, where each sublist has been
-    ; interned into an atom
-    (reverse (mapcar (lambda (x) (intern (coerce x 'string))) chlists))
-)) ; END parse-chars
-
-
-
-(defun str-to-output (str)
-; ``````````````````````````
-; Converts a string to a list of words/punctuation to output
-; TEST: "The next step be putting the Twitter block on the Texaco block."
-; 
-  (let ((char-list (coerce str 'list)) word words)
-    (dolist (c char-list)
-      (cond
-        ; If space, add accumulated word to word list and clear word
-        ((member c '(#\ ) :test #'char-equal)
-          (if word (setq words (cons (reverse word) words)))
-          (setq word nil))
-        ; If punctuation, add accumulated word to word list, clear word,
-        ; and add punctuation to word list
-        ((member c '(#\. #\, #\' #\") :test #'char-equal)
-          (if word (setq words (cons (reverse word) words)))
-          (setq word nil)
-          (setq words (cons (intern (coerce (list c) 'string)) words)))
-        ; Otherwise, add current character to accumulated word
-        (t
-          (setq word (cons c word)))))
-    ; Read list of word symbols from list of strings.
-    (reverse (mapcar (lambda (w)
-      (if (listp w) (read-from-string (coerce w 'string)) w)) words)))
-) ; END str-to-output
+  (if (not reverse)
+    `(^me paraphrase-to.v ^you (quote ,content))
+    `(^you paraphrase-to.v ^me (quote ,content)))
+) ; END create-paraphrase-to-wff
 
 
 
@@ -2591,24 +2672,10 @@
 ; Checks whether program has entered an infinite loop using a counter
 ;
   (cond
-    ((> *error-check* 500)
+    ((> *error-check* 1000)
       (if caller
-        (error-message (format nil "An error caused Eta to fall into an infinite loop in '~a'. Check if the plan is being updated correctly." caller) *live*)
-        (error-message "An error caused Eta to fall into an infinite loop. Check if the plan is being updated correctly." *live*))
+        (error-message (format nil "An error caused Eta to fall into an infinite loop in '~a'. Check if the plan is being updated correctly." caller))
+        (error-message "An error caused Eta to fall into an infinite loop. Check if the plan is being updated correctly."))
       (error))
     (t (setq *error-check* (1+ *error-check*))))
 ) ; END error-check
-
-
-
-(defun error-message (str mode)
-;````````````````````````````````
-; Print error message to the console, and if in live mode, to output.txt
-;
-  (format t "~a~%" str)
-  (if mode
-    (with-open-file (outfile "./io/output.txt" :direction :output
-                                            :if-exists :append
-                                            :if-does-not-exist :create)
-      (format outfile "~%#: ~a" str)))
-) ; END error-message

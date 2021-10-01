@@ -8,7 +8,7 @@
 (defparameter *have-question-answering-dialogue*
 
 '(event-schema :header (((set-of ^me ^you) have-question-answering-dialogue.v) ** ?e)
-;`````````````````````````````````````````````````````````````````````````````````````
+;````````````````````````````````````````````````````````````````````````````````````
 ; Blocks world conversation. An expected blocks world dialogue consists
 ; of the agent repeatedly asking the user if they have a spatial question
 ; to ask, followed by a question from the user, followed by an appropriate
@@ -66,14 +66,14 @@
     ?e5 (:try-in-sequence
 
       ; (5a)
-      (:if ((ulf-of.f ?e4) = '(GOODBYE.GR))
+      (:if (^you say-bye.v)
 
         ; Store the fact that ?e2 is finished and react.
         ?e6 (^me commit-to-STM.v (that (?e2 finished2.a)))
         ?e7 (^me react-to.v ?e4))
 
       ; (5b)
-      (:if ((ulf-of.f ?e4) = '(PAUSE.GR))
+      (:if (^you paraphrase-to.v ^me '(Pause for a moment \.))
 
         ; React and instantiate pause-conversation schema.
         ?e8 (^me react-to.v ?e4)

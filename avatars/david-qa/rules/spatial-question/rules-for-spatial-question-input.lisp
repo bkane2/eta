@@ -44,11 +44,11 @@
     ;; For now, preempt any references/pronouns
     ;; ----------------------------------------
     ;; 1 (0 spatial-word-potential 0 ANA-PRON 0)
-    ;;   2 ((Can you answer my question referring to a past question ?)) (0 :gist)
+    ;;   2 ((Can I answer your question referring to a past question ?)) (0 :gist)
     ;; 1 (0 spatial-word-potential 0 that block 0)
-    ;;   2 ((Can you answer my question referring to a past question ?)) (0 :gist)
+    ;;   2 ((Can I answer your question referring to a past question ?)) (0 :gist)
     ;; 1 (0 spatial-word-potential 0 that one 0)
-    ;;   2 ((Can you answer my question referring to a past question ?)) (0 :gist)
+    ;;   2 ((Can I answer your question referring to a past question ?)) (0 :gist)
     ;; ----------------------------------------
     ;; If spatial question, start preprocessing
     ;; ----------------------------------------
@@ -60,19 +60,27 @@
     ;; -----------------
     1 (0 special-request 0)
       2 (*request-input* (1 2 3)) (0 :subtree+clause)
-    ;; ---------------------
+    ;; ----------------------------------
+    ;; 'Indexical' explanation requests 
+    ;; ----------------------------------
+    1 (0 aux you verb-explain 4)
+      2 (*multi-token-word-tree* (can you explain your answer ?)) (0 :subtree+clause)
+    1 (1 verb-explain 1)
+      2 (*multi-token-word-tree* (can you explain your answer ?)) (0 :subtree+clause)
+    1 (1 wh-explanation 1)
+      2 (*multi-token-word-tree* (can you explain your answer ?)) (0 :subtree+clause)
     ;; "Small talk" patterns
     ;; ---------------------
     1 (0 wh_ 1 your name 0)
-      2 ((What is your name ?)) (0 :gist)
+      2 ((What is my name ?)) (0 :gist)
     1 (0 aux you 1 answer 3 question 0)
-      2 ((Can you answer my question ?)) (0 :gist)
+      2 ((Can I answer your question ?)) (0 :gist)
     1 (0 aux you 0)
-      2 ((Can you do something ?)) (0 :gist)
+      2 ((Can I do something ?)) (0 :gist)
     1 (0 wh_ 1 kinds 2 question 1 aux you 1 answer 0)
-      2 ((What questions can you answer ?)) (0 :gist)
+      2 ((What questions can I answer ?)) (0 :gist)
     1 (0)
-      2 ((NIL Gist \: Eta could not understand my question \.)) (0 :gist)
+      2 ((NIL Gist \: Eta could not understand your question \.)) (0 :gist)
   ))
 
   ; The first stage of preprocessing. Here we combine any words that have multiple tokens,
@@ -174,6 +182,8 @@
       2 (*trim-prefix-tree* (1 2 ?)) (0 :subtree+clause)
     1 (0 spatial-word 0)
       2 (*trim-prefix-tree* (1 2 ?)) (0 :subtree+clause)
+    1 (0 explain 0 noun-explain 0)
+      2 (*trim-prefix-tree* (1 2 3 4 ?)) (0 :subtree+clause)
   ))
 
   ; The third stage of preprocessing. We want to remove any "prefix" that the user might
@@ -196,38 +206,112 @@
       2 (*trim-prefix-tree* (8)) (0 :subtree+clause)
     1 (0 my 1 question 2 be 0)
       2 (*trim-prefix-tree* (7)) (0 :subtree+clause)
+
+    ; Detect and simplify 'explanation' prefixes
+    1 (what be det reason that 0)
+      2 (what be det reason that 0 be 0)
+        3 (*swap-pronoun-tree* (spatial-question why is 6 8)) (0 :subtree+clause)
+      2 (*swap-pronoun-tree* (spatial-question why do 6)) (0 :subtree+clause)
+    1 (wh-explanation be 1 true that 0)
+      2 (wh-explanation be 1 true that 0 be 0)
+        3 (*swap-pronoun-tree* (spatial-question why is 6 8)) (0 :subtree+clause)
+      2 (*swap-pronoun-tree* (spatial-question why do 6)) (0 :subtree+clause)
+    1 (verb-explain 1 wh-explanation you verb-answer that np_ 0)
+      2 (verb-explain 1 wh-explanation you verb-answer that np_ 0 be 0)
+        3 (*swap-pronoun-tree* (spatial-question why is 7 8 10)) (0 :subtree+clause)
+      2 (*swap-pronoun-tree* (spatial-question why do 7 8)) (0 :subtree+clause)
+    1 (verb-explain 1 wh-explanation you verb-answer np_ 0)
+      2 (verb-explain 1 wh-explanation you verb-answer np_ 0 be 0)
+        3 (*swap-pronoun-tree* (spatial-question why is 6 7 9)) (0 :subtree+clause)
+      2 (*swap-pronoun-tree* (spatial-question why do 6 7)) (0 :subtree+clause)
+    1 (verb-explain 1 wh-explanation 0)
+      2 (verb-explain 1 wh-explanation 0 be 0)
+        3 (*swap-pronoun-tree* (spatial-question why is 4 6)) (0 :subtree+clause)
+      2 (*swap-pronoun-tree* (spatial-question why do 4)) (0 :subtree+clause)
+    1 (1 wh-explanation AUX you verb-answer that np_ 0)
+      2 (1 wh-explanation AUX you verb-answer that np_ 0 be 0)
+        3 (*swap-pronoun-tree* (spatial-question why is 7 8 10)) (0 :subtree+clause)
+      2 (*swap-pronoun-tree* (spatial-question why do 7 8)) (0 :subtree+clause)
+    1 (1 wh-explanation AUX you verb-answer np_ 0)
+      2 (1 wh-explanation AUX you verb-answer np_ 0 be 0)
+        3 (*swap-pronoun-tree* (spatial-question why is 6 7 9)) (0 :subtree+clause)
+      2 (*swap-pronoun-tree* (spatial-question why do 6 7)) (0 :subtree+clause)
+
+    ; Other one-off prefixes
     1 (0 aux you 1 know if 0)
-      2 ((spatial-question 7)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 7)) (0 :subtree+clause)
     1 (0 aux you 1 know 0)
-      2 ((spatial-question 6)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 6)) (0 :subtree+clause)
     1 (0 aux you 1 see if 0)
-      2 ((spatial-question 7)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 7)) (0 :subtree+clause)
     1 (0 aux you 1 see 0)
-      2 ((spatial-question 6)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 6)) (0 :subtree+clause)
     1 (0 aux you 1 tell 1 if 0)
-      2 ((spatial-question 8)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 8)) (0 :subtree+clause)
     1 (0 aux you 1 tell me 0)
-      2 ((spatial-question 7)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 7)) (0 :subtree+clause)
     1 (0 aux you 1 tell 0)
-      2 ((spatial-question 6)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 6)) (0 :subtree+clause)
     1 (0 spatial-beginning-pair1 spatial-beginning-pair2 spatial-beginning-pair1 ; meant to match something
         spatial-beginning-pair2 0)                                               ; like "is there...what is next
                                                                                  ; to the red block?"
-      2 ((spatial-question 4 5 6)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 4 5 6)) (0 :subtree+clause)
     1 (between spatial-beginning 0)
-      2 ((spatial-question 1 2 3)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 1 2 3)) (0 :subtree+clause)
     1 (wh_ spatial-beginning 0)
-      2 ((spatial-question 1 2 3)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 1 2 3)) (0 :subtree+clause)
     1 (prep spatial-beginning 0)
-      2 ((spatial-question 1 2 3)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 1 2 3)) (0 :subtree+clause)
     1 (NIL so spatial-beginning 0)
-      2 ((spatial-question 3 4)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 3 4)) (0 :subtree+clause)
     1 (NIL \, spatial-beginning 0)
-      2 ((spatial-question 3 4)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 3 4)) (0 :subtree+clause)
     1 (NIL spatial-beginning 0)
-      2 ((spatial-question 2 3)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 2 3)) (0 :subtree+clause)
     1 (0)
-      2 ((spatial-question 1)) (0 :gist)
+      2 (*swap-pronoun-tree* (spatial-question 1)) (0 :subtree+clause)
+  ))
+
+  ; The final stage of preprocessing; we want to swap me/you pronouns so gist-clauses reference
+  ; a system-centric viewpoint. Note that this has to be done in stages using a
+  ; 'placeholder' set of pronouns, or else it would get stuck in an infinite cycle.
+  ; Also, this might be unreliable in the case of 'you' -> 'I', since sometimes it should map to 'me' instead.
+  ; However, in this case we expect that spatial questions will generally involve the user referring to themselves,
+  ; and thus use 'I'/'me' -> 'you'.
+  (READRULES '*swap-pronoun-tree*
+  '(
+    1 (0 you are 0)
+      2 (*swap-pronoun-tree* (1 xou are 4)) (0 :subtree+clause)
+    1 (0 you 0)
+      2 (*swap-pronoun-tree* (1 xou 3)) (0 :subtree+clause)
+    1 (0 your 0)
+      2 (*swap-pronoun-tree* (1 xour 3)) (0 :subtree+clause)
+    1 (0)
+      2 (*swap-pronoun-tree1* (1)) (0 :subtree+clause)
+  ))
+  (READRULES '*swap-pronoun-tree1*
+  '(
+    1 (0 I am 0)
+      2 (*swap-pronoun-tree1* (1 you are 4)) (0 :subtree+clause)
+    1 (0 I 0)
+      2 (*swap-pronoun-tree1* (1 you 3)) (0 :subtree+clause)
+    1 (0 me 0)
+      2 (*swap-pronoun-tree1* (1 you 3)) (0 :subtree+clause)
+    1 (0 my 0)
+      2 (*swap-pronoun-tree1* (1 your 3)) (0 :subtree+clause)
+    1 (0)
+      2 (*swap-pronoun-tree2* (1)) (0 :subtree+clause)
+  ))
+  (READRULES '*swap-pronoun-tree2*
+  '(
+    1 (0 xou are 0)
+      2 (*swap-pronoun-tree2* (1 I am 4)) (0 :subtree+clause)
+    1 (0 xou 0)
+      2 (*swap-pronoun-tree2* (1 I 3)) (0 :subtree+clause)
+    1 (0 xour 0)
+      2 (*swap-pronoun-tree2* (1 my 3)) (0 :subtree+clause)
+    1 (0)
+      2 ((1)) (0 :gist)
   ))
 
   ; We want to check for common ASR mistakes, and map those to the (most plausibly)

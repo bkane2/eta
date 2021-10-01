@@ -14,27 +14,27 @@
 '(
    ; Reciprocal questions
    1 (0 what 2 you 0 ?)
-      2 (What is your name ?) (0 :gist)
+      2 (What is my name ?) (0 :gist)
    1 (0 how 2 you 0 ?)
-      2 (What is your name ?) (0 :gist)
+      2 (What is my name ?) (0 :gist)
    1 (0 wh_ 1 your name 0 ?)
-      2 (What is your name ?) (0 :gist)
+      2 (What is my name ?) (0 :gist)
 
    ; Specific answer
    1 (0 american-names american-family-names 0)
-      2 ((My name is 2 3 \.)  (name)) (0 :gist)
+      2 ((Your name is 2 3 \.)  (Name)) (0 :gist)
    1 (0 american-names 0)
-      2 ((My name is 2 \.)  (name)) (0 :gist)
+      2 ((Your name is 2 \.)  (Name)) (0 :gist)
 
    1 (0)
-      2 ((LISSA could not understand what my name is \.)  (name)) (0 :gist)
+      2 ((Lissa could not understand what your name is \.)  (Name)) (0 :gist)
 ))
 
 
 (READRULES '*reaction-to-name-input*
    '(
-   1 (0 my name is american-names 0)
-      2 (It is so nice to see me 5 \. You hope we have great interaction during comming sessions\.) (100 :out)
+   1 (0 your name is american-names 0)
+      2 (It is so nice to see you 5 \. I hope we have great interactions during the coming sessions\.) (100 :out)
    1 (0)
-      2 (It is so nice to see me \. You hope we have great interaction during comming sessions\.) (100 :out)
+      2 (It is so nice to see you \. I hope we have great interactions during the coming sessions\.) (100 :out)
 ))

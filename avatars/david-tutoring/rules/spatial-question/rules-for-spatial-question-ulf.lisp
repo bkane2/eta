@@ -187,9 +187,9 @@
 
     ; in case no ULF is able to be extracted
     1 (0)
-       2 (You didn\'t catch what I said\. Could I rephrase ?) (6 :out)
-       2 (Sorry\, you didn\'t hear what I said\.) (6 :out)
-       2 (You didn\'t quite understand\.) (0 :out)
+       2 (I didn\'t catch what you said\. Could you rephrase ?) (6 :out)
+       2 (Sorry\, I didn\'t hear what you said\.) (6 :out)
+       2 (I didn\'t quite understand\.) (0 :out)
 
 )) ; END *spatial-question-ulf-tree*
 
@@ -299,6 +299,12 @@
        2 (((lex-ulf! det 1) (*n1-ulf-tree* 2 3 4)) (1 2)) (0 :ulf-recur)
 
     ; Pronoun 
+    1 (me)
+       2 me.pro (0 :ulf)
+    1 (I)
+       2 I.pro (0 :ulf)
+    2 (you)
+       2 you.pro (0 :ulf)
     1 (pron)
        2 (lex-ulf! pro 1) (0 :ulf)
 
@@ -784,13 +790,13 @@
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 4) (*pp-ulf-tree* 5 6 7 8) ?)
           ((1 2 (3 (adv-a 4))) ?)) (0 :ulf-recur)
     1 (modal pron verb-rel 2 np-bw 3 ?); e.g., should I move the Twitter block ?
-       2 (((lex-ulf! v 1) (lex-ulf! pro 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) ?)
+       2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) ?)
           ((1 2 (3 4)) ?)) (0 :ulf-recur)
     1 (modal pron verb-rel det 2 noun 1 prep 2 np-bw 3 ?); e.g., should I put the Twitter block (directly) on the Texaco block ?
-      2 (((lex-ulf! v 1) (lex-ulf! pro 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) (*pp-ulf-tree* 7 8 9 10 11) ?)
+      2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) (*pp-ulf-tree* 7 8 9 10 11) ?)
          ((1 2 (3 4 5)) ?)) (0 :ulf-recur)
     1 (modal pron verb-rel pron 1 prep 2 np-bw 3 ?); e.g., should I put it (directly) on the Twitter block ?
-      2 (((lex-ulf! v 1) (lex-ulf! pro 2) (lex-ulf! v- 3) (*np-ulf-tree* 4) (*pp-ulf-tree* 5 6 7 8 9) ?)
+      2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4) (*pp-ulf-tree* 5 6 7 8 9) ?)
          ((1 2 (3 4 5)) ?)) (0 :ulf-recur)
 
     ; Asking about an existential proposition
@@ -818,7 +824,7 @@
     ; Should I not have moved the ... ?
     ; Should not I have moved the ... ?
 
-    1 (Sorry\, you are not handling modal questions yet\.) (0 :out)
+    1 (Sorry\, I am not handling modal questions yet\.) (0 :out)
 
 )) ; END *modal-question-ulf-tree*
 
@@ -862,17 +868,19 @@
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 6) ?)
           ((sub 1 (2 3 (4 *h))) ?)) (0 :ulf-recur)
     1 (where should pron verb-rel 2 np-bw 3 prep-where-adv 2 np-bw 3 ?); e.g., where should I move the Twitter block relative to the Texaco block ?
-       2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (lex-ulf! pro 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) (*pp-ulf-tree* 8 9 10 11) ?)
+       2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) (*pp-ulf-tree* 8 9 10 11) ?)
           ((sub 1 (2 3 (4 5 *h (adv-a 6)))) ?)) (0 :ulf-recur)
     1 (where should pron verb-rel 2 np-bw 3 ?); e.g., where should I move the Twitter block ?
-       2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (lex-ulf! pro 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) ?)
+       2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) ?)
           ((sub 1 (2 3 (4 5 *h))) ?)) (0 :ulf-recur)
     1 (where do 2 np-bw 3 necessity to be ?); e.g., where does the Twitter block need to be ?
        2 (((lex-ulf! wh-pred 1) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 8) ?)
           ((sub 1 ((pres need.aux-v) 2 (3 *h))) ?)) (0 :ulf-recur)
     1 (where do pron necessity to verb-rel 2 np-bw 3 ?); e.g., where do I need to move the Twitter block ?
-       2 (((lex-ulf! wh-pred 1) (lex-ulf! pro 3) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
+       2 (((lex-ulf! wh-pred 1) (*np-ulf-tree* 3) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
           ((sub 1 ((pres need.aux-v) 2 (3 4 *h))) ?)) (0 :ulf-recur)
+
+    ; Where do you want me to put the Twitter block ?
 
 )) ; END *where-question-ulf-tree*
 
@@ -1246,10 +1254,10 @@
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! v- 4) (lex-ulf! adj 5) ?)
           ((1 (2 (3 4))) ?)) (0 :ulf-recur)
     1 (wh_ 2 should pron verb-rel 1 prep 2 np-bw 3 ?); e.g., what block should I put on the Twitter block ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! pro 4) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9 10) ?)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9 10) ?)
           ((sub 1 (2 3 (4 *h 5))) ?)) (0 :ulf-recur)
     1 (wh_ 2 should pron verb-rel ?); e.g., what block should I move ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! pro 4) (lex-ulf! v- 5) ?)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 5) ?)
           ((sub 1 (2 3 (4 *h))) ?)) (0 :ulf-recur)
 
 )) ; END *wh-question-ulf-tree*
@@ -1472,16 +1480,18 @@
        2 (((*np-ulf-tree* 2 3 4) (lex-ulf! v- 7) (lex-ulf! adj 8) ?)
           (((pres need.aux-v) 1 (2 3)) ?)) (0 :ulf-recur)
     1 (do pron necessity to verb-rel 2 np-bw 3 ?); e.g., do I need to move the Twitter block ?
-       2 (((lex-ulf! pro 2) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) ?)
+       2 (((*np-ulf-tree* 2) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) ?)
           (((pres need.aux-v) 1 (2 3)) ?)) (0 :ulf-recur)
     1 (do pron necessity to verb-rel det 2 noun 1 prep 2 np-bw 3 ?); e.g., do I need to put the Twitter block (directly) on the Target block ?
-       2 (((lex-ulf! pro 2) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) (*pp-ulf-tree* 9 10 11 12 13) ?)
+       2 (((*np-ulf-tree* 2) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) (*pp-ulf-tree* 9 10 11 12 13) ?)
           (((pres need.aux-v) 1 (2 3 4)) ?)) (0 :ulf-recur)
     1 (do pron necessity to verb-rel pron 1 prep 2 np-bw 3 ?); e.g., do I need to put it (directly) on the Target block ?
-       2 (((lex-ulf! pro 2) (lex-ulf! v- 5) (*np-ulf-tree* 6) (*pp-ulf-tree* 7 8 9 10 11) ?)
+       2 (((*np-ulf-tree* 2) (lex-ulf! v- 5) (*np-ulf-tree* 6) (*pp-ulf-tree* 7 8 9 10 11) ?)
           (((pres need.aux-v) 1 (2 3 4)) ?)) (0 :ulf-recur)
 
     ; Does not the Twitter block need to be on ...?
+
+    ; Do you want me to ... ?
 
 )) ; END *do-question-ulf-tree*
 
@@ -1586,18 +1596,18 @@
        2 (((*yn-question-ulf-tree* 1 2 3 4 5 2 6 7 8)) (poss-ques 1)) (0 :ulf-recur)
     ; More can/should be added
     1 (0 det 2 block 0)
-       2 (I am asking about some 3 4 \, but you didn\'t catch what it was\.) (6 :out)
-       2 (You heard me mention some 3 4 \, but didn\'t hear the rest\.) (6 :out)
-       2 (You couldn\'t hear what I said apart from mentioning some 3 4 \.) (0 :out)
+       2 (You are asking about some 3 4 \, but I didn\'t catch what it was\.) (6 :out)
+       2 (I heard you mention some 3 4 \, but didn\'t hear the rest\.) (6 :out)
+       2 (I couldn\'t hear what you said apart from mentioning some 3 4 \.) (0 :out)
     1 (0 det table 0)
-       2 (I referred to the table\, but you didn\'t catch what I said\.) (0 :out)
+       2 (You referred to the table\, but I didn\'t catch what you said\.) (0 :out)
     1 (0 index-det block 0)
-       2 (You\'re not sure what block I\'m referring to\.) (0 :out)
+       2 (I\'m not sure what block you\'re referring to\.) (0 :out)
     1 (0 pron 0)
-       2 (You\'re not sure what your question is referring to\.) (4 :out)
-       2 (You didn\'t catch what I am referring to\.) (0 :out)
+       2 (I\'m not sure what your question is referring to\.) (4 :out)
+       2 (I didn\'t catch what you are referring to\.) (0 :out)
     1 (0 corp 0)
-       2 (You heard me mention the 2 block\, but you didn\'t catch the rest\.) (0 :out)
+       2 (I heard you mention the 2 block\, but I didn\'t catch the rest\.) (0 :out)
     ; variants of begging-off responses should be added, with non-zero latency,
     ; so that the user will see a variety of such responses
  ))  

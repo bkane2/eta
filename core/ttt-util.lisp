@@ -105,6 +105,21 @@
 
 
 
+(defun bindings-from-ttt-match-deep (patt expr)
+;``````````````````````````````````````````````````
+; Tries to apply bindings-from-ttt-match to all sublists of a list.
+; Returns first match.
+;
+  (let ((res (bindings-from-ttt-match patt expr)))
+    (cond
+      (res res)
+      ((atom expr) nil)
+      (t (or (bindings-from-ttt-match-deep patt (car expr))
+             (bindings-from-ttt-match-deep patt (cdr expr))))))
+) ; END bindings-from-ttt-match-deep
+
+
+
 (defun hide-ttt-ops (wff)
 ;`````````````````````````````````````
 ; TAKEN FROM Gene's cl-util/ttt.lisp.

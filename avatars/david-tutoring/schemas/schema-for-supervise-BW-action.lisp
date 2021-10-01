@@ -91,6 +91,10 @@
 
 )
 
+:certainties (
+  !c1 (!e2 0.4)
+)
+
 )) ; END defparameter *supervise-BW-action*
 
 

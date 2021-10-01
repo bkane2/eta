@@ -1,7 +1,11 @@
 ;; Aug 5/2020
 ;; ===========================================================
 ;;
-;; TODO: Write header
+;; Contains the schema-based planning module used by Eta, built around
+;; the 'plan' and 'plan-step' structures defined below (essentially a doubly-linked-list
+;; with pointers for subplan relations.)
+;;
+;; Functions described in more detail in their headers.
 ;;
 
 (setf *print-circle* t) ; needed to prevent recursive loop when printing plan-step
@@ -14,6 +18,7 @@
 ; schema-contents : the contents of the schema used to generate the plan (if any)
 ; curr-step       : the current (to be processed) step of the plan
 ; vars            : contains any local variables in plan (potentially inherited)
+; goals           : contains any goals of a plan
 ; subplan-of      : points to a plan-step that the plan is a subplan of
 ;
   plan-name
@@ -21,6 +26,7 @@
   schema-contents
   curr-step
   vars
+  goals
   subplan-of
 ) ; END defstruct plan
 
@@ -35,12 +41,15 @@
 ; ep-name   : episode name of step (gist-clauses, etc. are implicitly attached to ep-name)
 ; wff       : action formula corresponding to episode name
 ; subplan   : subplan of step (if any)
+; certainty : how certain the step is (if the step is an expected step). The patience of the
+;             system in waiting to observe the step is proportional to this
 ;
   step-of
   prev-step
   next-step
   ep-name
   wff
+  (certainty 1.0) ; defaults to 1, i.e. a certain step
   subplan
 ) ; END defstruct plan-step
 
@@ -90,12 +99,24 @@
     (setq sections (get-schema-sections schema))
 
     ; Process each part of the schema separately
-    (process-schema-types       plan (gethash :types sections))
-    (process-schema-rigid-conds plan (gethash :rigid-conds sections))
-    (process-schema-episodes    plan (gethash :episodes sections))
+    (process-schema-types             plan (gethash :types sections))
+    (process-schema-var-roles         plan (gethash :var-roles sections))
+    (process-schema-rigid-conds       plan (gethash :rigid-conds sections))
+    (process-schema-static-conds      plan (gethash :static-conds sections))
+    (process-schema-preconds          plan (gethash :preconds sections))
+    (process-schema-goals             plan (gethash :goals sections))
+    (process-schema-episode-relations plan (gethash :episode-relations sections))
+    (process-schema-necessities       plan (gethash :necessities sections))
+    (process-schema-certainties       plan (gethash :certainties sections))
+    ; Process episodes last so things like certainties can be used
+    (process-schema-episodes          plan (gethash :episodes sections))
 
-  plan)
-) ; END init-plan-from-schema
+  ; If goals of plan are already satisfied, skip over plan by returning nil,
+  ; otherwise return new plan
+  (if (and (plan-goals plan) (every #'check-goal-satisfied (plan-goals plan)))
+    nil
+    plan)
+)) ; END init-plan-from-schema
 
 
 
@@ -130,23 +151,42 @@
 ; if I'm requiring all variables "local" to a schema to be included in
 ; the :types section. For now, I've kept this the same as before though.
 ;
-  (dolist (type types)
-    (when (not (variable? type))
+  (let ((type-pairs (form-name-wff-pairs types)) type-name type-wff var)
+    (dolist (type-pair type-pairs)
+      (setq type-name (first type-pair))
+      (setq type-wff (second type-pair))
       ; If typed variable, find value for variable through observation and
       ; substitute in both type and in contents of each schema section.
-      (when (variable? (car type))
-        (push (car type) (plan-vars plan))
+      (when (variable? (car type-wff))
+        (setq var (car type-wff))
+        (push var (plan-vars plan))
         ; Get skolem name and replace in schema.
-        (setq sk-name (observe-variable-type (car type) (second type)))
-        (nsubst sk-name (car type) (plan-schema-contents plan))
-        (setq type (subst sk-name (car type) type)))
+        (setq sk-name (observe-variable-type var (second type-wff)))
+        (nsubst sk-name var (plan-schema-contents plan))
+        (setq type-wff (subst sk-name var type-wff)))
       ; Store type as fact in context.
-      (store-in-context type)))
+      (store-in-context type-wff))
+  )
 ) ; END process-schema-types
 
 
 
-(defun process-schema-rigid-conds (plan rigid-conds) 
+(defun process-schema-var-roles (plan var-roles)
+;```````````````````````````````````````````````````
+; TBC
+; e.g., !r9 (?ka1 (kind1-of.n action1.n))
+;
+  (let ((var-role-pairs (form-name-wff-pairs var-roles)) var-role-name var-role-wff)
+    (dolist (var-role-pair var-role-pairs)
+      (setq var-role-name (first var-role-pair))
+      (setq var-role-wff (second var-role-pair))
+    )
+  )
+) ; END process-schema-var-roles
+
+
+
+(defun process-schema-rigid-conds (plan rigid-conds)
 ;`````````````````````````````````````````````````````
 ; Add all rigid-conds to context.
 ; TODO: This is incomplete and needs to be updated in the future.
@@ -154,20 +194,76 @@
 ; rigid-cond like (?b1 red.a)), or do anything with the proposition
 ; variables e.g. !r1
 ;
-  (mapcar (lambda (cond) (if (not (variable? cond))
-      (store-in-context cond)))
-    rigid-conds)
+  (let ((rigid-cond-pairs (form-name-wff-pairs rigid-conds)) rigid-cond-name rigid-cond-wff)
+    (dolist (rigid-cond-pair rigid-cond-pairs)
+      (setq rigid-cond-name (first rigid-cond-pair))
+      (setq rigid-cond-wff (second rigid-cond-pair))
+      (store-in-context rigid-cond-wff)
+    )
+  )
 ) ; END process-schema-rigid-conds
 
 
 
-(defun process-schema-episodes (plan episodes) 
+(defun process-schema-static-conds (plan static-conds)
+;````````````````````````````````````````````````````````
+; Adds any static conditions of the schema to the plan structure, as a list (static-cond-name static-cond-wff).
+; e.g., ?s2 (^you at-loc.p |Table|) gets added as:
+; (?s2 (^you at-loc.p |Table|))
+; TBC
+;
+  (let ((static-cond-pairs (form-name-wff-pairs static-conds)) static-cond-name static-cond-wff)
+    (dolist (static-cond-pair static-cond-pairs)
+      (setq static-cond-name (first static-cond-pair))
+      (setq static-cond-wff (second static-cond-pair))
+    )
+  )
+) ; END process-schema-static-conds
+
+
+
+(defun process-schema-preconds (plan preconds)
+;```````````````````````````````````````````````
+; Adds any preconditions of the schema to the plan structure, as a list (precond-name precond-wff).
+; e.g., ?p1 (some ?c ((?c member-of.p ?cc) and (not (^you understand.v ?c)))) gets added as:
+; (?p1 (some ?c ((?c member-of.p ?cc) and (not (^you understand.v ?c)))))
+; TBC
+;
+  (let ((precond-pairs (form-name-wff-pairs preconds)) precond-name precond-wff)
+    (dolist (precond-pair precond-pairs)
+      (setq precond-name (first precond-pair))
+      (setq precond-wff (second precond-pair))
+    )
+  )
+) ; END process-schema-preconds
+
+
+
+(defun process-schema-goals (plan goals)
+;`````````````````````````````````````````
+; Adds any goals of the schema to the plan structure, as a list (goal-name goal-wff).
+; e.g., ?g1 (^me want1.v (that (^you understand1.v ?c))) gets added as:
+; (?g1 (^me want1.v (that (^you understand1.v ?c))))
+;
+  (let ((goal-pairs (form-name-wff-pairs goals)) goal-name goal-wff)
+    (dolist (goal-pair goal-pairs)
+      (setq goal-name (first goal-pair))
+      (setq goal-wff (second goal-pair))
+      (push (list goal-name goal-wff) (plan-goals plan))))
+) ; END process-schema-goals
+
+
+
+(defun process-schema-episodes (plan episodes)
 ;```````````````````````````````````````````````
 ; Converts episodes contents of schema to a linked list
 ; representing the steps in a plan. Returns the first
 ; plan step.
+; TODO: eventually, it seems like we should allow for steps
+; to be added to the plan non-sequentially, based on the
+; episode-relations defined in the schema.
 ;
-  (let ((steps (form-step-pairs episodes)) first-step prev-step curr-step)
+  (let ((steps (form-name-wff-pairs episodes)) first-step prev-step curr-step)
 
     ; Give error if first element of first pair isn't episode variable starting with '?'
     (when (not (variable? (caar steps)))
@@ -184,6 +280,9 @@
       (if (null first-step) (setq first-step curr-step))
       (setf (plan-step-ep-name curr-step) (first step))
       (setf (plan-step-wff curr-step) (second step))
+      ; When episode name has certainty associated, add to step
+      (when (get (first step) 'certainty)
+        (setf (plan-step-certainty curr-step) (get (first step) 'certainty)))
       ; When previous step exists, set bidirectional pointers
       (when prev-step
         (setf (plan-step-prev-step curr-step) prev-step)
@@ -197,21 +296,91 @@
     ;; (format t "action list of argument-instantiated schema is:~%")
     ;; (print-current-plan-steps plan) ; DEBUGGING
 
-    ; Instantiate first episode in plan
-    (instantiate-curr-step plan))
-) ; END process-schema-episodes
+)) ; END process-schema-episodes
 
 
 
-(defun form-step-pairs (episodes) 
-;`````````````````````````````````
-; Groups episodes into a list of (ep-name wff) pairs.
+(defun process-schema-episode-relations (plan episode-relations)
+;``````````````````````````````````````````````````````````````````
+; TBC
+; e.g., !w8 (?e8 before1.p ?e9)
+;
+  (let ((episode-relation-pairs (form-name-wff-pairs episode-relations)) episode-relation-name episode-relation-wff)
+    (dolist (episode-relation-pair episode-relation-pairs)
+      (setq episode-relation-name (first episode-relation-pair))
+      (setq episode-relation-wff (second episode-relation-pair))
+    )
+  )
+) ; END process-schema-episode-relations
+
+
+
+(defun process-schema-necessities (plan necessities)
+;``````````````````````````````````````````````````````
+; TBC
+; e.g., !n1 (!bb .99)
+;
+  (let ((necessity-pairs (form-name-wff-pairs necessities)) necessity-name necessity-wff)
+    (dolist (necessity-pair necessity-pairs)
+      (setq necessity-name (first necessity-pair))
+      (setq necessity-wff (second necessity-pair))
+    )
+  )
+) ; END process-schema-necessities
+
+
+
+(defun process-schema-certainties (plan certainties)
+;``````````````````````````````````````````````````````
+; Processes certainty formulas in the schema, adding the certainty to a
+; property list of the episode var/name.
+; e.g., !c1 (!e1 .8)
+;
+  (let ((certainty-pairs (form-name-wff-pairs certainties)) certainty-name certainty-wff
+        episode-name certainty)
+    (dolist (certainty-pair certainty-pairs)
+      (setq certainty-name (first certainty-pair))
+      (setq certainty-wff (second certainty-pair))
+      (setq episode-name (first certainty-wff))
+      (setq certainty (second certainty-wff))
+      ; ((that ,episode-name) is-necessary-to-degree ,certainty)
+      (setf (get (dual-var episode-name) 'certainty) certainty)
+    )
+  )
+) ; END process-schema-certainties
+
+
+
+(defun certainty-to-period (certainty)
+;``````````````````````````````````````````
+; Maps a certainty from [0,1] to a period corresponding to the
+; period (in seconds) that Eta must wait to consider an expected episode
+; failed and move on in the plan.
+; The proportion between the period (in task cycles) and the
+; quantity -log(1 - certainty) is determined by the global
+; constant *expected-step-failure-period-coefficient*.
+;
+  (if (or (>= certainty 1) (< certainty 0))
+    'inf
+    (* *expected-step-failure-period-coefficient*
+      (* -1 (log (- 1 certainty)))))
+) ; END certainty-to-period
+
+
+
+(defun form-name-wff-pairs (contents)
+;`````````````````````````````````````
+; Groups contents of a schema section, assumed to be a series of
+; declarations of the following form:
+; <name> <wff>
+; into a list of (name wff) pairs. Here, name is assumed to be
+; a variable of the form ?x or !x.
 ;
   (cond
-    ((null episodes) nil)
-    (t (cons (list (first episodes) (second episodes))
-             (form-step-pairs (cddr episodes)))))
-) ; END form-step-pairs
+    ((null contents) nil)
+    (t (cons (list (first contents) (second contents))
+             (form-name-wff-pairs (cddr contents)))))
+) ; END form-name-wff-pairs
 
 
 
@@ -256,9 +425,6 @@
   (setf (plan-curr-step plan)
     (plan-step-next-step (plan-curr-step plan)))
 
-  ; Instantiate the episode variable of the new step and substitute
-  (instantiate-curr-step plan)
-
   ;; (format t "remaining steps in plan ~a after advancing: ~%" (plan-plan-name plan))
   ;; (print-current-plan-steps plan) ; DEBUGGING
 
@@ -271,7 +437,7 @@
 ; Updates the state of the plan by advancing any step whose
 ; subplan has been completed, i.e. has no more steps left.
 ; 
-  (let ((curr-step (plan-curr-step plan)) subplan)
+  (let ((curr-step (plan-curr-step plan)) subplan unsatisfied-goals replanned?)
 
     ; If no curr-step, return nil
     (if (null curr-step) (return-from update-plan-state nil))
@@ -285,10 +451,21 @@
         (setf (plan-step-subplan curr-step) nil))
       ; Otherwise, recursively update each subplan
       (t (update-plan-state subplan)
+
         ; Advance plan once subplan is finished
         (when (null (plan-curr-step subplan))
+
+          ; If goals of subplan (if any) still unsatisfied, try replanning based on the first unsatisfied goal
+          (when (plan-goals subplan)
+            (setq unsatisfied-goals (remove-if #'check-goal-satisfied (plan-goals subplan)))
+            (when unsatisfied-goals
+              (setq replanned? (replan-for-goal plan (car unsatisfied-goals)))
+              (if replanned? (return-from update-plan-state nil))))
+
           ;; (format t "subplan ~a has no curr-step, so advancing plan ~a past step: ~%  ~a ~a ~%"
           ;;   (plan-plan-name subplan) (plan-plan-name plan) (plan-step-ep-name curr-step) (plan-step-wff curr-step)) ; DEBUGGING
+
+          ; Advance plan if subplan is finished and goals (if any) satisfied
           (advance-plan plan)))))
 ) ; END update-plan-state
 
@@ -312,7 +489,9 @@
     (if (not (variable? ep-var)) (return-from instantiate-curr-step nil))
 
     ; Generate a constant for the episode and destructively substitute in plan
-    (setq ep-name (episode-name ep-var))
+    (setq ep-name (episode-name))
+    ; TODO: use episode-relations formulas to assert relations in timegraph
+    (store-init-time-of-episode ep-name)
     (nsubst-variable plan ep-name ep-var)
 
     ;; (format t "action list after substituting ~a for ~a:~%" ep-name ep-var)
@@ -320,6 +499,7 @@
 
     ; Attach wff to episode name (likely not used, but for convenience's sake)
     ; TODO: should (wff ** ep-name) be stored in context at this point?
+    ;       as well as instantiating the non-fluent variable, e.g. '!e1'?
     (setf (get ep-name 'wff) (plan-step-wff curr-step))
     
     ; In the case of an Eta action, transfer properties from ep-var hash tables
@@ -328,26 +508,28 @@
       ; Gist clauses
       (when (get schema-name 'gist-clauses)
         (setq gist-clauses (gethash ep-var (get schema-name 'gist-clauses)))
-        (setf (get ep-name 'gist-clauses) gist-clauses))
+        (dolist (gist-clause gist-clauses)
+          (store-gist-clause-characterizing-episode gist-clause ep-name '^me '^you)))
 
-      ;; (format t "Gist clauses attached to ~a =~% ~a~%"
-      ;;   ep-name (get ep-name 'gist-clauses)) ; DEBUGGING
+      ;; (format t "Gist clauses attached to ~a (~a) from ~a =~% ~a~%"
+      ;;   ep-name (plan-step-wff curr-step) ep-var (get-gist-clauses-characterizing-episode ep-name)) ; DEBUGGING
 
-      ; Semantics
+      ; Logical forms
       (when (get schema-name 'semantics)
         (setq semantics (gethash ep-var (get schema-name 'semantics)))
-        (setf (get ep-name 'semantics) semantics))
+        (dolist (wff semantics)
+          (store-semantic-interpretation-characterizing-episode wff ep-name '^me '^you)))
 
-      ;; (format t "Semantics attached to ~a =~% ~a~%"
-      ;;   ep-name (get ep-name 'semantics)) ; DEBUGGING
+      ;; (format t "Semantics attached to ~a (~a) from ~a =~% ~a~%"
+      ;;   ep-name (plan-step-wff curr-step) ep-var (get-semantic-interpretations-characterizing-episode ep-name)) ; DEBUGGING
 
       ; Topic-keys
       (when (get schema-name 'topic-keys)
         (setq topic-keys (gethash ep-var (get schema-name 'topic-keys)))
         (setf (get ep-name 'topic-keys) topic-keys))
 
-      ;; (format t "Semantics attached to ~a =~% ~a~%"
-      ;;   ep-name (get ep-name 'semantics)) ; DEBUGGING
+      ;; (format t "Topic keys attached to ~a =~% ~a~%"
+      ;;   ep-name (get ep-name 'topic-keys)) ; DEBUGGING
   ))
 ) ; END instantiate-curr-step
 
@@ -372,6 +554,8 @@
       ((null subplan) plan)
       ; If subplan forms an infinite loop, break loop and return subplan
       ((and (plan-curr-step subplan) (equal subplan (plan-step-subplan (plan-curr-step subplan))))
+        (format t "*** found infinite loop in subplan ~a; breaking loop ~%"
+          (plan-plan-name subplan))
         (setf (plan-step-subplan curr-step) nil)
         subplan)
       ; If the subplan is fully executed, then remove subplan and return plan
@@ -386,6 +570,49 @@
 
 
 
+(defun find-prev-step-of-type (plan subject action-type)
+;``````````````````````````````````````````````````````````
+; Finds the most recent previous step in a plan of a certain type
+; (e.g. 'say-to.v') or within a list of types, and a particular subject
+; (nil if subject doesn't matter).
+; If no such step in the current plan, try recursively in the superplan
+; of plan (returning nil if no superplan exists).
+;
+  (let ((prev-step (plan-step-prev-step (plan-curr-step plan))) wff action-type1)
+
+    ; Iterate through each previous step, and return that step if the
+    ; action type of the wff is the same as action-type
+    (loop while (not (null prev-step)) do
+      (setq wff (plan-step-wff prev-step))
+      (setq action-type1 (if (listp wff) (second wff)))
+      (setq subject1 (if (listp wff) (first wff)))
+      (cond
+        ((and (atom action-type) (equal action-type1 action-type) (or (null subject) (equal subject1 subject)))
+          (return-from find-prev-step-of-type prev-step))
+        ((and (listp action-type) (member action-type1 action-type) (or (null subject) (equal subject1 subject)))
+          (return-from find-prev-step-of-type prev-step)))
+      (setq prev-step (plan-step-prev-step prev-step)))
+  
+    ; If no such step found in current plan, recursively try in superplan (if exists)
+    (cond
+      ((plan-subplan-of plan)
+        (find-prev-step-of-type (plan-step-step-of (plan-subplan-of plan)) subject action-type))
+      (t nil))
+)) ; END find-prev-step-of-type
+
+
+
+(defun get-parent-ep-name (plan)
+;`````````````````````````````````
+; If plan is a subplan of a step, get the episode name
+; corresponding to that step.
+;
+  (let ((superstep (plan-subplan-of plan)))
+    (if superstep (plan-step-ep-name superstep)))
+) ; END get-parent-ep-name
+
+
+
 (defun has-next-step? (plan) 
 ;`````````````````````````````
 ; Returns t if plan has another step, nil otherwise.
@@ -395,10 +622,160 @@
 
 
 
-(defun process-next-action (plan) 
+(defun inquire-truth-of-next-episode (plan)
+;`````````````````````````````````````````````
+; Checks the truth of the immediately pending episode in the plan,
+; through a process of "self-inquiry" (i.e. checking the system's
+; context/memory, potentially with some level of inference (TBC) as well).
+; TODO: in addition to updating the plan accordingly, this should
+; return t if the inquiry was a success, or nil otherwise.
+; 
+  (let (curr-step ep-var ep-name wff match)
+  
+    ; Get current expected step, expected wff, and episode var
+    (setq curr-step (plan-curr-step plan))
+    (setq ep-var (plan-step-ep-name curr-step))
+    (setq wff (plan-step-wff curr-step))
+
+    ; Inquire about truth of wff in context; use first match
+    (setq match (get-from-context wff))
+    (if (equal match T) (setq match (list wff)))
+    (when match
+      (setq match (car match))
+
+      ; Get episode name corresponding to contextual fact
+      (setq ep-name (get-episode-from-contextual-fact match))
+      
+      ; Substitute that episode name for the episode variable in the plan
+      (nsubst-variable plan ep-name ep-var)
+
+      ; Make all variable substitutions needed to unify wff and match
+      (mapcar (lambda (x y) (if (and (variable? x) y) (nsubst-variable plan y x)))
+        wff match)
+
+      ; Attach wff to episode name (likely not used, but for convenience's sake)
+      (setf (get ep-name 'wff) match)
+
+      ; Remove the matched predicate from context if a telic predicate, i.e., assume
+      ; something like (^you say-to.v ^me ...) is no longer relevant after matched once.
+      ; TODO: I'm not sure if this is a safe or realistic assumption to make... but it's
+      ; currently necessary to prevent the program from automatically looping in the case
+      ; where a :repeat-until episode consists of the user saying something and the agent
+      ; replying, since the say-to.v in the schema will keep matching the same fact in context.
+      (if (member (second match) *verbs-telic*) (remove-old-contextual-fact match))
+
+      ; Advance the plan
+      (advance-plan plan)))
+) ; END inquire-truth-of-next-episode
+
+
+
+(defun check-goal-satisfied (goal)
+;`````````````````````````````````````
+; Check whether a goal is satisfied through process of "self-inquiry",
+; i.e. checking context to verify whether the content of the goal
+; (assuming, for now, a standard "want that ..." goal) is true in context.
+; TODO: should also check knowledge base and/or memory if the goal is
+; something like "want that me know ...".
+;
+  (let (goal-var goal-wff bindings goal-clause)
+    (setq goal-var (first goal))
+    (setq goal-wff (second goal))
+
+    ; Check goal wff (currently only 'want that ...' goals are supported)
+    (cond
+      ((setq bindings (bindings-from-ttt-match '(^me want.v (that _!)) goal-wff))
+        (setq goal-clause (get-single-binding bindings))
+        ; Check if goal clause is true in context
+        (if (get-from-context goal-clause) t nil))
+
+      (t (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff)))
+)) ; END check-goal-satisfied
+
+
+
+(defun replan-for-goal (plan goal)
 ;```````````````````````````````````````
-; Executes the immediately pending action in the plan, which is the
-; current step of the deepest active subplan.
+; Given an unsatisfied goal, use a transduction tree to determine an appropriate subplan to instantiate
+; and attach to the current plan step.
+; TODO: currently only goals of form (^me want.v (that (^me know.v (ans-to '(...))))) are supported,
+; and only the quoted expression is used to select a subplan. This will need to be made more general eventually.
+;
+  (let (curr-step goal-var goal-wff bindings goal-words tagged-words choice schema-name args subplan)
+
+    ; Get current expected step, expected wff, and instantiated ep-name
+    (setq curr-step (plan-curr-step plan))
+    (setq goal-var (first goal))
+    (setq goal-wff (second goal))
+
+    ; Get quoted words of goal statement
+    (cond
+      ((setq bindings (bindings-from-ttt-match '(^me want.v (that (^me know.v (ans-to _!)))) goal-wff))
+        (setq goal-words (get-single-binding bindings))
+        ; Remove quote
+        (setq goal-words (cadr goal-words)))
+
+      (t (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff)))
+
+    ; Select subplan for replanning
+    (setq tagged-words (mapcar #'tagword goal-words))
+    (setq choice (choose-result-for tagged-words '*replan-tree*))
+
+    ; Create subplan depending on directive
+    (cond
+      ; :schema directive
+      ((eq (car choice) :schema)
+        (setq schema-name (cdr choice))
+        (setq subplan (init-plan-from-schema schema-name nil)))
+
+      ; :schema+args directive
+      ((eq (car choice) :schema+args)
+        (setq schema-name (first (cdr choice)) args (second (cdr choice)))
+        (setq subplan (init-plan-from-schema schema-name args))))
+    
+    ; If subplan was obtained, attach to current step and return t, otherwise return nil
+    (when subplan
+      (add-subplan-curr-step plan subplan)
+      t)
+
+)) ; END replan-for-goal
+
+
+
+(defun determine-next-episode-failed (plan)
+;``````````````````````````````````````````````
+; Determine that the immediately pending episode in the plan is a
+; 'failed' episode; i.e. an expected episode which did not end up
+; coming true during the "period" of expectation (governed by the
+; certainty of the episode). Instantiate the episode with a new episode
+; name characterized as a failure.
+; Should return t after instantiating failed episode.
+;
+  (let (curr-step ep-name wff)
+
+    ; Instantiate the episode variable of the new step and substitute
+    (instantiate-curr-step plan)
+
+    ; Get current expected step, expected wff, and instantiated ep-name
+    (setq curr-step (plan-curr-step plan))
+    (setq ep-name (plan-step-ep-name curr-step))
+    (setq wff (plan-step-wff curr-step))
+
+    ; Add (^you do.v (no.d thing.n)) to context, characterizing <ep-name>. This is
+    ; essentially a no-op and isn't currently used for any further inference or replanning.
+    ; TODO: this needs to be reworked after working out semantics for failed episodes.
+    (store-contextual-fact-characterizing-episode `(^you do.v (no.d thing.n)) ep-name)
+
+    ; Advance the plan
+    (advance-plan plan)
+  
+)) ; END determine-next-episode-failed
+
+
+
+(defun process-next-episode (plan) 
+;```````````````````````````````````````
+; Executes the immediately pending episode in the plan.
 ;
 ; Successful execution of an action returns a pair of variable bindings
 ; for any variables instantiated during execution of the action, and a
@@ -416,35 +793,29 @@
 ; this eventually opens the door to an AND-OR style of planning, as in
 ; two-person games.)
 ;
-  (let (curr-step subplan wff ret bindings new-subplan)
+  (let (curr-step wff ret bindings new-subplan)
 
-    ; Find the next action from the deepest active subplan
-    (setq subplan (find-curr-subplan plan))
-
-    ; Current step becomes whatever the current step of subplan is
-    (setq curr-step (plan-curr-step subplan))
+    ; Current step becomes whatever the current step of plan is
+    (setq curr-step (plan-curr-step plan))
 
     ; If no curr-step, return nil
-    (if (null curr-step) (return-from process-next-action nil))
+    (if (null curr-step) (return-from process-next-episode nil))
 
-    ;; (format t "~%steps of currently due plan ~a are: ~%" (plan-plan-name subplan))
-    ;; (print-current-plan-steps subplan) ; DEBUGGING
+    ;; (format t "~%steps of currently due plan ~a are: ~%" (plan-plan-name plan))
+    ;; (print-current-plan-steps plan) ; DEBUGGING
 
     (setq wff (plan-step-wff curr-step))
 
-    ; Perform the action corresponding to the current step
-    ; Returns a pair of variable bindings obtained by the action,
-    ; as well as a subplan generated by the action (possibly nil),
+    ; Instantiate the episode variable of the new step and substitute
+    (instantiate-curr-step plan)
+
+    ; Perform the episode corresponding to the current step accordingly,
+    ; returning a pair of variable bindings obtained by the action, as
+    ; well as a subplan generated by the action (if any, otherwise this is nil),
     ; e.g., (((var1 val1) (var2 val2)) PLAN788)
-    (setq ret (cond
-      ; If Eta action
-      ((eq (car wff) '^me)
-        (implement-next-eta-action subplan))
-      ; If User action
-      ((eq (car wff) '^you)
-        (observe-next-user-action subplan))
-      ; If abstract episode
-      (t (implement-next-plan-episode subplan))))
+    (setq ret (if (eq (car wff) '^me)
+      (implement-next-eta-action plan)
+      (implement-next-plan-episode plan)))
 
     (setq bindings (first ret))
     (setq new-subplan (second ret))
@@ -456,16 +827,16 @@
 
     ; Make all variable substitutions in the plan
     (dolist (binding bindings)
-      (nsubst-variable subplan (second binding) (first binding)))
+      (nsubst-variable plan (second binding) (first binding)))
 
     ; If a new subplan was generated, add it as a subplan to the
     ; current step. Otherwise, advance the current (sub)plan.
     (if new-subplan
-      (add-subplan-curr-step subplan new-subplan)
-      (advance-plan subplan))
-      
-  wff)
-) ; END process-next-action
+      (add-subplan-curr-step plan new-subplan)
+      (advance-plan plan))
+
+  wff
+)) ; END process-next-episode
 
 
 
@@ -577,6 +948,8 @@
       (gethash var (get schema-name 'semantics)))
     (setf (gethash new-var (get schema-name 'topic-keys))
       (gethash var (get schema-name 'topic-keys)))
+    ; New var has same certainty as old var
+    (setf (get new-var 'certainty) (get var 'certainty))
   ; Return new var
   new-var)
 ) ; END duplicate-variable
@@ -597,7 +970,7 @@
       ; Recursive case
       (t
         (remove-duplicates
-          (remove nil (mapcan #'get-episode-vars episodes))
+          (remove nil (apply #'append (mapcar #'get-episode-vars episodes)))
           :test #'equal))))
 ) ; END get-episode-vars
 

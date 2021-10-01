@@ -100,64 +100,87 @@
 ; "table" (& perhaps a spatial relation) to jump to this tree.
 ;
 '(
+    ; explanation questions
+    1 (adv-explain 0 between 0)
+       2 (adv-explain be 0 between 0)
+          3 (((*yn-between-question-ulf-tree* 2 3 4 5)) ((sub why.adv-s (1 *h)) ?)) (0 :ulf-recur)
+       2 (adv-explain do 0 between 0)
+          3 (((*do-question-ulf-tree* 2 3 4 5)) ((sub why.adv-s (1 *h)) ?)) (0 :ulf-recur)
+    1 (adv-explain 0)
+       2 (adv-explain be not np-bw 0)
+          3 (((*yn-question-ulf-tree* 2 3 4 5)) ((sub why.adv-s (1 *h)) ?)) (0 :ulf-recur)
+       2 (adv-explain be not there 0)
+          3 (((*exist-question-ulf-tree* 2 3 4 5)) ((sub why.adv-s (1 *h)) ?)) (0 :ulf-recur)
+       2 (adv-explain be np-bw 0)
+          3 (((*yn-question-ulf-tree* 2 3 4)) ((sub why.adv-s (1 *h)) ?)) (0 :ulf-recur)
+       2 (adv-explain be there 0)
+          3 (((*exist-question-ulf-tree* 2 3 4)) ((sub why.adv-s (1 *h)) ?)) (0 :ulf-recur)
+       2 (adv-explain do 0)
+          3 (((*do-question-ulf-tree* 2 3)) ((sub why.adv-s (1 *h)) ?)) (0 :ulf-recur)
+
     ; "is/are"-questions
     1 (be 0 between 0) ; "between" causes issues with prep+NP patterns, so need specific rules
-       2 *yn-between-question-ulf-tree* (0 :subtree)
+       2 (((*yn-between-question-ulf-tree* 1 2 3 4)) (1 ?)) (0 :ulf-recur)
+    1 (be not np-bw 0)
+       2 (((*yn-question-ulf-tree* 1 2 3 4)) (1 ?)) (0 :ulf-recur)
     1 (be np-bw 0)
-       2 *yn-question-ulf-tree* (0 :subtree)
+       2 (((*yn-question-ulf-tree* 1 2 3)) (1 ?)) (0 :ulf-recur)
 
     ; existential there questions
+    1 (be not there 0)
+       2 (((*exist-question-ulf-tree* 1 2 3 4)) (1 ?)) (0 :ulf-recur)
     1 (be there 0)
-       2 *exist-question-ulf-tree* (0 :subtree)
+       2 (((*exist-question-ulf-tree* 1 2 3)) (1 ?)) (0 :ulf-recur)
 
     ; have questions (usually indicates perfect aspect)
     1 (have 0)
-       2 *has-question-ulf-tree* (0 :subtree)
+       2 (((*has-question-ulf-tree* 1 2)) (1 ?)) (0 :ulf-recur)
 
     ; modal questions
     1 (modal 0); e.g., can you see the NVidia block ?
-       2 *modal-question-ulf-tree* (0 :subtree)
+       2 (((*modal-question-ulf-tree* 1 2)) (1 ?)) (0 :ulf-recur)
+       2 (Sorry\, I am not handling modal questions yet\.) (0 :out)
 
     ; wh+do questions
     1 (wh_ 0 do 0); e.g., what block did I just move ?
-       2 *wh-do-question-ulf-tree* (0 :subtree)
+       2 (((*wh-do-question-ulf-tree* 1 2 3 4)) (1 ?)) (0 :ulf-recur)
 
     ; how_many questions
     1 (how_many 0 between 0)
-       2 *wh-between-question-ulf-tree* (0 :subtree)
+       2 (((*wh-between-question-ulf-tree* 1 2 3 4)) (1 ?)) (0 :ulf-recur)
     ; The following has been incorporated into *wh-question-ulf-tree*
       ;;  1 (how_many 0)
       ;;  2 *how-many-question-ulf-tree* (0 :subtree)
 
     ; when questions
     1 (when 0)
-       2 *when-question-ulf-tree* (0 :subtree)
+       2 (((*when-question-ulf-tree* 1 2)) (1 ?)) (0 :ulf-recur)
 
     ; what color questions
     1 (wh_ color 0)
-       2 *color-question-ulf-tree* (0 :subtree)
+       2 (((*color-question-ulf-tree* 1 2 3)) (1 ?)) (0 :ulf-recur)
     1 (wh_ be det color 0)
-       2 *color-question-ulf-tree* (0 :subtree)
+       2 (((*color-question-ulf-tree* 1 2 3 4 5)) (1 ?)) (0 :ulf-recur)
 
     ; where questions
     1 (where 0)
-       2 *where-question-ulf-tree* (0 :subtree)
+       2 (((*where-question-ulf-tree* 1 2)) (1 ?)) (0 :ulf-recur)
 
     ; wh-questions
     1 (wh_ 0 between 0)
-       2 *wh-between-question-ulf-tree* (0 :subtree)
+       2 (((*wh-between-question-ulf-tree* 1 2 3 4)) (1 ?)) (0 :ulf-recur)
     1 (wh_ 0)
-       2 *wh-question-ulf-tree* (0 :subtree)
+       2 (((*wh-question-ulf-tree* 1 2)) (1 ?)) (0 :ulf-recur)
 
     ; PP[wh]-questions
     1 (between 2 wh_ 0); e.g., Between which two blocks is the NVidia block ?
-       2 *ppwh-between-question-ulf-tree* (0 :subtree)
+       2 (((*ppwh-between-question-ulf-tree* 1 2 3 4)) (1 ?)) (0 :ulf-recur)
     1 (prep 2 wh_ 0); e.g., On top of which block is the NVidia block ?
-       2 *ppwh-question-ulf-tree* (0 :subtree)
+       2 (((*ppwh-question-ulf-tree* 1 2 3 4)) (1 ?)) (0 :ulf-recur)
 
     ; "do"-questions
     1 (do 0)
-       2 *do-question-ulf-tree* (0 :subtree)
+       2 (((*do-question-ulf-tree* 1 2)) (1 ?)) (0 :ulf-recur)
 
     ; declarative questions
     1 (np-bw 3 be 0 ?); e.g. A red block is next to a blue block ?
@@ -169,7 +192,7 @@
 
     ; declarative 'modal' questions with ellipses, e.g., next to the Twitter block ?
     1 (1 prep 4 ?)
-       2 (*modal-question-ulf-tree* (should it be 1 2 3 ?)) (0 :subtree+clause)
+       2 (((*modal-question-ulf-tree* should it be 1 2 3 ?)) (1 ?)) (0 :ulf-recur)
 
     ; fallback rules
     1 (0 block 0 between 0)
@@ -187,9 +210,9 @@
 
     ; in case no ULF is able to be extracted
     1 (0)
-       2 (You didn\'t catch what I said\. Could I rephrase ?) (6 :out)
-       2 (Sorry\, you didn\'t hear what I said\.) (6 :out)
-       2 (You didn\'t quite understand\.) (0 :out)
+       2 (I didn\'t catch what you said\. Could you rephrase ?) (6 :out)
+       2 (Sorry\, I didn\'t hear what you said\.) (6 :out)
+       2 (I didn\'t quite understand\.) (0 :out)
 
 )) ; END *spatial-question-ulf-tree*
 
@@ -299,6 +322,12 @@
        2 (((lex-ulf! det 1) (*n1-ulf-tree* 2 3 4)) (1 2)) (0 :ulf-recur)
 
     ; Pronoun 
+    1 (me)
+       2 me.pro (0 :ulf)
+    1 (I)
+       2 I.pro (0 :ulf)
+    2 (you)
+       2 you.pro (0 :ulf)
     1 (pron)
        2 (lex-ulf! pro 1) (0 :ulf)
 
@@ -505,109 +534,114 @@
 ; Parses yes-no questions.
 ;
 '(  
+    ; Questions beginning with 'is not' (mostly relevant for explanation questions,
+    ; e.g., "why isn't the Twitter block on the Texaco block?")
+    1 (be not 0)
+       2 (((*yn-question-ulf-tree* 1 3)) (not 1)) (0 :ulf-recur)
+
     ; Asking about conjunction of blocks
     1 (be np-bw 3 and np-bw 2 noun 0)
        ; Historical
        2 (be np-bw 3 and np-bw 2 noun rel-adj adv-hist-word 0 ?); e.g., were the NVidia block and the SRI block touching on the first turn ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*np-ulf-tree* 5 6 7) (lex-ulf! adj 8) (*adv-ulf-tree* 9 10) ?)
-             (((set-of 2 3) (1 4 5)) ?)) (0 :ulf-recur)
+             ((set-of 2 3) (1 4 5))) (0 :ulf-recur)
        2 (be np-bw 3 and np-bw 2 noun 1 rel-adj adv-hist-word 0 ?); e.g., were the NVidia block and the SRI block directly touching previously ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*np-ulf-tree* 5 6 7) (lex-ulf! adv-a 8) (lex-ulf! adj 9) (*adv-ulf-tree* 10 11) ?)
-             (((set-of 2 3) (1 4 5 6)) ?)) (0 :ulf-recur)
+             ((set-of 2 3) (1 4 5 6))) (0 :ulf-recur)
        2 (be np-bw 3 and np-bw 2 noun 1 prep each other adv-hist-word 0 ?); e.g., were the NVidia block and the SRI block (directly) touching each other ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*np-ulf-tree* 5 6 7) (*pp-ulf-tree* 8 9 10 11) (*adv-ulf-tree* 12 13) ?)
-             (((set-of 2 3) (1 4 5)) ?)) (0 :ulf-recur)
+             ((set-of 2 3) (1 4 5))) (0 :ulf-recur)
        ; Standard
        2 (be np-bw 3 and np-bw 2 noun rel-adj ?); e.g., are the NVidia block and the SRI block touching ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*np-ulf-tree* 5 6 7) (lex-ulf! adj 8) ?)
-             (((set-of 2 3) (1 4)) ?)) (0 :ulf-recur)
+             ((set-of 2 3) (1 4))) (0 :ulf-recur)
        2 (be np-bw 3 and np-bw 2 noun 1 rel-adj ?); e.g., are the NVidia block and the SRI block directly touching ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*np-ulf-tree* 5 6 7) (lex-ulf! adv-a 8) (lex-ulf! adj 9) ?)
-             (((set-of 2 3) (1 4 5)) ?)) (0 :ulf-recur)
+             ((set-of 2 3) (1 4 5))) (0 :ulf-recur)
        2 (be np-bw 3 and np-bw 2 noun 1 prep each other ?); e.g., are the NVidia block and the SRI block (directly) touching each other ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*np-ulf-tree* 5 6 7) (*pp-ulf-tree* 8 9 10 11) ?)
-             (((set-of 2 3) (1 4)) ?)) (0 :ulf-recur)
+             ((set-of 2 3) (1 4))) (0 :ulf-recur)
 
     ; Asking about a single block
     1 (be det 2 block 0)
        ; Historical
        2 (be det 2 block 1 prep np-bw 3 conj np-bw 3 adv-hist-word 0 ?); e.g., was the NVidia block above the SRI block and the Texaco block previously ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (*pp-ulf-tree* 5 6 7 8 9 10 11) (*adv-ulf-tree* 12 13) ?)
-             ((2 (1 3 4)) ?)) (0 :ulf-recur)
+             (2 (1 3 4))) (0 :ulf-recur)
        2 (be det 2 block 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., was the NVidia block on [a red block]/[it]/[red blocks] on the first turn ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (*pp-ulf-tree* 5 6 7 8 9) (*adv-ulf-tree* 10 11) ?)
-             ((2 (1 3 4)) ?)) (0 :ulf-recur)
+             (2 (1 3 4))) (0 :ulf-recur)
        2 (be det 2 block adj adv-hist-word 0 ?); e.g., was the NVidia block clear/red/visible before I moved it ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (lex-ulf! adj 5) (*adv-ulf-tree* 6 7) ?)
-             ((2 (1 3 4)) ?)) (0 :ulf-recur)
+             (2 (1 3 4))) (0 :ulf-recur)
        2 (be det 2 block 4 det 2 noun 4 adv-hist-word 0 ?); e.g., was the Twitter block the leftmost block before I moved it ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4 5) (*np-ulf-tree* 6 7 8 9) (*adv-ulf-tree* 10 11) ?)
-             ((2 (1 (= 3) 4)) ?)) (0 :ulf-recur)
+             (2 (1 (= 3) 4))) (0 :ulf-recur)
        2 (be det 2 block 4 adv-history 1 det 2 noun 4 ?); e.g., was the Twitter block recently the leftmost block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4 5) (*adv-ulf-tree* 6 7) (*np-ulf-tree* 8 9 10 11) ?)
-             ((2 (1 3 (= 4))) ?)) (0 :ulf-recur)
+             (2 (1 3 (= 4)))) (0 :ulf-recur)
        ; Standard
        2 (be det 2 block 1 prep np-bw 3 conj np-bw 3 ?); e.g., is the NVidia block above the SRI block and the Texaco block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (*pp-ulf-tree* 5 6 7 8 9 10 11) ?)
-             ((2 (1 3)) ?)) (0 :ulf-recur)
+             (2 (1 3))) (0 :ulf-recur)
        2 (be det 2 block 1 prep 2 np-bw 3 ?); e.g., is the NVidia block on [a red block]/[it]/[red blocks] ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (*pp-ulf-tree* 5 6 7 8 9) ?)
-             ((2 (1 3)) ?)) (0 :ulf-recur)
+             (2 (1 3))) (0 :ulf-recur)
        2 (be det 2 block adj ?); e.g., is the NVidia block clear/red/visible ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (lex-ulf! adj 5) ?)
-             ((2 (1 3)) ?)) (0 :ulf-recur)
+             (2 (1 3))) (0 :ulf-recur)
        2 (be det 2 block 4 det 2 noun 4 ?); e.g., is the Twitter block the leftmost block?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4 5) (*np-ulf-tree* 6 7 8 9) ?)
-             ((2 (1 (= 3))) ?)) (0 :ulf-recur)
+             (2 (1 (= 3)))) (0 :ulf-recur)
 
     ; Asking about a single block (by proper name)
     1 (be corp 0)
        ; Historical
        2 (be corp 1 prep np-bw 3 conj np-bw 3 adv-hist-word 0 ?); e.g., was NVidia above the SRI block and the Texaco block previously ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*pp-ulf-tree* 3 4 5 6 7 8 9) (*adv-ulf-tree* 10 11) ?)
-             ((2 (1 3 4)) ?)) (0 :ulf-recur)
+             (2 (1 3 4))) (0 :ulf-recur)
        2 (be corp 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., was NVidia on [a red block]/[it]/[red blocks] on the first turn ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*pp-ulf-tree* 3 4 5 6 7) (*adv-ulf-tree* 8 9) ?)
-             ((2 (1 3 4)) ?)) (0 :ulf-recur)
+             (2 (1 3 4))) (0 :ulf-recur)
        2 (be corp adj adv-hist-word 0 ?); e.g., was NVidia clear/red/visible before I moved it ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! adj 3) (*adv-ulf-tree* 4 5) ?)
-             ((2 (1 3 4)) ?)) (0 :ulf-recur)
+             (2 (1 3 4))) (0 :ulf-recur)
        2 (be corp det 2 noun 4 adv-hist-word 0 ?); e.g., was Twitter the leftmost block before I moved it ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*np-ulf-tree* 3 4 5 6) (*adv-ulf-tree* 7 8) ?)
-             ((2 (1 (= 3) 4)) ?)) (0 :ulf-recur)
+             (2 (1 (= 3) 4))) (0 :ulf-recur)
        2 (be corp adv-history 1 det 2 noun 4 ?); e.g., was Twitter recently the leftmost block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*adv-ulf-tree* 3 4) (*np-ulf-tree* 5 6 7 8) ?)
-             ((2 (1 3 (= 4))) ?)) (0 :ulf-recur)
+             (2 (1 3 (= 4)))) (0 :ulf-recur)
        ; Standard
        2 (be corp 1 prep np-bw 3 conj np-bw 3 ?); e.g., is NVidia above the SRI block and the Texaco block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*pp-ulf-tree* 3 4 5 6 7 8 9) ?)
-             ((2 (1 3)) ?)) (0 :ulf-recur)
+             (2 (1 3))) (0 :ulf-recur)
        2 (be corp 1 prep 2 np-bw 3 ?); e.g., is NVidia on [a red block]/[it]/[red blocks] ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*pp-ulf-tree* 3 4 5 6 7) ?)
-             ((2 (1 3)) ?)) (0 :ulf-recur)
+             (2 (1 3))) (0 :ulf-recur)
        2 (be corp adj ?); e.g., is NVidia clear/red/visible ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! adj 3) ?)
-             ((2 (1 3)) ?)) (0 :ulf-recur)
+             (2 (1 3))) (0 :ulf-recur)
        2 (be corp det 2 noun 4 ?); e.g., is Twitter the leftmost block?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*np-ulf-tree* 3 4 5 6) ?)
-             ((2 (1 (= 3))) ?)) (0 :ulf-recur)
+             (2 (1 (= 3)))) (0 :ulf-recur)
 
     ; Asking about a pronoun
     1 (be pron 0)
        ; Historical
        2 (be pron 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., was it on top of [a red block]/[them]/[red blocks] previously ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*pp-ulf-tree* 3 4 5 6 7) (*adv-ulf-tree* 8 9) ?)
-             ((2 (1 3 4)) ?)) (0 :ulf-recur)
+             (2 (1 3 4))) (0 :ulf-recur)
        2 (be pron adj adv-hist-word 0 ?); e.g., was it clear/red/visible previously ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! adj 3) (*adv-ulf-tree* 4 5) ?)
-             ((2 (1 3 4)) ?)) (0 :ulf-recur)
+             (2 (1 3 4))) (0 :ulf-recur)
        ; Standard
        2 (be pron 1 prep 2 np-bw 3 ?); e.g., is it on top of [a red block]/[them]/[red blocks] ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*pp-ulf-tree* 3 4 5 6 7) ?)
-             ((2 (1 3)) ?)) (0 :ulf-recur)
+             (2 (1 3))) (0 :ulf-recur)
        2 (be pron adj ?); e.g., is it clear/red/visible ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! adj 3) ?)
-             ((2 (1 3)) ?)) (0 :ulf-recur)
+             (2 (1 3))) (0 :ulf-recur)
 
 )) ; END *yn-question-ulf-tree*
 
@@ -621,21 +655,21 @@
     ; Historical
     1 (be there 3 noun 1 prep np-bw 3 conj np-bw 3 adv-hist-word 0 ?); e.g., was there a red block above the SRI block and the NVidia block last turn ?
        2 (((lex-ulf! v 1) there.pro (*np-ulf-tree* 3 4 5 6 7 8 9 10 11) (*adv-ulf-tree* 12 13) ?) 
-          ((2 (1 3 4)) ?)) (0 :ulf-recur)
+          (2 (1 3 4))) (0 :ulf-recur)
     1 (be there 1 adv-history 3 noun 1 prep 2 np-bw 3 ?); e.g., was there ever a red block on the NVidia block ?
        2 (((lex-ulf! v 1) there.pro (*adv-ulf-tree* 3 4) (*np-ulf-tree* 5 6 7 8 9 10 11))
-          ((2 (1 3 4)) ?)) (0 :ulf-recur)
+          (2 (1 3 4))) (0 :ulf-recur)
     1 (be there 3 noun 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., was there a red block on a red block previously ?
        2 (((lex-ulf! v 1) there.pro (*np-ulf-tree* 3 4 5 6 7 8 9) (*adv-ulf-tree* 10 11) ?) 
-          ((2 (1 3 4)) ?)) (0 :ulf-recur)
+          (2 (1 3 4))) (0 :ulf-recur)
 
     ; Standard
     1 (be there 3 noun 1 prep np-bw 3 conj np-bw 3 ?); e.g., is there a red block above the SRI block and the NVidia block ?
        2 (((lex-ulf! v 1) there.pro (*np-ulf-tree* 3 4 5 6 7 8 9 10 11) ?) 
-          ((2 (1 3)) ?)) (0 :ulf-recur)
+          (2 (1 3))) (0 :ulf-recur)
     1 (be there 3 noun 1 prep 2 np-bw 3 ?); e.g., is there a red block on [a blue block]/[it]
        2 (((lex-ulf! v 1) there.pro (*np-ulf-tree* 3 4 5 6 7 8 9) ?) 
-          ((2 (1 3)) ?)) (0 :ulf-recur)
+          (2 (1 3))) (0 :ulf-recur)
 
 )) ; END *exist-question-ulf-tree*
 
@@ -648,27 +682,27 @@
 '( 
     1 (have 2 np-bw 3 adv_ 1 verb-rel 2 np-bw 3 ?); e.g., has the SRI block ever touched the NVidia block ?
        2 (((*np-ulf-tree* 2 3 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7) (*np-ulf-tree* 8 9 10) ?)
-          ((1 (2 ((past perf) (3 4)))) ?)) (0 :ulf-recur)
+          (1 (2 ((past perf) (3 4))))) (0 :ulf-recur)
     1 (have 2 np-bw 3 adv_ 1 been 1 adj ?); e.g., has the SRI block ever been (totally) clear ?
-       2 (((*np-ulf-tree* 2 3 4) (*adv-ulf-tree* 5 6) (lex-ulf! adj 9) ?) ((1 (2 ((past perf) (be.v 3)))) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 2 3 4) (*adv-ulf-tree* 5 6) (lex-ulf! adj 9) ?) (1 (2 ((past perf) (be.v 3))))) (0 :ulf-recur)
     1 (have 2 np-bw 3 adv_ 1 been between 0 ?); e.g., has the SRI block ever been between the NVidia block and Twitter block ?
        2 (((*np-ulf-tree* 2 3 4) (*adv-ulf-tree* 5 6) (*pp-between-ulf-tree* 8 9) ?)
-          ((1 (2 ((past perf) (be.v 3)))) ?)) (0 :ulf-recur)
+          (1 (2 ((past perf) (be.v 3))))) (0 :ulf-recur)
     1 (have 2 np-bw 3 adv_ 1 been 1 prep 2 np-bw 3 ?); e.g., has the SRI block ever been on the NVidia block ?
        2 (((*np-ulf-tree* 2 3 4) (*adv-ulf-tree* 5 6) (*pp-ulf-tree* 8 9 10 11 12) ?)
-          ((1 (2 ((past perf) (be.v 3)))) ?)) (0 :ulf-recur)
+          (1 (2 ((past perf) (be.v 3))))) (0 :ulf-recur)
     1 (have there adv_ 1 been 2 np-bw 3 between 0 ?); e.g., has there ever been a block between the NVidia block and Twitter block ?
        2 ((there.pro (*adv-ulf-tree* 3 4) (*np-ulf-tree* 6 7 8 9 10) ?)
-          ((2 ((past perf) (be.v 1 3))) ?)) (0 :ulf-recur)
+          (2 ((past perf) (be.v 1 3)))) (0 :ulf-recur)
     1 (have there adv_ 1 been 2 np-bw 3 prep 2 np-bw 3 ?); e.g., has there ever been a block on the SRI block ?
        2 ((there.pro (*adv-ulf-tree* 3 4) (*np-ulf-tree* 6 7 8 9 10 11 12) ?)
-          ((2 ((past perf) (be.v 1 3))) ?)) (0 :ulf-recur)
+          (2 ((past perf) (be.v 1 3)))) (0 :ulf-recur)
     1 (have pron adv_ 1 verb-rel 2 np-bw 3 ?); e.g., have I ever moved the Target block ?
        2 (((*np-ulf-tree* 2) (*adv-ulf-tree* 3 4) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) ?)
-          ((1 (2 ((past perf) (3 4)))) ?)) (0 :ulf-recur)
+          (1 (2 ((past perf) (3 4))))) (0 :ulf-recur)
     1 (have pron verb-rel 2 np-bw 3 ?); e.g., have I moved the Target block ?
        2 (((*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) ?)
-          ((1 ((past perf) (2 3))) ?)) (0 :ulf-recur)
+          (1 ((past perf) (2 3)))) (0 :ulf-recur)
 
 )) ; END *has-question-ulf-tree*
 
@@ -685,130 +719,130 @@
        ; Standard
        2 (modal np-bw 3 and np-bw 2 noun be rel-adj ?); e.g., should the NVidia block and the SRI block be touching ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*np-ulf-tree* 5 6 7) (lex-ulf! v- 8) (lex-ulf! adj 9) ?)
-             ((1 (set-of 2 3) (4 5)) ?)) (0 :ulf-recur)
+             (1 (set-of 2 3) (4 5))) (0 :ulf-recur)
        2 (modal np-bw 3 and np-bw 2 noun be 1 rel-adj ?); e.g., should the NVidia block and the SRI block be directly touching ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*np-ulf-tree* 5 6 7) (lex-ulf! v- 8) (lex-ulf! adv-a 9) (lex-ulf! adj 10) ?)
-             ((1 (set-of 2 3) (4 5 6)) ?)) (0 :ulf-recur)
+             (1 (set-of 2 3) (4 5 6))) (0 :ulf-recur)
        2 (modal np-bw 3 and np-bw 2 noun be 1 prep each other ?); e.g., should the NVidia block and the SRI block be touching each other ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*np-ulf-tree* 5 6 7) (lex-ulf! v- 8) (*pp-ulf-tree* 9 10 11 12) ?)
-             ((1 (set-of 2 3) (4 5)) ?)) (0 :ulf-recur)
+             (1 (set-of 2 3) (4 5))) (0 :ulf-recur)
 
     ; Asking about a single block
     1 (modal 1 det 2 block 0)
        ; Negation
        2 (modal not det 2 block be 1 between np-bw 3 conj np-bw 3 ?); e.g., should not the NVidia block be between the SRI block and the Texaco block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 6) (*pp-between-ulf-tree* 7 8 9 10 11 12 13) ?)
-             ((1 not 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 not 2 (3 4))) (0 :ulf-recur)
        2 (modal not det 2 block be 1 prep np-bw 3 conj np-bw 3 ?); e.g., should not the NVidia block be above the SRI block and the Texaco block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 6) (*pp-ulf-tree* 7 8 9 10 11 12 13) ?)
-             ((1 not 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 not 2 (3 4))) (0 :ulf-recur)
        2 (modal not det 2 block be 1 prep 2 np-bw 3 ?); e.g., should not the NVidia block be on [a red block]/[it]/[red blocks] ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 6) (*pp-ulf-tree* 7 8 9 10 11) ?)
-             ((1 not 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 not 2 (3 4))) (0 :ulf-recur)
        2 (modal not det 2 block be adj ?); e.g., should not the NVidia block be clear/red/visible ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 6) (lex-ulf! adj 7) ?)
-             ((1 not 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 not 2 (3 4))) (0 :ulf-recur)
        2 (modal not det 2 block 4 be det 2 noun 4 ?); e.g., should not the Twitter block be the leftmost block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 3 4 5 6) (lex-ulf! v- 7) (*np-ulf-tree* 8 9 10 11) ?)
-             ((1 not 2 (3 (= 4))) ?)) (0 :ulf-recur)
+             (1 not 2 (3 (= 4)))) (0 :ulf-recur)
        ; Standard
        2 (modal det 2 block be 1 between np-bw 3 conj np-bw 3 ?); e.g., should the NVidia block be between the SRI block and the Texaco block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (lex-ulf! v- 5) (*pp-between-ulf-tree* 6 7 8 9 10 11 12) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
        2 (modal det 2 block be 1 prep np-bw 3 conj np-bw 3 ?); e.g., should the NVidia block be above the SRI block and the Texaco block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9 10 11 12) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
        2 (modal det 2 block be 1 prep 2 np-bw 3 ?); e.g., should the NVidia block be on [a red block]/[it]/[red blocks] ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9 10) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
        2 (modal det 2 block be adj ?); e.g., should the NVidia block be clear/red/visible ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (lex-ulf! v- 5) (lex-ulf! adj 6) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
        2 (modal det 2 block 4 be det 2 noun 4 ?); e.g., should the Twitter block be the leftmost block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4 5) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9 10) ?)
-             ((1 2 (3 (= 4))) ?)) (0 :ulf-recur)
+             (1 2 (3 (= 4)))) (0 :ulf-recur)
 
     ; Asking about a single block (by proper name)
     1 (modal corp 0)
        ; Standard
        2 (modal corp be 1 between np-bw 3 conj np-bw 3 ?); e.g., should NVidia be between the SRI block and the Texaco block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*pp-between-ulf-tree* 4 5 6 7 8 9 10) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
        2 (modal corp be 1 prep np-bw 3 conj np-bw 3 ?); e.g., should NVidia be above the SRI block and the Texaco block ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*pp-ulf-tree* 4 5 6 7 8 9 10) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
        2 (modal corp be 1 prep 2 np-bw 3 ?); e.g., should NVidia be on [a red block]/[it]/[red blocks] ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*pp-ulf-tree* 4 5 6 7 8) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
        2 (modal corp be adj ?); e.g., should NVidia be clear/red/visible ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (lex-ulf! adj 4) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
        2 (modal corp be det 2 noun 4 ?); e.g., should Twitter be the leftmost block?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6 7) ?)
-             ((1 2 (3 (= 4))) ?)) (0 :ulf-recur)
+             (1 2 (3 (= 4)))) (0 :ulf-recur)
 
     ; Asking about a pronoun
     1 (modal 1 pron 0)
        ; Negation
        2 (modal not pron be 1 prep 2 np-bw 3 ?); e.g., should not it be on top of [a red block]/[them]/[red blocks] ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 3) (lex-ulf! v- 4) (*pp-ulf-tree* 5 6 7 8 9) ?)
-             ((1 not 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 not 2 (3 4))) (0 :ulf-recur)
        2 (modal not pron be adj ?); e.g., should not it be clear/red/visible ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 3) (lex-ulf! v- 4) (lex-ulf! adj 5) ?)
-             ((1 not 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 not 2 (3 4))) (0 :ulf-recur)
        ; Standard
        2 (modal pron be 1 prep 2 np-bw 3 ?); e.g., should it be on top of [a red block]/[them]/[red blocks] ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*pp-ulf-tree* 4 5 6 7 8) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
        2 (modal pron be adj ?); e.g., should it be clear/red/visible ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (lex-ulf! adj 4) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
 
     ; Spatial verb
     1 (modal np-bw 2 not verb-rel 1 between 0 ?); e.g., should anything not sit between the two red blocks ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 5) (*pp-between-ulf-tree* 7 8) ?)
-          ((1 2 (not (3 (adv-a 4)))) ?))
+          (1 2 (not (3 (adv-a 4)))))
     1 (modal np-bw 2 not verb-rel 2 np-bw 3 ?); e.g., should any block not touch the NVidia block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) ?)
-          ((1 2 (not (3 4))) ?)) (0 :ulf-recur)
+          (1 2 (not (3 4)))) (0 :ulf-recur)
     1 (modal np-bw 2 not verb-rel prep 2 np-bw 3 ?); e.g., should any block not sit on the red NVidia block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9) ?)
-          ((1 2 (not (3 (adv-a 4)))) ?)) (0 :ulf-recur)
+          (1 2 (not (3 (adv-a 4))))) (0 :ulf-recur)
     1 (modal np-bw 2 verb-rel 1 between 0 ?); e.g., should anything sit between the two red blocks ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 4) (*pp-between-ulf-tree* 6 7) ?)
-          ((1 2 (3 (adv-a 4))) ?)) (0 :ulf-recur)
+          (1 2 (3 (adv-a 4)))) (0 :ulf-recur)
     1 (modal np-bw 2 verb-rel 2 np-bw 3 ?); e.g., should any block support the NVidia block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) ?)
-          ((1 2 (3 4)) ?)) (0 :ulf-recur)
+          (1 2 (3 4))) (0 :ulf-recur)
     1 (modal np-bw 2 verb-rel prep 2 np-bw 3 ?); e.g., should any block sit on the red NVidia block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 4) (*pp-ulf-tree* 5 6 7 8) ?)
-          ((1 2 (3 (adv-a 4))) ?)) (0 :ulf-recur)
+          (1 2 (3 (adv-a 4)))) (0 :ulf-recur)
     1 (modal pron verb-rel 2 np-bw 3 ?); e.g., should I move the Twitter block ?
-       2 (((lex-ulf! v 1) (lex-ulf! pro 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) ?)
-          ((1 2 (3 4)) ?)) (0 :ulf-recur)
+       2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) ?)
+          (1 2 (3 4))) (0 :ulf-recur)
     1 (modal pron verb-rel det 2 noun 1 prep 2 np-bw 3 ?); e.g., should I put the Twitter block (directly) on the Texaco block ?
-      2 (((lex-ulf! v 1) (lex-ulf! pro 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) (*pp-ulf-tree* 7 8 9 10 11) ?)
-         ((1 2 (3 4 5)) ?)) (0 :ulf-recur)
+      2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) (*pp-ulf-tree* 7 8 9 10 11) ?)
+         (1 2 (3 4 5))) (0 :ulf-recur)
     1 (modal pron verb-rel pron 1 prep 2 np-bw 3 ?); e.g., should I put it (directly) on the Twitter block ?
-      2 (((lex-ulf! v 1) (lex-ulf! pro 2) (lex-ulf! v- 3) (*np-ulf-tree* 4) (*pp-ulf-tree* 5 6 7 8 9) ?)
-         ((1 2 (3 4 5)) ?)) (0 :ulf-recur)
+      2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4) (*pp-ulf-tree* 5 6 7 8 9) ?)
+         (1 2 (3 4 5))) (0 :ulf-recur)
 
     ; Asking about an existential proposition
     1 (modal there 0)
        ; Negation
        2 (modal not there be det 2 noun 1 between 0 ?); e.g., should not there be a red block between the Twitter block and the Texaco block ?
           3 (((lex-ulf! v 1) there.pro (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7 8 9 10) ?)
-             ((1 not 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 not 2 (3 4))) (0 :ulf-recur)
        2 (modal not there be det 2 noun 1 prep 2 np-bw 3 ?); e.g., should not there be a red block on the Twitter block ?
           3 (((lex-ulf! v 1) there.pro (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7 8 9 10 11 12) ?)
-             ((1 not 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 not 2 (3 4))) (0 :ulf-recur)
        ; Standard
        2 (modal there be det 2 noun 1 between 0 ?); e.g., should there be a red block between the Twitter block and the Texaco block ?
           3 (((lex-ulf! v 1) there.pro (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6 7 8 9) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
        2 (modal there be det 2 noun 1 prep 2 np-bw 3 ?); e.g., should there be a red block on the Twitter block ?
           3 (((lex-ulf! v 1) there.pro (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6 7 8 9 10 11) ?)
-             ((1 2 (3 4)) ?)) (0 :ulf-recur)
+             (1 2 (3 4))) (0 :ulf-recur)
 
     
     ; Should the Twitter block not be on ... ?
@@ -817,8 +851,6 @@
     ; Should I have put the ... on ... ?
     ; Should I not have moved the ... ?
     ; Should not I have moved the ... ?
-
-    1 (Sorry\, you are not handling modal questions yet\.) (0 :out)
 
 )) ; END *modal-question-ulf-tree*
 
@@ -832,23 +864,23 @@
     ; Historical
     1 (where be det 2 noun adv-hist-word 0 ?); e.g., where was the NVidia block previously ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) (*adv-ulf-tree* 6 7) ?)
-          ((sub 1 (3 (2 *h 4))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 *h 4)))) (0 :ulf-recur)
     1 (where be pron adv-hist-word 0 ?); e.g., where was it before I moved it ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (*adv-ulf-tree* 4 5) ?)
-          ((sub 1 (3 (2 *h 4))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 *h 4)))) (0 :ulf-recur)
     ; Standard
     1 (where be det 2 noun prep-where-adv 2 np-bw 3 ?); e.g., where is the Twitter block with respect to the Texaco block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) (*pp-ulf-tree* 6 7 8 9) ?)
-          ((sub 1 (3 (2 *h (adv-a 4)))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 *h (adv-a 4))))) (0 :ulf-recur)
     1 (where be pron prep-where-adv 2 np-bw 3 ?); e.g., where is it with respect to the Texaco block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (*pp-ulf-tree* 4 5 6 7) ?)
-          ((sub 1 (3 (2 *h (adv-a 4)))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 *h (adv-a 4))))) (0 :ulf-recur)
     1 (where be det 2 noun ?); e.g., where is the NVidia block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) ?)
-          ((sub 1 (3 (2 *h))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 *h)))) (0 :ulf-recur)
     1 (where be pron ?); e.g., where is it ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) ?)
-          ((sub 1 (3 (2 *h))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 *h)))) (0 :ulf-recur)
 
     ; NOTE: does this make sense?
     1 (where be there 0); interpret like a y/n-question, i.e., drop the "where"
@@ -857,22 +889,22 @@
     ; Modal where-questions
     1 (where should 2 np-bw 3 be prep-where-adv 2 np-bw 3 ?); e.g., where should the Twitter block be relative to the Texaco block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 6) (*pp-ulf-tree* 7 8 9 10) ?)
-          ((sub 1 (2 3 (4 *h (adv-a 5)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 *h (adv-a 5))))) (0 :ulf-recur)
     1 (where should 2 np-bw 3 be ?); e.g., where should the Twitter block be ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 6) ?)
-          ((sub 1 (2 3 (4 *h))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 *h)))) (0 :ulf-recur)
     1 (where should pron verb-rel 2 np-bw 3 prep-where-adv 2 np-bw 3 ?); e.g., where should I move the Twitter block relative to the Texaco block ?
-       2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (lex-ulf! pro 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) (*pp-ulf-tree* 8 9 10 11) ?)
-          ((sub 1 (2 3 (4 5 *h (adv-a 6)))) ?)) (0 :ulf-recur)
+       2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) (*pp-ulf-tree* 8 9 10 11) ?)
+          (sub 1 (2 3 (4 5 *h (adv-a 6))))) (0 :ulf-recur)
     1 (where should pron verb-rel 2 np-bw 3 ?); e.g., where should I move the Twitter block ?
-       2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (lex-ulf! pro 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) ?)
-          ((sub 1 (2 3 (4 5 *h))) ?)) (0 :ulf-recur)
+       2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) ?)
+          (sub 1 (2 3 (4 5 *h)))) (0 :ulf-recur)
     1 (where do 2 np-bw 3 necessity to be ?); e.g., where does the Twitter block need to be ?
        2 (((lex-ulf! wh-pred 1) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 8) ?)
-          ((sub 1 ((pres need.aux-v) 2 (3 *h))) ?)) (0 :ulf-recur)
+          (sub 1 ((pres need.aux-v) 2 (3 *h)))) (0 :ulf-recur)
     1 (where do pron necessity to verb-rel 2 np-bw 3 ?); e.g., where do I need to move the Twitter block ?
-       2 (((lex-ulf! wh-pred 1) (lex-ulf! pro 3) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
-          ((sub 1 ((pres need.aux-v) 2 (3 4 *h))) ?)) (0 :ulf-recur)
+       2 (((lex-ulf! wh-pred 1) (*np-ulf-tree* 3) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
+          (sub 1 ((pres need.aux-v) 2 (3 4 *h)))) (0 :ulf-recur)
 
     ; Where do you want me to put the Twitter block ?
 
@@ -887,31 +919,31 @@
 '(
     1 (when do pron not verb-rel 2 np-bw 3 ?); e.g., when did I not move the Twitter block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) ?)
-          ((sub 1 (2 3 (not (4 5 (adv-e *h))))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (not (4 5 (adv-e *h)))))) (0 :ulf-recur)
     1 (when do pron adv_ 1 verb-rel 2 np-bw 3 ?); e.g., when did I recently move the Twitter block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (*adv-ulf-tree* 4 5) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
-          ((sub 1 (2 3 (4 (5 6 (adv-e *h))))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 (5 6 (adv-e *h)))))) (0 :ulf-recur)
     1 (when do pron verb-rel 2 np-bw 3 ?); e.g., when did I move the Twitter block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) ?)
-          ((sub 1 (2 3 (4 5 (adv-e *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 5 (adv-e *h))))) (0 :ulf-recur)
     1 (when do 2 np-bw 3 not verb-rel 2 np-bw 3 ?); e.g., when did the Twitter block not touch the Texaco block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 7) (*np-ulf-tree* 8 9 10) ?)
-          ((sub 1 (2 3 (not (4 5 (adv-e *h))))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (not (4 5 (adv-e *h)))))) (0 :ulf-recur)
     1 (when do 2 np-bw 3 verb-rel 2 np-bw 3 ?); e.g., when did the Twitter block touch the Texaco block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
-          ((sub 1 (2 3 (not (4 5 (adv-e *h))))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (not (4 5 (adv-e *h)))))) (0 :ulf-recur)
     1 (when be 2 np-bw 3 verb-rel ?); e.g., when was the Twitter block moved ?
        2 (((lex-ulf! wh-pred 1) (*np-ulf-tree* 3 4 5) (lex-ulf! v-pasv 6) ?)
-          ((sub 1 (2 (3 (adv-e *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 (3 (adv-e *h))))) (0 :ulf-recur)
     1 (when be 2 np-bw 3 not prep 2 np-bw 3 ?); e.g., when was the SRI block not on_top_of the Twitter block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) (*pp-ulf-tree* 7 8 9 10) ?)
-          ((sub 1 (3 (2 not 4 (adv-e *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 not 4 (adv-e *h))))) (0 :ulf-recur)
     1 (when be 2 np-bw 3 prep 2 np-bw 3 ?); e.g., when was the SRI block on_top_of the Twitter block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) (*pp-ulf-tree* 6 7 8 9) ?)
-          ((sub 1 (3 (2 4 (adv-e *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 4 (adv-e *h))))) (0 :ulf-recur)
     1 (when be 2 np-bw 3 adj ?); e.g., when was the SRI block clear ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5) (lex-ulf! adj 6) ?)
-          ((sub 1 (3 (2 4 (adv-e *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 4 (adv-e *h))))) (0 :ulf-recur)
 
 )) ; END *when-question-ulf-tree*
 
@@ -925,37 +957,37 @@
     ; Historical
     1 (what color noun be 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what color block was to_the_left_of the SRI block previously ?
        2 (((lex-ulf! det 1) (lex-ulf! adj 2) (lex-ulf! noun 3) (lex-ulf! v 4) 
-          (*pp-ulf-tree* 5 6 7 8 9) (*adv-ulf-tree* 10 11) ?) (((1 (2 3)) (4 5 6)) ?)) (0 :ulf-recur)
+          (*pp-ulf-tree* 5 6 7 8 9) (*adv-ulf-tree* 10 11) ?) ((1 (2 3)) (4 5 6))) (0 :ulf-recur)
     1 (what color be np-bw 2 conj np-bw 2 adv-hist-word 0 ?); e.g., what color were the Target block and the Starbucks block initially ?
        2 (((lex-ulf! det 1) (lex-ulf! noun 2) (lex-ulf! v 3) (*np-ulf-tree* 4 5) (*np-ulf-tree* 7 8) (*adv-ulf-tree* 9 10) ?)
-          ((sub ({of}.p (1 2)) ((set-of 4 5) (3 *h 6))) ?)) (0 :ulf-recur)
+          (sub ({of}.p (1 2)) ((set-of 4 5) (3 *h 6)))) (0 :ulf-recur)
     1 (what color be np-bw 0 adv-hist-word 0 ?); e.g., what color was the Nvidia block initially ?
        2 (((lex-ulf! det 1) (lex-ulf! noun 2) (lex-ulf! v 3) (*np-ulf-tree* 4 5) (*adv-ulf-tree* 6 7) ?)
-          ((sub ({of}.p (1 2)) (4 (3 *h 5))) ?)) (0 :ulf-recur)
+          (sub ({of}.p (1 2)) (4 (3 *h 5)))) (0 :ulf-recur)
     1 (what be det color of np-bw 0 adv-hist-word 0 ?); e.g., what was the color of the NVidia block initially ?
        2 (((lex-ulf! det 1) (lex-ulf! noun 4) (lex-ulf! v 2) (lex-ulf! prep 5) (*np-ulf-tree* 6 7) (*adv-ulf-tree* 8 9) ?)
-          ((sub (4 (1 2)) (3 (5 *h 6))) ?)) (0 :ulf-recur)
+          (sub (4 (1 2)) (3 (5 *h 6)))) (0 :ulf-recur)
     ; Standard
     1 (what color noun be 1 prep 2 np-bw 3 ?); e.g., what color block is to_the_left_of the SRI block ?
        2 (((lex-ulf! det 1) (lex-ulf! adj 2) (lex-ulf! noun 3) (lex-ulf! v 4) 
-          (*pp-ulf-tree* 5 6 7 8 9) ?) (((1 (2 3)) (4 5)) ?)) (0 :ulf-recur)
+          (*pp-ulf-tree* 5 6 7 8 9) ?) ((1 (2 3)) (4 5))) (0 :ulf-recur)
     1 (what color be np-bw 2 conj np-bw 2 ?); e.g., what color are the Target block and the Starbucks block ?
        2 (((lex-ulf! det 1) (lex-ulf! noun 2) (lex-ulf! v 3) (*np-ulf-tree* 4 5) (*np-ulf-tree* 7 8) ?)
-          ((sub ({of}.p (1 2)) ((set-of 4 5) (3 *h))) ?)) (0 :ulf-recur)
+          (sub ({of}.p (1 2)) ((set-of 4 5) (3 *h)))) (0 :ulf-recur)
     1 (what color be np-bw 0 ?); e.g., what color is the Nvidia block ?
        2 (((lex-ulf! det 1) (lex-ulf! noun 2) (lex-ulf! v 3) (*np-ulf-tree* 4 5))
-          ((sub ({of}.p (1 2)) (4 (3 *h))) ?)) (0 :ulf-recur)
+          (sub ({of}.p (1 2)) (4 (3 *h)))) (0 :ulf-recur)
     1 (what be det color of np-bw 0 ?); e.g., what is the color of the NVidia block ?
        2 (((lex-ulf! det 1) (lex-ulf! noun 4) (lex-ulf! v 2) (lex-ulf! prep 5) (*np-ulf-tree* 6 7) ?)
-          ((sub (4 (1 2)) (3 (5 *h))) ?)) (0 :ulf-recur)
+          (sub (4 (1 2)) (3 (5 *h)))) (0 :ulf-recur)
     1 (what color noun be there prep 2 np-bw 3 ?); e.g., what color blocks are there on the table ?
        2 (((lex-ulf! det 1) (lex-ulf! adj 2) (lex-ulf! noun 3) (lex-ulf! v 4) there.pro (*pp-ulf-tree* 6 7 8 9) ?)
-          ((5 (4 (1 (2 3)) 6)) ?)) (0 :ulf-recur)
+          (5 (4 (1 (2 3)) 6))) (0 :ulf-recur)
     1 (what color noun be there ?); e.g., what color blocks are there ?
        2 (((lex-ulf! det 1) (lex-ulf! adj 2) (lex-ulf! noun 3) (lex-ulf! v 4) there.pro ?)
-          ((5 (4 (1 (2 3)))) ?)) (0 :ulf-recur)
+          (5 (4 (1 (2 3))))) (0 :ulf-recur)
     1 (what color be there ?); e.g., what colors are there ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) there.pro ?) ((3 (2 1)) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) there.pro ?) (3 (2 1))) (0 :ulf-recur)
 
 )) ; END *color-question-ulf-tree*
 
@@ -969,207 +1001,207 @@
 '(
     ; Passive historical
     1 (wh_ 2 be adv_ 1 verb-rel between 0 ?); e.g., what (block) was just placed between the SRI and NVidia blocks ?
-       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v-pasv 6) (*pp-between-ulf-tree* 7 8) ?) ((1 (2 (3 4))) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v-pasv 6) (*pp-between-ulf-tree* 7 8) ?) (1 (2 (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 be adv_ 1 verb-rel 1 prep 2 np-bw 3 ?); e.g., what (block) was just placed on the SRI block ?
-       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v-pasv 6) (*pp-ulf-tree* 7 8 9 10 11) ?) ((1 (2 (3 4))) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v-pasv 6) (*pp-ulf-tree* 7 8 9 10 11) ?) (1 (2 (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 be adv_ 1 verb-rel adv-hist-word 0 ?); e.g., what (block) was only moved once ?
-       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v-pasv 6) (*adv-ulf-tree* 7 8) ?) ((1 (2 (3 4))) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v-pasv 6) (*adv-ulf-tree* 7 8) ?) (1 (2 (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 be adv_ 1 verb-rel ?); e.g., what (block) was just moved ?
-       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v-pasv 6) ?) ((1 (2 3)) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v-pasv 6) ?) (1 (2 3))) (0 :ulf-recur)
     1 (wh_ 2 be verb-rel between 0 adv-hist-word 0 ?); e.g., what (block) was placed between the SRI and NVidia blocks two turns ago ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) (*pp-between-ulf-tree* 5 6) (*adv-ulf-tree* 7 8) ?) ((1 (2 3 4)) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) (*pp-between-ulf-tree* 5 6) (*adv-ulf-tree* 7 8) ?) (1 (2 3 4))) (0 :ulf-recur)
     1 (wh_ 2 be verb-rel 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what (block) was placed on the SRI block two turns ago ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) (*pp-ulf-tree* 5 6 7 8 9) (*adv-ulf-tree* 10 11) ?) ((1 (2 3 4)) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) (*pp-ulf-tree* 5 6 7 8 9) (*adv-ulf-tree* 10 11) ?) (1 (2 3 4))) (0 :ulf-recur)
     1 (wh_ 2 be verb-rel adv-hist-word 0 ?); e.g., what (block) was moved two turns ago ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) (*adv-ulf-tree* 5 6) ?) ((1 (2 3)) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) (*adv-ulf-tree* 5 6) ?) (1 (2 3))) (0 :ulf-recur)
     1 (wh_ 2 be verb-rel between 0 ?); e.g., what (block) was placed between the SRI and NVidia blocks ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) (*pp-between-ulf-tree* 5 6) ?) ((1 (2 3)) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) (*pp-between-ulf-tree* 5 6) ?) (1 (2 3))) (0 :ulf-recur)
     1 (wh_ 2 be verb-rel 1 prep 2 np-bw 3 ?); e.g., what (block) was placed on the SRI block ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) (*pp-ulf-tree* 5 6 7 8 9) ?) ((1 (2 3)) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) (*pp-ulf-tree* 5 6 7 8 9) ?) (1 (2 3))) (0 :ulf-recur)
     1 (wh_ 2 be verb-rel ?); e.g., what (block) was moved ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) ?) ((1 2) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv 4) ?) (1 2)) (0 :ulf-recur)
    ; Past perf pasv (historical)
     1 (wh_ 2 have adv_ 1 been verb-rel 1 prep 2 np-bw 3 ?); e.g., what (block) has just been placed on the Twitter block ?
       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v-pasv- 7) (*pp-ulf-tree* 8 9 10 11 12) ?)
-         ((1 (2 (((past perf) 3) 4))) ?)) (0 :ulf-recur)
+         (1 (2 (((past perf) 3) 4)))) (0 :ulf-recur)
     1 (wh_ 2 have been adv_ 1 verb-rel 1 prep 2 np-bw 3 ?); e.g., what (block) has been recently placed on the Twitter block ?
       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 5 6) (lex-ulf! v-pasv- 7) (*pp-ulf-tree* 8 9 10 11 12) ?)
-         ((1 (2 (((past perf) 3) 4))) ?)) (0 :ulf-recur)
+         (1 (2 (((past perf) 3) 4)))) (0 :ulf-recur)
     1 (wh_ 2 have been verb-rel 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what (block) has been placed on the Twitter block two turns ago ?
       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv- 5) (*pp-ulf-tree* 6 7 8 9 10) (*adv-ulf-tree* 11 12) ?)
-         ((1 (((past perf) 2) 3 4)) ?)) (0 :ulf-recur)
+         (1 (((past perf) 2) 3 4))) (0 :ulf-recur)
     1 (wh_ 2 have been verb-rel 1 prep 2 np-bw 3 ?); e.g., what (block) has been placed on the Twitter block ?
       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv- 5) (*pp-ulf-tree* 6 7 8 9 10) ?)
-         ((1 (((past perf) 2) 3)) ?)) (0 :ulf-recur)
+         (1 (((past perf) 2) 3))) (0 :ulf-recur)
     1 (wh_ 2 have adv_ 1 been verb-rel ?); e.g., what (block) has just been moved ?
       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v-pasv- 7) ?)
-         ((1 (2 ((past perf) 3))) ?)) (0 :ulf-recur)
+         (1 (2 ((past perf) 3)))) (0 :ulf-recur)
     1 (wh_ 2 have been adv_ 1 verb-rel ?); e.g., what (block) has been recently moved ?
       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 5 6) (lex-ulf! v-pasv- 7) ?)
-         ((1 (2 ((past perf) 3))) ?)) (0 :ulf-recur)
+         (1 (2 ((past perf) 3)))) (0 :ulf-recur)
     1 (wh_ 2 have been verb-rel adv-hist-word 0 ?); e.g., what (block) has been moved two turns ago ?
       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv- 5) (*adv-ulf-tree* 6 7) ?)
-         ((1 (((past perf) 2) 3)) ?)) (0 :ulf-recur)
+         (1 (((past perf) 2) 3))) (0 :ulf-recur)
     1 (wh_ 2 have been verb-rel ?); e.g., what (block) has been moved ?
       2 (((*np-ulf-tree* 1 2) (lex-ulf! v-pasv- 5) ?)
-         ((1 ((past perf) 2)) ?)) (0 :ulf-recur)
+         (1 ((past perf) 2))) (0 :ulf-recur)
 
     ; + Not (historical)
     1 (wh-det 1 noun be not 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what red blocks were not on_top_of the NVidia block initially ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) (*pp-ulf-tree* 6 7 8 9 10)
-          (*adv-ulf-tree* 11 12) ?) ((1 (2 not 3 4)) ?)) (0 :ulf-recur)
+          (*adv-ulf-tree* 11 12) ?) (1 (2 not 3 4))) (0 :ulf-recur)
     1 (wh-det 1 noun be not 1 adj adv-hist-word 0 ?); e.g., what blocks were not (totally) clear during the previous turn ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) (lex-ulf! adj 7) (*adv-ulf-tree* 8 9) ?)
-          ((1 (2 not 3 4)) ?)) (0 :ulf-recur)
+          (1 (2 not 3 4))) (0 :ulf-recur)
     ; + There (historical)
     1 (wh-det 1 noun be there 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what red blocks were there on blue blocks at the start ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) (*pp-ulf-tree* 6 7 8 9 10)
-          (*adv-ulf-tree* 11 12) ?) ((1 (2 3 4)) ?)) (0 :ulf-recur)
+          (*adv-ulf-tree* 11 12) ?) (1 (2 3 4))) (0 :ulf-recur)
     ; Pronoun (historical)
     1 (wh-pron be 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what was next to the Texaco block previously ?
        2 ((what.pro (lex-ulf! v 2) (*pp-ulf-tree* 3 4 5 6 7) (*adv-ulf-tree* 8 9) ?) 
-          ((1 (2 3 4)) ?)) (0 :ulf-recur)
+          (1 (2 3 4))) (0 :ulf-recur)
     1 (wh-pron be the sup-adj 2 adv-hist-word 0 ?); e.g., what was the highest red block before I moved the SRI block ?
        2 (((lex-ulf! pro 1) (lex-ulf! v 2) the.d (*n1-ulf-tree* 4 5) (*adv-ulf-tree* 6 7) ?)
-          ((1 (2 (= (the.d 4)) 5)) ?)) (0 :ulf-recur)
+          (1 (2 (= (the.d 4)) 5))) (0 :ulf-recur)
     1 (wh-pron be the most sup-adj-base 2 adv-hist-word 0 ?); e.g., what was the most high red block before I moved the SRI block ?
        2 (((lex-ulf! pro 1) (lex-ulf! v 2) the.d (*n1-ulf-tree* 4 5 6) (*adv-ulf-tree* 7 8) ?)
-          ((1 (2 (= (the.d 4)) 5)) ?)) (0 :ulf-recur)
+          (1 (2 (= (the.d 4)) 5))) (0 :ulf-recur)
     1 (wh-pron be the 2 noun prep np-bw 3 adv-hist-word 0 ?); e.g., what was the block next_to the farthest blue block initially ?
        2 (((lex-ulf! pro 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5 6 7 8) (*adv-ulf-tree* 9 10) ?)
-          ((1 (2 (= 3) 4)) ?)) (0 :ulf-recur)
+          (1 (2 (= 3) 4))) (0 :ulf-recur)
     1 (wh-pron be the 2 noun 8 adv-hist-word 0 ?); e.g., what was the first block that I put on the Twitter block previously ?
        2 (((lex-ulf! pro 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5 6) (*adv-ulf-tree* 7 8) ?)
-          ((1 (2 (= 3) 4)) ?)) (0 :ulf-recur)
+          (1 (2 (= 3) 4))) (0 :ulf-recur)
     ; Past perf (historical)
     1 (wh_ 2 have pron adv_ 1 verb-rel adv-hist-word 0 ?); e.g., what blocks have I just moved before I moved the Twitter block ?
       2 (((*np-ulf-tree* 1 2) (*np-ulf-tree* 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7) (*adv-ulf-tree* 8 9) ?)
-         ((sub 1 (2 (3 ((past perf) (4 *h 5))))) ?)) (0 :ulf-recur)
+         (sub 1 (2 (3 ((past perf) (4 *h 5)))))) (0 :ulf-recur)
     1 (wh_ 2 have pron adv_ 1 verb-rel ?); e.g., what blocks have I just moved ?
       2 (((*np-ulf-tree* 1 2) (*np-ulf-tree* 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7) ?)
-         ((sub 1 (2 (3 ((past perf) (4 *h))))) ?)) (0 :ulf-recur)
+         (sub 1 (2 (3 ((past perf) (4 *h)))))) (0 :ulf-recur)
     1 (wh_ 2 have pron verb-rel adv-hist-word 0 ?); e.g., what blocks have I moved since the beginning ?
       2 (((*np-ulf-tree* 1 2) (*np-ulf-tree* 4) (lex-ulf! v- 5) (*adv-ulf-tree* 6 7) ?)
-         ((sub 1 (2 ((past perf) (3 *h 4)))) ?)) (0 :ulf-recur)
+         (sub 1 (2 ((past perf) (3 *h 4))))) (0 :ulf-recur)
     1 (wh_ 2 have pron verb-rel ?); e.g., what blocks have I moved ?
       2 (((*np-ulf-tree* 1 2) (*np-ulf-tree* 4) (lex-ulf! v- 5) ?)
-         ((sub 1 (2 ((past perf) (3 *h)))) ?)) (0 :ulf-recur)
+         (sub 1 (2 ((past perf) (3 *h))))) (0 :ulf-recur)
     1 (wh_ 2 have pron adv_ 1 verb-rel 1 prep 2 np-bw 3 ?); e.g., what blocks have I recently put on the Twitter block ?
       2 (((*np-ulf-tree* 1 2) (*np-ulf-tree* 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7) (*pp-ulf-tree* 8 9 10 11 12) ?)
-         ((sub 1 (2 (3 ((past perf) (4 *h 5))))) ?)) (0 :ulf-recur)
+         (sub 1 (2 (3 ((past perf) (4 *h 5)))))) (0 :ulf-recur)
     1 (wh_ 2 have pron verb-rel 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what blocks have I put on the Twitter block since the beginning ?
       2 (((*np-ulf-tree* 1 2) (*np-ulf-tree* 4) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9 10) (*adv-ulf-tree* 11 12) ?)
-         ((sub 1 (2 ((past perf) (3 *h 4 5)))) ?)) (0 :ulf-recur)
+         (sub 1 (2 ((past perf) (3 *h 4 5))))) (0 :ulf-recur)
     1 (wh_ 2 have pron verb-rel 1 prep 2 np-bw 3 ?); e.g., what blocks have I put on the Twitter block ?
       2 (((*np-ulf-tree* 1 2) (*np-ulf-tree* 4) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9 10) ?)
-         ((sub 1 (2 ((past perf) (3 *h 4)))) ?)) (0 :ulf-recur)
+         (sub 1 (2 ((past perf) (3 *h 4))))) (0 :ulf-recur)
     1 (wh_ 2 have adv_ 1 verb-rel 2 np-bw 3 ?); e.g., what blocks have recently touched the Twitter block ?
       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
-         ((1 (2 ((past perf) (3 4)))) ?)) (0 :ulf-recur)
+         (1 (2 ((past perf) (3 4))))) (0 :ulf-recur)
     1 (wh_ 2 have verb-rel 2 np-bw 3 adv-hist-word 0 ?); e.g., what blocks have touched the Twitter block since the beginning ?
       2 (((*np-ulf-tree* 1 2) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) (*adv-ulf-tree* 8 9) ?)
-         ((1 ((past perf) (2 3 4))) ?)) (0 :ulf-recur)
+         (1 ((past perf) (2 3 4)))) (0 :ulf-recur)
     1 (wh_ 2 have verb-rel 2 np-bw 3 ?); e.g., what blocks have touched the Twitter block ?
       2 (((*np-ulf-tree* 1 2) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) ?)
-         ((1 ((past perf) (2 3))) ?)) (0 :ulf-recur)
+         (1 ((past perf) (2 3)))) (0 :ulf-recur)
     1 (wh_ 2 have adv_ 1 verb-rel ?); e.g., what blocks have recently moved ?
       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 4 5) (lex-ulf! v- 6) ?)
-         ((1 ((past perf) 2 3)) ?)) (0 :ulf-recur)
+         (1 ((past perf) 2 3))) (0 :ulf-recur)
     1 (wh_ 2 have verb-rel adv-hist-word 0 ?); e.g., what blocks have moved since the beginning ?
       2 (((*np-ulf-tree* 1 2) (lex-ulf! v- 4) (*adv-ulf-tree* 5 6) ?)
-         ((1 ((past perf) 2 3)) ?)) (0 :ulf-recur)
+         (1 ((past perf) 2 3))) (0 :ulf-recur)
     1 (wh_ 2 have verb-rel ?); e.g., what blocks have moved ?
       2 (((*np-ulf-tree* 1 2) (lex-ulf! v- 4) ?)
-         ((1 ((past perf) 2)) ?)) (0 :ulf-recur)
+         (1 ((past perf) 2))) (0 :ulf-recur)
     ; Non-be verb (historical)
     1 (wh_ 2 verb-rel 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what block sat on the SRI block previously ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*pp-ulf-tree* 4 5 6 7 8) (*adv-ulf-tree* 9 10))
-          ((1 (2 3 4)) ?)) (0 :ulf-recur)
+          (1 (2 3 4))) (0 :ulf-recur)
     1 (wh_ 2 adv_ 1 verb-rel 2 np-bw 3 ?); e.g., what block initially faced the SRI block ?
        2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 3 4) (lex-ulf! v 5) (*np-ulf-tree* 6 7 8))
-          ((1 (2 (3 4))) ?)) (0 :ulf-recur)
+          (1 (2 (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 verb-rel 2 np-bw 3 adv-hist-word 0 ?); e.g., what block faced the SRI block initially ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4 5 6) (*adv-ulf-tree* 7 8))
-          ((1 (2 3 4)) ?)) (0 :ulf-recur)
+          (1 (2 3 4))) (0 :ulf-recur)
     1 (wh_ 2 verb-rel adv-hist-word 0 ?); e.g., what changed since last turn ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*adv-ulf-tree* 4 5)) ((1 (2 3)) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*adv-ulf-tree* 4 5)) (1 (2 3))) (0 :ulf-recur)
     1 (wh_ 2 adv_ 1 verb-rel ?); e.g., what recently changed ?
-       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 3 4) (lex-ulf! v 5)) ((1 (2 3)) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (*adv-ulf-tree* 3 4) (lex-ulf! v 5)) (1 (2 3))) (0 :ulf-recur)
     1 (wh_ 2 do not verb-rel ?); e.g., what blocks did not move ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) not (lex-ulf! v- 5)) ((1 (2 3 4)) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) not (lex-ulf! v- 5)) (1 (2 3 4))) (0 :ulf-recur)
     1 (wh_ 2 verb-rel ?); e.g., what blocks moved ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3)) ((1 2) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3)) (1 2)) (0 :ulf-recur)
     ; Standard (historical premodifier)
     1 (wh_ 2 be adv_ 1 prep 2 np-bw 3 ?); e.g., what red blocks were (most) recently above it ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*adv-ulf-tree* 4 5)
-          (*pp-ulf-tree* 6 7 8 9) ?) ((1 (2 3 4)) ?)) (0 :ulf-recur)
+          (*pp-ulf-tree* 6 7 8 9) ?) (1 (2 3 4))) (0 :ulf-recur)
     1 (wh_ 2 be adv_ 1 adj ?); e.g., which blocks were initially clear ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*adv-ulf-tree* 4 5) (lex-ulf! adj 6) ?) 
-          ((1 (2 3 4)) ?)) (0 :ulf-recur)
+          (1 (2 3 4))) (0 :ulf-recur)
     ; Standard (historical)
     1 (wh_ 2 be 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what red blocks were above it initially ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*pp-ulf-tree* 4 5 6 7 8)
-          (*adv-ulf-tree* 9 10) ?) ((1 (2 3 4)) ?)) (0 :ulf-recur)
+          (*adv-ulf-tree* 9 10) ?) (1 (2 3 4))) (0 :ulf-recur)
     1 (wh_ 2 be 1 adj adv-hist-word 0 ?); e.g., which blocks were (totally) clear initially ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! adj 5) (*adv-ulf-tree* 6 7) ?) 
-          ((1 (2 3 4)) ?)) (0 :ulf-recur)
+          (1 (2 3 4))) (0 :ulf-recur)
     1 (wh_ 2 be 2 np-bw 3 adv_ 1 prep ?); e.g., what/which block was the NVidia block previously on_top_of ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4 5 6)
-          (*adv-ulf-tree* 7 8) (lex-ulf! prep 9) ?) ((sub 1 (3 (2 4 (5 *h)))) ?)) (0 :ulf-recur)
+          (*adv-ulf-tree* 7 8) (lex-ulf! prep 9) ?) (sub 1 (3 (2 4 (5 *h))))) (0 :ulf-recur)
     1 (wh_ 2 be 2 np-bw 3 prep adv-hist-word 0 ?); e.g., what/which block was the NVidia block on_top_of before I moved it ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4 5 6)
-          (lex-ulf! prep 7) (*adv-ulf-tree* 8 9) ?) ((sub 1 (3 (2 (4 *h) 5))) ?)) (0 :ulf-recur)
+          (lex-ulf! prep 7) (*adv-ulf-tree* 8 9) ?) (sub 1 (3 (2 (4 *h) 5)))) (0 :ulf-recur)
 
     ; + Not
     1 (wh-det 1 noun be not 1 prep 2 np-bw 3 ?); e.g., what red blocks are not directly on_top_of the NVidia block ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4)
-          (*pp-ulf-tree* 6 7 8 9 10) ?) ((1 (2 not 3)) ?)) (0 :ulf-recur)
+          (*pp-ulf-tree* 6 7 8 9 10) ?) (1 (2 not 3))) (0 :ulf-recur)
     1 (wh-det 1 noun be not 1 adj ?); e.g., what blocks are not (totally) clear ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) (lex-ulf! adj 7) ?)
-          ((1 (2 not 3)) ?)) (0 :ulf-recur)
+          (1 (2 not 3))) (0 :ulf-recur)
     ; + There
     1 (wh-det 1 noun be there 1 prep 2 np-bw 3 ?); e.g., what red blocks are there on blue blocks ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4)
-          (*pp-ulf-tree* 6 7 8 9 10) ?) ((1 (2 3)) ?)) (0 :ulf-recur)
+          (*pp-ulf-tree* 6 7 8 9 10) ?) (1 (2 3))) (0 :ulf-recur)
     ; Pronoun
     1 (wh-pron be 1 prep 2 np-bw 3 ?); e.g., what is next to the Texaco block ?
        2 ((what.pro (lex-ulf! v 2) (*pp-ulf-tree* 3 4 5 6 7) ?) 
-          ((1 (2 3)) ?)) (0 :ulf-recur)
+          (1 (2 3))) (0 :ulf-recur)
     1 (wh-pron be the sup-adj 2 ?); e.g., what is the highest red block ?
        2 (((lex-ulf! pro 1) (lex-ulf! v 2) the.d (*n1-ulf-tree* 4 5) ?)
-          ((1 (2 (= (the.d 4)))) ?)) (0 :ulf-recur)
+          (1 (2 (= (the.d 4))))) (0 :ulf-recur)
     1 (wh-pron be the most sup-adj-base 2 ?); e.g., what is the highest red block ?
        2 (((lex-ulf! pro 1) (lex-ulf! v 2) the.d (*n1-ulf-tree* 4 5 6) ?)
-          ((1 (2 (= (the.d 4)))) ?)) (0 :ulf-recur)
+          (1 (2 (= (the.d 4))))) (0 :ulf-recur)
     1 (wh-pron be the 2 noun prep np-bw 3 ?); e.g., what is the block next_to the farthest blue block ?
        2 (((lex-ulf! pro 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5 6 7 8) ?)
-          ((1 (2 (= 3))) ?)) (0 :ulf-recur)
+          (1 (2 (= 3)))) (0 :ulf-recur)
     1 (wh-pron be the 2 noun 8 ?); e.g., what is the third block to the left of the Twitter block ?
        2 (((lex-ulf! pro 1) (lex-ulf! v 2) (*np-ulf-tree* 3 4 5 6) ?)
-          ((1 (2 (= 3))) ?)) (0 :ulf-recur)
+          (1 (2 (= 3)))) (0 :ulf-recur)
     ; Non-be verb
     1 (wh_ 2 do not verb-rel 1 prep 2 np-bw 3 ?); e.g., what block doesn't sit on the table ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9 10))
-          ((1 (2 not (3 4))) ?)) (0 :ulf-recur)
+          (1 (2 not (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 do not verb-rel 2 np-bw 3 ?); e.g., what blocks don't touch the SRI block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8))
-          ((1 (2 not (3 4))) ?)) (0 :ulf-recur)
+          (1 (2 not (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 verb-rel 1 prep 2 np-bw 3 ?); e.g., what block sits on the SRI block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*pp-ulf-tree* 4 5 6 7 8))
-          ((1 (2 3)) ?)) (0 :ulf-recur)
+          (1 (2 3))) (0 :ulf-recur)
     1 (wh_ 2 verb-rel 2 np-bw 3 ?); e.g., what block faces the SRI block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4 5 6))
-          ((1 (2 3)) ?)) (0 :ulf-recur)
+          (1 (2 3))) (0 :ulf-recur)
     ; Standard
     1 (wh_ 2 be 1 prep 2 np-bw 3 ?); e.g., what red blocks are above it ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3)
-          (*pp-ulf-tree* 4 5 6 7 8) ?) ((1 (2 3)) ?)) (0 :ulf-recur)
+          (*pp-ulf-tree* 4 5 6 7 8) ?) (1 (2 3))) (0 :ulf-recur)
     1 (wh_ 2 be 1 adj ?); e.g., which blocks are (totally) clear ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! adj 5) ?) 
-          ((1 (2 3)) ?)) (0 :ulf-recur)
+          (1 (2 3))) (0 :ulf-recur)
     1 (wh_ 2 be 2 np-bw 3 prep ?); e.g., what/which block is the NVidia block on_top_of ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4 5 6)
-          (lex-ulf! prep 7) ?) ((sub 1 (3 (2 (4 *h)))) ?)) (0 :ulf-recur)
+          (lex-ulf! prep 7) ?) (sub 1 (3 (2 (4 *h))))) (0 :ulf-recur)
 
    ; The following rules were repurposed from the "how many" question tree,
    ; and need to be re-integrated into the above at some point.
@@ -1177,82 +1209,82 @@
    ; Counting blocks satisfying some property (historical)
     1 (wh-det 1 noun be there adv-hist-word 0 ?); e.g., how many red blocks were there initially ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) there.pro (*adv-ulf-tree* 6 7) ?)
-          ((1 (2 there.pro 4)) ?))  (0 :ulf-recur)
+          (1 (2 there.pro 4)))  (0 :ulf-recur)
     1 (wh-det 1 noun 3 be not adj adv-hist-word 0 ?); e.g., how many blocks (on the table) were not red before this turn ?
        2 (((*np-ulf-tree* 1 2 3 4) (lex-ulf! v 5) (lex-ulf! adj 7) (*adv-ulf-tree* 8 9) ?)
-          ((1 (2 not 3 4)) ?)) (0 :ulf-recur)
+          (1 (2 not 3 4))) (0 :ulf-recur)
     1 (wh-det 1 noun 3 be adj adv-hist-word 0 ?); e.g., how many blocks (on the table) were red previously ?
        2 (((*np-ulf-tree* 1 2 3 4) (lex-ulf! v 5) (lex-ulf! adj 6) (*adv-ulf-tree* 7 8) ?)
-          ((1 (2 3 4)) ?)) (0 :ulf-recur)
+          (1 (2 3 4))) (0 :ulf-recur)
     1 (wh-det be not adj adv-hist-word 0 ?); e.g., how many were not red initially ?
        2 (((*np-ulf-tree* 1 blocks) (lex-ulf! v 2) (lex-ulf! adj 4) (*adv-ulf-tree* 5 6) ?)
-          ((1 (2 not 3 4)) ?)) (0 :ulf-recur)
+          (1 (2 not 3 4))) (0 :ulf-recur)
     1 (wh-det be adj adv-hist-word 0 ?); e.g., how many were red initially ?
        2 (((*np-ulf-tree* 1 blocks) (lex-ulf! v 2) (lex-ulf! adj 3) (*adv-ulf-tree* 4 5) ?)
-          ((1 (2 3 4)) ?)) (0 :ulf-recur)
+          (1 (2 3 4))) (0 :ulf-recur)
 
     ; Counting blocks satisfying some preposition
     1 (wh-det 1 noun be not prep 2 np-bw 3 conj 2 np-bw 3 ?); e.g., how many blocks are not on red blocks or blue blocks ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) (*pp-ulf-tree* 6 7 8 9 10 11 12 13) ?)
-          ((1 (2 not 3)) ?)) (0 :ulf-recur)
+          (1 (2 not 3))) (0 :ulf-recur)
     1 (wh-det 1 noun be 1 prep 2 np-bw 3 conj 2 np-bw 3 ?); e.g., how many blocks are above the SRI block and NVidia block ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) (*pp-ulf-tree* 6 7 8 9 10 11 12 13) ?) 
-          ((1 (2 3)) ?)) (0 :ulf-recur)
+          (1 (2 3))) (0 :ulf-recur)
     1 (wh-det 1 noun be 1 prep 2 np-bw 3 ?); e.g., how many blocks are there on some red block ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) (*pp-ulf-tree* 6 7 8 9) ?) 
-          ((1 (2 3)) ?)) (0 :ulf-recur)
+          (1 (2 3))) (0 :ulf-recur)
 
     ; Counting blocks satisfying some property
     1 (wh-det 1 noun be there in noun-total ?); e.g., how many red blocks are there in total ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) there.pro (*pp-ulf-tree* 6 7) ?)
-          ((1 (2 there.pro (adv-a 4))) ?)) (0 :ulf-recur)
+          (1 (2 there.pro (adv-a 4)))) (0 :ulf-recur)
     1 (wh-det 1 noun be there ?); e.g., how many red blocks are there ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) there.pro ?)
-          ((1 (2 there.pro)) ?))  (0 :ulf-recur)
+          (1 (2 there.pro)))  (0 :ulf-recur)
     1 (wh-det 1 noun 3 be not adj ?); e.g., how many blocks on the table are not red ?
        2 (((*np-ulf-tree* 1 2 3 4) (lex-ulf! v 5) (lex-ulf! adj 7) ?)
-          ((1 (2 not 3)) ?)) (0 :ulf-recur)
+          (1 (2 not 3))) (0 :ulf-recur)
     1 (wh-det 1 noun 3 be adj ?); e.g., how many blocks are red ?
        2 (((*np-ulf-tree* 1 2 3 4) (lex-ulf! v 5) (lex-ulf! adj 6) ?)
-          ((1 (2 3)) ?)) (0 :ulf-recur)
+          (1 (2 3))) (0 :ulf-recur)
     1 (wh-det be not adj ?); e.g., how many are not red ?
        2 (((*np-ulf-tree* 1 blocks) (lex-ulf! v 2) (lex-ulf! adj 4) ?)
-          ((1 (2 not 3)) ?)) (0 :ulf-recur)
+          (1 (2 not 3))) (0 :ulf-recur)
     1 (wh-det be adj ?); e.g., how many are red ?
        2 (((*np-ulf-tree* 1 blocks) (lex-ulf! v 2) (lex-ulf! adj 3) ?)
-          ((1 (2 3)) ?)) (0 :ulf-recur)
+          (1 (2 3))) (0 :ulf-recur)
     1 (wh-det of det 1 noun be prep 2 np-bw 3 ?); e.g., how many of the blocks are on some blue block ?
        2 (((*np-ulf-tree* 1 4 5) (lex-ulf! v 6) (*pp-ulf-tree* 7 8 9 10) ?)
-          ((1 (2 3)) ?)) (0 :ulf-recur)
+          (1 (2 3))) (0 :ulf-recur)
     1 (wh-det of det 1 noun be adj ?); e.g., how many of the blocks are red ?
        2 (((*np-ulf-tree* 1 4 5) (lex-ulf! v 6) (lex-ulf! adj 7) ?)
-          ((1 (2 3)) ?)) (0 :ulf-recur)
+          (1 (2 3))) (0 :ulf-recur)
 
     ; Modal wh-question
     1 (wh_ 2 should not be between 0 ?); e.g., what block should not be between the Twitter block and the Texaco block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! v- 5) (*pp-between-ulf-tree* 6 7) ?)
-          ((1 (2 not (3 4))) ?)) (0 :ulf-recur)
+          (1 (2 not (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 should be between 0 ?); e.g., what block should be between the Twitter block and the Texaco block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! v- 4) (*pp-between-ulf-tree* 5 6) ?)
-          ((1 (2 (3 4))) ?)) (0 :ulf-recur)
+          (1 (2 (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 should not be 1 prep 2 np-bw 3 ?); e.g., what block should not be on the Twitter block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9 10) ?)
-          ((1 (2 not (3 4))) ?)) (0 :ulf-recur)
+          (1 (2 not (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 should be 1 prep 2 np-bw 3 ?); e.g., what block should be on the Twitter block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! v- 4) (*pp-ulf-tree* 5 6 7 8 9) ?)
-          ((1 (2 (3 4))) ?)) (0 :ulf-recur)
+          (1 (2 (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 should not be adj ?); e.g., what block should not be clear ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! v- 5) (lex-ulf! adj 6) ?)
-          ((1 (2 not (3 4))) ?)) (0 :ulf-recur)
+          (1 (2 not (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 should be adj ?); e.g., what block should be clear ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! v- 4) (lex-ulf! adj 5) ?)
-          ((1 (2 (3 4))) ?)) (0 :ulf-recur)
+          (1 (2 (3 4)))) (0 :ulf-recur)
     1 (wh_ 2 should pron verb-rel 1 prep 2 np-bw 3 ?); e.g., what block should I put on the Twitter block ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! pro 4) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9 10) ?)
-          ((sub 1 (2 3 (4 *h 5))) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9 10) ?)
+          (sub 1 (2 3 (4 *h 5)))) (0 :ulf-recur)
     1 (wh_ 2 should pron verb-rel ?); e.g., what block should I move ?
-       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (lex-ulf! pro 4) (lex-ulf! v- 5) ?)
-          ((sub 1 (2 3 (4 *h))) ?)) (0 :ulf-recur)
+       2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 5) ?)
+          (sub 1 (2 3 (4 *h)))) (0 :ulf-recur)
 
 )) ; END *wh-question-ulf-tree*
 
@@ -1266,34 +1298,34 @@
     ; Historical
     1 (prep-history wh-det 2 be np-bw 3 between 0 ?); e.g., during what turn was the NVidia block between a red block and a blue block ?
        2 (((*pp-ulf-tree* 1 2 3) (lex-ulf! v 4) (*np-ulf-tree* 5 6) (*pp-between-ulf-tree* 7 8) ?)
-          ((sub 1 (3 (2 4 (adv-e *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 4 (adv-e *h))))) (0 :ulf-recur)
     1 (prep-history wh-det 2 be np-bw 3 prep np-bw 3 ?); e.g., during what turn was the NVidia block on the SRI block ?
        2 (((*pp-ulf-tree* 1 2 3) (lex-ulf! v 4) (*np-ulf-tree* 5 6) (*pp-ulf-tree* 7 8 9) ?)
-          ((sub 1 (3 (2 4 (adv-e *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 4 (adv-e *h))))) (0 :ulf-recur)
     1 (prep wh-det 2 be np-bw 4 adv-hist-word 0 ?); e.g., on what object was the NVidia block previously ?
        2 (((*pp-ulf-tree* 1 2 3) (lex-ulf! v 4) (*np-ulf-tree* 5 6) (*adv-ulf-tree* 7 8) ?)
-          ((sub 1 (3 (2 *h 4))) ?)) (0 :ulf-recur)
+          (sub 1 (3 (2 *h 4)))) (0 :ulf-recur)
     
     ; Historical + do
     1 (prep-history wh-det 2 do pron verb-rel 2 np-bw 3 ?); e.g., during what turn did I move the SRI block ?
        2 (((*pp-ulf-tree* 1 2 3) (lex-ulf! v 4) (*np-ulf-tree* 5) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
-          ((sub 1 (2 3 (4 5 (adv-e *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 5 (adv-e *h))))) (0 :ulf-recur)
     1 (prep wh-det 2 do pron adv_ 1 verb-rel 2 np-bw 3 ?); e.g., between which blocks did I just move the SRI block ?
        2 (((*pp-ulf-tree* 1 2 3) (lex-ulf! v 4) (*np-ulf-tree* 5) (*adv-ulf-tree* 6 7) (lex-ulf! v- 8) (*np-ulf-tree* 9 10 11) ?)
-          ((sub 1 (2 3 (4 (5 6 *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 (5 6 *h))))) (0 :ulf-recur)
     1 (prep wh-det 2 do pron verb-rel 2 np-bw 3 ?); e.g., between which blocks did I move the SRI block ?
        2 (((*pp-ulf-tree* 1 2 3) (lex-ulf! v 4) (*np-ulf-tree* 5) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
-          ((sub 1 (2 3 (4 5 *h))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 5 *h)))) (0 :ulf-recur)
     1 (prep wh-det 2 do pron adv_ 1 verb-rel 2 np-bw 3 ?); e.g., on_to what block did I just move the SRI block ?
        2 (((*pp-ulf-tree* 1 2 3) (lex-ulf! v 4) (*np-ulf-tree* 5) (*adv-ulf-tree* 6 7) (lex-ulf! v- 8) (*np-ulf-tree* 9 10 11) ?)
-          ((sub 1 (2 3 (4 (5 6 *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 (5 6 *h))))) (0 :ulf-recur)
     1 (prep wh-det 2 do pron verb-rel 2 np-bw 3 ?); e.g., on_to what block did I move the SRI block ?
        2 (((*pp-ulf-tree* 1 2 3) (lex-ulf! v 4) (*np-ulf-tree* 5) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
-          ((sub 1 (2 3 (4 5 *h))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 5 *h)))) (0 :ulf-recur)
 
     ; Standard
     1 (prep wh-det 2 be np-bw 4 ?); e.g., on what object is the NVidia block ?
-       2 (((*pp-ulf-tree* 1 2 3) (lex-ulf! v 4) (*np-ulf-tree* 5 6) ?) ((sub 1 (3 (2 *h))) ?)) (0 :ulf-recur)
+       2 (((*pp-ulf-tree* 1 2 3) (lex-ulf! v 4) (*np-ulf-tree* 5 6) ?) (sub 1 (3 (2 *h)))) (0 :ulf-recur)
 
     ; TODO: add further rules, e.g., for "On what blocks are there other blocks ?", or
     ; "On how many blocks is the Target block resting/placed/supported/positioned ?"
@@ -1309,73 +1341,73 @@
     ; Premodifying+postmodifying adv-e
     1 (where do pron adv_ 1 verb-rel 2 np-bw 3 adv-hist-word 0 ?); e.g., where did I ever move the NVidia block since the beginning ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (*adv-ulf-tree* 4 5) (lex-ulf! v- 6)
-          (*np-ulf-tree* 7 8 9) (*adv-ulf-tree* 10 11) ?) ((sub 1 (2 3 (4 (5 6 (adv-a *h) 7)))) ?)) (0 :ulf-recur)
+          (*np-ulf-tree* 7 8 9) (*adv-ulf-tree* 10 11) ?) (sub 1 (2 3 (4 (5 6 (adv-a *h) 7))))) (0 :ulf-recur)
     1 (wh_ 2 do pron adv_ 1 verb-rel between 0 adv-hist-word 0 ?); e.g., what blocks did I ever put between the SRI block and NVidia block since the beginning ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7)
-          (*pp-between-ulf-tree* 8 9) (*adv-ulf-tree* 10 11) ?) ((sub 1 (2 3 (4 (5 *h 6 7)))) ?)) (0 :ulf-recur)
+          (*pp-between-ulf-tree* 8 9) (*adv-ulf-tree* 10 11) ?) (sub 1 (2 3 (4 (5 *h 6 7))))) (0 :ulf-recur)
     1 (wh_ 2 do pron adv_ 1 verb-rel 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what blocks did I ever put on the SRI block since the beginning ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7)
-          (*pp-ulf-tree* 8 9 10 11 12) (*adv-ulf-tree* 13 14) ?) ((sub 1 (2 3 (4 (5 *h 6 7)))) ?)) (0 :ulf-recur)
+          (*pp-ulf-tree* 8 9 10 11 12) (*adv-ulf-tree* 13 14) ?) (sub 1 (2 3 (4 (5 *h 6 7))))) (0 :ulf-recur)
     1 (wh_ 2 do pron adv_ 1 verb-rel adv-hist-word 0 ?); e.g., what blocks did I ever move since the beginning ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7) (*adv-ulf-tree* 8 9) ?)
-          ((sub 1 (2 3 (4 (5 *h 6)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 (5 *h 6))))) (0 :ulf-recur)
     1 (wh_ 2 do pron not adv_ 1 verb-rel adv-hist-word 0 ?); e.g., what blocks did I not ever move since the beginning ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (*adv-ulf-tree* 6 7) (lex-ulf! v- 8) (*adv-ulf-tree* 9 10) ?)
-          ((sub 1 (2 3 (not (4 (5 *h 6))))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (not (4 (5 *h 6)))))) (0 :ulf-recur)
 
     ; Premodifying adverb
     1 (where do pron adv_ 1 verb-rel 2 np-bw 3 ?); e.g., where did I just move the NVidia block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (*adv-ulf-tree* 4 5) (lex-ulf! v- 6)
-          (*np-ulf-tree* 7 8 9) ?) ((sub 1 (2 3 (4 (5 6 (adv-a *h))))) ?)) (0 :ulf-recur)
+          (*np-ulf-tree* 7 8 9) ?) (sub 1 (2 3 (4 (5 6 (adv-a *h)))))) (0 :ulf-recur)
     1 (wh_ 2 do pron adv_ 1 verb-rel between 0 ?); e.g., what (block) did I just put between the SRI block and NVidia block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7)
-          (*pp-between-ulf-tree* 8 9) ?) ((sub 1 (2 3 (4 (5 *h 6)))) ?)) (0 :ulf-recur)
+          (*pp-between-ulf-tree* 8 9) ?) (sub 1 (2 3 (4 (5 *h 6))))) (0 :ulf-recur)
     1 (wh_ 2 do pron adv_ 1 verb-rel 1 prep 2 np-bw 3 ?); e.g., what (block) did I just put on the SRI block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7)
-          (*pp-ulf-tree* 8 9 10 11 12) ?) ((sub 1 (2 3 (4 (5 *h 6)))) ?)) (0 :ulf-recur)
+          (*pp-ulf-tree* 8 9 10 11 12) ?) (sub 1 (2 3 (4 (5 *h 6))))) (0 :ulf-recur)
     1 (wh_ 2 do pron adv_ 1 verb-rel adv-hist-word 0 ?); e.g., what (block) did I only move once?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7) (*adv-ulf-tree* 8 9) ?)
-          ((sub 1 (2 3 (4 (5 *h 6)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 (5 *h 6))))) (0 :ulf-recur)
     1 (wh_ 2 do pron not adv_ 1 verb-rel ?); e.g., what (block) did I not just move ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (*adv-ulf-tree* 6 7) (lex-ulf! v- 8) ?)
-          ((sub 1 (2 3 (not (4 (5 *h))))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (not (4 (5 *h)))))) (0 :ulf-recur)
     1 (wh_ 2 do pron adv_ 1 verb-rel ?); e.g., what (block) did I just move ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (*adv-ulf-tree* 5 6) (lex-ulf! v- 7) ?)
-          ((sub 1 (2 3 (4 (5 *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 (5 *h))))) (0 :ulf-recur)
 
     ; Postmodifying adv-e
     1 (where do pron verb-rel 2 np-bw 3 adv-hist-word 0 ?); e.g., where did I move the NVidia block two turns ago ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (lex-ulf! v- 4)
-          (*np-ulf-tree* 5 6 7) (*adv-ulf-tree* 8 9) ?) ((sub 1 (2 3 (4 5 (adv-a *h) 6))) ?)) (0 :ulf-recur)
+          (*np-ulf-tree* 5 6 7) (*adv-ulf-tree* 8 9) ?) (sub 1 (2 3 (4 5 (adv-a *h) 6)))) (0 :ulf-recur)
     1 (wh_ 2 do pron verb-rel between 0 adv-hist-word 0 ?); e.g., what (block) did I put between the SRI block and NVidia block two turns ago ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 5)
-          (*pp-between-ulf-tree* 6 7) (*adv-ulf-tree* 8 9) ?) ((sub 1 (2 3 (4 *h 5 6))) ?)) (0 :ulf-recur)
+          (*pp-between-ulf-tree* 6 7) (*adv-ulf-tree* 8 9) ?) (sub 1 (2 3 (4 *h 5 6)))) (0 :ulf-recur)
     1 (wh_ 2 do pron verb-rel 1 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., what (block) did I put on the SRI block two turns ago ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 5)
-          (*pp-ulf-tree* 6 7 8 9 10) (*adv-ulf-tree* 11 12) ?) ((sub 1 (2 3 (4 *h 5 6))) ?)) (0 :ulf-recur)
+          (*pp-ulf-tree* 6 7 8 9 10) (*adv-ulf-tree* 11 12) ?) (sub 1 (2 3 (4 *h 5 6)))) (0 :ulf-recur)
     1 (wh_ 2 do pron verb-rel adv-hist-word 0 ?); e.g., what (block) did I move two turns ago ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 5) (*adv-ulf-tree* 6 7) ?)
-          ((sub 1 (2 3 (4 *h 5))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 *h 5)))) (0 :ulf-recur)
     1 (wh_ 2 do pron not verb-rel adv-hist-word 0 ?); e.g., what (blocks) did I not move two turns ago ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 6) (*adv-ulf-tree* 7 8) ?)
-          ((sub 1 (2 3 (not (4 *h 5)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (not (4 *h 5))))) (0 :ulf-recur)
 
     ; Standard
     1 (where do pron verb-rel 2 np-bw 3 ?); e.g., where did I move the NVidia block ?
        2 (((lex-ulf! wh-pred 1) (lex-ulf! v 2) (*np-ulf-tree* 3) (lex-ulf! v- 4)
-          (*np-ulf-tree* 5 6 7) ?) ((sub 1 (2 3 (4 5 (adv-a *h)))) ?)) (0 :ulf-recur)
+          (*np-ulf-tree* 5 6 7) ?) (sub 1 (2 3 (4 5 (adv-a *h))))) (0 :ulf-recur)
     1 (wh_ 2 do pron verb-rel between 0 ?); e.g., what (block) did I put between the SRI block and NVidia block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 5)
-          (*pp-between-ulf-tree* 6 7) ?) ((sub 1 (2 3 (4 *h 5))) ?)) (0 :ulf-recur)
+          (*pp-between-ulf-tree* 6 7) ?) (sub 1 (2 3 (4 *h 5)))) (0 :ulf-recur)
     1 (wh_ 2 do pron verb-rel 1 prep 2 np-bw 3 ?); e.g., what (block) did I put on the SRI block ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 5)
-          (*pp-ulf-tree* 6 7 8 9 10) ?) ((sub 1 (2 3 (4 *h 5))) ?)) (0 :ulf-recur)
+          (*pp-ulf-tree* 6 7 8 9 10) ?) (sub 1 (2 3 (4 *h 5)))) (0 :ulf-recur)
     1 (wh_ 2 do pron verb-rel ?); e.g., what (block) did I move ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 5) ?)
-          ((sub 1 (2 3 (4 *h))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (4 *h)))) (0 :ulf-recur)
     1 (wh_ 2 do pron not verb-rel ?); e.g., what (block) did I not move ?
        2 (((*np-ulf-tree* 1 2) (lex-ulf! v 3) (*np-ulf-tree* 4) (lex-ulf! v- 6) ?)
-          ((sub 1 (2 3 (not (4 *h)))) ?)) (0 :ulf-recur)
+          (sub 1 (2 3 (not (4 *h))))) (0 :ulf-recur)
     
 )) ; END *wh-do-question-ulf-tree*
 
@@ -1386,82 +1418,87 @@
 ; Parses do questions.
 ;
 '(
+    ; Questions beginning with 'is not' (mostly relevant for explanation questions,
+    ; e.g., "why don't the Twitter block and Texaco block touch?")
+    1 (do not 0)
+       2 (((*do-question-ulf-tree* 1 3)) (not 1)) (0 :ulf-recur)
+
     ; Action verbs (historical)
     1 (do pron verb-rel 2 np-bw 3 between 0 ?); e.g., did I put anything between the two red blocks ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) (*pp-between-ulf-tree* 7 8) ?)
-          ((1 2 (3 4 5)) ?)) (0 :ulf-recur)
+          (1 2 (3 4 5))) (0 :ulf-recur)
     1 (do pron verb-rel 2 np-bw 3 prep 2 np-bw 3 ?); e.g., did I put anything on the Twitter block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) (*pp-ulf-tree* 7 8 9 10) ?)
-          ((1 2 (3 4 5)) ?)) (0 :ulf-recur)
+          (1 2 (3 4 5))) (0 :ulf-recur)
     1 (do pron verb-rel 2 np-bw 3 between 0 adv-hist-word 0 ?); e.g., did I put anything between the two red blocks initially ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) (*pp-between-ulf-tree* 7 8)
            (*adv-ulf-tree* 9 10) ?)
-          ((1 2 (3 4 5 6)) ?)) (0 :ulf-recur)
+          (1 2 (3 4 5 6))) (0 :ulf-recur)
     1 (do pron verb-rel 2 np-bw 3 prep 2 np-bw 3 adv-hist-word 0 ?); e.g., did I put anything on the Twitter block initially ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (lex-ulf! v- 3) (*np-ulf-tree* 4 5 6) (*pp-ulf-tree* 7 8 9 10)
            (*adv-ulf-tree* 11 12) ?)
-          ((1 2 (3 4 5 6)) ?)) (0 :ulf-recur)
+          (1 2 (3 4 5 6))) (0 :ulf-recur)
     1 (do pron adv_ 1 verb-rel 2 np-bw 3 between 0 ?); e.g., did I recently put anything between the two red blocks ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*adv-ulf-tree* 3 4) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) (*pp-between-ulf-tree* 9 10) ?)
-          ((1 2 (3 (4 5 6))) ?)) (0 :ulf-recur)
+          (1 2 (3 (4 5 6)))) (0 :ulf-recur)
     1 (do pron adv_ 1 verb-rel 2 np-bw 3 prep 2 np-bw 3 ?); e.g., did I recently put anything on the Twitter block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2) (*adv-ulf-tree* 3 4) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) (*pp-ulf-tree* 9 10 11 12) ?)
-          ((1 2 (3 (4 5 6))) ?)) (0 :ulf-recur)
+          (1 2 (3 (4 5 6)))) (0 :ulf-recur)
 
     ; Negation (historical)
     1 (do np-bw 2 not verb-rel 1 between 0 adv-hist-word 0 ?); e.g., did anything not sit between the two red blocks initially ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 5) (*pp-between-ulf-tree* 7 8) (*adv-ulf-tree* 9 10) ?)
-          ((1 2 (not (3 (adv-a 4) 5))) ?)) (0 :ulf-recur)
+          (1 2 (not (3 (adv-a 4) 5)))) (0 :ulf-recur)
     1 (do np-bw 2 not verb-rel 2 np-bw 3 adv-hist-word 0 ?); e.g., did any block not support the NVidia block at the first turn ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) (*adv-ulf-tree* 9 10) ?)
-          ((1 2 (not (3 4 5))) ?)) (0 :ulf-recur)
+          (1 2 (not (3 4 5)))) (0 :ulf-recur)
     1 (do np-bw 2 not verb-rel prep 2 np-bw 3 adv-hist-word 0 ?); e.g., did any block not sit on the red NVidia block on the turn before this ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9) (*adv-ulf-tree* 10 11) ?)
-          ((1 2 (not (3 (adv-a 4) 5))) ?)) (0 :ulf-recur)
+          (1 2 (not (3 (adv-a 4) 5)))) (0 :ulf-recur)
 
     ; Standard (historical)
     1 (do np-bw 2 verb-rel 1 between 0 adv-hist-word 0 ?); e.g., did anything sit between the two red blocks initially ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 4) (*pp-between-ulf-tree* 6 7) (*adv-ulf-tree* 8 9) ?)
-          ((1 2 (3 (adv-a 4) 5)) ?)) (0 :ulf-recur)
+          (1 2 (3 (adv-a 4) 5))) (0 :ulf-recur)
     1 (do np-bw 2 verb-rel 2 np-bw 3 adv-hist-word 0 ?); e.g., did any block support the NVidia block at the first turn ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) (*adv-ulf-tree* 8 9) ?)
-          ((1 2 (3 4 5)) ?)) (0 :ulf-recur)
+          (1 2 (3 4 5))) (0 :ulf-recur)
     1 (do np-bw 2 verb-rel prep 2 np-bw 3 adv-hist-word 0 ?); e.g., did any block sit on the red NVidia block on the turn before this ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 4) (*pp-ulf-tree* 5 6 7 8) (*adv-ulf-tree* 9 10) ?)
-          ((1 2 (3 (adv-a 4) 5)) ?)) (0 :ulf-recur)
+          (1 2 (3 (adv-a 4) 5))) (0 :ulf-recur)
 
     ; Negated
     1 (do np-bw 2 not verb-rel 1 between 0 ?); e.g., does anything not sit between the two red blocks ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 5) (*pp-between-ulf-tree* 7 8) ?)
-          ((1 2 (not (3 (adv-a 4)))) ?))
+          (1 2 (not (3 (adv-a 4)))))
     1 (do np-bw 2 not verb-rel 2 np-bw 3 ?); e.g., does any block not touch the NVidia block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) ?)
-          ((1 2 (not (3 4))) ?)) (0 :ulf-recur)
+          (1 2 (not (3 4)))) (0 :ulf-recur)
     1 (do np-bw 2 not verb-rel prep 2 np-bw 3 ?); e.g., does any block not sit on the red NVidia block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 5) (*pp-ulf-tree* 6 7 8 9) ?)
-          ((1 2 (not (3 (adv-a 4)))) ?)) (0 :ulf-recur)
+          (1 2 (not (3 (adv-a 4))))) (0 :ulf-recur)
 
     ; Historical premodifier
     1 (do np-bw 2 adv_ 1 verb-rel 1 between 0 ?); e.g., did anything recently sit between the two red blocks ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*adv-ulf-tree* 4 5) (lex-ulf! v- 6) (*pp-between-ulf-tree* 8 9) ?)
-          ((1 2 (3 (4 (adv-a 5)))) ?))
+          (1 2 (3 (4 (adv-a 5)))))
     1 (do np-bw 2 adv_ 1 verb-rel 2 np-bw 3 ?); e.g., did any block initially touch the NVidia block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*adv-ulf-tree* 4 5) (lex-ulf! v- 6) (*np-ulf-tree* 7 8 9) ?)
-          ((1 2 (3 (4 5))) ?)) (0 :ulf-recur)
+          (1 2 (3 (4 5)))) (0 :ulf-recur)
     1 (do np-bw 2 adv_ 1 verb-rel prep 2 np-bw 3 ?); e.g., did any block previously sit on the red NVidia block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (*adv-ulf-tree* 4 5) (lex-ulf! v- 6) (*pp-ulf-tree* 7 8 9 10) ?)
-          ((1 2 (3 (4 (adv-a 5)))) ?)) (0 :ulf-recur)
+          (1 2 (3 (4 (adv-a 5))))) (0 :ulf-recur)
 
     ; Standard
     1 (do np-bw 2 verb-rel 1 between 0 ?); e.g., does anything sit between the two red blocks ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 4) (*pp-between-ulf-tree* 6 7) ?)
-          ((1 2 (3 (adv-a 4))) ?)) (0 :ulf-recur)
+          (1 2 (3 (adv-a 4)))) (0 :ulf-recur)
     1 (do np-bw 2 verb-rel 2 np-bw 3 ?); e.g., does any block support the NVidia block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 4) (*np-ulf-tree* 5 6 7) ?)
-          ((1 2 (3 4)) ?)) (0 :ulf-recur)
+          (1 2 (3 4))) (0 :ulf-recur)
     1 (do np-bw 2 verb-rel prep 2 np-bw 3 ?); e.g., does any block sit on the red NVidia block ?
        2 (((lex-ulf! v 1) (*np-ulf-tree* 2 3) (lex-ulf! v- 4) (*pp-ulf-tree* 5 6 7 8) ?)
-          ((1 2 (3 (adv-a 4))) ?)) (0 :ulf-recur)
+          (1 2 (3 (adv-a 4)))) (0 :ulf-recur)
 
     ; Modal 'do'
     1 (do 2 np-bw 3 necessity to be 1 between 0 ?); e.g., does the Twitter block need to be between the Texaco block and the Mercedes block ?
@@ -1474,13 +1511,13 @@
        2 (((*np-ulf-tree* 2 3 4) (lex-ulf! v- 7) (lex-ulf! adj 8) ?)
           (((pres need.aux-v) 1 (2 3)) ?)) (0 :ulf-recur)
     1 (do pron necessity to verb-rel 2 np-bw 3 ?); e.g., do I need to move the Twitter block ?
-       2 (((lex-ulf! pro 2) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) ?)
+       2 (((*np-ulf-tree* 2) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) ?)
           (((pres need.aux-v) 1 (2 3)) ?)) (0 :ulf-recur)
     1 (do pron necessity to verb-rel det 2 noun 1 prep 2 np-bw 3 ?); e.g., do I need to put the Twitter block (directly) on the Target block ?
-       2 (((lex-ulf! pro 2) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) (*pp-ulf-tree* 9 10 11 12 13) ?)
+       2 (((*np-ulf-tree* 2) (lex-ulf! v- 5) (*np-ulf-tree* 6 7 8) (*pp-ulf-tree* 9 10 11 12 13) ?)
           (((pres need.aux-v) 1 (2 3 4)) ?)) (0 :ulf-recur)
     1 (do pron necessity to verb-rel pron 1 prep 2 np-bw 3 ?); e.g., do I need to put it (directly) on the Target block ?
-       2 (((lex-ulf! pro 2) (lex-ulf! v- 5) (*np-ulf-tree* 6) (*pp-ulf-tree* 7 8 9 10 11) ?)
+       2 (((*np-ulf-tree* 2) (lex-ulf! v- 5) (*np-ulf-tree* 6) (*pp-ulf-tree* 7 8 9 10 11) ?)
           (((pres need.aux-v) 1 (2 3 4)) ?)) (0 :ulf-recur)
 
     ; Does not the Twitter block need to be on ...?
@@ -1590,18 +1627,18 @@
        2 (((*yn-question-ulf-tree* 1 2 3 4 5 2 6 7 8)) (poss-ques 1)) (0 :ulf-recur)
     ; More can/should be added
     1 (0 det 2 block 0)
-       2 (I am asking about some 3 4 \, but you didn\'t catch what it was\.) (6 :out)
-       2 (You heard me mention some 3 4 \, but didn\'t hear the rest\.) (6 :out)
-       2 (You couldn\'t hear what I said apart from mentioning some 3 4 \.) (0 :out)
+       2 (You are asking about some 3 4 \, but I didn\'t catch what it was\.) (6 :out)
+       2 (I heard you mention some 3 4 \, but didn\'t hear the rest\.) (6 :out)
+       2 (I couldn\'t hear what you said apart from mentioning some 3 4 \.) (0 :out)
     1 (0 det table 0)
-       2 (I referred to the table\, but you didn\'t catch what I said\.) (0 :out)
+       2 (You referred to the table\, but I didn\'t catch what you said\.) (0 :out)
     1 (0 index-det block 0)
-       2 (You\'re not sure what block I\'m referring to\.) (0 :out)
+       2 (I\'m not sure what block you\'re referring to\.) (0 :out)
     1 (0 pron 0)
-       2 (You\'re not sure what your question is referring to\.) (4 :out)
-       2 (You didn\'t catch what I am referring to\.) (0 :out)
+       2 (I\'m not sure what your question is referring to\.) (4 :out)
+       2 (I didn\'t catch what you are referring to\.) (0 :out)
     1 (0 corp 0)
-       2 (You heard me mention the 2 block\, but you didn\'t catch the rest\.) (0 :out)
+       2 (I heard you mention the 2 block\, but I didn\'t catch the rest\.) (0 :out)
     ; variants of begging-off responses should be added, with non-zero latency,
     ; so that the user will see a variety of such responses
  ))  

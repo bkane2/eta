@@ -60,77 +60,59 @@
 ;
 ; 10. Follow up
 ;
+;
+;
+; TODO: the steps in this schema are represented as ((set-of ^me ^you) ...), and likewise for the schemas for each
+; subdialogue, but perhaps it would make sense for them to be (^me ... ^you) instead.
+;
 
 :episodes (
 
-?e1 (^me say-to.v ^you '(Hi\, my name is Sophie\. I am a computer character\. I may sound choppy\, but I am still able to have
+?e1 (^me say-to.v ^you '([OPPORTUNITY] Hi\, my name is Sophie\. I am a computer character\. I may sound choppy\, but I am still able to have
                         a conversation with you\. I just moved back into the area from Florida about two weeks ago\. I was recently
                         diagnosed with lung cancer\, and finished radiation about a month ago\. My pain seemed to be under
                         control for a while\, but it seems to be getting worse now\. I\'m meeting with you today to help
                         get some questions answered about my options and my future\.))
-
+;; TODO: maybe accomodate potential user reply here (with low certainty, so Eta doesn't wait too long for it)
 
 ;; 1. (sleep-poorly)
-?e10 (^me say-to.v ^you '(One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well\. Most nights I
-                        have to take medication for my pain\. I\'m not sure if it\'s only the pain\, but I keep waking up at night\.
-                        Do you know why I keep waking up like this?))
-?e11 (^you reply-to.v ?e10)
-?e12 (^me react-to.v ?e11)
+?e10 ((set-of ^me ^you) ask-about-poor-sleep.v)
 
 
 ;; 2. (^medicine-working)
-?e20 (^me say-to.v ^you '(I just started on my new pain medication recently\. How long will it be before I know if it\'s working?))
-?e21 (^you reply-to.v ?e20)
-?e22 (^me react-to.v ?e21)
+?e20 ((set-of ^me ^you) ask-how-long-to-know-pain-medication-working.v)
 
 
 ;; 3. (^medicine-request)
 ;; NOTE: may be obviated by previous replies.
-?e30 (^me say-to.v ^you '(You know\, I\'m in a lot of pain\, and the Lortab just isn\'t working\. I think maybe I need something
-                     stronger for my pain\.))
-?e31 (^you reply-to.v ?e30)
-?e32 (^me react-to.v ?e31)
+?e30 ((set-of ^me ^you) ask-for-stronger-pain-medication.v)
 
 
 ;; 4. (test-results)
-?e35 (^me say-to.v ^you '(Can you explain to me what my test results mean?))
-?e36 (^you reply-to.v ?e35)
-?e37 (^me react-to.v ?e36)
+?e35 ((set-of ^me ^you) ask-about-test-results.v)
 
 
 ;; 5. (prognosis)
 ;; NOTE: may be obviated by previous replies.
-?e40 (^me say-to.v ^you '(I want you to be honest with me\. How long do you think I have?))
-?e41 (^you reply-to.v ?e40)
-?e42 (^me react-to.v ?e41)
+?e40 ((set-of ^me ^you) ask-about-prognosis.v)
 
 
 ;; 6. (treatment-option)
-?e50 (^me say-to.v ^you '(What are my choices at this point?))
-?e51 (^you reply-to.v ?e50)
-?e52 (^me react-to.v ?e51)
+?e50 ((set-of ^me ^you) ask-about-treatment-options.v)
 
 
 ;; 7. (chemotherapy)
 ;; NOTE: may be obviated by previous replies.
-?e60 (^me say-to.v ^you '(My previous doctor mentioned something about chemotherapy\, but he said to wait to see how
-       things go after the radiation\. Do you think I need chemotherapy?))
-?e61 (^you reply-to.v ?e60)
-?e62 (^me react-to.v ?e61)
+?e60 ((set-of ^me ^you) ask-if-need-chemotherapy.v)
 
 
 ;; 8. (comfort-care)
 ;; NOTE: may be obviated by previous replies.
-?e70 (^me say-to.v ^you '(You know\, I really just prefer to be comfortable at this point\. Do you think I should
-                         start considering comfort care?))
-?e71 (^you reply-to.v ?e70)
-?e72 (^me react-to.v ?e71)
+?e70 ((set-of ^me ^you) ask-about-comfort-care.v)
 
 
 ;; 9. (tell-family)
-?e80 (^me say-to.v ^you '(I haven\'t told my family everything yet\. I wanted to wait to talk to you first\. What should I say to them?))
-?e81 (^you reply-to.v ?e80)
-?e82 (^me react-to.v ?e81)
+?e80 ((set-of ^me ^you) ask-what-to-tell-family.v)
 
 
 ?e300 (^me say-to.v ^you '(Thank you for taking the time to meet with me today\. It was difficult to talk about my future\, but comforting to
@@ -174,17 +156,7 @@
 ;
 (mapcar #'(lambda (x) 
       (store-output-gist-clauses (first x) (second x) '*eta-schema*))
-  '(
-    (?e10 ((Why have I not been sleeping well ?)))
-    (?e20 ((How will I know if my pain medication is working ?)))
-    (?e30 ((Can I have a stronger pain medication ?)))
-    (?e35 ((What do my test results mean ?)))
-    (?e40 ((What is my prognosis ?)))
-    (?e50 ((What are my options for treatment ?)))
-    (?e60 ((Do I need chemotherapy ?)))
-    (?e70 ((Should I get comfort care ?)))
-    (?e80 ((What should I tell my family ?)))
-  )
+  '()
 ) ; END mapcar #'store-output-gist-clauses
 
 

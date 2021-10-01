@@ -55,7 +55,9 @@
 ;```````````````````````````````
 ; contains the following fields:
 ; curr-plan        : points to the currently active dialogue plan
-; dialogue-history : should be three lists: surface form, gist clauses, and ULF interpretations
+; task-queue       : a list of tasks (currently 'perform-next-step', 'perceive-world', 'interpret-perceptions',
+;                    'infer-facts-top-down', and 'infer-facts-bottom-up') to repeatedly execute in cycles
+; perception-queue : a queue of perceptions pending context-driven interpretation
 ; reference-list   : contains a list of discourse entities to be used in ULF coref
 ; equality-sets    : hash table containing a list of aliases, keyed by canonical name
 ; gist-kb-user     : hash table of all gist clauses + associated topic keys from user
@@ -63,6 +65,7 @@
 ; context          : hash table of facts that are true at Now*, e.g., <wff3>
 ; memory           : hash table of atemporal/"long-term" facts, e.g., (<wff3> ** E3) and (Now* during E3)
 ; kb               : hash table of Eta's knowledge base, containing general facts
+; tg               : timegraph of all episodes
 ;
 ; TODO: currently reference-list and equality-sets are separate things, though they serve a similar
 ; purpose, namely keeping track of which entities co-refer (e.g. skolem variable and noun phrase).
@@ -70,7 +73,8 @@
 ; propositions, versus the current module built over the ULF interpretation.
 ;
   curr-plan
-  dialogue-history
+  task-queue
+  perception-queue
   reference-list
   equality-sets
   gist-kb-user
@@ -78,6 +82,7 @@
   context
   memory
   kb
+  tg
 ) ; END defstruct ds
 
 
@@ -108,28 +113,12 @@
   ; Use response inhibition via latency numbers when *use-latency* = T
   (defvar *use-latency* t)
 
+  ; Queue of tasks that Eta must perform
+  (defvar *tasks-list* '(perform-next-step perceive-world interpret-perceptions infer-facts-top-down infer-facts-bottom-up))
+
   ; Global variable for dialogue record structure
   (defvar *ds* (make-ds))
-
-  ; Dialogue record keeps track of three kinds of history - surface words,
-  ; gist clauses, and semantic interpretations
-  (let ((dialogue-history (make-hash-table :test #'equal)))
-    (setf (gethash 'words dialogue-history) nil)
-    (setf (gethash 'gist-clauses dialogue-history) nil)
-    (setf (gethash 'semantics dialogue-history) nil)
-    (setf (ds-dialogue-history *ds*) dialogue-history))
-
-  ; Initialize hash table for aliases/equality sets
-  (setf (ds-equality-sets *ds*) (make-hash-table :test #'equal))
-
-  ; Initialize hash tables for User and Eta topic keys/gist clauses
-  (setf (ds-gist-kb-user *ds*) (make-hash-table :test #'equal))
-  (setf (ds-gist-kb-eta *ds*) (make-hash-table :test #'equal))
-
-  ; Initialize fact hash tables
-  (setf (ds-context *ds*) (make-hash-table :test #'equal))
-  (setf (ds-memory *ds*) (make-hash-table :test #'equal))
-  (setf (ds-kb *ds*) (make-hash-table :test #'equal))
+  (init-ds)
 
   ; Load object schemas
   (load-obj-schemas)
@@ -161,9 +150,9 @@
   (defparameter *certainty-threshold* 0.7)
 
   ; Maximum delays used in processing speech acts
-  (defparameter *delay-acknowledge.v* 10)
-  (defparameter *delay-respond-to.v* 15)
-  (defparameter *delay-say-to.v* 15)
+  (defparameter *delay-acknowledge.v* 10) ; certainty ~0.3
+  (defparameter *delay-respond-to.v* 15) ; certainty ~0.4
+  (defparameter *delay-say-to.v* 15) ; certainty ~0.4
 
   ; Number of Eta outputs generated so far (maintained
   ; for latency enforcement, i.e., not repeating a previously
@@ -172,35 +161,49 @@
 
   ; Used for keeping track of output number in output.txt.
   (defparameter *output-count* 0)
+  ; Used for detecting whether to print "dummy" line to output.txt to prompt system to listen.
+  (defparameter *output-listen-prompt* 0)
 
-  ; This is used to check whether some error has caused Eta to enter
-  ; an infinite loop (e.g. if the plan isn't correctly updated).
-  (defparameter *error-check* 0)
+  ; Timer parameters. Each end up being set to current system time, meaning
+  ; that time elapsed can be calculated by comparing the timer values to the
+  ; system time at a future point.
+  (defparameter *flush-context-timer* (get-universal-time))
+  (defparameter *expected-step-failure-timer* (get-universal-time))
+
+  ; The timer period (in seconds) that must be passed for Eta to flush context,
+  ; removing "instantaneous" telic verbs from context.
+  (defparameter *flush-context-period* 5)
+
+  ; The certainty of an episode determines the timer period (in seconds) that must be
+  ; passed for Eta to consider an expected episode failed and move on in the plan.
+  ; This is a function on the certainty of the episode, with a certainty of 1 having
+  ; an infinite period, and a certainty of 0 having a period of 0. This constant determines
+  ; the coefficient on the certainty-to-period function.
+  ; Currently, this coefficient makes a certainty of ~0.632 correspond to 30 seconds.
+  (defparameter *expected-step-failure-period-coefficient* 30)
 
   ; If *read-log* is the name of some file (in logs/ directory), read and
   ; emulate that file, allowing for user corrections and saving them in a file
   ; of the same name in logs_out/ directory.
   (defparameter *read-log* nil)
 
+  ; If *emotions* is T, Eta will allow use of emotion tags at beginning of outputs.
+  (defparameter *emotions* nil)
+
+  ; If *mark-opportunities* is T, Eta will allow use of opportunity tags in outputs.
+  (defparameter *mark-opportunities* nil)
+
   ; Log contents and pointer corresponding to current position in log.
   (defparameter *log-contents* nil)
   (defparameter *log-answer* nil)
   (defparameter *log-ptr* 0)
 
-  ; If *live* = T, operates in "live mode" (intended for avatar
-  ; system) with file IO. If *live* = nil, operates in terminal mode.
-  (defparameter *live* nil)
-
-  ; If *perceptive* = T, is capable of perceiving the world during the
-  ; perceive-world.v episode in the scema (in terminal mode, the user enters
-  ; a list of facts, otherwise they're provided in perceptions.lisp)
-  (defparameter *perceptive* nil)
-
-  ; If *responsive* = T, is capable of constructing natural language responses
-  ; from any ULF, including generating responses from spatial relation answers in
-  ; the BW system. If *responsive* = nil, the system can only form responses/reactions
-  ; at the level of gist clauses, and will refrain from fully answering spatial questions.
-  (defparameter *responsive* nil)
+  ; A list of any registered perception subsystems that Eta needs to listen to.
+  ; Currently only supports '|Blocks-World-System|, '|Terminal|, and '|Audio|.
+  (defparameter *registered-systems-perception* nil)
+  ; A list of any registered specialist subsystems that Eta can interact with.
+  ; Currently only supports '|Spatial-Reasoning-System|.
+  (defparameter *registered-systems-specialist* nil)
 
   ; If terminal mode and perceptive, keep list of block coordinates mimicking actual BW system.
   (defparameter *block-coordinates* '(
@@ -215,6 +218,7 @@
   ))
 
   ; Global variables used for IO
+  (defparameter *input* nil)
   (defparameter *next-answer* nil)
   (defparameter *next-input* nil)
   (defparameter *next-perceptions* nil)
@@ -229,23 +233,50 @@
 
 
 
-(defun eta (read-log live perceptive responsive)
-;`````````````````````````````````````````````````
-; live = t: avatar mode; live = nil: terminal mode
-; perceptive = t: system awaits information during perceive-world.v action
-;                      (from command line if in terminal mode)
+(defun init-ds ()
+;``````````````````````
+; Initializes a dialogue state record structure with any special
+; properties of the dialogue state (e.g. hash tables, task queues, etc.)
 ;
+  ; Initialize task queue
+  (refill-task-queue)
+
+  ; Initialize hash table for aliases/equality sets
+  (setf (ds-equality-sets *ds*) (make-hash-table :test #'equal))
+
+  ; Initialize hash tables for User and Eta topic keys/gist clauses
+  (setf (ds-gist-kb-user *ds*) (make-hash-table :test #'equal))
+  (setf (ds-gist-kb-eta *ds*) (make-hash-table :test #'equal))
+
+  ; Initialize fact hash tables
+  (setf (ds-context *ds*) (make-hash-table :test #'equal))
+  (setf (ds-memory *ds*) (make-hash-table :test #'equal))
+  (setf (ds-kb *ds*) (make-hash-table :test #'equal))
+
+  ; Initialize timegraph
+  (construct-timegraph)
+) ; END init-ds
+
+
+
+
+
+(defun eta (read-log subsystems-perception subsystems-specialist &optional (emotions nil) (mark-opportunities nil) (dependencies t))
+;```````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
 ; (now largely commented out) and controls the loop for producing,
 ; managing, and executing the dialog plan (mostly, reading & feature-
 ; annotating inputs & producing outputs, but with some subplan
 ; formation, gist clause formation, etc.).
 ;
+  (setq *dependencies* dependencies)
+
   (init)
   (setq *read-log* read-log)
-  (setq *live* live)
-  (setq *perceptive* perceptive)
-  (setq *responsive* responsive)
+  (setq *registered-systems-perception* subsystems-perception)
+  (setq *registered-systems-specialist* subsystems-specialist)
+  (setq *emotions* emotions)
+  (setq *mark-opportunities* mark-opportunities)
   (setq *count* 0) ; Number of outputs so far
 
   (when *read-log*
@@ -264,24 +295,9 @@
 
   ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
-  ; Execution of the plan continues so long as
-  ; the dialogue plan has another step
+  ; The interaction continues so long as the dialogue plan has another step
   (loop while (has-next-step? (ds-curr-plan *ds*)) do
-
-    ; Process next action of dialogue plan
-    (process-next-action (ds-curr-plan *ds*))
-
-    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
-    ;; (format t " here is after the print-current-plan-status -----------~%")
-
-    ;; (error-check :caller 'eta)
-
-    ; Update plan state after processing the previous step
-    (update-plan-state (ds-curr-plan *ds*))
-
-    ;; (format t " here is after the plan state has been updated -----------~%")
-    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
-  )
+    (do-task (select-and-remove-task)))
   
 ) ; END eta
 
@@ -289,12 +305,241 @@
 
 
 
-(defun implement-next-plan-episode (subplan)
-;``````````````````````````````````````````````
+(defun refill-task-queue ()
+;```````````````````````````````````
+; Refills the task queue after it becomes empty.
+  (setf (ds-task-queue *ds*) *tasks-list*)
+) ; END refill-task-queue
+
+
+
+
+
+(defun select-and-remove-task ()
+;```````````````````````````````````
+; Select the task at the front of the task queue. Return the
+; task and update the queue, refilling the queue when empty.
+;
+  ; When the task queue is empty, refill
+  (when (null (ds-task-queue *ds*))
+    (refill-task-queue))
+
+  ; Pop the current front of the task queue
+  (let ((curr-task (car (ds-task-queue *ds*))))
+    (setf (ds-task-queue *ds*) (cdr (ds-task-queue *ds*)))
+    curr-task)
+) ; END select-and-remove-task
+
+
+
+
+
+(defun do-task (task)
+;````````````````````````
+; Given a symbol denoting a task, call the top-level function
+; implementing that task.
+; NOTE: this can be made a bit more space-efficient just by using
+; (funcall task), but I didn't want to assume that all tasks will
+; necessarily share the same format.
+;
+  ;; (format t "executing task: ~a~%" task) ; DEBUGGING
+  (case task
+    (perform-next-step (perform-next-step))
+    (perceive-world (perceive-world))
+    (interpret-perceptions (interpret-perceptions))
+    (infer-facts-top-down (infer-facts-top-down))
+    (infer-facts-bottom-up (infer-facts-bottom-up)))
+) ; END do-task
+
+
+
+
+
+(defun perform-next-step ()
+;````````````````````````````````````
+; Performs the next step of the current dialogue plan, and
+; updates the plan state, removing any completed subplans.
+;
+  (let ((plan (ds-curr-plan *ds*)) subplan curr-step wff subj certainty plan-advanced?)
+
+    ; Find the next action from the deepest active subplan
+    (setq subplan (find-curr-subplan plan))
+
+    ; Current step becomes whatever the current step of subplan is
+    (setq curr-step (plan-curr-step subplan))
+
+    ; Get wff of current step and the subject of the episode
+    (setq wff (plan-step-wff curr-step))
+    (setq subj (car wff))
+
+    (cond
+      ; If the subject of the expected plan step is the user, inquire about the truth of the episode.
+      ((equal subj '^you)
+
+        ; Output prompt for external system to listen for user audio (but only once)
+        (setq *output-listen-prompt* (if (= *output-listen-prompt* 0) 1 2))
+
+        ; If first time listening for user input for given episode, and in read-log mode,
+        ; read next tuple in log as input.
+        ; NOTE: the following code is only relevant if (*read-log-mode* t) is set in config.lisp.
+        ; TODO: this still isn't working; need to look into this more.
+        (when (and (= *output-listen-prompt* 1) *read-log*)
+          ; Verify current tuple
+          (when (>= *log-ptr* 0)
+            (if (not *log-answer*) (setq *log-answer* '(PARSE FAILURE \.)))
+            (verify-log *log-answer* (nth *log-ptr* *log-contents*) *read-log*)
+            (setq *log-answer* nil))
+          ; Increment log pointer
+          (setq *log-ptr* (1+ *log-ptr*))
+          ; Read off input of next tuple and store in context
+          (let ((log-input (if (>= *log-ptr* (length *log-contents*))
+                    (parse-chars (coerce "bye" 'list))
+                    (parse-chars (coerce (first (nth *log-ptr* *log-contents*)) 'list)))))
+            (setq log-input `(^you say-to.v ^me ',log-input))
+            (when log-input
+              (setq ep-name-new (store-new-contextual-facts (list log-input)))
+              (push (list ep-name-new log-input) (ds-perception-queue *ds*))))
+          (update-plan-state plan)
+          (return-from perform-next-step nil))
+
+        ; Check certainty of expected plan step
+        (setq certainty (plan-step-certainty curr-step))
+
+        (cond
+          ; If timer exceeds period (a function of certainty of step), instantiate a 'failed' episode and continue plan.
+          ((>=inf (- (get-universal-time) *expected-step-failure-timer*) (certainty-to-period certainty)) 
+            (setq plan-advanced? (determine-next-episode-failed subplan)))
+
+          ; Otherwise, inquire self about the truth of the immediately pending episode. Plan is advanced
+          ; (and appropriate substitutions made) if the expected episode is determined to be true.
+          (t
+            (setq plan-advanced? (inquire-truth-of-next-episode subplan)))))
+
+      ; Otherwise, process the plan step, resetting the timer for expected step failure.
+      (t
+        ; Disable prompt for external system to listen for user audio
+        (setq *output-listen-prompt* 0)
+
+        (process-next-episode subplan)
+        (setq plan-advanced? t)))
+
+    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+    ;; (format t " here is after the print-current-plan-status -----------~%")
+
+    ; Update plan state after processing the previous step
+    (update-plan-state plan)
+
+    ; If plan was advanced, reset the timer for checking whether to declare an expected step a failure.
+    (if plan-advanced? (setq *expected-step-failure-timer* (get-universal-time)))
+
+    ;; (format t " here is after the plan state has been updated -----------~%")
+    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+
+)) ; END perform-next-step
+
+
+
+
+
+(defun perceive-world ()
+;````````````````````````````````````
+; Perceive the world by cycling through each of Eta's registered subsystems
+; collecting facts from each one, and adding them to context as well as a
+; perception queue for further interpretation. In the case where a fact
+; is negated (i.e., (not ...)), the fact is instead removed from context.
+;
+; Periodically (with the parameter determining the period defined in the 'init'
+; function), Eta should also flush context of facts with predicates that are
+; known to be "instantaneous" telic predicates, e.g., saying, replying, moving, etc.
+;
+  (let (inputs)
+
+  ; Flush context of "instantaneous" telic verbs once timer passes a certain period.
+  (when (>= (- (get-universal-time) *flush-context-timer*) *flush-context-period*)
+    ;; (format t "FLUSHING CONTEXT~%") ; DEBUGGING
+    (flush-context)
+    (setq *flush-context-timer* (get-universal-time)))
+
+  ; Cycle through all registered perception sources;
+  ; for each observation, instantiate an episode and
+  ; any relevant temporal relations.
+    (dolist (system *registered-systems-perception*)
+      (setq inputs (read-from-system system))
+
+      ;; (when inputs (format t "received inputs: ~a~%" inputs)) ; DEBUGGING
+
+      ; Remove any facts observed to no longer be true, i.e. of the form (not (...)).
+      ; Then remove these facts from the list.
+      ; TODO: some facts imply the negation of other ones,
+      ; e.g., (^you smiling.a) => (not (^you frowning.a)). Presumably
+      ; this would be inferred, but I'm not sure how this inferred
+      ; fact can be used to remove a previous (^you smiling.a) fact
+      ; from context, unless we look for & remove contradictions from
+      ; context each time this task executes. I suppose another option
+      ; to inferring the negation would be using a lexical resource,
+      ; such as WordNet, which has mutual exclusion relations.
+      (mapcar (lambda (input)
+        (when (equal 'not (car input)) (remove-old-contextual-fact (second input)))) inputs)
+      (remove-if (lambda (input) (equal 'not (car input))) inputs)
+
+      ; Add facts to context, and push them into a queue of new perceptions for further interpretation.
+      (when inputs (setq ep-name-new (store-new-contextual-facts inputs)))
+      (mapcar (lambda (input) (push (list ep-name-new input) (ds-perception-queue *ds*))) inputs))
+)) ; END perceive-world
+
+
+
+
+
+(defun interpret-perceptions ()
+;```````````````````````````````
+; Given a list of enqueued perceptions, go through each one and interpret it
+; in the context of the current (sub)plan (emptying the queue in the process).
+;
+  (let (subplan)
+    ; Find the next action from the deepest active subplan
+    (setq subplan (find-curr-subplan (ds-curr-plan *ds*)))
+
+    ; Go through queued perceptions and try to interpret each one in
+    ; context of the current plan
+    (dolist (fact (ds-perception-queue *ds*))
+      (interpret-perception-in-context fact subplan))
+    (setf (ds-perception-queue *ds*) nil)
+
+)) ; END interpret-perceptions
+
+
+
+
+
+(defun infer-facts-top-down ()
+;```````````````````````````````
 ; TBC
 ;
-; This program is called if an episode is a general event or control flow
-; formula, rather than an action formula starting with "Me" or "You".
+  nil
+) ; END infer-facts-top-down
+
+
+
+
+
+(defun infer-facts-bottom-up ()
+;````````````````````````````````````
+; TBC
+; 
+  nil
+) ; END infer-facts-bottom-up
+
+
+
+
+
+(defun implement-next-plan-episode (subplan)
+;``````````````````````````````````````````````
+; Any "abstract" plan episodes concerned with control flow (e.g., conditional events,
+; repeating an event, etc.), as opposed to actions starting with "^me" or "^you", are
+; implemented here. Execution of such episodes by Eta involves modifying the plan structure
+; in a way that corresponds to the episode in question.
 ;
   (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
@@ -369,19 +614,29 @@
 
 (defun implement-next-eta-action (subplan)
 ;``````````````````````````````````````````````````
-; TBC (rewrite)
+; Any actions by Eta are implemented here. We assume that this program
+; is called only if the first action of the plan is already known to be of
+; type (^me ...).
 ;
-; We assume that every {sub}plan name has a 'rest-of-plan' property
-; pointing to the remainder of the plan that has not been fully executed
-; (i.e., the first step of this remainder has been at most partially
-; executed). Further, every action name for a nonprimitive action has,
-; or needs to be supplied with, a 'subplan' property pointing to the
-; name of a subplan, which will again have a 'rest-of-plan' property.
-; Also, the subplan name will have a 'subplan-of' property that points
-; back to the name of the action it expands.
+; If the currently due step of the plan is a primitive action (e.g., saying
+; something), execute it. Otherwise, create a subplan for the action. 
+; No part of the new subplan is immediately executed or further
+; elaborated, so that the main Eta plan manager can in principle
+; check and amend the overall rest of the plan if necessary (e.g.,
+; add or modify temporal constraints to avoid inconsistencies; more 
+; radical changes may be warranted for optimizing overall utility).
+; Any subschemas used in the elaboration process typically supply 
+; multiple (^me say-to.v ^you '(...)) actions), and choice packets used
+; for step elaboration typically elaborate (^me react-to.v ...) actions
+; into single or multiple (^me say-to.v ^you '(...)) subactions.
 ;
-; We assume that this program is called only if the first action of
-; the plan  is already known to be of type (^me ...), i.e., an action by Eta.
+; The function returns a pair (var-bindings new-subplan), where either
+; may be nil. var-bindings is a list of pairs of variables and symbols
+; generated during execution of the action, to be bound to that variable
+; in the remainder of the plan. new-subplan is the subplan created by the
+; action (if any). If a new subplan is returned, it is attached to the
+; current plan step by the calling function, otherwise the calling function
+; advances the plan to the next step.
 ;
 ; TODO: IT SEEMS THAT THIS PROGRAM COULD ITSELF BE
 ;   REFORMULATED AS A KIND OF CHOICE TREE THAT SELECTS A SUBPLAN
@@ -397,29 +652,12 @@
 ;   FREQUENT OVERALL CONSISTENCY, PROBABILITY, AND UTILITY 
 ;   CALCULATIONS).
 ;
-; If the currently due action pointed to by the 'rest-of-plan'
-; property of '{sub}plan-name' is primitive (e.g., saying something),
-; execute it and advance the 'rest-of-plan pointer' of '{sub}plan-name'.
-; Otherwise, if the 'subplan' property of the currently due action
-; is nil, generate a subplan name, point to it via the 'subplan'
-; property of the currently due action, find a choice tree or subschema
-; for realizing the currently due action, and initialize the subplan.
-;
-; No part of the new subplan is immediately executed or further
-; elaborated, so that the main Eta plan manager can in principle
-; check and amend the overall rest of the plan if necessary (e.g.,
-; add or modify temporal constraints to avoid inconsistencies; more 
-; radical changes may be warranted for optimizing overall utility).
-; Any subschemas used in the elaboration process typically supply 
-; multiple (^me say-to.v ^you '(...)) actions), and choice packets used
-; for step elaboration typically elaborate (^me react-to.v ...) actions
-; into single or multiple (^me say-to.v ^you '(...)) subactions.
-;
   (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
          superstep ep-name1 user-ep-name user-ulf n user-gist-clauses user-gist-passage
-         proposal-gist main-clause info topic suggestion query ans perceptions
-         perceived-actions sk-var sk-name concept-name goal-schema)
+         prev-step prev-step-ep-name prev-step-wff utterance query eta-ulf
+         proposal-gist main-clause info topic suggestion ans perceptions
+         perceived-actions sk-var sk-name concept-name concept-schema goal-name goal-schema)
 
     ;; (format t "~%WFF = ~a,~% in the ETA action ~a being processed~%" wff ep-name) ; DEBUGGING
 
@@ -436,21 +674,40 @@
         (setq expr (eval-functions (get-single-binding bindings)))
         (cond
           ; If the current "say" action is a question, then use 'topic-keys'
-          ; and 'gist-clauses' of current ep-name and gist-kb-user to see
-          ; if question has already been answered. If so, omit action.
+          ; and gist-kb-user to see if question has already been answered.
+          ; If so, omit action.
           ; TODO: investigate why this required advancing the plan twice...
           ((not (null (obviated-question expr ep-name)))
             (advance-plan subplan)
             (setq new-subplan nil))
           ; Primitive say-to.v act: drop the quote, say it, increment the
           ; *count* variable, advance the 'rest-of-plan' pointer, and
-          ; store the turn in the dialogue history
+          ; log the turn in the conversation history
           ((eq (car expr) 'quote)
             (setq expr (flatten (second expr)))
             (setq *count* (1+ *count*))
-            (if *live* (say-words expr) (print-words expr))
-            (store-turn '^me expr (get ep-name 'gist-clauses) (list (get ep-name 'semantics))
-              (ds-dialogue-history *ds*)))
+            (setq expr (tag-opportunities expr))
+            (setq expr (tag-emotions expr))
+
+            ; Inherit any gists/semantics from parent episode, if any
+            (setq ep-name1 (get-parent-ep-name subplan))
+            (when ep-name1
+              (mapcar (lambda (gist) (store-gist-clause-characterizing-episode gist ep-name '^me '^you))
+                (get-gist-clauses-characterizing-episode ep-name1))
+              (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
+                (get-semantic-interpretations-characterizing-episode ep-name1)))
+
+            ; Check both episode and parent episode for gists/ulfs
+            (log-turn (list expr
+                (get-gist-clauses-characterizing-episode ep-name)
+                (get-semantic-interpretations-characterizing-episode ep-name))
+              :agent (if (boundp '*agent-id*) *agent-id* 'eta))
+
+            ; Output words
+            (if (member '|Audio| *registered-systems-perception*)
+              (say-words expr)
+              (print-words expr)))
+
           ; Nonprimitive say-to.v act (e.g. (^me say-to.v ^you (that (?e be.v finished.a)))):
           ; Should probably be illegal action specification since we can use 'tell.v' for
           ; inform acts. For the moment however, handle equivalently to tell.v.
@@ -460,17 +717,82 @@
       ; beyond this point is non-primitive actions, to be expanded using choice packets.
 
       ;`````````````````````
+      ; Eta: Paraphrasing
+      ;`````````````````````
+      ; Yields e.g. ((_+ '(I am a senior comp sci major \.))), or nil if unsuccessful.
+      ; Used for elaborating a gist-clause by Eta into a surface-level utterance via choice
+      ; packets which first branch on the gist-clause to select an appropriate subtree, and
+      ; then generate an utterance based on the context of the previous speech act in the dialogue.
+      ((setq bindings (bindings-from-ttt-match '(^me paraphrase-to.v ^you _+) wff))
+        (setq expr (eval-functions (get-single-binding bindings)))
+        (cond
+          ; If the current "say" action is a question, then use 'topic-keys'
+          ; and gist-kb-user to see if question has already been answered.
+          ; If so, omit action.
+          ((not (null (obviated-question expr ep-name)))
+            (advance-plan subplan)
+            (setq new-subplan nil))
+
+          ; Get subtree, get surface response, attach say-to.v action
+          ((eq (car expr) 'quote)
+            (setq expr (flatten (second expr)))
+
+            ; Store gist-clause that Eta is paraphrasing
+            (store-gist expr (get ep-name 'topic-keys) (ds-gist-kb-eta *ds*))
+            (store-gist-clause-characterizing-episode expr ep-name '^me '^you)
+
+            ; Inherit any semantics from parent episode, if any
+            (setq ep-name1 (get-parent-ep-name subplan))
+            (when ep-name1
+              (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
+                (get-semantic-interpretations-characterizing-episode ep-name1)))
+
+            ; Use previous user reply as context for response generation
+            (setq prev-step (find-prev-step-of-type subplan '^you '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
+            (when prev-step
+              (setq prev-step-ep-name (plan-step-ep-name prev-step))
+              (setq prev-step-wff (plan-step-wff prev-step)))
+
+            (format t "~%found previous speech act: ~a (~a)~%" prev-step-ep-name prev-step-wff) ; DEBUGGING
+
+            ; Get gist-clauses corresponding to previous user speech act
+            (setq user-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
+
+            (format t "associated gist clauses: ~a~%" user-gist-clauses) ; DEBUGGING
+
+            ; Get utterance from gist-clause and prior gist-clause
+            ; TODO: for now this appends all user gist-clauses together, but there might be a better way to do it
+            (setq utterance (form-surface-utterance-from-gist-clause expr (apply #'append user-gist-clauses)))
+
+            ; Attach say-to.v action as subplan to paraphrase-to.v action
+            (setq new-subplan
+              (init-plan-from-episode-list
+                (list :episodes (episode-var) (create-say-to-wff utterance)))))
+
+          ; Other argument types unexpected
+          (t (setq new-subplan nil))))
+
+      ;`````````````````````
       ; Eta: Reacting
       ;`````````````````````
       ; Yields e.g. ((_! EP34.)), or nil if unsuccessful.
       ((setq bindings (bindings-from-ttt-match '(^me react-to.v _!) wff))
-        (setq user-ep-name (get-single-binding bindings))
-        ; Get user gist clauses and ulf from bound user action
-        (setq user-gist-clauses (get user-ep-name 'gist-clauses))
-        (setq user-ulf (resolve-references (get user-ep-name 'semantics)))
-        (format t "~% user gist clause is ~a ~%" user-gist-clauses) ; DEBUGGING
-        (format t "~% user ulf is ~a ~%" user-ulf) ; DEBUGGING
-        (setq new-subplan (plan-reaction-to user-gist-clauses user-ulf)))
+        (setq expr (get-single-binding bindings))
+        (cond
+          ; If 'quoted' gist-clause, attribute gist-clause to user
+          ((and (listp expr) (eq (car expr) 'quote))
+            (setq expr (flatten (second expr)))
+            (setq user-gist-clauses (list expr))
+            (setq user-ulf nil))
+          ; Otherwise, find gist-clauses associated with episode Eta is reacting to
+          (t
+            (setq user-ep-name (get-single-binding bindings))
+            (setq user-gist-clauses (get-gist-clauses-characterizing-episode user-ep-name))
+            (setq user-ulf (resolve-references (get-semantic-interpretations-characterizing-episode user-ep-name)))))
+
+        (format t "~% user gist clause (for ~a) is ~a" user-ep-name user-gist-clauses) ; DEBUGGING
+        (format t "~% user ulf (for ~a) is ~a ~%" user-ep-name user-ulf) ; DEBUGGING
+        (setq new-subplan (plan-reaction-to user-gist-clauses user-ulf ep-name)))
 
       ; NOTE: Apart from saying and reacting, assume that Eta actions
       ; also allow telling, describing, suggesting, asking, saying 
@@ -553,20 +875,28 @@
       ;`````````````````````````````````````
       ; Eta: Recalling answer from history
       ;`````````````````````````````````````
-      ((setq bindings (bindings-from-ttt-match '(^me recall-answer.v _! _!1 _!2) wff))
-        (setq object-locations (eval-functions (get-single-binding bindings)))
-        ;; (format t "bindings: ~a~% object locations: ~a~%" (get-single-binding bindings) object-locations) ; DEBUGGING
-        (setq bindings (cdr bindings))
+      ((setq bindings (bindings-from-ttt-match '(^me recall-answer.v _!1 _!2) wff))
         (setq user-ulf (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
-        ; Output ULF if in live mode, along with indicator that the ULF is not intended as a query.
-        (write-ulf `(quote ,(list 'non-query (eval user-ulf))))
+
+        ; Get object locations from context
+        (setq object-locations (get-from-context '(?x at-loc.p ?y)))
+        ;; (format t "found object locations from context: ~a~%" object-locations) ; DEBUGGING
+
+        ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
+        ; TODO: first might need to remove stored block coordinates from context.
+        (when *read-log*
+          (let ((perceptions (second (nth *log-ptr* *log-contents*))))
+            (if (not (listp perceptions)) (setq perceptions nil))
+            (store-new-contextual-facts (update-block-coordinates (remove-if-not #'verb-phrase? perceptions)))))
+
         ; Determine answers by recalling from history
-        (if *responsive*
+        (if *dependencies*
           (setq ans `(quote ,(recall-answer object-locations (eval user-ulf))))
           (setq ans '()))
         (format t "recalled answer: ~a~%" ans) ; DEBUGGING
+
         ; Bind ans to variable given in plan (e.g. ?ans-relations)
         (setq var-bindings (cons (list expr ans) var-bindings)))
 
@@ -576,12 +906,16 @@
       ((setq bindings (bindings-from-ttt-match '(^me seek-answer-from.v _! _!1) wff))
         (setq system (get-single-binding bindings))
         (setq bindings (cdr bindings))
-        (setq user-ulf (get-single-binding bindings))
-        ; Leaving this open in case we want different procedures for different systems
-        (cond
-          ((null *live*) (write-ulf user-ulf))
-          ((eq system '|Blocks-World-System|) (write-ulf user-ulf))
-          (t (write-ulf user-ulf))))
+        (setq query (eval (get-single-binding bindings)))
+
+        ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
+        (when *read-log*
+          (let ((perceptions (second (nth *log-ptr* *log-contents*))))
+            (if (not (listp perceptions)) (setq perceptions nil))
+            (store-new-contextual-facts (update-block-coordinates (remove-if-not #'verb-phrase? perceptions)))))
+
+        ; Send query to external source
+        (if system (write-subsystem (list query) system)))
 
       ;``````````````````````````````````````````
       ; Eta: Recieve answer from external source
@@ -590,15 +924,10 @@
         (setq system (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
-        ; Leaving this open in case we want different procedures for different systems
-        (cond
-          (*read-log* (setq ans '()))
-          ((null *responsive*) (setq ans '()))
-          ((null *live*) (setq ans `(quote ,(get-answer-offline))))
-          ((eq system '|Blocks-World-System|) (setq ans `(quote ,(get-answer))))
-          (t (setq ans `(quote ,(get-answer)))))
-        (if (not (answer-list? (eval ans)))
-          (setq ans '()))
+        ; Get answer from subsystem
+        (setq ans (read-subsystem system :block t))
+        (if (or *read-log* (not (answer-list? ans))) (setq ans nil))
+        (if ans (setq ans `(quote ,ans)))
         (format t "received answer: ~a~% (for variable ~a)~%" ans expr) ; DEBUGGING
         ; Bind ans to variable given in plan (e.g. ?ans-relations)
         (setq var-bindings (cons (list expr ans) var-bindings)))
@@ -612,16 +941,47 @@
         (setq expr (get-single-binding bindings))
         ; Generate response based on list of relations
         (cond
-          ((null *responsive*) (setq ans '(Could not form final answer \: not in responsive mode \.)))
-          (t (setq ans (generate-response (eval user-ulf) (eval expr)))))
+          ((not (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
+            (setq ans '(Could not form final answer \: |Spatial-Reasoning-System| not registered \.)))
+          (t (let ((tuple (generate-response (eval user-ulf) (eval expr))))
+            (setq ans (first tuple))
+            (setq eta-ulf (second tuple))
+            (store-semantic-interpretation-characterizing-episode eta-ulf ep-name '^me '^you))))
         (format t "answer to output: ~a~%" ans) ; DEBUGGING
         ; If in read-log mode, append answer to list of new log answers
         (when *read-log*
-          (setq *log-answer* (modify-response ans)))
+          (setq *log-answer* ans))
         ; Create say-to.v subplan from answer
         (setq new-subplan
           (init-plan-from-episode-list
             (list :episodes (episode-var) (create-say-to-wff ans)))))
+
+      ;````````````````````````````
+      ; Eta: Conditionally paraphrasing
+      ;````````````````````````````
+      ; TODO: I'm not really fond of the way that this is handled currently. It seems like
+      ; getting an answer binding from an external system, and communicating that answer,
+      ; should be two separate steps in the schema.
+      ((setq bindings (bindings-from-ttt-match '(^me conditionally-paraphrase-to.v ^you _! _!1) wff))
+        (setq user-ulf (get-single-binding bindings))
+        (setq bindings (cdr bindings))
+        (setq expr (get-single-binding bindings))
+        ; Generate response gist based on list of relations
+        (cond
+          ((not (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
+            (setq ans '(Could not form final answer \: |Spatial-Reasoning-System| not registered \.)))
+          (t (let ((tuple (generate-response (eval user-ulf) (eval expr))))
+            (setq ans (first tuple))
+            (setq eta-ulf (second tuple))
+            (store-semantic-interpretation-characterizing-episode eta-ulf ep-name '^me '^you))))
+        (format t "gist answer to output: ~a~%" ans) ; DEBUGGING
+        ; If in read-log mode, append answer gist to list of new log answers
+        (when *read-log*
+          (setq *log-answer* ans))
+        ; Create paraphrase-to.v subplan from answer
+        (setq new-subplan
+          (init-plan-from-episode-list
+            (list :episodes (episode-var) (create-paraphrase-to-wff ans)))))
 
       ;````````````````````````````
       ; Eta: Proposing
@@ -629,10 +989,11 @@
       ((setq bindings (bindings-from-ttt-match '(^me propose1-to.v ^you _!) wff))
         (setq expr (get-single-binding bindings))
         (cond
-          ((null *responsive*) (setq proposal-gist '(Could not create proposal \: not in responsive mode \.)))
+          ((null (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
+            (setq proposal-gist '(Could not create proposal \: '|Spatial-Reasoning-System| not registered \.)))
           (t (setq proposal-gist (generate-proposal expr))))
-        (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
-        (setf (get ep-name 'gist-clauses) (list proposal-gist))
+        ;; (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
+        (store-gist-clause-characterizing-episode proposal-gist ep-name '^me '^you)
         (setq new-subplan (plan-proposal proposal-gist)))
 
       ;````````````````````````````
@@ -643,43 +1004,12 @@
       ((setq bindings (bindings-from-ttt-match '(^me issue-correction-to.v ^you _!) wff))
         (setq expr (get-single-binding bindings))
         (cond
-          ((null *responsive*) (setq proposal-gist '(Could not create proposal \: not in responsive mode \.)))
+          ((null (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
+            (setq proposal-gist '(Could not create proposal \: |Spatial-Reasoning-System| not registered \.)))
           (t (setq proposal-gist (generate-proposal expr))))
         ;; (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
-        (setf (get ep-name 'gist-clauses) (list proposal-gist))
+        (store-gist-clause-characterizing-episode proposal-gist ep-name '^me '^you)
         (setq new-subplan (plan-correction proposal-gist)))
-
-      ;````````````````````````````
-      ; Eta: Perceiving world
-      ;````````````````````````````
-      ((setq bindings (bindings-from-ttt-match '(^me perceive-world.v _! _!1 _!2) wff))
-        (setq system (get-single-binding bindings))
-        (setq bindings (cdr bindings))
-        (setq user-ulf (get-single-binding bindings))
-        (setq bindings (cdr bindings))
-        (setq expr (get-single-binding bindings))
-        ; Get perceptions
-        (cond
-          (*read-log* (setq perceptions (second (nth *log-ptr* *log-contents*))))
-          ((null *perceptive*) (setq perceptions nil))
-          ((null *live*) (setq perceptions (get-perceptions-offline)))
-          ((eq system '|Blocks-World-System|) (setq perceptions (get-perceptions)))
-          (t (setq perceptions (get-perceptions))))
-
-        ; Ensure perceptions are in correct format, i.e. a list of lists, otherwise set to nil
-        (if (or (not perceptions) (not (listp perceptions)) (not (every #'listp perceptions)))
-          (setq perceptions nil))
-        ; When in terminal mode and perceptive mode, update block coordinates after user gives move and add to perceptions
-        (when (or *read-log* (and (null *live*) *perceptive*))
-          (setq perceptions (update-block-coordinates (remove-if-not #'verb-phrase? perceptions))))
- 
-        (format t "received perceptions: ~a~% (for variable ~a)~%" perceptions expr) ; DEBUGGING
-
-        ; Commit perceptions to memory
-        (commit-perceptions-to-memory perceptions user-ulf)       
-        
-        ; Bind quoted perceptions for var in plan
-        (setq var-bindings (cons (list expr `(quote ,perceptions)) var-bindings)))
 
       ;`````````````````````````
       ; Eta: Committing to STM
@@ -692,7 +1022,7 @@
       ((setq bindings (bindings-from-ttt-match '(^me commit-to-STM.v (that _!)) wff))
         (setq expr (get-single-binding bindings))
         ; Store each formula in context
-        (store-in-context expr))
+        (store-new-contextual-facts (list expr)))
 
       ;````````````````````````````
       ; Eta: Trying
@@ -714,21 +1044,46 @@
       ;````````````````````````````
       ; Finding some action (or other entity?), given an episode like
       ; ?e1 (find4.v (some.d ?ka1 (:l (?x) (?x step1-toward.p ?goal-rep))))
-      ; TODO: currently manually stores ((pair ^me ?e1) successful.a), which
-      ; needs to be changed - see note on 'Eta: Trying' action.
-      ; Also sends query to the BW system for step regardless of what the
-      ; argument of the find4.v action is.
+      ; TODO: currently assumes that the request must be sent to the
+      ; Spatial-Reasoning-System, but in theory a 'finding' episode could involve
+      ; any specialist server, or possibly even none (e.g., 'finding' in memory).
+      ; The former can be solved somewhat unelegantly by adding the server as an
+      ; argument to this action in the schema; the latter will be more difficult.
       ((setq bindings (bindings-from-ttt-match '(^me find4.v _!) wff))
         (setq expr (get-single-binding bindings))
         (setq sk-var (second expr))
-        (observe-step-towards-goal (third (third (third expr)))); desperately needs changing
-        (setq sk-name (choose-variable-restrictions sk-var (third expr)))
+        ; Get goal name from expr, and corresponding record structure
+        (setq goal-name (get-single-binding
+          (cdr (bindings-from-ttt-match-deep '(_!1 step1-toward.p _!2) expr))))
+        (setq goal-schema (get-record-structure goal-name))
+        ; Substitute record structure for goal name in expr
+        (setq expr (subst goal-schema goal-name expr))
+        ; Request step towards goal schema from BW system
+        (setq query `((what.pro be.v (= ,expr)) ?))
+        (write-subsystem (list query) '|Spatial-Reasoning-System|)
+
+        ; Get answer from BW system
+        ; This is either nil or a list (((ka ...) step1-toward.p ($ ...)))
+        (setq ans (read-subsystem '|Spatial-Reasoning-System| :block t))
+        ; Substitute goal name for record structure in ans
+        (setq ans (subst goal-name goal-schema ans :test #'equal))
+        ; Set sk-name to reified action
+        (setq sk-name (get-single-binding
+          (bindings-from-ttt-match-deep '(_!1 step1-toward.p _!2) ans)))
+        ; Remove existing step1-toward.p propositions from context, and add new one(s)
+        (remove-from-context `(?x step1-toward.p ,goal-name))
+        (mapcar #'store-in-context ans)
+        ; Substitute skolem name for skolem var in schema
         (format t "found ~a for variable ~a~%" sk-name sk-var)
+
+        ; If a step was found for the current episode, store that
+        ; the episode was successful in context
+        ; TODO: needs to be changed; see comment on 'Eta: Trying' action.
         ;; (setq superstep (plan-subplan-of subplan))
         ;; (setq ep-name1 (plan-step-ep-name superstep))
         (setq ep-name1 ep-name)
         (if (and sk-name ep-name1)
-          (store-in-context `((pair ^me ,ep-name1) successful.a))); also desperately needs changing
+          (store-in-context `((pair ^me ,ep-name1) successful.a)))
 
         ; Bind variable to skolem constant in plan
         (setq var-bindings (cons (list sk-var sk-name) var-bindings)))
@@ -753,6 +1108,12 @@
         (setq sk-name (choose-variable-restrictions sk-var (third expr)))
         (format t "chose value ~a for variable ~a~%" sk-name sk-var) ; DEBUGGING
 
+        ; Store fact that sk-name chosen in context (removing any existing choice)
+        ; TODO: perhaps choose.v actions are 'instantaneous' and should therefore be
+        ; removed periodically, along with say-to.v actions etc.
+        (remove-from-context '(^me choose.v ?x))
+        (store-in-context `(^me choose.v ,sk-name))
+
         ; Bind variable to skolem constant in plan
         (setq var-bindings (cons (list sk-var sk-name) var-bindings)))
 
@@ -769,20 +1130,29 @@
       ((setq bindings (bindings-from-ttt-match '(^me form-spatial-representation.v _!) wff))
         (setq expr (get-single-binding bindings))
         (setq sk-var (second expr))
+        ; Get concept name from expr, and corresponding record structure
+        (setq concept-name (get-single-binding
+          (cdr (bindings-from-ttt-match-deep '(_!1 instance-of.p _!2) expr))))
+        (setq concept-schema (get-record-structure concept-name))
         ; Substitute record structure for concept name in expr
-        (setq expr (ttt:apply-rule '(/ (_!1 instance-of.p _!2)
-                                       (_!1 instance-of.p (record-structure! _!2)))
-                      expr :max-n 1))
+        (setq expr (subst concept-schema concept-name expr))
         ; Request goal representation from BW system
-        (request-goal-rep expr)
-        ; Get goal representation from BW system
-        ; NOTE: currently no special offline (terminal mode) procedure for getting goal schema.
-        (setq goal-schema (get-goal-rep))
-        ; Generate skolem name, add alias and facts in context
+        (setq query `((what.pro be.v (= ,expr)) ?))
+        (write-subsystem (list query) '|Spatial-Reasoning-System|)
+
+        ; Get answer from BW system
+        ; This is a list of relations ((($ ...) goal-schema1.n) (($ ...) instance-of.p ($ ...)))
+        (setq ans (read-subsystem '|Spatial-Reasoning-System| :block t))
+        ; Create name for goal representation and add alias
         (setq sk-name (gensym "BW-goal-rep"))
-        (add-alias (cons '$ goal-schema) sk-name)
-        (store-in-context (list sk-name 'goal-schema1.n))
-        (store-in-context (list sk-name 'instance-of.p concept-name))
+        (setq goal-schema (get-single-binding
+          (bindings-from-ttt-match-deep '(_! goal-schema1.n) ans)))
+        (add-alias goal-schema sk-name)
+        ; Substitute canonical names for record structures in relations
+        (setq ans (subst concept-name concept-schema ans :test #'equal))
+        (setq ans (subst sk-name goal-schema ans :test #'equal))
+        ; Store answer in context
+        (mapcar #'store-in-context ans)
         ; Substitute skolem name for skolem var in schema
         (format t "formed representation ~a for variable ~a~%" sk-name sk-var)
         
@@ -813,335 +1183,148 @@
 
 
 
-(defun observe-next-user-action (subplan)
-;```````````````````````````````````````````````
-; TBC (rewrite)
+(defun interpret-perception-in-context (fact plan)
+;````````````````````````````````````````````````````````
+; Interpret a 'primitive' perception in the context of the current plan status.
+; In the case of a perceived "^you say-to.v ^me" action by the user, the relevant
+; context is the previous speech act in the plan (typically by Eta), and the user's
+; reply is 'automatically' interpreted as a response to that speech act.
 ;
-; '{sub}plan-name' provides the name of a (sub)plan whose
-; 'rest-of-plan' pointer points to a user action, i.e., the
-; name of a user action followed by a wff of type (^you ...).
+; e.g., suppose the previous speech act by Eta in the plan is:
+; E1 (^me say-to.v ^you '(What is your favorite type of food ?))
 ;
-; We build a two-level plan structure for nonprimitive user
-; replies (with a (^you say-to.v ^me '(...)) at the primitive
-; level), and (in another Eta plan iteration) "interpret" 
-; these replies. The value returned is a pair 
-;    (<user action name> <corresponding wff>) 
-; for the step that was processed. (This is not needed but 
-; may help in debugging.)
+; And the following action by the user is perceived:
+; E2 (^you say-to.v ^me '(Thai food \.))
 ;
-; The idea is that we should recognize user actions as being
-; hierarchically organized (just like Eta actions). 
-; Currently we're just anticipating nonprimitive top-level
-; actions like 
-;        (^you reply-to.v <eta action>)
-; that we expand to one further, primitive level of type
-;        (^you say-to.v ^me '(...)) 
-; actions. However, in principle, observing a user action
-; is a plan-recognition process, where for example multiple 
-; sentences uttered by the user may comprise a sequence of
-; speech acts of different types (just like outputs by Eta);
-; as well, the highest-level user plan that is recognized may
-; fail to match the *expected* type of the user action (but
-; we're ignoring this possibility for now).
+; We want to try to interpret the utterance in E2 using the context of E1 (particularly, the gist-clause
+; corresponding to Eta's utterance), extracting a gist-clause and semantic interpretation (when relevant)
+; for the user, and possibly additional inferences. After doing so (and storing them in memory), we store
+; the fact:
+; ((^you reply-to.v E1) ** E2)
 ;
-; Primitive user actions arise in two ways: First, (^you say-to.v
-; ^me '(...)) actions are generated here from nonprimitive
-; (^you reply-to.v ...) actions as already mentioned and explained
-; further below. Second, Eta actions of type (^me react-to.v ...)
-; may generate schema-based subplans that contain multiple Eta
-; comments of type (^me say-to.v ^you '(...)), where these are
-; preceded by "hallucinated" user inputs of form (^you paraphrase.v
-; '(...)); here the quoted words comprise a gist clause "attributed"
-; to the user, i.e., these are treated as implicit versions of 
-; (parts of) the user's previous actual input that were "para-
-; phrased" by the user in the context of the Eta question they
-; answer. These "hallucinated" clauses attributed to the user are
-; needed to enable uniform processing of Eta's reaction to each
-; individual gist clause derived from an actual input.
-;
-; To generate a subplan containing a primitive (^you say-to.v ^me 
-; '(...)) action, given a (^you reply-to.v <eta action>) action, 
-; we read the user input, form a wff for the primitive action with
-; the input word list filled in, generate a plan name for the
-; simple subordinate plan, and assign a value to that plan name
-; consisting of a new action name for the primitive action and the
-; (^you say-to.v ...) wff. We don't make interpretation of the 
-; user input part of the process of generating the primitive 
-; action (though we could, since we have at hand the <eta action>
-; to which the user is responding, in the wff (^you reply-to.v 
-; <eta action>)); instead, we derive the interpretation when
-; processing the primitive action; this is for consistency with
-; the general principle that interpretation (including speech act
-; recognition) should proceed bottom-up (but with the previous 
-; Eta utterance as context). [However, maybe hierarchical
-; interpretation should be a process separate from hierarchical
-; plan processing...]
-; 
-; So, processing of primitive (^you say-to.v ^me '(...)) actions
-; should lead to their "interpretation", i.e., extraction of gist
-; clauses and possibly supplementary information that could
-; obviate later Eta questions. This requires finding out what
-; the user is replying to, by looking "upward" and "backward" in the
-; plan hierarchy. Specifically, we need to access the nonprimitive
-; user action that immediately subsumes the (^you say-to.v ^me ...)
-; action -- this is accessible via the 'subplan-of' property of
-; {sub}plan-name -- and the wff of this noprimitive action in turn
-; supplies the name of the Eta action that the user is responding
-; to. The 'gist-clauses' property of that Eta action name leads 
-; to the desired context information for interpreting the user input 
-; utterance. (In future the 'interpretation' property is to be used.)
-; 
-  (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
-         (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
-         words superstep ep-name1 wff1 wff1-arg eta-ep-name eta-clauses user-gist-clauses
-         main-clause user-ulfs user-action input user-try-ka-success)
+  (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
+         user-gist-clauses user-ulfs inferred-wffs goal-step ka try-success)
 
-    ;; (format t "~%WFF = ~a,~%      in the user action ~a being processed~%" wff ep-name) ; DEBUGGING
+    (setq ep-name (first fact))
+    (setq wff (second fact))
 
-    ; Big conditional statement to observe different types of user actions
+    ; Conditional statement matching different types of 'primitive' observed wffs
     (cond
-      ;`````````````````````
-      ; User: Saying
-      ;`````````````````````
-      ; A say-to.v act may be primitive, having a '?words' variable as its argument,
-      ; or may have been created from a (^you reply-to.v <eta action>)) based on reading
-      ; the user's input:
+      ;```````````````````````````
+      ; User: Saying -> Replying
+      ;```````````````````````````
       ((setq bindings (bindings-from-ttt-match '(^you say-to.v ^me _!) wff))
         (setq expr (get-single-binding bindings))
 
+        ; If say-to.v act has a quoted word list argument, e.g., '(nice to meet you \.)',
+        ; it should unquote and decompress the words.
         (cond
-          ; if say-to.v act has a variable argument, e.g. '?words', it should read the user's
-          ; words, and destructively substitute these words in for the variable in the plan.
-          ((variable? expr)
-            (loop while (not input) do
-              (setq input (cond
-                (*read-log* (if (>= *log-ptr* (length *log-contents*))
-                  (read-words "bye")
-                  (read-words (first (nth *log-ptr* *log-contents*)))))
-                (*live* (hear-words *delay-say-to.v*))
-                (t (read-words)))))
-            (setq words (decompress input))
-            ; Bind input words to variable in plan
-            (setq var-bindings (cons (list expr `(quote ,input)) var-bindings)))
-
-          ; if say-to.v act has a quoted word list argument, e.g., '(nice to meet you \.)',
-          ; it should unquote and decompress the words.
           ((quoted-sentence? expr)
             (setq words (decompress (second expr))))
-
-          ; anything else is unexpected
+          ; Anything else is unexpected
           (t
             (format t "~%*** SAY-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST OR VARIABLE" expr)))
 
-        ; Prepare to "interpret" 'words', using the Eta output it is a response to;
-        ; first we need the superordinate action (wff should be in the form (^you reply-to.v <eta action>))
-        (setq superstep (plan-subplan-of subplan))
-        (when superstep
-          (setq ep-name1 (plan-step-ep-name superstep))
-          (setq wff1 (plan-step-wff superstep))
-          (setq wff1-arg (car (last wff1))))
+        ; Use previous speech act as context for interpretation
+        (setq prev-step (find-prev-step-of-type plan '^me '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
+        (when prev-step
+          (setq prev-step-ep-name (plan-step-ep-name prev-step))
+          (setq prev-step-wff (plan-step-wff prev-step)))
 
-        ;; (format t "~%User action name1 = ~a" ep-name1)
-        ;; (format t "~%User words = ~a" words)
-        ;; (format t "~%User WFF1 = ~a, if correct,~%    ends in a ETA action name" wff1) ; DEBUGGING
-        
-        (cond
-          ; If the superordinate reply-to.v action has specific gist clause(s)
-          ((quoted-sentence-list? wff1-arg)
-            (setq eta-clauses (eval wff1-arg)))
-          ; If the superordinate reply-to.v action has an episode with gist clause(s) associated
-          ((symbolp wff1-arg)
-            (setq eta-ep-name wff1-arg)
-            (setq eta-clauses (get eta-ep-name 'gist-clauses)))
-          ; Otherwise, assume there is no superordinate action, set gist clauses to nil
-          (t (setq eta-clauses nil)))
+        ;; (format t "~%wff = ~a,~%     in the context of ~a ~a~%" wff prev-step-ep-name prev-step-wff) ; DEBUGGING
 
-        ;; (format t "~%ETA action name is ~a" eta-ep-name)
-        ;; (format t "~%ETA gist clauses that the user is responding to~% = ~a " eta-clauses)
-        ;; (format t "~%using gist clause: ~a " (car (last eta-clauses))) ; DEBUGGING
+        ; Get gist-clauses corresponding to previous speech act
+        (setq prev-step-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
+
+        (format t "~%ETA gist clauses that the user is responding to (from episode ~a)~% = ~a " prev-step-ep-name prev-step-gist-clauses)
+        (format t "~%using gist clause: ~a~% " (car (last prev-step-gist-clauses))) ; DEBUGGING
 
         ; Compute the "interpretation" (gist clauses) of the user input,
         ; which will be done with a gist-clause packet selected using the
         ; main Eta action clause, and with the user input being the text
         ; to which the tests in the gist clause packet (tree) are applied.
         ;
-        ; TODO: In the future, we might instead of or in addition use
-        ; (get eta-ep-name 'interpretation).
+        ; TODO: In the future, we might instead of or in addition use the semantic
+        ; interpretation of Eta's previous speech act.
         (setq user-gist-clauses
-          (form-gist-clauses-from-input words (car (last eta-clauses))))
+          (form-gist-clauses-from-input words (car (last prev-step-gist-clauses))))
 
-        ; Remove contradiction
+        ; Remove contradicting user gist-clauses (if any)
         (setq user-gist-clauses (remove-contradiction user-gist-clauses))
-        (format t "Obtained user gist clauses ~a for episode ~a~%" user-gist-clauses ep-name1) ; DEBUGGING
+        (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
 
-        ; Both the primitive user action and the immediately subordinate action
-        ; recieve the gist-clause interpretation just computed.
-        (setf (get ep-name 'gist-clauses) user-gist-clauses)
-        (setf (get ep-name1 'gist-clauses) user-gist-clauses)
+        ; Store user gist-clauses in memory
+        (dolist (user-gist-clause user-gist-clauses)
+          (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me))
 
-        ; Get ulfs from user gist clauses and set them as an attribute to the current
-        ; user action
+        ; Obtain semantic interpretation(s) of the user gist-clauses
         (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
-        (format t "Obtained ulfs ~a for episode ~a~%" user-ulfs ep-name1) ; DEBUGGING
+        (format t "~%Obtained ulfs ~a for episode ~a" user-ulfs ep-name) ; DEBUGGING
 
-        (setf (get ep-name 'semantics) user-ulfs)
-        (setf (get ep-name1 'semantics) user-ulfs)
+        (log-turn (list words user-gist-clauses (resolve-references user-ulfs)) :agent 'user)
 
-        ; Get fine-grained user action type corresponding to gist clauses (e.g. (^you say-be.v)),
-        ; and store ((^you say-bye.v) * ?e1), where ?e1 is the ep-name of of say-to.v (and likewise
-        ; for the parent of the say-to.v episode, if it exists).
+        ; Store the semantic interpretations in memory
+        (dolist (user-ulf user-ulfs)
+          (store-semantic-interpretation-characterizing-episode user-ulf ep-name '^you '^me))
+
+        ; Add the fact (^you reply-to.v <prev-step-ep-name>) to context (characterizing ep-name)
+        (when prev-step-ep-name
+          (store-contextual-fact-characterizing-episode `(^you reply-to.v ,prev-step-ep-name) ep-name))
+
+        ; Infer any additional facts from user gist-clauses
+        ; TODO: since this is now input-driven inference rather than (gist-clause/LF) interpretation,
+        ; it should probably be moved to a different function, perhaps using another queue of 'new'
+        ; gist-clauses or LF interpretations. Ultimately, it seems like this sort of inference should
+        ; be done directly using the LF interpretations, rather than the gist-clause, but using 
+        ; gist-clauses is more straightforward for now.
+        ; TODO: currently this only supports one inferred wff per gist-clause, but it should allow multiple.
         ; NOTE: for now, we assume that each user utterance is described by only one action type,
         ; so the gist clauses are concatenated together first.
-        (setq user-action (form-user-action-type (apply #'append user-gist-clauses)))
-        (format t "Obtained user-action ~a for episode ~a~%" user-action ep-name1) ; DEBUGGING
-        (store-in-context `((^you ,user-action) * ,ep-name))
-        (when ep-name1
-          (store-in-context `((^you ,user-action) * ,ep-name1)))
+        (setq inferred-wffs (remove nil (mapcar #'form-inferences-from-gist-clause user-gist-clauses)))
 
-        ; Add turn to dialogue history
-        (store-turn '^you words user-gist-clauses user-ulfs (ds-dialogue-history *ds*)))
+        (format t "~%Inferred wffs ~a for episode ~a~%" inferred-wffs ep-name) ; DEBUGGING
 
-      ;`````````````````````
-      ; User: Paraphrasing
-      ;`````````````````````
-      ; Next we deal with gist clauses "attributed" to the user, in user
-      ; actions of form '(^you paraphrase.v '<gist clause>')' in a subplan
-      ; derived from a schema for handling complex user turns; i.e. we take the
-      ; view that the user paraphrased these gist clauses in his/her original, 
-      ; often "condensed", sentences; thus we can directly set the 'gist-clauses'
-      ; properties of the user action rather than applying 'form-gist-clauses-from-input'
-      ; again (as was done above for (^you say-to.v ^me '(...)) actions).
-      ((setq bindings (bindings-from-ttt-match '(^you paraphrase.v _!) wff))
-        (setq expr (get-single-binding bindings))
-        (cond
-          ((not (quoted-sentence? expr))
-            (format t "~%*** PARAPHRASE-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST" expr))
-          (t
-            ; Drop quote, leaving a singleton list of clauses
-            (setq user-gist-clauses (cdr expr))
-            (setf (get ep-name 'gist-clauses) user-gist-clauses))))
-
-      ;`````````````````````
-      ; User: Replying
-      ;`````````````````````
-      ; Nonprimitive (^you reply-to.v <eta action name>) action; we particularize this
-      ; action as a subplan, based on reading the user's input
-      ((setq bindings (bindings-from-ttt-match '(^you reply-to.v _!) wff))
-        ; If in *read-log* mode, finish processing the previous turn-tuple before moving on
-        (when *read-log*
-          (when (>= *log-ptr* 0)
-            (if (not *log-answer*) (setq *log-answer* '(PARSE FAILURE \.)))
-            (verify-log *log-answer* (nth *log-ptr* *log-contents*) *read-log*)
-            (setq *log-answer* nil))
-          (setq *log-ptr* (1+ *log-ptr*)))
-
-        (loop while (not input) do
-          
-          ;; Read user input
-          (setq input (cond
-            (*read-log* (if (>= *log-ptr* (length *log-contents*))
-              (read-words "bye")
-              (read-words (first (nth *log-ptr* *log-contents*)))))
-            (*live* (hear-words))
-            (t (read-words)))))
-
-        ;; (format t "~% input is equal to ~a ~%" input) ; DEBUGGING
-
-        (cond
-          ((null input) (setq new-subplan nil))
-          (t
-            ; Make sure that any final punctuation, such as ?, ., or !,
-            ; is separated from the final word (so as to not impair pattern matching)
-            (setq input (detach-final-punctuation input))
-
-            ;; (format t "~%echo of input: ~a" input) ; DEBUGGING
-
-            ; Create subplan
-            (setq new-subplan
-              (init-plan-from-episode-list
-                (list :episodes (episode-var) (create-say-to-wff input :reverse t)))))))
-
-      ;`````````````````````
-      ; User: Responding
-      ;`````````````````````
-      ; Currently, this is treated as a more "general" version of replying, and also
-      ; is aimed at more instantaneous verbal responses, i.e., occurring within some
-      ; seconds after the previous action.
-      ; TODO: ultimately, it seems like a response could be verbal or non-verbal (e.g.
-      ; a gesture, following an instruction, etc.). But this invites certain parallel
-      ; processing issues, so currently I keep these separate. Also, it seems like the
-      ; distinction between replying and responding is somewhat arbitrary currently...
-      ((setq bindings (bindings-from-ttt-match '(^you respond-to.v _!) wff))
-        ; Read user input (within some secs if live mode)
-        (setq input (if *live* (hear-words :delay *delay-respond-to.v*) (read-words)))
-        (format t "~% input is equal to ~a ~%" input) ; DEBUGGING
-
-        (cond
-          ((null input) (setq new-subplan nil))
-          (t
-            ; Make sure that any final punctuation, such as ?, ., or !,
-            ; is separated from the final word (so as to not impair pattern matching)
-            (setq input (detach-final-punctuation input))
-
-            ;; (format t "~%echo of input: ~a" input) ; DEBUGGING
-
-            ; Create subplan
-            (setq new-subplan
-              (init-plan-from-episode-list
-                (list :episodes (episode-var) (create-say-to-wff input :reverse t)))))))
-
-      ;`````````````````````
-      ; User: Acknowledging
-      ;`````````````````````
-      ; Same as replying, but allows for "tacit approval" (some secs of silence) as well.
-      ((setq bindings (bindings-from-ttt-match '(^you acknowledge.v _!) wff))
-        ; Read user input (within some secs if live mode)
-        (setq input (if *live* (hear-words :delay *delay-acknowledge.v*) (read-words)))
-        (format t "~% input is equal to ~a ~%" input) ; DEBUGGING
-
-        (cond
-          ((null input) (setq new-subplan nil))
-          (t
-            ; Make sure that any final punctuation, such as ?, ., or !,
-            ; is separated from the final word (so as to not impair pattern matching)
-            (setq input (detach-final-punctuation input))
-
-            ;; (format t "~%echo of input: ~a" input) ; DEBUGGING
-
-            ; Create subplan
-            (setq new-subplan
-              (init-plan-from-episode-list
-                (list :episodes (episode-var) (create-say-to-wff input :reverse t)))))))
-
+        ; Add each inferred wff to context (characterizing ep-name)
+        (dolist (inferred-wff inferred-wffs)
+          (store-contextual-fact-characterizing-episode inferred-wff ep-name))
+        
+      )
       ;````````````````````````````
-      ; User: Trying
+      ; User: Moving -> Trying
       ;````````````````````````````
-      ; User tries some reified action. Queries the BW system for whether or
-      ; not trying the action was successful.
-      ; TODO: needs to be made more general in the future.
-      ((setq bindings (bindings-from-ttt-match '(^you try1.v _!) wff))
-        (setq expr (get-single-binding bindings))
-        (setq user-try-ka-success (if *live* (get-user-try-ka-success)
-                                             (get-user-try-ka-success-offline)))
-        (format t "~% user-try-ka-success is equal to ~a ~%" user-try-ka-success) ; DEBUGGING
-        (when user-try-ka-success
+      ((setq bindings (bindings-from-ttt-match '(^you action-verb? _*) wff))
+        (setq expr (get-multiple-bindings bindings))
+
+        ;; (format t "~%Matched arguments = ~a" expr) ; DEBUGGING
+
+        ; Check context for any current goal step; get reified action from goal step
+        (setq goal-step (car (get-from-context '(?ka step1-toward.p ?goal))))
+        (setq ka (first goal-step))
+        
+        (format t "~%Found ka = ~a" ka) ; DEBUGGING
+
+        ; If the (ka ...) consists of an action verb, check arguments of action verb against arguments of
+        ; the matched action to check if the action successfully instantiates (ka ...)
+        (when (action-verb? (car (second ka)))
+          (when (and (equal (length (cdr (second ka))) (length expr))
+                     (every (lambda (x y) (equal x y)) (cdr (second ka)) expr))
+            (setq try-success t)))
+
+        ;; (format t "~%Match between ~a and ~a successful?: ~a~%" (cdr (second ka)) expr try-success) ; DEBUGGING
+
+        ; If the action was successful, store the following facts in context
+        (when try-success
           (store-in-context `((pair ^you ,ep-name) successful.a))
-          (store-in-context `((pair ^you ,ep-name) instance-of.p ,expr)))
+          (store-in-context `((pair ^you ,ep-name) instance-of.p ,ka)))
+        
+        ; Store (^you try1.v (ka ...)) as characterizing ep-name regardless
+        (store-contextual-fact-characterizing-episode `(^you try1.v ,ka) ep-name)
 
-        ; As a subplan of this, Eta should percieve the world (assuming a BW system).
-        (setq new-subplan
-          (init-plan-from-episode-list
-            (list :episodes (episode-var)
-              '(^me perceive-world.v |Blocks-World-System| nil ?perceptions)))))
+      )
+      ; Some other wff (currently nothing is done in this case)
+      (t nil))
 
-      ; Unrecognizable step
-      (t (format t "~%*** UNRECOGNIZABLE STEP ~a " wff) (error))
-    )
-
-    ; Return new subplan (possibly nil) and any variable bindings
-    (list var-bindings new-subplan)
-
-)) ; END observe-next-user-action
+)) ; END interpret-perception-in-context
 
 
 
@@ -1236,7 +1419,7 @@
 
 
 
-(defun plan-reaction-to (user-gist-clauses user-ulf)
+(defun plan-reaction-to (user-gist-clauses user-ulf ep-name)
 ;````````````````````````````````````````````````````````````````
 ; Starting at a top-level choice tree root, choose an action or
 ; subschema suitable for reacting to 'user-gist-clauses' (which
@@ -1265,7 +1448,7 @@
 ; in light of the meaning of these reactive comments...More thought
 ; required.
 ;
-  (let (user-gist-words choice tagged-words wff schema-name args)
+  (let (user-gist-words choice tagged-words wff schema-name args eta-gist-clause keys)
     
     (if (null user-gist-clauses)
       (return-from plan-reaction-to nil))
@@ -1310,13 +1493,32 @@
 
     (if (null choice) (return-from plan-reaction-to nil))
 
-    ; 'choice' may be an instantiated reassembly pattern (prefaced by
-    ; directive :out), or the name of a schema (to be initialized).
+    ; 'choice' may be an instantiated reassembly pattern corresponding to a
+    ; gist-clause (directive :gist), to be contextually paraphrased by Eta
+    ; as a subplan, or a direct output (directive :out) to be spoken to the
+    ; user as a subplan. Otherwise it may be the name of a schema (to be initialized).
     ; In the first case we create a 1-step subplan whose action is of
-    ; the type (^me say-to.v ^you '(...)), where the verbal output is
-    ; adjusted by applying 'modify-response' to the reassembly patterns.
-    ; In the second case, we initiate a multistep plan.
+    ; the type (^me paraphrase-to.v ^you '(...)) or (^me say-to.v ^you '(...)),
+    ; respectively, where in the latter case the verbal output is adjusted by
+    ; applying 'modify-response' to the reassembly patterns.
+    ; In the case of a schema, we initiate a multistep plan.
     (cond
+      ; :gist directive
+      ((eq (car choice) :gist)
+        (cond
+          ((atom (first (cdr choice)))
+            (setq eta-gist-clause (cdr choice)))
+          (t
+            (setq eta-gist-clause (first (cdr choice)))
+            (setq keys (second (cdr choice)))))
+        ;; (format t "~%chosen Eta gist clause = ~a~%" eta-gist-clause) ; DEBUGGING
+        ; Store Eta's gist-clause under top-level episode
+        (store-gist eta-gist-clause keys (ds-gist-kb-eta *ds*))
+        (store-gist-clause-characterizing-episode eta-gist-clause ep-name '^me '^you)
+        ; Add paraphrase-to.v subplan
+        (init-plan-from-episode-list
+          (list :episodes (episode-var) `(^me paraphrase-to.v ^you (quote ,eta-gist-clause)))))
+
       ; :out directive
       ((eq (car choice) :out)
         (init-plan-from-episode-list
@@ -1507,6 +1709,7 @@
 
 ;; (defun form-spatial-representation ()
 ;; ;``````````````````````````````````````
+;; ; TODO: now deprecated; will delete in the future.
 ;; ; Forms a spatial representation from the currently chosen BW-concept.n
 ;; ; (assuming such a choice has actually been made at this point), through
 ;; ; sending the BW system the chosen concept schema and receiving a goal
@@ -1541,22 +1744,24 @@
 
 
 
-(defun observe-step-towards-goal (goal-rep)
-;`````````````````````````````````````````````
-; Observes next step towards the currently active BW goal-schema,
-; through reading IO file. Store fact in context.
-; TODO: might need changing - see note on 'find4.v' implementation.
-; Currently, the (?x step1-toward.p ?goal-rep) step is hard-coded
-; (based on the value of ?goal-rep extracted from the lambda function
-; in the find4.v action), which it shouldn't be.
-;
-  (let (step)
-    (setq step (if *live* (get-planner-input)
-                          (get-planner-input-offline)))
-    (remove-from-context `(?x step1-toward.p ,goal-rep))
-    (if step
-      (store-in-context `(,step step1-toward.p ,goal-rep))))
-) ; END observe-step-toward-goal
+;; (defun observe-step-towards-goal (goal-rep)
+;; ;`````````````````````````````````````````````
+;; ; TODO: now deprecated; will delete in the future.
+;; ; Observes next step towards the currently active BW goal-schema,
+;; ; through reading IO file. Store fact in context.
+;; ; TODO: might need changing - see note on 'find4.v' implementation.
+;; ; Currently, the (?x step1-toward.p ?goal-rep) step is hard-coded
+;; ; (based on the value of ?goal-rep extracted from the lambda function
+;; ; in the find4.v action), which it shouldn't be.
+;; ;
+;;   (let (step)
+;;     (setq step (if (member '|Spatial-Reasoning-System| *registered-systems-specialist*)
+;;                     (get-planner-input)
+;;                     (get-planner-input-offline)))
+;;     (remove-from-context `(?x step1-toward.p ,goal-rep))
+;;     (if step
+;;       (store-in-context `(,step step1-toward.p ,goal-rep))))
+;; ) ; END observe-step-toward-goal
 
 
 
@@ -1571,12 +1776,6 @@
 ; some adjective modifier, e.g.,
 ; (random.a (:l (?x) (and (?x member-of.p ?cc)
 ;                         (not (^you understand.v ?x)))))
-; The fact that some individual was chosen is also stored in context.
-; NOTE: does this make sense? i.e., should something being chosen be
-; stored in dialogue context? If the choosing occurs as part of a loop,
-; how is something "unchosen" at the end of the loop? Currently I do that
-; here, so basically only one (^me choose.v ?x) fact can be active in
-; context at once, but it's pretty ugly.
 ;
   (let (sk-name sk-const lambda-descr modifier candidates)
     (setq sk-const (skolem (implode (cdr (explode sk-var)))))
@@ -1591,9 +1790,6 @@
       ((equal modifier 'random.a)
         (nth (random (length candidates)) candidates))
       (t (car candidates))))
-    ; Store fact that sk-name chosen in context (removing any existing choice).
-    (remove-from-context '(^me choose.v ?x))
-    (store-in-context `(^me choose.v ,sk-name))
     sk-name)
 ) ; END choose-variable-restrictions
 
@@ -1607,15 +1803,13 @@
 ; If so, check what facts, if any, are stored in gist-kb-user under 
 ; the 'topic-keys' obtained as the value of that property of
 ; 'eta-action-name'. If there are such facts, check if they
-; seem to provide an answer to the gist-version of the question,
-; which will be the last gist clause stored under property
-; 'gist-clauses' of 'eta-action-name'.
+; seem to provide an answer to the gist-version of the question.
 ; NOTE: modified to check if gist clause contains question rather than surface
 ; sentence (B.K. 4/17/2020)
 ;
   (let (gist-clauses topic-keys facts)
     ;; (format t "~% ****** input sentence: ~a~%" sentence)
-    (setq gist-clauses (get eta-action-name 'gist-clauses))
+    (setq gist-clauses (get-gist-clauses-characterizing-episode eta-action-name))
     ;; (format t "~% ****** gist clauses are ~a **** ~%" gist-clauses)
     ;; (format t "~% ****** quoted question returns ~a **** ~%" (some #'question? gist-clauses)) ; DEBUGGING
     (if (not (some #'question? gist-clauses))
@@ -1657,6 +1851,50 @@
     (if (null facts) (return-from obviated-action nil))
   facts)
 ) ; END obviated-action
+
+
+
+
+
+(defun form-surface-utterance-from-gist-clause (gist-clause prior-gist-clause)
+;``````````````````````````````````````````````````````````````````````````````
+; Given a gist-clause by Eta, elaborate it into a surface utterance using the
+; context provided by the prior gist-clause using choice trees.
+;
+; First this uses Eta's gist-clause to select a relevant subtree for response
+; generation, then it uses the context of the previous gist-clause to select
+; the surface utterance.
+;
+  (let (tagged-gist-clause choice tagged-prior-gist-clause relevant-tree utterance)
+
+    ; Get the relevant pattern transduction tree given Eta's gist clause
+    ;````````````````````````````````````````````````````````````````````````````````````````````````
+    ;; (format t "~% gist-clause = ~a" gist-clause) ; DEBUGGING
+    (setq tagged-gist-clause (mapcar #'tagword gist-clause))
+    ;; (format t "~% tagged gist clause = ~a" tagged-gist-clause) ; DEBUGGING
+    (setq choice (choose-result-for tagged-gist-clause '*gist-clause-trees-for-response*))
+
+    ; Get the surface utterance using context (if applicable)
+    ;````````````````````````````````````````````````````````````````````````````````````````````````
+    (cond
+      ; :out directive; output utterance directly without using context
+      ((eq (car choice) :out)
+        (setq utterance (cdr choice)))
+
+      ; :subtrees directive; use first subtree to select response based on context
+      ((eq (car choice) :subtrees)
+        (setq relevant-tree (cadr choice))
+        ;; (format t "~% relevant tree = ~a" relevant-tree) ; DEBUGGING   
+        ;; (format t "~% prior-gist-clause = ~a" prior-gist-clause) ; DEBUGGING
+        (setq tagged-prior-gist-clause (mapcar #'tagword prior-gist-clause))
+        ;; (format t "~% tagged gist clause = ~a" tagged-prior-gist-clause) ; DEBUGGING
+        (setq utterance (cdr
+          (choose-result-for tagged-prior-gist-clause relevant-tree)))))
+
+    ;; (format t "~% utterance = ~a" utterance) ; DEBUGGING   
+
+    utterance
+)) ; END form-surface-utterance-from-gist-clause
 
 
 
@@ -1711,6 +1949,7 @@
     (setq sentences (split-sentences words))
     (dolist (sentence sentences)
       (let ((tagged-sentence (mapcar #'tagword sentence)))
+        ;; (format t "~% tagged sentence = ~a" tagged-sentence) ; DEBUGGING
         (setq clause (cdr (choose-result-for tagged-sentence specific-tree)))
         (when (atom (car clause)) (setq clause (list clause))) ; in case no topic-key
         (when clause
@@ -1728,9 +1967,7 @@
         (store-gist (car clause) keys (ds-gist-kb-user *ds*))
         (push (car clause) facts)))
 
-    ; The results obtained will be stored as the 'gist-clauses'
-    ; property of the name of the user input. So, 'facts' should
-    ; be a concatenation of the above results in the order in
+    ; 'facts' should be a concatenation of the above results in the order in
     ; which they occur in the user's input; in reacting, Eta will
     ; pay particular attention to the first clause, and any final question.
     (setq gist-clauses (reverse facts))
@@ -1780,61 +2017,62 @@
 
 
 
-(defun form-user-action-type (clause)
-;```````````````````````````````````````
-; Given a gist clause, find a corresponding 'action type'
-; (i.e., a predicate like say-bye.v) using hierarchical
-; pattern transduction.
+(defun form-inferences-from-gist-clause (clause)
+;``````````````````````````````````````````````````
+; Infer an additional wff from a user gist-clause using pattern transduction.
+; TODO: currently, this only supports one inferred wff per gist-clause, but should
+; be able to support multiple.
 ;
-  (let (tagged-clause action-type)
+  (let (tagged-clause inferred-wff)
     (setq tagged-clause (mapcar #'tagword clause))
-    (setq action-type (choose-result-for tagged-clause '*clause-action-type-tree*))
-  action-type)
-) ; END form-user-action-type
+    (setq inferred-wff (choose-result-for tagged-clause '*clause-inference-tree*))
+  inferred-wff)
+) ; END form-inferences-from-gist-clause
 
 
 
 
 
-(defun commit-perceptions-to-memory (perceptions user-ulf)
-;``````````````````````````````````````````````````````````
-; Given perceptions by the system (e.g., block moves) and/or a
-; query ULF, store these facts in short-term memory (context).
-; The facts are deindexed and stored in context as, e.g.,
-; ((you.pro ((past move.v) |B1|)) @ NOW1), though the indexical
-; formula is also stored hashed on the time NOW1.
-; TODO: as indicated, many aspects of this will need changing.
-; I'm also not sure that such historical temporal facts should
-; be stored in short-term memory/context at all, versus some
-; form of long-term memory.
-;
-  ; Store move.v facts in context, deindexed at the current time
-  ; TODO: COME BACK TO THIS
-  ; It seems like this should be somehow an explicit store-in-context step in schema, but which facts are
-  ; indexical? Should e.g. past moves in fact be stored in memory rather than context?
-  (let ((action-perceptions (remove-if-not #'verb-phrase? perceptions)))
-    (when action-perceptions
-      (setq *time-prev* *time*)
-      (mapcar (lambda (perception)
-          (let ((perception1 (list perception '@ *time*)))
-            (update-time)
-            (store-in-context perception1)
-          ))
-        action-perceptions)))
+;; (defun commit-perceptions-to-memory (perceptions user-ulf)
+;; ;``````````````````````````````````````````````````````````
+;; ; TODO: deprecated, remove
+;; ; Given perceptions by the system (e.g., block moves) and/or a
+;; ; query ULF, store these facts in short-term memory (context).
+;; ; The facts are deindexed and stored in context as, e.g.,
+;; ; ((you.pro ((past move.v) |B1|)) @ NOW1), though the indexical
+;; ; formula is also stored hashed on the time NOW1.
+;; ; TODO: as indicated, many aspects of this will need changing.
+;; ; I'm also not sure that such historical temporal facts should
+;; ; be stored in short-term memory/context at all, versus some
+;; ; form of long-term memory.
+;; ;
+;;   ; Store move.v facts in context, deindexed at the current time
+;;   ; TODO: COME BACK TO THIS
+;;   ; It seems like this should be somehow an explicit store-in-context step in schema, but which facts are
+;;   ; indexical? Should e.g. past moves in fact be stored in memory rather than context?
+;;   (let ((action-perceptions (remove-if-not #'verb-phrase? perceptions)))
+;;     (when action-perceptions
+;;       (setq *time-prev* *time*)
+;;       (mapcar (lambda (perception)
+;;           (let ((perception1 (list perception '@ *time*)))
+;;             (update-time)
+;;             (store-in-context perception1)
+;;           ))
+;;         action-perceptions)))
 
-  ; Store ULF of user utterance in context, deindexed at the current time
-  ; TODO: COME BACK TO THIS
-  ; This should probably be done elsewhere (e.g. at the time of Eta processing the say-to.v episode),
-  ; but then the utterance would come temporally before any block moves, whereas it should be the other
-  ; way around. The perceive-world.v action in general needs to be rethought (since really observing a
-  ; user say-to.v action, much like a move.v action or any other action, IS a perceive world action).
-  ; Update Eta's current time
-  (when user-ulf
-    (let ((utterance-prop `((^you ((past ask.v) ,user-ulf)) @ ,*time*)))
-      (update-time)
-      (store-in-context utterance-prop)
-    ))
-) ; END commit-perceptions-to-memory
+;;   ; Store ULF of user utterance in context, deindexed at the current time
+;;   ; TODO: COME BACK TO THIS
+;;   ; This should probably be done elsewhere (e.g. at the time of Eta processing the say-to.v episode),
+;;   ; but then the utterance would come temporally before any block moves, whereas it should be the other
+;;   ; way around. The perceive-world.v action in general needs to be rethought (since really observing a
+;;   ; user say-to.v action, much like a move.v action or any other action, IS a perceive world action).
+;;   ; Update Eta's current time
+;;   (when user-ulf
+;;     (let ((utterance-prop `((^you ((past ask.v) ,user-ulf)) @ ,*time*)))
+;;       (update-time)
+;;       (store-in-context utterance-prop)
+;;     ))
+;; ) ; END commit-perceptions-to-memory
 
 
 
@@ -1875,15 +2113,15 @@
 ; This is just the top-level call to 'choose-result-for', with
 ; no prior match providing a value of 'parts', i.e., 'parts' = nil;
 ; this is to enable tracing of just the top-level calls
-  (choose-result-for1 tagged-clause nil rule-node)
+  (choose-result-for1 tagged-clause nil rule-node nil)
 ) ; END choose-result-for
 
 
 
 
 
-(defun choose-result-for1 (tagged-clause parts rule-node)
-;`````````````````````````````````````````````````````````
+(defun choose-result-for1 (tagged-clause parts rule-node visited-subtrees)
+;``````````````````````````````````````````````````````````````````````````
 ; This is a generic choice-tree search program, used both for
 ; (i) finding gist clauses in user inputs (starting with selection
 ; of appropriate subtrees as a function of Eta's preceding
@@ -2016,6 +2254,9 @@
 ; in the value pattern are interpreted as references to parts
 ; obtained from the prior match.) 
 ;
+; The function maintains a list of visited subtrees
+; (for a particular path) to avoid entering infinite recursion.
+;
 
   ; First make sure we have the lexical code needed for ULF computation
   (if (not (fboundp 'eval-lexical-ulfs)) (load "eval-lexical-ulfs.lisp"))
@@ -2033,7 +2274,7 @@
             (< *count* (+ (get rule-node 'time-last-used)
                           (get rule-node 'latency))))
       (return-from choose-result-for1
-        (choose-result-for1 tagged-clause parts (get rule-node 'next))))
+        (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees)))
 
     ;; (format t "~% ***1*** Tagwords = ~a ~%" tagged-clause) ; DEBUGGING
     ;; (format t "~% =====2==== Pattern/output to be matched in rule ~a = ~%  ~a and directive = ~a" rule-node pattern directive) ; DEBUGGING
@@ -2054,15 +2295,15 @@
         ; Pattern does not match 'tagged-clause', search siblings recursively
         (if (null newparts)
           (return-from choose-result-for1
-            (choose-result-for1 tagged-clause parts (get rule-node 'next))))
+            (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees)))
 
         ; Pattern matched, try to obtain recursive result from children
         (setq result
-          (choose-result-for1 tagged-clause newparts (get rule-node 'children)))
+          (choose-result-for1 tagged-clause newparts (get rule-node 'children) visited-subtrees))
 
         (if result (return-from choose-result-for1 result)
                    (return-from choose-result-for1
-                      (choose-result-for1 tagged-clause parts (get rule-node 'next)))))
+                      (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees))))
 
       ;`````````````````````
       ; :subtree directive
@@ -2071,8 +2312,14 @@
       ; root name, given as 'pattern'
       ((eq directive :subtree)
         (setf (get rule-node 'time-last-used) *count*)
-        (return-from choose-result-for1
-          (choose-result-for1 tagged-clause parts pattern)))
+        (cond
+          ; If subtree was already visited, skip rule
+          ((member pattern visited-subtrees)
+            (return-from choose-result-for1
+              (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees)))
+          ; Otherwise, go to subtree and add subtree to list of visited subtrees
+          (t (return-from choose-result-for1
+            (choose-result-for1 tagged-clause parts pattern (cons pattern visited-subtrees))))))
 
       ;````````````````````````````
       ; :subtree+clause directive
@@ -2088,7 +2335,8 @@
         (setq newclause (instance (second pattern) parts))
         (setq new-tagged-clause (mapcar #'tagword newclause))
         (return-from choose-result-for1
-          (choose-result-for1 new-tagged-clause nil (car pattern))))
+          (choose-result-for1 new-tagged-clause nil (car pattern)
+            (remove-duplicates (cons (car pattern) visited-subtrees)))))
 
       ;````````````````````````
       ; :ulf-recur directive
@@ -2154,7 +2402,7 @@
       ((eq directive :ulf-coref)
         (setq newclause (instance (second pattern) parts))
         (setq new-tagged-clause (mapcar #'tagword newclause))
-        (setq result (choose-result-for1 new-tagged-clause nil (car pattern)))
+        (setq result (choose-result-for1 new-tagged-clause nil (car pattern) visited-subtrees))
         (if (and result (not (equal (car result) :out)))
           (setq result (coref-ulf result)))
         (return-from choose-result-for1 result))

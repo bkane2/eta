@@ -53,8 +53,8 @@
         (mapcar (lambda (prop) (add-certainty prop nil))
           (find-relation-to-next-time answer coords))
         ; Otherwise, get spatial relations
-        (mapcan (lambda (time)
-          (mapcar (lambda (prop) (add-certainty prop time)) (get time '@))) answer))
+        (apply #'append (mapcar (lambda (time)
+          (mapcar (lambda (prop) (add-certainty prop time)) (get time '@))) answer)))
       :test (lambda (x y) (equal (car x) (car y)))))
 ) ; END recall-answer
 
@@ -77,9 +77,9 @@
     ; If next turn has some move action, return a relation to that move, otherwise just return the original time(s).
     (cond
       (moved-before-block
-        (list `(before.ps (I.pro ((past move.v) ,moved-before-block)))))
+        (list `(before.ps (you.pro ((past move.v) ,moved-before-block)))))
       (moved-after-block
-        (list `(after.ps (I.pro ((past move.v) ,moved-after-block)))))
+        (list `(after.ps (you.pro ((past move.v) ,moved-after-block)))))
       (t times)))
 ) ; END find-relation-to-next-time
 
@@ -888,7 +888,7 @@
 ; Adds certainty to a relation based on time.
 ; NOTE: currently always set to 1.0 - see note on 'apply-to-times' func.
 ;
-  (list rel 1.0)
+  `((that ,rel) certain-to-degree 1.0)
 ) ; END add-certainty
 
 

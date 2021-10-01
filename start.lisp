@@ -4,49 +4,67 @@
 ;; Starts Eta using the configuration specified in config.lisp
 ;;
 
-(load "./config.lisp")
+; Load the config file corresponding to the session's agent-id.
+; TODO: could modify this to auto-generate a default config file if one doesn't exist for the agent-id.
+(load
+  (if (and (boundp '*agent-id*) *agent-id* (or (stringp *agent-id*) (numberp *agent-id*))
+           (probe-file (format nil "config/~a.lisp" *agent-id*)))
+    (format nil "config/~a.lisp" *agent-id*)
+    (format nil "config/config.lisp")))
+
+
+(defun get-io-path (fname)
+;``````````````````````````
+; Yields IO path for avatar instance.
+;
+  (concatenate 'string *io-path* fname)
+) ; END get-io-path
 
 
 (defun clean-io-files ()
 ;``````````````````````````
-; Overwrites all io files used by Eta with blank files
+; Overwrites all io files used by Eta with blank files.
 ;
   (ensure-directories-exist "./io/")
+  (ensure-directories-exist *io-path*)
+  (ensure-directories-exist (get-io-path "in/"))
+  (ensure-directories-exist (get-io-path "out/"))
+  (ensure-directories-exist (get-io-path "conversation-log/"))
   (when *read-log-mode*
     (ensure-directories-exist "./logs/")
     (ensure-directories-exist "./logs/logs/")
     (ensure-directories-exist "./logs/logs_out/"))
 
+  ; Ensure all standard input & output files for registered subsystems exist and are empty
+  ; Note: input files only created for non-terminal systems,
+  ;       output files are only created for non-terminal and non-audio systems
+  (mapcar (lambda (system)
+  (let ((fname-in (if (not (member system '(|Terminal|)))
+                  (concatenate 'string (get-io-path "in/") (string system) ".lisp")))
+        (fname-out (if (not (member system '(|Terminal| |Audio|)))
+                  (concatenate 'string (get-io-path "out/") (string system) ".lisp"))))
+    (if fname-in
+    (with-open-file (outfile fname-in :direction :output :if-exists
+                                      :supersede :if-does-not-exist :create)))
+    (if fname-out
+    (with-open-file (outfile fname-out :direction :output :if-exists
+                                      :supersede :if-does-not-exist :create)))))
+  (append *subsystems-perception* *subsystems-specialist*))
+
+  ; Delete the contents of conversation-log files
+  (with-open-file (outfile (get-io-path "conversation-log/text.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  (with-open-file (outfile (get-io-path "conversation-log/gist.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  (with-open-file (outfile (get-io-path "conversation-log/ulf.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+
   ; Delete the content of the sessionInfo.lisp file after reading
-  (with-open-file (outfile "./io/sessionInfo.lisp" :direction :output :if-exists
-                                                   :supersede :if-does-not-exist :create))
+  (with-open-file (outfile (get-io-path "sessionInfo.lisp")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
   ; Delete the content of output.txt, if it exists, otherwise create
-  (with-open-file (outfile "./io/output.txt" :direction :output :if-exists 
-                                             :supersede :if-does-not-exist :create))
-  ; Delete the content of input.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/input.lisp" :direction :output :if-exists 
-                                             :supersede :if-does-not-exist :create))
-  ; Delete the content of ulf.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/ulf.lisp" :direction :output :if-exists 
-                                           :supersede :if-does-not-exist :create))
-  ; Delete the content of perceptions.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/perceptions.lisp" :direction :output :if-exists 
-                                              :supersede :if-does-not-exist :create))
-  ; Delete the content of answer.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/answer.lisp" :direction :output :if-exists 
-                                              :supersede :if-does-not-exist :create))
-  ; Delete the content of goal-request.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/goal-request.lisp" :direction :output :if-exists 
-                                                    :supersede :if-does-not-exist :create))
-  ; Delete the content of goal-rep.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/goal-rep.lisp" :direction :output :if-exists 
-                                                :supersede :if-does-not-exist :create)) 
-  ; Delete the content of planner-input.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/planner-input.lisp" :direction :output :if-exists 
-                                                     :supersede :if-does-not-exist :create))    
-  ; Delete the content of user-try-ka-success.lisp, if it exists, otherwise create
-  (with-open-file (outfile "./io/user-try-ka-success.lisp" :direction :output :if-exists 
-                                                           :supersede :if-does-not-exist :create))                                                                           
+  (with-open-file (outfile (get-io-path "output.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))                                                                      
 ) ; END clean-io-files
 
 
@@ -78,12 +96,25 @@
 ) ; END load-avatar-files
 
 
+
+
+
+; Set IO path based on agent ID (using basic path if no ID is defined)
+(defparameter *io-path*
+  (if (and (boundp '*agent-id*) *agent-id* (or (stringp *agent-id*) (numberp *agent-id*)))
+    (format nil "./io/~a/" *agent-id*)
+    (format nil "./io/")))
+
+
+
+
+
 ; If live mode, load *user-id* from sessionInfo file (if it exists).
 ; Otherwise, manually set *user-id* (or prompt user for input).
 ;````````````````````````````````````````````````````````````````
 (defparameter *user-id* nil)
-(if (and *live-mode* (probe-file "./io/sessionInfo.lisp"))
-  (load "./io/sessionInfo.lisp"))
+(if (probe-file (get-io-path "sessionInfo.lisp"))
+  (load (get-io-path "sessionInfo.lisp")))
 (when (not *user-id*)
   (defparameter *user-id* "_test")
   ;; (format t "~%~%Enter user-id ~%")
@@ -104,9 +135,9 @@
   ; Run Eta (safe mode)
   ;`````````````````````````
   (*safe-mode*
-    (handler-case (eta nil *live-mode* *perceptive-mode* *responsive-mode*)
+    (handler-case (eta nil *subsystems-perception* *subsystems-specialist* *emotion-tags* *opportunity-tags* *dependencies*)
       (error (c)
-        (error-message "Execution of Eta failed due to an internal error." *live-mode*)
+        (error-message "Execution of Eta failed due to an internal error.")
         (values 0 c))))
 
   ; Run Eta (read-log mode)
@@ -124,11 +155,11 @@
         (format t "==:: READING LOG ~a ::==~%" log)
         (load "load-eta.lisp")
         (load-avatar-files *avatar*)
-        (eta log nil t t)) logs)))
+        (eta log *subsystems-perception* *subsystems-specialist* *emotion-tags* *opportunity-tags* *dependencies*)) logs)))
 
   ; Run Eta
   ;`````````````````````````
-  (t (eta nil *live-mode* *perceptive-mode* *responsive-mode*)))
+  (t (eta nil *subsystems-perception* *subsystems-specialist* *emotion-tags* *opportunity-tags* *dependencies*)))
 
 
 ; Write user gist clauses to file

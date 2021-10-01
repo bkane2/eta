@@ -63,9 +63,10 @@
 )
 
 :goals (
-  ; Currently not handled by Eta
-  ?g1 (^me want1.v (that (^you understand1.v ?c)))
-  ?g2 (^you want1.v (that ((^me teach-BW-concept-to.v ^you) @ ^now)))
+  ; TODO: now that this is (somewhat) supported, should the schema be modified to
+  ; use goal-driven replanning?
+  ;; ?g1 (^me want1.v (that (^you understand1.v ?c)))
+  ;; ?g2 (^you want1.v (that ((^me teach-BW-concept-to.v ^you) @ ^now)))
 )
 
 
@@ -217,7 +218,7 @@
 )
 
 
-:event-relations (
+:episode-relations (
   ; Not included yet
 )
 
@@ -228,7 +229,11 @@
 
 
 :certainties (
-  ; Not included yet
+  !c1 (!e16 0.3)
+  !c2 (!e21 0.3)
+  !c3 (!e51 0.3)
+  !c4 (!e8 0.4)
+  !c5 (!e26 0.4)
 )
 
 

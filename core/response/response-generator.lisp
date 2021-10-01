@@ -21,10 +21,14 @@
 
 (defun generate-response (query-ulf relations)
 ; `````````````````````````````````````````````
-; Generates a natural language response, given a query ULF and a list of satisfying relations+certainties.
+; Generates a natural language response, given a query ULF and a list of satisfying relations with
+; certainties (of form ((that ?rel) certain-to-degree ?cert)).
 ; In the case where relations is nil, we rely on presupposition handling to generate the appropriate response.
 ;
-  (let ((query-type (get-query-type query-ulf)) ans-tuple ans-ulf output-ulf uncertain-flag poss-ans)
+  (let ((query-type (get-query-type query-ulf)) ans-tuple ans-ulf output-ulf uncertain-flag poss-ans response)
+
+    ; Simplify format of relations to (?rel ?cert) pairs
+    (setq relations (mapcar (lambda (relation) (list (second (first relation)) (third relation))) relations))
 
     ; Check if poss-ques, if so set flag to true (to add a hedge later on) and set ulf to remainder
     (when (poss-ques? query-ulf)
@@ -76,7 +80,10 @@
         (ttt:apply-rule `(/ descr-flag? ,ans-ulf) query-ulf))
       ; Query is TIME type
       ((equal query-type 'TIME)
-        (ttt:apply-rule `(/ time-flag? ,ans-ulf) query-ulf)))))
+        (ttt:apply-rule `(/ time-flag? ,ans-ulf) query-ulf))
+      ; Query is EXPLANATION type
+      ((equal query-type 'EXPLANATION)
+        (ttt:apply-rule `(/ explanation-flag? ,ans-ulf) query-ulf)))))
 
     ; When answer is uncertain, append an adverb indicating uncertainty to answer
     (when uncertain-flag
@@ -96,10 +103,12 @@
     (format t "output ULF: ~a~%" output-ulf) ; DEBUGGING
 
     ; Convert output ULF to an english string and output (or output an error if the output ULF is nil)
-    (if output-ulf
-      (append (if poss-ans '(You are not sure that you understood the question correctly \, but))
+    (setq response (if output-ulf
+      (append (if poss-ans '(I\'m not sure that I understood the question correctly \, but))
         (ulf-to-english (normalize-output output-ulf)))
-      '(Sorry \, you was unable to find an object that satisfies given constraints \, please rephrase in a simpler way \.)))
+      '(Sorry \, I was unable to find an object that satisfies given constraints \, please rephrase in a simpler way \.)))
+
+    (list response output-ulf))
 ) ; END generate-response
 
 
@@ -134,6 +143,7 @@
     ((ttt:match-expr '(^* ident-flag?) ulf) 'IDENT)
     ((ttt:match-expr '(^* count-flag?) ulf) 'COUNT)
     ((ttt:match-expr '(^* exist-flag?) ulf) 'EXIST)
+    ((ttt:match-expr '(^* explanation-flag?) ulf) 'EXPLANATION)
     (t 'CONFIRM))
 ) ; END get-query-type
 
@@ -182,9 +192,12 @@
       ; Query is TIME type
       ((equal query-type 'TIME)
         (form-ans-time ans-set))
+      ; Query is EXPLANATION type
+      ((equal query-type 'EXPLANATION)
+        (form-ans-explanation ans-set))
       ; Other
       (t
-        '(Sorry \, you was unable to find an object that satisfies given constraints \, please rephrase in a simpler way \.))))
+        '(Sorry \, I was unable to find an object that satisfies given constraints \, please rephrase in a simpler way \.))))
 
     (list ans uncertain-flag))
 ) ; END form-ans
@@ -195,7 +208,9 @@
 ; For converting a ULF response to a surface form response via the ulf2english library.
 ;
   ;; (format t "converting to english: ~a~%" ulf) ; DEBUGGING
-  (str-to-output (ulf2english:ulf2english ulf :add-commas t))
+  (if *dependencies*
+    (str-to-output (ulf2english:ulf2english ulf :add-commas t))
+    '(Dependencies disabled \.))
 ) ; END ulf-to-english
 
 
@@ -204,7 +219,9 @@
 ; Generates presupposition for query ULF (if any), and creates a response to that
 ; presupposition by negating it.
 ;
-  (let ((presupposition (ulf-pragmatics:get-wh-question-presupposition ulf :calling-package *package*)))
+  (let ((presupposition nil))
+    (if *dependencies*
+      (setq presupposition (ulf-pragmatics:get-wh-question-presupposition ulf :calling-package *package*)))
     (format t "presupposition: ~a~%" presupposition) ; DEBUGGING
     (negate-wh-question-presupposition (normalize-wh-question-presupposition (remove-adv-e presupposition))))
 ) ; END respond-to-presupposition
@@ -392,6 +409,26 @@
 ) ; END form-ans-time
 
 
+(defun form-ans-explanation (relations)
+; ``````````````````````````````````````
+; Creates a ULF for an explanation query from a list of factor relations, by converting
+; relations to copular expressions and adding 'also.cc' conjunctions (if necessary).
+;
+; e.g. (form-ans-explanation '(((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n)))
+;                              ((the.d (|Twitter| block.n)) on.p (the.d (|McDonald's| block.n))) ))
+;       => (because.ps (((the.d (|Twitter| block.n)) ((pres be.v) (on.p (the.d (|Texaco| block.n))))) also.cc
+;                       ((the.d (|Twitter| block.n)) ((pres be.v) (on.p (the.d (|McDonald's| block.n)))))))
+;
+; e.g. (form-ans-explanation '(((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n)))))
+;      => (because.ps ((the.d (|Twitter| block.n)) ((pres be.v) (on.p (the.d (|Texaco| block.n))))))
+;
+  ; NOTE: uses 'also' connective so that we can later cleanly split off factors
+  ;       when generating a response from the gist clause.
+  (list 'because.ps (make-conjunction (mapcar #'prop-to-cop relations) :conj 'ALSO.CC))
+  ;; (list 'because.ps (make-set relations))
+) ; END form-ans-explanation
+
+
 (defun compare-certainty (relation)
 ; ```````````````````````````````````
 ; Compares certainty of relation to the global threshold parameter.
@@ -550,6 +587,9 @@
 
 (defun color-flag? (p)
   (ttt:match-expr '(OF.P (WHAT.D (! COLOR.N (PLUR COLOR.N)))) p))
+
+(defun explanation-flag? (p)
+  (ttt:match-expr '(! WHY.ADV-S) p))
 
 (defun yn-word? (p)
   (member p '(BE.V DO.AUX-S DO.AUX-V CAN.AUX-S CAN.AUX-V)))

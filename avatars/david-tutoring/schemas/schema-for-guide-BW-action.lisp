@@ -92,6 +92,10 @@
 
 )
 
+:certainties (
+  !c1 (!e3 0.4)
+)
+
 )) ; END defparameter *guide-BW-action*
 
 

@@ -325,7 +325,7 @@
 ; Checks if a ULF is an action verb.
 ;
   (if (and (atom ulf)
-    (member ulf '(move.v put.v change.v pick_up.v rotate.v place.v))) t nil)
+    (member ulf '(move.v make.v put.v change.v pick_up.v rotate.v place.v))) t nil)
 ) ; END action-verb?
 
 
@@ -454,7 +454,9 @@
 ;`````````````````````````````
 ; Applies the sub macro to a ULF.
 ;
-  (nth-value 1 (ulf-lib:apply-sub-macro ulf :calling-package *package*))
+  (if *dependencies*
+    (nth-value 1 (ulf-lib:apply-sub-macro ulf :calling-package *package*))
+    ulf)
 ) ; END apply-sub-macro
 
 
@@ -507,12 +509,12 @@
 
 (defun time-adverbial-phrase? (ulf)
 ;```````````````````````````````````
-; Checks if a ULF is a time adverbial phrase, i.e. either (adv-e ...), (word.ps ...),
-; or (word.mod-a (word.ps ...))
+; Checks if a ULF is a time adverbial phrase, i.e. either (adv-e ...), (temporal-word.ps ...),
+; or (word.mod-a (temporal-word.ps ...))
 ;
   (or
-    (ttt:match-expr '(mod-a? (sent-prep? _!)) ulf)
-    (ttt:match-expr '(sent-prep? _!) ulf)
+    (ttt:match-expr '(mod-a? (temporal-sent-prep? _!)) ulf)
+    (ttt:match-expr '(temporal-sent-prep? _!) ulf)
     (ttt:match-expr '(adv-e _!) ulf))
 ) ; END time-adverbial-phrase?
 
@@ -595,6 +597,14 @@
 ;
   (and (atom ulf) (equal (second (sym-split ulf 3)) '.PS))
 ) ; END sent-prep?
+
+
+(defun temporal-sent-prep? (ulf)
+;`````````````````````````````````````
+; Checks if a ULF belongs to a subset of sentential prepositions that indicate temporal relations.
+;
+  (member ulf '(before.ps after.ps while.ps during.ps until.ps))
+) ; END temporal-sent-prep?
 
 
 (defun ps-to-p! (ulf)
@@ -1074,12 +1084,35 @@
 ) ; END make-set
 
 
+(defun make-conjunction (list &key (conj 'AND.CC))
+;```````````````````````````````````````````````````````````
+; Makes a list of conjunctions of the elements of a list, if multiple elements.
+; i.e., (|A| and.cc |B| and.cc |C| ...)
+; If list has only a single element, just return that element.
+;
+  (if (<= (length list) 1) (car list)
+    (cdr (apply #'append (mapcar (lambda (elem) (list conj elem)) list))))
+) ; END make-conjunction
+
+
 (defun copulative? (v)
 ;``````````````````````
 ; Checks whether v is a copulative verb, e.g. be.v
 ;
   (member v '(be.v))
 ) ; END copulative?
+
+
+(defun prop-to-cop (ulf)
+;`````````````````````````
+; Converts a proposition ULF to a copulative expression, e.g.,
+; (|A| on.p |B|) => (|A| ((pres be.v) (on.p |B|)))
+;
+  (if (relation-prop? ulf)
+    (let ((subj (car ulf)) (rst (cdr ulf)))
+      `(,subj ((pres be.v) ,(if (= 1 (length rst)) (car rst) rst))))
+    ulf)
+) ; END prop-to-cop
 
 
 (defun equal-prop? (prop)
@@ -1122,15 +1155,18 @@
 ;`````````````````````````````
 ; Checks whether a proposition is a relation, i.e. ((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n))),
 ; or ((the.d (|Twitter| block.n)) central.a)
+; TODO: function is messy and should be refactored
 ;
   (and (listp prop) (or
+    ; (|A| red.a) or (|A| (very.mod-a red.a))
     (and
-      (or (np? (first prop)) (nnp? (first prop)) (restricted-variable? (first prop)))
+      (or (np? (first prop)) (nnp? (first prop)) (restricted-variable? (first prop)) (proper-name? (first prop)))
       (or (adj? (second prop))
           (and (listp (second prop)) (mod-a? (first (second prop))) (adj? (second (second prop))))))
+    ; (|A| on.p |B|) or (|A| = |B|) or (|A| (directly.adv-a on.p) |B|)
     (and
-      (or (np? (first prop)) (nnp? (first prop)) (restricted-variable? (first prop)))
-      (or (np? (first prop)) (nnp? (third prop)) (restricted-variable? (third prop)))
+      (or (np? (first prop)) (nnp? (first prop)) (restricted-variable? (first prop)) (proper-name? (first prop)))
+      (or (np? (first prop)) (nnp? (third prop)) (restricted-variable? (third prop)) (proper-name? (third prop)))
       (or (prep? (second prop))
           (and (listp (second prop)) (adv-a? (first (second prop))) (prep? (second (second prop))))
           (equal '= (second prop))))))

@@ -15,12 +15,12 @@
   ; It looks like there are no gist clause trees here, which might be appropriate because this question is so open-ended
   ; That said, it might be a good idea to get a sense of whether the user's hometown was a city, rural, suburban...
   1 (0)
-    2 ((NIL Gist \: nothing found for how where I grew up is \.) (describe-hometown)) (0 :gist)
+    2 ((NIL gist \: Nothing found for how where you grew up is \.) (Describe-hometown)) (0 :gist)
 ))
        
 
 (READRULES '*reaction-to-describe-hometown-input*
 '(
-  1 (0 NIL Gist 0)
-    2 (Where I grew up is important in shaping who I am \.) (100 :out)
+  1 (0 NIL gist 0)
+    2 (Where you grew up is important in shaping who you are \.) (100 :out)
 ))

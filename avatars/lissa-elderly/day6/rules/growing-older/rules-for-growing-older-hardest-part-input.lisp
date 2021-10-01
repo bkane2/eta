@@ -38,28 +38,28 @@
 '(
   ; Questions
   1 (0 what 4 you 0 ?)
-      2 (What is the hardest part when you growing older ?) (0 :gist)
+      2 (What is the hardest part when I grow older ?) (0 :gist)
   1 (0 wh_ 4 chore 1 enjoy 0 ?)
-      2 (What is the hardest part when you growing older ?) (0 :gist)
+      2 (What is the hardest part when I grow older ?) (0 :gist)
 
   ; Specific answers
   1 (0 NEG 2 worse 0) 
-    2 ((Do not have hardest part for growing older \.) (growing-older-hardest-part)) (0 :gist)
+    2 ((Do not have hardest part for growing older \.) (Growing-older-hardest-part)) (0 :gist)
   1 (0 NEG 1 vision 0)
-    2 ((The hardest part of growing older is bad 4 \.) (growing-older-hardest-part)) (0 :gist)
+    2 ((The hardest part of growing older is bad 4 \.) (Growing-older-hardest-part)) (0 :gist)
   1 (0 vision 1 worse 0)
-    2 ((The hardest part of growing older is bad 2 \.) (growing-older-hardest-part)) (0 :gist)
+    2 ((The hardest part of growing older is bad 2 \.) (Growing-older-hardest-part)) (0 :gist)
   1 (0 illness 0)
-    2 ((The hardest part of growing older is 2 \.) (growing-older-hardest-part)) (0 :gist)
+    2 ((The hardest part of growing older is 2 \.) (Growing-older-hardest-part)) (0 :gist)
   1 (0 lonely 0)
-    2 ((The hardest part of growing older is loneliness \.) (growing-older-hardest-part)) (0 :gist)
+    2 ((The hardest part of growing older is loneliness \.) (Growing-older-hardest-part)) (0 :gist)
   1 (0 depend 0)
-    2 ((The hardest part of growing older is needing care \.) (growing-older-hardest-part)) (0 :gist)
+    2 ((The hardest part of growing older is needing care \.) (Growing-older-hardest-part)) (0 :gist)
   1 (0 disable 0)
-    2 ((The hardest part of growing older is getting disable \.) (growing-older-hardest-part)) (0 :gist)
+    2 ((The hardest part of growing older is getting disable \.) (Growing-older-hardest-part)) (0 :gist)
 
   1 (0)
-      2 ((NIL Gist \: nothing found for what the hardest part of growing older is \.) (growing-older-hardest-part)) (0 :gist)
+      2 ((NIL gist \: Nothing found for what the hardest part of growing older is \.) (Growing-older-hardest-part)) (0 :gist)
 ))
 
 
@@ -68,19 +68,19 @@
   ; NOTE: These reactions are a bit too specific, some need to be rephrased in case
   ; LISSA doesn't judge user input correctly.
   1 (0 not have hardest part 0)
-    2 (You are happy to hear that I am happy with my life\.) (100 :out)
+    2 (I am happy to hear that you are happy with your life\.) (100 :out)
   1 (0 bad vision 0)
-    2 (You are sorry to hear that I have problem with 3 \. Hopefully a doctor might be able to help me with that\.) (100 :out)
+    2 (I am sorry to hear that you have problem with 3 \. Hopefully a doctor might be able to help you with that\.) (100 :out)
   1 (0 illness 0)
-    2 (Hopefully exercise helps keep me healthy\, and medicine if I need it \!) (100 :out)
+    2 (Hopefully exercise helps keep you healthy\, and medicine if you need it \!) (100 :out)
   1 (0 lonely 0)
-    2 (Make sure to keep contact with my friends and family if I can\.) (100 :out)
+    2 (Make sure to keep contact with your friends and family if you can\.) (100 :out)
   1 (0 depend 0)
-    2 (Being dependent on others sounds a little bit upset\. But you think every one will go through this period\. 
-      Just I treat it as a process of nature\.) (100 :out)
+    2 (Being dependent on others sounds a little bit upset\. But I think every one will go through this period\. 
+      just treat it as a process of nature\.) (100 :out)
   1 (0 disable 0)
-    2 (I should explore other interests of our life and do not just focus on the frustrated part\.) (100 :out)
+    2 (You should explore other interests of our life and do not just focus on the frustrated part\.) (100 :out)
 
-  1 (0 NIL Gist 0)
-    2 (You really hope I can get through that part\.) (100 :out)
+  1 (0 NIL gist 0)
+    2 (I really hope you can get through that part\.) (100 :out)
 ))
