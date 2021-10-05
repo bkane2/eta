@@ -85,8 +85,8 @@
        2 (((*yn-between-question-ulf-tree* 1 3)) (not 1)) (0 :ulf-recur)
 
     ; Historical
-    1 (be 0 between 0 block 0)
-       2 (be det 2 block 2 between 7 noun adv-hist-word 0 ?); e.g., was the NVidia block between two red blocks previously ?
+    1 (be 0 between 0 noun-obj 0)
+       2 (be det 2 noun-obj 2 between 7 noun adv-hist-word 0 ?); e.g., was the NVidia block between two red blocks previously ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (*pp-between-ulf-tree* 5 6 7 8) (*adv-ulf-tree* 9 10) ?)
              (2 (1 3 4))) (0 :ulf-recur) 
     1 (be there 1 adv-history 3 noun 2 between 7 noun ?); e.g., was there ever any red block between the SRI and NVidia blocks ?
@@ -97,8 +97,8 @@
           (2 (1 3 4))) (0 :ulf-recur)
 
     ; Standard
-    1 (be 0 between 0 block 0)
-       2 (be det 2 block 2 between 7 noun ?); e.g., is the NVidia block (directly) between two red blocks ?
+    1 (be 0 between 0 noun-obj 0)
+       2 (be det 2 noun-obj 2 between 7 noun ?); e.g., is the NVidia block (directly) between two red blocks ?
           3 (((lex-ulf! v 1) (*np-ulf-tree* 2 3 4) (*pp-between-ulf-tree* 5 6 7 8) ?)
              (2 (1 3))) (0 :ulf-recur) 
     1 (be there 3 noun 2 between 7 noun ?); e.g., is there a red block between a blue and a green block ?
@@ -133,7 +133,7 @@
     1 (wh-pron be the 2 noun 1 between 7 noun adv-hist-word 0 ?); e.g., what was the block between the NVidia block and the SRI block before I moved it ?
        2 (((lex-ulf! pro 1) (lex-ulf! v 2) the.d (*n1-ulf-tree* 4 5) 
           (*pp-between-ulf-tree* 6 7 8 9) (*adv-ulf-tree* 10 11) ?) (1 (2 (= (the.d (n+preds 4 5))) 6))) (0 :ulf-recur)
-    1 (wh-det 1 block be 2 between 7 noun adv-hist-word 0 ?); e.g., how many blocks were (there) between a red block and a blue block previously ?
+    1 (wh-det 1 noun-obj be 2 between 7 noun adv-hist-word 0 ?); e.g., how many blocks were (there) between a red block and a blue block previously ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) (*pp-between-ulf-tree* 5 6 7 8) (*adv-ulf-tree* 9 10) ?)
           (1 (2 3 4))) (0 :ulf-recur)
 
@@ -156,7 +156,7 @@
     1 (wh-pron be the 2 noun 1 between 7 noun ?); e.g., what is the block between a red block and a blue block ?
        2 (((lex-ulf! pro 1) (lex-ulf! v 2) the.d (*n1-ulf-tree* 4 5) 
           (*pp-between-ulf-tree* 6 7 8 9) ?) (1 (2 (= (the.d (n+preds 4 5)))))) (0 :ulf-recur)
-    1 (wh-det 1 block be 2 between 7 noun ?); e.g., how many blocks are (there) between a red block and a blue block ?
+    1 (wh-det 1 noun-obj be 2 between 7 noun ?); e.g., how many blocks are (there) between a red block and a blue block ?
        2 (((*np-ulf-tree* 1 2 3) (lex-ulf! v 4) (*pp-between-ulf-tree* 5 6 7 8) ?)
           (1 (2 3))) (0 :ulf-recur)
 
@@ -173,7 +173,7 @@
 '(
     1 (4 wh-det 2 noun be 2 between 8 noun 2 ?); what block is between a red and a blue block?
        2 (((*wh-beteen-question-ulf-tree* 2 3 4 5 7 8 9 ?)) (poss-ques 1)) (0 :ulf-recur)
-    1 (4 wh-det 1 color 1 block be 1 between 3 noun 4); what color block is between ...
+    1 (4 wh-det 1 color 1 noun-obj be 1 between 3 noun 4); what color block is between ...
        2 (((*wh-between-question-ulf-tree* what color block is 9 10 11 ?)) 
           (poss-ques 1)) (0 :ulf-recur)
     1 (4 wh-pron be the 2 noun 1 between 7 noun 4); what is the block between ...
@@ -188,7 +188,7 @@
        2 (((*yn-between-question-ulf-tree* 2 4 6 7 8 ?)) (poss-ques 1)) (0 :ulf-recur)
     1 (2 be 1 det 2 noun 2 between 7 noun 4); so\, is n\'t the NVidia block between the two of them ?
        2 (((*yn-between-question-ulf-tree* 2 4 5 6 8 9 10 ?)) (poss-ques 1)) (0 :ulf-recur)
-    1 (0 det 1 block 0 between 0)
+    1 (0 det 1 noun-obj 0 between 0)
        2 (Sorry\, you are asking about some 3 4 being between objects \, but I didn\'t 
           really catch what it was \.) (0 :out)
     1 (0 between 0 det table 0)
