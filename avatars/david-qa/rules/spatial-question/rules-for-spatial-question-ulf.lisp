@@ -117,6 +117,10 @@
           3 (((*exist-question-ulf-tree* 2 3 4)) ((sub why.adv-s (1 *h)) ?)) (0 :ulf-recur)
        2 (adv-explain do 0)
           3 (((*do-question-ulf-tree* 2 3)) ((sub why.adv-s (1 *h)) ?)) (0 :ulf-recur)
+    1 (adv-explain not det 2 noun ?)
+      2 (((*np-ulf-tree* 3 4 5)) ((sub why.adv-s ((not 1) *h)) ?)) (0 :ulf-recur)
+    1 (adv-explain det 2 noun ?)
+      2 (((*np-ulf-tree* 2 3 4)) ((sub why.adv-s (1 *h)) ?)) (0 :ulf-recur)
 
     ; "is/are"-questions
     1 (be 0 between 0) ; "between" causes issues with prep+NP patterns, so need specific rules

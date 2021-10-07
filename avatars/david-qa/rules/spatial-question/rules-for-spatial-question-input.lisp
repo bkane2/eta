@@ -62,13 +62,30 @@
       2 (*request-input* (1 2 3)) (0 :subtree+clause)
     ;; ----------------------------------
     ;; 'Indexical' explanation requests 
+    ;; The following are interpreted as the slightly awkward gist clause
+    ;; "why [not] my previous question ?", assuming that the "my previous question"
+    ;; is replaced with the actual previous question ULF by the reference resolution module.
     ;; ----------------------------------
-    1 (0 aux you verb-explain 4)
-      2 (*multi-token-word-tree* (can you explain your answer ?)) (0 :subtree+clause)
-    1 (1 verb-explain 1)
-      2 (*multi-token-word-tree* (can you explain your answer ?)) (0 :subtree+clause)
-    1 (1 wh-explanation 1)
-      2 (*multi-token-word-tree* (can you explain your answer ?)) (0 :subtree+clause)
+    1 (0 aux you verb-explain 5)
+      2 (0 verb-explain 1 wh-explanation NEG 2)
+        3 (*multi-token-word-tree* (why not my previous question ?)) (0 :subtree+clause)
+      2 (*multi-token-word-tree* (why my previous question ?)) (0 :subtree+clause)
+    1 (1 verb-explain 1 wh-explanation NEG 2)
+      2 (*multi-token-word-tree* (why not my previous question ?)) (0 :subtree+clause)
+    1 (1 verb-explain 3)
+      2 (*multi-token-word-tree* (why my previous question ?)) (0 :subtree+clause)
+    1 (1 wh-explanation do you 5)
+      2 (0 you NEG 4)
+        3 (*multi-token-word-tree* (why not my previous question ?)) (0 :subtree+clause)
+      2 (*multi-token-word-tree* (why my previous question ?)) (0 :subtree+clause)
+    1 (1 wh-explanation NEG 2)
+      2 (*multi-token-word-tree* (why not my previous question ?)) (0 :subtree+clause)
+    1 (1 wh-explanation 2)
+      2 (*multi-token-word-tree* (why my previous question ?)) (0 :subtree+clause)
+    1 (1 what be 1 reasons 5)
+      2 (0 reasons 0 NEG 2)
+        3 (*multi-token-word-tree* (why not my previous question ?)) (0 :subtree+clause)
+      2 (*multi-token-word-tree* (why my previous question ?)) (0 :subtree+clause)
     ;; "Small talk" patterns
     ;; ---------------------
     1 (0 wh_ 1 your name 0)

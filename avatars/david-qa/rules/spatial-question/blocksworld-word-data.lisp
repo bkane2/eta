@@ -197,8 +197,8 @@
   (adv-f-number once twice thrice)
   (adv-f always never adv-f-number)
   (adv-history adv-f adv-e)
-  (noun-history turn time stage step question utterance iteration move action period start beginning while past
-      now second minute hour moment present future)
+  (noun-history turn time stage step question answer utterance iteration move action period start beginning
+      while past now second minute hour moment present future)
   (prep-history at in on prep-history-simple)
   (prep-history-simple during within before after when where while prior_to following preceding since from until)
   (prep-history-adj ago before previously after later)
