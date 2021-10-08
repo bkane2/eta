@@ -442,6 +442,16 @@
 ) ; END qmark?
 
 
+
+(defun question-ulf? (ulf)
+;```````````````````````````
+; Matches a ULF that ends with a question mark.
+;
+  (and (listp ulf) (qmark? (second ulf)))
+) ; END question-ulf?
+
+
+
 (defun remove-question-mark (ulf)
 ;``````````````````````````````````
 ; Removes question mark in ULF.
@@ -730,6 +740,7 @@
 ;
   (and (det-np? ulf) (or
     (member (first ulf) '(that.d this.d those.d))
+    (member (first ulf) '(your.d my.d his.d her.d))
     (and (equal (first ulf) 'np+preds) (indexical-np? (second ulf)))))
 ) ; END indexical-np?
 

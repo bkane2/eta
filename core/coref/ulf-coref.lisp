@@ -219,7 +219,9 @@
         ((existential-there? ref) 'existential-there)
         ((reflexive? ref) 'reflexive)
         ((relative? ref) 'relative)
-        ((anaphor? ref) 'anaphor)))
+        ((anaphor? ref) 'anaphor)
+        (t 'sentence) ; assume this if no other category is matched
+      ))
     ; Attach name (if proper name)
     (if (proper-name? ref) (setf (get de 'name) ref))
   de)
@@ -264,9 +266,35 @@
     ; Calculate weight for each candidate, and determine the most likely reference
     (let* ((weighted-options (assign-weights candidate-list ulf)))
 
-      ;; (format t "~%weighted options: ~a~%~%" weighted-options) ; DEBUGGING
+      ;; (format t "~%~%ulf: ~a" ulf) ; DEBUGGING
+      ;; (format t "~%weighted options: ~a~%" weighted-options) ; DEBUGGING
 
       (get-most-likely weighted-options))) candidate-lists))
+
+  ;; (format t "~%results: ~a~%" results) ; DEBUGGING
+
+  ; TODO: this is a super hack intended to support elliptical questions in the blocks world QA
+  ; setting - e.g., "why?". Currently the coref module does not support more complex forms of
+  ; references, such as sentential references, so this is added to allow for that particular use
+  ; case. Ultimately something more general needs to be implemented.
+  (setq results (mapcar (lambda (pair)
+      (cond
+        ; If any DE refers to "your previous question", find the user's previous question
+        ; in the conversation log, create new discourse entity, and replace in pair
+        ((equal (get (car pair) 'ulf) '(your.d (previous.a question.n)))
+          ; Get the contents of the previous question (second to last question ULF
+          ; in conversation log), excluding the question mark
+          (let ((prev-question (first (car (remove nil
+                    (mapcar (lambda (ulfs) (if (question-ulf? (car ulfs)) (car ulfs)))
+                      (third (ds-conversation-log *ds*))))))))
+            (if prev-question
+              (cons (car pair) (create-discourse-entity prev-question))
+              pair)))
+        ; Otherwise, pair is unchanged
+        (t pair)))
+    results))
+
+  ;; (format t "~%results (updated): ~a~%" results) ; DEBUGGING
 
   ; Corefer each discourse entity to its top candidate (or accomodate that entity if the top candidate is itself)
   (mapcar (lambda (pair)
