@@ -839,10 +839,24 @@
 
 
 
+(defun log-turn (turn &key (agent 'user))
+;````````````````````````````````````````````````
+; Records a turn in the conversation log, as well as writing to external files.
+;
+  (let ((text (first turn)) (gists (second turn)) (ulfs (third turn))
+        (agent-name (string-upcase (string agent))))
+    (push text (first (ds-conversation-log *ds*)))
+    (push gists (second (ds-conversation-log *ds*)))
+    (push ulfs (third (ds-conversation-log *ds*)))
+    (log-turn-write turn :agent agent)
+)) ; END log-turn
+
+
+
 (defun detach-final-punctuation (wordlist)
 ;```````````````````````````````````````````
 ; Ensures that the punctuation at the end of the word list is
-; a separate token, and not attached to the final word
+; a separate token, and not attached to the final word.
 ; 
   (let* ((lastword (car (last wordlist))) (chars (explode lastword))
         ch punc)
@@ -861,7 +875,7 @@
 
 (defun nil-gist-clause? (gist-clause)
 ;`````````````````````````````````````
-; Return t if gist-clause is the nil gist clause (i.e. '(NIL Gist ...))
+; Return t if gist-clause is the nil gist clause (i.e. '(NIL Gist ...)).
 ;
   (and (>= (length gist-clause) 2) (equal (subseq gist-clause 0 2) '(NIL GIST)))
 ) ; END nil-gist-clause?
@@ -870,7 +884,7 @@
 
 (defun nil-gist-question? (gist-clause)
 ;`````````````````````````````````````
-; Return t if gist-clause is the nil gist question (i.e. '(NIL Question ...))
+; Return t if gist-clause is the nil gist question (i.e. '(NIL Question ...)).
 ;
   (and (>= (length gist-clause) 2) (equal (subseq gist-clause 0 2) '(NIL QUESTION)))
 ) ; END nil-gist-question"
@@ -881,7 +895,7 @@
 ;````````````````````````````````````````
 ; Remove user gist clauses identical with '(NIL Gist ...) or '(NIL Question ...), unless it is the only
 ; gist clause (note: prefer nil question to nil gist).
-; Also remove duplicate gist clauses
+; Also remove duplicate gist clauses.
 ;
   (remove-duplicates
   (let ((purified-gist-clauses (remove-if (lambda (x) (or (nil-gist-clause? x) (nil-gist-question? x))) user-gist-clauses)))
@@ -895,7 +909,7 @@
 
 (defun gist-contradiction (current-gist-list gist-clause)
 ;`````````````````````````````````````````````````````
-; Finds gist clauses which contradict one another
+; Finds gist clauses which contradict one another.
 ;
   (let (cont-flag)
     (loop for ix from 1 to (list-length current-gist-list) do
@@ -914,7 +928,7 @@
 (defun remove-contradiction (gist-list)
 ;`````````````````````````````````````````````````````
 ; Remove any contradicting gist clauses (get rid of the
-; latter one, which appears later in the conversation)
+; latter one, which appears later in the conversation).
 ;
   (cond
     ((<= (list-length gist-list) 1) gist-list)

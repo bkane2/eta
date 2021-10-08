@@ -62,6 +62,7 @@
 ; equality-sets    : hash table containing a list of aliases, keyed by canonical name
 ; gist-kb-user     : hash table of all gist clauses + associated topic keys from user
 ; gist-kb-eta      : hash table of all gist clauses + associated topic keys from Eta
+; conversation-log : three-tuple containing chronological records of all text, gist, and ulf in conversation
 ; context          : hash table of facts that are true at Now*, e.g., <wff3>
 ; memory           : hash table of atemporal/"long-term" facts, e.g., (<wff3> ** E3) and (Now* during E3)
 ; kb               : hash table of Eta's knowledge base, containing general facts
@@ -79,6 +80,7 @@
   equality-sets
   gist-kb-user
   gist-kb-eta
+  conversation-log
   context
   memory
   kb
@@ -137,8 +139,8 @@
   ; Coreference mode
   ; 0 : simply reconstruct the original ulf
   ; 1 : mode 2 but excluding i.pro and you.pro from resolved references
-  ; 2 : substitute most specific references only for anaphors and indexical np's (e.g. that block)
-  ; 3 : substitute most specific references for all references
+  ; 2 : substitute most specific referents only for anaphora and indexical np's (e.g. that block)
+  ; 3 : substitute most specific referents for all references
   (defparameter *coreference-mode* 1)
 
   ; Recency cutoff used when attempting coreference (i.e. the coreference
@@ -247,6 +249,9 @@
   ; Initialize hash tables for User and Eta topic keys/gist clauses
   (setf (ds-gist-kb-user *ds*) (make-hash-table :test #'equal))
   (setf (ds-gist-kb-eta *ds*) (make-hash-table :test #'equal))
+
+  ; Initialize conversation log ((text gists ulfs) tuple)
+  (setf (ds-conversation-log *ds*) (list nil nil nil))
 
   ; Initialize fact hash tables
   (setf (ds-context *ds*) (make-hash-table :test #'equal))

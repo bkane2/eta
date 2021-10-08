@@ -117,8 +117,8 @@
 
 
 
-(defun log-turn (turn &key (agent 'user))
-;`````````````````````````````````````````
+(defun log-turn-write (turn &key (agent 'user))
+;```````````````````````````````````````````````
 ; Logs some a turn (a tuple (text gists ulfs)) in the conversation-log directory.
 ; Temporarily disable pretty-printing so each line in the log file corresponds to a single turn.
 ;
@@ -135,7 +135,7 @@
     (with-open-file (outfile fname-ulf  :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~a : ~s~%" agent-name (remove nil ulfs)))
     (setq *print-pretty* t)
-)) ; END log-turn
+)) ; END log-turn-write
 
 
 
