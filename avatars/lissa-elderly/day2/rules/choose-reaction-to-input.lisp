@@ -25,13 +25,10 @@
 ;;   ((what is your favorite flavor of ice cream ?))
 ;;   ((what is your favorite food ?))
 ;;   ((How did you get here today ?))
-
 (MAPC 'ATTACHFEAT ; needed for detecting alternatives in the
-                  ; watching-or-reading question
+; watching-or-reading question
 '(
-   (spare-time-activity sports read reading watch watching play
-      playing hike hiking explore exploring walk walking walks hobby
-      hobbies painting); others? "make", "build" seem too general
+  (SPARE-TIME-ACTIVITY sports read reading watch watching play playing hike hiking explore exploring walk walking walks hobby hobbies painting) ; others? "make", "build" seem too general
 ))
 
 
@@ -39,14 +36,14 @@
 ; Choose between reaction to a question and an assertion
 ; Only one gist clause is expected here
 '(
-   1 (0 wh_ 3 SELF 0)
-      2 *reaction-to-question* (0 :subtree)
-   1 (0 aux SELF 0)
-      2 *reaction-to-question* (0 :subtree)
-   1 (0 right-really 4 ?)
-      2 *reaction-to-question* (0 :subtree)
-   1 (0); by default, it's an assertion
-      2 *reaction-to-assertion* (0 :subtree)
+  1 (0 .WH_ 3 .SELF 0)
+    2 *reaction-to-question* (0 :subtree)
+  1 (0 .AUX .SELF 0)
+    2 *reaction-to-question* (0 :subtree)
+  1 (0 right-really 4 ?)
+    2 *reaction-to-question* (0 :subtree)
+  1 (0) ; by default, it's an assertion
+    2 *reaction-to-assertion* (0 :subtree)
 ))
 
 
@@ -60,36 +57,33 @@
 ; issue.
 ;
 '(
-   ; rochester1
-   1 (0 you 0 been in rochester 0)
-      2 *reaction-to-how-long-in-rochester-input* (0 :subtree)
-   1 (0 you do not like 6 rochester 0) 
-      2 *reaction-to-not-like-about-rochester-input* (0 :subtree)
-   1 (0 you like 6 rochester 0)
-      2 *reaction-to-like-about-rochester-input* (0 :subtree)
-   1 (0 you would change 0 rochester 0)
-      2 *reaction-to-changing-rochester-input* (0 :subtree)
-
-   ; rochester2
-   1 (0 you would take me 0)
-      2 *reaction-to-tour-of-rochester-input* (0 :subtree)
-   1 (0 your favorite place to eat 0)
-      2 *reaction-to-favorite-eatery-input* (0 :subtree)
-   1 (0 garbage plate 0)
-      2 *reaction-to-garbage-plate-input* (0 :subtree)
-   1 (0 you have 2 to 2 dinosaur barbecue 0)
-      2 *reaction-to-dinosaur-bbq-input* (0 :subtree)
-
-   ; pets
-   1 (0 you do not have a pet 0)
-      2 *reaction-to-have-a-pet-input* (0 :subtree)
-   1 (0 your pet is 0)
-      2 *reaction-to-have-a-pet-input* (0 :subtree)
-   1 (0 your family member has 0) 
-      2 *reaction-to-family-neighbor-pet-input* (0 :subtree)
-   1 (0 your neighbor has 0)
-      2 *reaction-to-family-neighbor-pet-input* (0 :subtree)
-   1 (0 you believe pets help their owners 0)
-      2 *reaction-to-pets-help-owners-input* (0 :subtree)
+  ; rochester1
+  1 (0 you 0 been in rochester 0)
+    2 *reaction-to-how-long-in-rochester-input* (0 :subtree)
+  1 (0 you .DO not .LIKE 6 rochester 0)
+    2 *reaction-to-not-like-about-rochester-input* (0 :subtree)
+  1 (0 you .LIKE 6 rochester 0)
+    2 *reaction-to-like-about-rochester-input* (0 :subtree)
+  1 (0 you would change 0 rochester 0)
+    2 *reaction-to-changing-rochester-input* (0 :subtree)
+  ; rochester2
+  1 (0 you would take me 0)
+    2 *reaction-to-tour-of-rochester-input* (0 :subtree)
+  1 (0 your favorite place to eat 0)
+    2 *reaction-to-favorite-eatery-input* (0 :subtree)
+  1 (0 .GARBAGE plate 0)
+    2 *reaction-to-garbage-plate-input* (0 :subtree)
+  1 (0 you .HAVE 2 to 2 dinosaur .BARBECUE 0)
+    2 *reaction-to-dinosaur-bbq-input* (0 :subtree)
+  ; pets
+  1 (0 you .DO not .HAVE a pet 0)
+    2 *reaction-to-have-a-pet-input* (0 :subtree)
+  1 (0 your pet is 0)
+    2 *reaction-to-have-a-pet-input* (0 :subtree)
+  1 (0 your .FAMILY member has 0)
+    2 *reaction-to-family-neighbor-pet-input* (0 :subtree)
+  1 (0 your neighbor has 0)
+    2 *reaction-to-family-neighbor-pet-input* (0 :subtree)
+  1 (0 you .BELIEVE pets .HELP their owners 0)
+    2 *reaction-to-pets-help-owners-input* (0 :subtree)
 ))
-

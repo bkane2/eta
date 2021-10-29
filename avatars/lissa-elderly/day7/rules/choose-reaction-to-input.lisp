@@ -24,9 +24,8 @@
 ;;	How far did you go in school ?
 ;;  What part of your education has been most meaningful to you ?
 ;;  What do you think about lifelong learning ?
-
 (MAPC 'ATTACHFEAT ; needed for detecting alternatives in the
-                  ; watching-or-reading question
+; watching-or-reading question
 '(
 ))
 
@@ -35,13 +34,13 @@
 ; Choose between reaction to a question and an assertion
 ; Only one gist clause is expected here
 '(
-  1 (0 wh_ 3 SELF 0)
+  1 (0 .WH_ 3 .SELF 0)
     2 *reaction-to-question* (0 :subtree)
-  1 (0 aux SELF 0)
+  1 (0 .AUX .SELF 0)
     2 *reaction-to-question* (0 :subtree)
   1 (0 right-really 4 ?)
     2 *reaction-to-question* (0 :subtree)
-  1 (0); by default, it's an assertion
+  1 (0) ; by default, it's an assertion
     2 *reaction-to-assertion* (0 :subtree)
 ))
 
@@ -58,26 +57,23 @@
 '(
   ; education
   1 (0 you went to school 0)
-    2 *reaction-to-education-how-far-input* (0 :subtree) 
-  1 (0 the most meaningful part 3 education 0)  
-    2 *reaction-to-education-most-meaningful-input* (0 :subtree) 
-  1 (0 you think life long learning 0)  
+    2 *reaction-to-education-how-far-input* (0 :subtree)
+  1 (0 the most meaningful part 3 education 0)
+    2 *reaction-to-education-most-meaningful-input* (0 :subtree)
+  1 (0 you think life long learning 0)
     2 *reaction-to-thoughts-about-lifelong-learning-input* (0 :subtree)
-   
   ; employment
-  1 (0 work benefited you 0)
+  1 (0 .WORK benefited you 0)
     2 *reaction-to-work-benefit-input* (0 :subtree)
-  1 (0 best part 2 retirement 0)  
+  1 (0 best part 2 retirement 0)
     2 *reaction-to-retirement-best-part-input* (0 :subtree)
-  1 (0 way to give back to your community 0) 
+  1 (0 way to give back to your community 0)
     2 *reaction-to-give-back-to-community-input* (0 :subtree)
-
   ; life-goal
-  1 (0 personal goal you are working on to stay healthy 0) 
+  1 (0 personal goal you are working on to stay healthy 0)
     2 *reaction-to-goal-stay-healthy-input* (0 :subtree)
   1 (0 being healthier improves your life quality 0)
     2 *reaction-to-being-healthier-life-quality-input* (0 :subtree)
-  1 (0 step that you have taken to achieve your goal 0)
+  1 (0 step that you .HAVE taken to achieve your goal 0)
     2 *reaction-to-steps-achieve-goal-input* (0 :subtree)
 ))
-

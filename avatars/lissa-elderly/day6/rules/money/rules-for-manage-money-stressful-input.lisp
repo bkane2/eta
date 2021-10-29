@@ -3,23 +3,17 @@
 ;; (0 managing money is not stressful 0) (0 managing money is stressful 0)
 ;; manage-money-stressful
 ;; (2 Is managing money 2 stressful 5)
-
-
 ;; SEEMS TO BE INCOMPLETE - PERHAPS A COMPLETE VERSION IS ON THE HCI SYSTEM?
-
 (MAPC 'ATTACHFEAT
 '(
-
 ))
-   
-	
+
+
 (READRULES '*manage-money-stressful-input*
 '(
-
 ))
 
 
 (READRULES '*reaction-to-manage-money-stressful-input*
-'( 
-
+'(
 ))
