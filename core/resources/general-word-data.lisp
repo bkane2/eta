@@ -28,268 +28,317 @@
 ;    of them are as yet used.)
 ;
 
-  (MAPC (LAMBDA (TRIPLE) (SETF (GET (CAR TRIPLE) 'TWOWORDS) (CDR TRIPLE)))
-	'((DON\'T DO NOT) (DONT DO NOT) (DOESN\'T DOES NOT) (DIDN\'T DID NOT)
-	  (WON\'T WILL NOT) (WONT WILL NOT) 
-	  (CAN\'T CAN NOT) (CANT CAN NOT) (CANNOT CAN NOT)
-	  (COULDN\'T COULD NOT) (WOULDN\'T WOULD NOT) (SHOULDN\'T SHOULD NOT)
-	  (AREN\'T ARE NOT) (ISN\'T IS NOT) (WASN\'T WAS NOT)
-	  (WEREN\'T WERE NOT) (MIGHTN\'T MIGHT NOT) (HAVEN\'T HAVE NOT)
-	  (HASN\'T HAS NOT) (HADN\'T HAD NOT)
-	  (I\'M I AM) (I\'LL I WILL) (I\'D I WOULD)
-	  (YOU\'RE YOU ARE) (YOU\'LL YOU WILL) (YOU\'D YOU WOULD)
-	  (HE\'S HE IS) (HE\'LL HE WILL) (HE\'D HE WOULD)
-	  (SHE\'S SHE IS) (SHE\'LL SHE WILL) (SHE\'D SHE WOULD)
-	  (IT\'S IT IS) (IT\'LL IT WILL) 
-	  (WE\'RE WE ARE) (WE\'LL WE WILL) (WE\'D WE WOULD)
-	  (THEY\'RE THEY ARE) (THEY\'LL THEY WILL) (THEY\'D THEY WOULD)
-	  (I\'VE I HAVE) (YOU\'VE YOU HAVE) (WE\'VE WE HAVE) 
-	  (THEY\'VE THEY HAVE) (GONNA GOING TO) (WANNA WANT TO) (THAT\'S THAT IS)
-		(HOW\'S HOW IS)
-	  ))
+(MAPC (LAMBDA (TRIPLE) (SETF (GET (CAR TRIPLE) 'TWOWORDS) (CDR TRIPLE)))
+'(
+  (DON\'T DO NOT)
+  (DONT DO NOT)
+  (DOESN\'T DOES NOT)
+  (DIDN\'T DID NOT)
+  (WON\'T WILL NOT)
+  (WONT WILL NOT)
+  (CAN\'T CAN NOT)
+  (CANT CAN NOT)
+  (CANNOT CAN NOT)
+  (COULDN\'T COULD NOT)
+  (WOULDN\'T WOULD NOT)
+  (SHOULDN\'T SHOULD NOT)
+  (AREN\'T ARE NOT)
+  (ISN\'T IS NOT)
+  (WASN\'T WAS NOT)
+  (WEREN\'T WERE NOT)
+  (MIGHTN\'T MIGHT NOT)
+  (HAVEN\'T HAVE NOT)
+  (HASN\'T HAS NOT)
+  (HADN\'T HAD NOT)
+  (I\'M I AM)
+  (I\'LL I WILL)
+  (I\'D I WOULD)
+  (YOU\'RE YOU ARE)
+  (YOU\'LL YOU WILL)
+  (YOU\'D YOU WOULD)
+  (HE\'S HE IS)
+  (HE\'LL HE WILL)
+  (HE\'D HE WOULD)
+  (SHE\'S SHE IS)
+  (SHE\'LL SHE WILL)
+  (SHE\'D SHE WOULD)
+  (IT\'S IT IS)
+  (IT\'LL IT WILL)
+  (WE\'RE WE ARE)
+  (WE\'LL WE WILL)
+  (WE\'D WE WOULD)
+  (THEY\'RE THEY ARE)
+  (THEY\'LL THEY WILL)
+  (THEY\'D THEY WOULD)
+  (I\'VE I HAVE)
+  (YOU\'VE YOU HAVE)
+  (WE\'VE WE HAVE)
+  (THEY\'VE THEY HAVE)
+  (GONNA GOING TO)
+  (WANNA WANT TO)
+  (THAT\'S THAT IS)
+  (HOW\'S HOW IS)
+))
 
-  (MAPC (LAMBDA (PAIR) (SETF (GET (CAR PAIR) 'NEG) (CADR PAIR)))
-	'((DO DON\'T) (DID DIDN\'T) (DOES DOESN\'T) (WILL WON\'T) (CAN CAN\'T)
-	  (COULD COULDN\'T) (WOULD WOULDN\'T) (SHOULD SHOULDN\'T)
-	  (ARE AREN\'T) (IS ISN\'T) (WAS WASN\'T) (WERE WEREN\'T)
-	  (HAVE HAVEN\'T) (HAS HASN\'T) (HAD HADN\'T)
-	  ))
-
-
-  (DUALS 'I 'YOU)
-  (SETF (GET 'ME 'SUBST) 'YOU)
-  (SETF (GET 'YOU2 'SUBST) 'ME)		; objective case!
-  (DUALS 'MY 'YOUR)
-  (DUALS 'MINE 'YOURS)
-  (DUALS 'MYSELF 'YOURSELF)
-  (SETF (GET 'AM 'SUBST) 'ARE)
-  (SETF (GET 'ARE2 'SUBST) 'AM)		; second person! (after YOU)
-  (SETF (GET 'WAS2 'SUBST) 'WERE)	; after I?
-  (SETF (GET 'WERE2 'SUBST) 'WAS)	; after YOU?
-
-
-					; Features:
-
-  (MAPC 'ATTACHFEAT
-	'((FINISH FINISHED DONE QUIT STOP TERMINATE)
-          (FOREIGN FRANCAIS DEUTSCH ITALIANO ESPANOL
-		   FRANCAIS? DEUTSCH? ITALIANO? ESPANOL?)
-    (END-PUNC - ? ! \. \: \;)
-    (THEME-KEY PET-KEY CHAT1-OPENING CHAT1-ROCHESTER CHAT1-MOVIES
-                             ; we could add other keys, as a flag for
-                             ; adhering to a particular theme (i.e., capture
-    )                  ; by a particular cluster of rules)
-		; Numbers
-		(ONE |1|) (TWO |2|) (THREE |3|) (FOUR |4|)
-		(FIVE |5|) (SIX |6|) (SEVEN |7|) (EIGHT |8|)
-		(NINE |9|) (TEN |10|) (ELEVEN |11|) (TWELVE |12|)
-		(THIRTEEN |13|) (FOURTEEN |14|) (FIFTEEN |15|) (SIXTEEN |16|)
-		(SEVENTEEN |17|) (EIGHTEEN |18|) (NINETEEN |19|) (TWENTY |20|)
-		(THIRTY |30|) (FORTY |40|) (FIFTY |50|) (SIXTY |60|) (SEVENTY |70|)
-		(EIGHTY |80|) (NINETY |90|)
-		; Pronouns
-	  (INDEX-PRON I YOU ME US MINE YOURS OURS)
-	  (QUANT-PRON SOMEONE EVERYONE ANYONE SOMETHING EVERYTHING
-		      EVERYBODY NOBODY SOMEBODY ANYBODY ANYTHING NOTHING)
-	  (REFL-PRON ONESELF MYSELF YOURSELF HIMSELF HERSELF ITSELF
-		     OURSELVES YOURSELVES THEMSELVES)
-	  (ANA-PRON HE SHE IT THEY HIM HER THEM HERS THEIRS)
-	  (ANAPHOR ANA-PRON HIS HER ITS THEIR)
-		(REL-PRON THAT WHICH WHEN WHO WHOM)
-	  (PRON INDEX-PRON QUANT-PRON REFL-PRON ANA-PRON WH-PRON REL-PRON)
-    (WH-DET WHICH WHAT WHOSE HOW_MANY)
-    (WH-PRON WHO WHOM WHAT WHICH)
-		(INDEX-DET THAT THOSE THESE THIS)
-	  (DET THE A AN MY YOUR HIS HER ITS OUR THEIR ALL EVERY EACH ANY INDEX-DET
-				 SOME MANY ONE TWO THREE ANOTHER OTHER WH-DET
-               TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE TEN ELEVEN TWELVE)
-	  (NP_ PRON DET)                ;; the beginning of a noun phrase
-	  (MODAL CAN WILL SHALL COULD WOULD SHOULD MIGHT MAY OUGHT)
-		(NECESSITY NEED HAVE)
-	  (HAVE HAS HAD)
-	  (BE AM ARE IS WAS WERE)
-	  (DO DOES DID DOING)
-		(AUX-BASE HAVE BE DO) ; "basic", i.e. non-modal auxiliary verbs
-	  (AUX MODAL HAVE BE DO)
-	  (FREQ OFTEN FREQUENTLY MANY FEW LOTS)
-	  (TIMEADV TODAY YESTERDAY TOMORROW OFTEN SOMETIMES SELDOM
-		   NEVER RARELY ALWAYS CONSTANTLY NOW)
-	  (DEG-ADV NOT JUST VERY ONLY EXACTLY PRECISELY; name changed from 'WH-ADV' 6/17/19
-             IMMEDIATELY RIGHT SLIGHTLY DIRECTLY FLUSH UP); "directly on", "flush against"
-	  (INITADV TIMEADV DEG-ADV)
-	  (CONJ BUT AND OR)
-	  (WH_ WH-DET WH-PRON WHY HOW WHEN WHERE);; begin'g of wh-ques
-	  (QUANT POSQUANT NEGQUANT)
-	  (POSQUANT ALWAYS ALL EVERYONE EVERYTHING EVERY EVERYBODY
-		    CONSTANTLY)
-	  (NEGQUANT NEVER NOTHING NOONE NO-ONE NOBODY)
-	  (ADV POSADV NEGADV INITADV S-ADV)
-	  (POSADV ALWAYS SOMETIMES CERTAINLY COURSE ABSOLUTELY SURE OK OKAY
-		  OCCASIONALLY MOSTLY YESTERDAY TOMORROW FREQUENTLY USUALLY
-		  CONSTANTLY PROBABLY REALLY TRULY OBVIOUSLY NATURALLY |OK,|
-		  ALSO SO)
-	  (NEGADV SELDOM RARELY NEVER ALMOST)
-    (S-ADV PERHAPS)
-	  (PERHAPS MAYBE POSSIBLY)
-    (SUPPOSE GUESS IMAGINE HOPE) ; aimed at things like "I suppose so"
-    (TENTATIVE PERHAPS SUPPOSE)
-    (DOUBT UNLIKELY HARDLY NOT); aimed at things like "I doubt it",
-                               ; "I don't think so", "That's unlikely"
-	  (SELF I MY MYSELF ME)
-	  (FATHER DAD)
-	  (MOTHER MOM MOMMY)
-	  (CHILD CHILDREN KID KIDS)
-	  (SON SONS) 
-	  (DAUGHTER DAUGHTERS)
-	  (SPOUSE HUSBAND WIFE)
-	  (GRANDFATHER GRANDDAD GRANDPA)
-	  (GRANDMOTHER GRANNY GRANDMA) 
-	  (FAMILY1 FATHER MOTHER SON DAUGHTER SPOUSE
-		   CHILD SON DAUGHTER)
-	  (FAMILY2 GRANDMOTHER GRANDFATHER COUSIN NIECE NEPHEW UNCLE AUNT
-		   MOTHER-IN-LAW FATHER-IN-LAW)
-	  (FAMILY FAMILY1 FAMILY2)
-	
-	  (MONEY CASH ASSETS FINANCIAL)
-	  (NOMONEY DEBT BROKE)
-	  (MONEYTHEME MONEY NOMONEY BANK ACCOUNT MORTGAGE
-		      PAYMENTS ENDS FORTUNE)
-	  (TROUBLE TROUBLES DIFFICULT DIFFICULTY DIFFICULTIES 
-		   TOUGH HARD HARDSHIP CHALLENGING PROBLEM PROBLEMS
-                   STRUGGLE STRUGGLING) 
-	  (NOMORE RID LOST GONE LEFT AWAY OUT)
-	  (NEG NO NOT NOPE NAH HARDLY LITTLE SCARCELY)
-		(POS YES YEAH YUP SURE DEFINITELY CERTAINLY ABSOLUTELY INDEED AGREED)
-
-	  (MARRIAGETHEME MARRIAGE SPOUSE DIVORCE)
-	  (DIVORCE DIVORCED SEPARATION SEPARATED)
-	  (LOVELIFE LOVE LOVER SEX)
-	  (LOVER MAN WOMAN GIRLFRIEND BOYFRIEND AFFAIR MISTRESS)
-	  (SCHOOLTHEME SCHOOLWORK TEACHER)
-	  (SCHOOLWORK SCHOOL CLASS CLASSES COURSE COURSES ASSIGNMENT ESSAY
-		      ESSAYS HOMEWORK ASSIGNMENTS EXAM EXAMS TEST TESTS GRADES MARKS
-		      STUDY STUDIES)
-	  (TEACHER TEACHERS INSTRUCTOR INSTRUCTORS PROFESSOR PROFESSORS
-		   LECTURER LECTURERS COLLEAGUE COLLEAGUES)
-	  (WORKTHEME WORK-BOSS SALARY OFFICE CO-WORKERS)
-	  (WORK-BOSS WORK BOSS)
-	  (WORK WORKING WORKED JOB JOBS)
-	  (BOSS EMPLOYER SUPERVISOR CHAIRMAN)
-	  (SALARY RAISE PAY)
-	  (SOCIALLIFE FRIEND FUN)
-	  (FRIEND FRIENDS BUDDY BUDDIES PAL PALS ACQUAINTANCE
-		  ACQUAINTANCES FRIENDSHIP FRIENDSHIPS)
-	  (FUN SOCIAL PARTY PARTIES DANCE DANCES DANCING
-	       MOVIE  CONCERT VISIT VISITING INVITE INVITED) ;SHOW
-    (PET-TYPE DOG DOGS CAT CATS CANARY BUDGY BUDGIE BUDGERIGAR PARROT
-          GOLDFISH GERBIL HAMSTER GUINEA-PIG GUINEAPIG GUINEA PIG IGUANA 
-          TURTLE HORSE PONY)
-    (PETTHEME PET-KEY PET-TYPE PETS PET)
-               
-	  (BELIEVE THINK KNOW SUPPOSE SUSPECT PRESUME GUESS)
-	  (REMEMBER RECALL)
-	  (PERCEIVE NOTICE NOTE SEE INFER CONCLUDE REALIZE)
-	  (CONC BELIEVE REMEMBER PERCEIVE)
-	  (BADSTATE UNHAPPY SAD WORRIED TIRED DEPRESSED APPALLED
-		    TERRIBLE AWFUL LONELY DISGUSTED UPSET BORED DISMAYED
-		    DISTRESSED SHAMBLES WRECKED ROCKS DEAD FALLING APART
-		    DISINTEGRATING PIECES LOUSY)
-	  (BADHEALTH SICK WRECK CANCER ILL ILLNESS ILLNESSES INSANE
-		     SICKNESS PAIN PAINS ACHE ACHES CRAZY HURT HURTS INJURY 
-                     INJURED SMOKE SMOKING ALCOHOLIC ALCOHOLISM TIRED FATIGUED)
-    (SICKNESS SICKNESSES COLD FLU HEADACHE HEADACHES TOOTHACHE CANCER 
-      	DIABETES DIABETIC DIABETICS RABIES DISEASE)
-	  (GOODHEALTH HEALTHY WELL BETTER HEALTH)
-	  (HEALTH-THEME GOODHEALTH BADHEALTH)
-	  (BADQUALITY STUPID MEAN NASTY SILLY IDIOTIC VICIOUS DISGUSTING DORKY
-		      BORING UGLY SMELLY WEIRD DUMB OLD POOR DIFFICULT LAZY YUCKY
-		      DIFFICULT EVIL WICKED MALICIOUS DENSE INSANE CRAZY NUTS
-		      PHONEY TERRIBLE AWFUL DREADFUL MISERABLE HELLISH STINK
-              STINKS SUCK SUCKS GROSS GREASY)
-	  (DIFFICULT TOUGH IMPOSSIBLE HARD CHALLENGING DEMANDING STRESSFUL)
-	  (MUCH TOO MANY)
-	  (HATE HATES HATED)
-	  (DISLIKE DISLIKES)
-	  (BADATTITUDE HATE DISLIKE AFRAID DESPISE)
-	  (YELL YELLING YELLED YELLS SCREAM SCREAMING SCREAMED SCREAMS) 
-	  (BOTHER BOTHERS BOTHERING BUG BUGS BUGGING ANNOYS HARRASS HARRASSING 
-                  HARASSES NAG NAGS NAGGING PESTER PESTERS PESTERING)
-	  (FIGHT FIGHTS FIGHTING FOUGHT ARGUE ARGUING ARGUES 
-		 QUARREL QUARRELING QUARRELED)
-	  (BADREL BADATTITUDE BOTHER HATE YELL FIGHT)
-	  (KILL KILLED)
-	  (MURDER MURDERED)
-	  (BEAT BEATS BEATING)
-	  (SHOOT SHOT)
-	  (STAB STABBED)
-	  (BATTER BATTERED BATTERS)
-
-    (BADOCCUR DIED DISAPPEARED BURNED CRASHED BROKE COLLAPSED)
-  	(BADEVENT DEATH DISAPPEARANCE ACCIDENT)
-	
-	  (INJURE BEAT SHOOT STAB BATTER)
-	  (VIOLENCE KILL MURDER INJURE)
-	  (CHEAT CHEATING CHEATS CHEATED)
-	  (LIE LYING LIED)
-	  (FOOL FOOLS FOOLED FOOLING)
-	  (DECEIVE DECEIVED DECEIVING CHEAT LIE FOOL)
-	  (ERR GOOF GOOFED BLEW BLOWN MISTAKE MISTAKES BLUNDER BLUNDERS)
-	  (STUPIDTHING IDIOT MORON JERK FOOL ASS WEIRDO PERVERT DORK DUMMY DUM
-		       DUMMIE DUM-DUM NERD BOZO YOYO PEABRAIN DINGBAT DING-DONG 
-		       DING-DING FREAK SLOB GOOBER NUMBSKULL DIMWIT NITWIT LOSER
-		       SLEAZEBAG CRETIN AIRHEAD TURKEY TWIT DWEEB)
-	  (SCARYTHING KILLER MONSTER EXAM OLD DEATH SICKNESS AGE SNAKES)
-	  (BADTHING STUPIDTHING SCARYTHING CRIME)
-	  (CRIME VIOLENCE ROB ROBBED ROBBERY MUGGING THEFT THIEF
-		 BURGLAR BURGLARY STEAL STOLE RAPE RAPED EXTORTION PIMP
-		 EXTORTING EXTORTED EXTORTS RIP-OFF MAFIA MOB MOBSTER)
-	  (LIQUOR BOOZE BEER DRINK DRINKS DRINKING DRANK DRUNK ALCOHOL
-		  	ALCOHOLIC)
-	  (DRUGS DRUG LIQUOR ADDICT JUNKIE HOOKED ADDICTED HEROIN COCAIN
-		 COCAINE MAINLINE DOPE ECSTASY CRACK)
-	  (BADPROP BADSTATE BADQUALITY STUPIDTHING)
-	  (BADPRED BADPROP BADREL BADEVENT VIOLENCE DECEIVE BADTHING)
-	  (GOODSTATE HAPPY WELL FINE PLEASED DELIGHTED CHEERFUL GLAD	
-		     SATISFIED CONTENTED JOY JOYFUL)
-	  (GOODQUALITY SMART CLEVER BRIGHT NICE GOOD FRIENDLY PRETTY COOL SEXY
-		       HANDSOME GOOD-LOOKING KIND INTELLIGENT HELPFUL LOVELY 
-		       ENJOYABLE DELIGHTFUL ENTERTAINING FUN FUNNY WONDERFUL
-		       NORMAL SANE BEAUTIFUL SHARP PERFECT DELICIOUS KNOWLEDGEABLE SKILLED)
-	  (LOVE LOVES)
-	  (LIKE LIKES)
-	  (ADMIRE ADMIRES) 
-	  (UNDERSTAND UNDERSTANDS)
-    (LISTEN LISTENS HEAR HEARS)
-	  (RESPECT RESPECTS)
-	  (APPRECIATE APPRECIATES)
-	  (CARE CARES)
-	  (ENJOY ENJOYS ENJOYING ENJOYED)
-	  (GOODATTITUDE LOVE LIKE ADMIRE UNDERSTAND RESPECT STAND 
-             APPRECIATE CARE ENJOY)
-	  (HELP HELPS HELPED ASSIST ASSISTS ASSISTED)
-    (RELAXATION RELAX RELAXES RELAXING RELAXED CALM CALMS CALMING SOOTH
-        SOOTHES SOOTHINGTHERAPY THERAPEUTIC)
-    (VERY QUITE EXTREMELY EXCEEDINGLY EXCEPTIONALLY EXTRAORDINARY TREMENDOUSLY
-        IMMENSELY HUGELY UNCOMMONLY PARTICULARLY HIGHLY REMARKABLY TRULY REALLY)
-    (HELPFUL HELPING HELP OBLIGING ACCOMMODATING SYMPATHETIC USEFUL)
-    (TIRED SLEEPY EXHAUSTED WEARY FATIGUED)
-	  (SUPPORT SUPPORTS SUPPORTED)
-    (QUICK EFFICIENT FAST)
-	  (GOODTHING GENIUS BEAUTY SEX FUN PLEASURE)
-	  (GOODACTION HELP SUPPORT) 
-	  (GOODPROP GOODSTATE GOODQUALITY)
-	  (GOODREL GOODATTITUDE GOODACTION)
-	  (GOODPRED GOODPROP GOODREL GOODTHING)
-	  (INFORM INFORMS INFORMED TELL TELLS TOLD TELLING
-		  	ASSURE ASSURES ASSURES ASSURING)
-	  (ASSERT ASSERTS ASSERTED ASSERTING SAY SAYS SAID SAYING 
-		  	CLAIM CLAIMS CLAIMED STATES STATED STATING)
-	  (COMMUN INFORM ASSERT)
-	  (WANT NEED NEEDS WISH REQUIRE REQUIRES)
-	  (V AUX CONC BADREL VIOLENCE GOODREL COMMUN WANT)
-	  ))
+(MAPC (LAMBDA (PAIR) (SETF (GET (CAR PAIR) 'NEG) (CADR PAIR)))
+'(
+  (DO DON\'T)
+  (DID DIDN\'T)
+  (DOES DOESN\'T)
+  (WILL WON\'T)
+  (CAN CAN\'T)
+  (COULD COULDN\'T)
+  (WOULD WOULDN\'T)
+  (SHOULD SHOULDN\'T)
+  (ARE AREN\'T)
+  (IS ISN\'T)
+  (WAS WASN\'T)
+  (WERE WEREN\'T)
+  (HAVE HAVEN\'T)
+  (HAS HASN\'T)
+  (HAD HADN\'T)
+))
 
 
-   (SETQ *TRACERULES* NIL)
+(DUALS 'I 'YOU)
+(SETF (GET 'ME 'SUBST) 'YOU)
+(SETF (GET 'YOU2 'SUBST) 'ME) ; objective case!
+(DUALS 'MY 'YOUR)
+(DUALS 'MINE 'YOURS)
+(DUALS 'MYSELF 'YOURSELF)
+(SETF (GET 'AM 'SUBST) 'ARE)
+(SETF (GET 'ARE2 'SUBST) 'AM) ; second person! (after YOU)
+(SETF (GET 'WAS2 'SUBST) 'WERE) ; after I?
+(SETF (GET 'WERE2 'SUBST) 'WAS) ; after YOU?
 
 
+; Features:
+(MAPC 'ATTACHFEAT
+'(
+  (FINISH finished done quit stop terminate)
+  (FOREIGN francais deutsch italiano espanol francais \? deutsch \? italiano \? espanol \?)
+  (END-PUNC - ? ! \. \: \;)
+  (THEME-KEY pet-key chat1-opening chat1-rochester chat1-movies
+    ; we could add other keys, as a flag for
+    ; adhering to a particular theme (i.e., capture
+  ) ; by a particular cluster of rules)
+
+  ; Numbers
+  (ONE |1|)
+  (TWO |2|)
+  (THREE |3|)
+  (FOUR |4|)
+  (FIVE |5|)
+  (SIX |6|)
+  (SEVEN |7|)
+  (EIGHT |8|)
+  (NINE |9|)
+  (TEN |10|)
+  (ELEVEN |11|)
+  (TWELVE |12|)
+  (THIRTEEN |13|)
+  (FOURTEEN |14|)
+  (FIFTEEN |15|)
+  (SIXTEEN |16|)
+  (SEVENTEEN |17|)
+  (EIGHTEEN |18|)
+  (NINETEEN |19|)
+  (TWENTY |20|)
+  (THIRTY |30|)
+  (FORTY |40|)
+  (FIFTY |50|)
+  (SIXTY |60|)
+  (SEVENTY |70|)
+  (EIGHTY |80|)
+  (NINETY |90|)
+
+  ; Pronouns
+  (INDEX-PRON I you me us mine yours ours)
+  (QUANT-PRON someone everyone anyone something everything
+			everybody nobody somebody anybody anything nothing)
+  (REFL-PRON oneself myself yourself himself herself itself
+			ourselves yourselves themselves)
+  (ANA-PRON he she it they him her them hers theirs)
+  (ANAPHOR ANA-PRON his her its their)
+  (REL-PRON that which when who whom)
+  (PRON INDEX-PRON QUANT-PRON REFL-PRON ANA-PRON WH-PRON REL-PRON)
+  (WH-DET which what whose how_many)
+  (WH-PRON who whom what which)
+
+  (INDEX-DET that those these this)
+  (DET the a an my your his her its our their all every each any INDEX-DET
+			some many ONE TWO THREE another other WH-DET TWO THREE FOUR FIVE SIX
+			SEVEN EIGHT NINE TEN ELEVEN TWELVE)
+  (NP_ PRON DET) ; the beginning of a noun phrase
+  (MODAL can will shall could would should might may ought)
+  (NECESSITY need HAVE)
+  (HAVE has had)
+  (BE am are is was were)
+  (DO does did doing)
+  (AUX-BASE HAVE BE DO) ; "basic", i.e. non-modal auxiliary verbs
+  (AUX MODAL HAVE BE DO)
+  (FREQ often frequently many few lots)
+  (TIMEADV today yesterday tomorrow often sometimes seldom never rarely
+			always constantly now)
+  (DEG-ADV not just VERY only exactly precisely 	  ; name changed from 'WH-ADV' 6/17/19
+  		immediately right slightly directly flush up) ; "directly on", "flush against"
+  (INITADV TIMEADV DEG-ADV)
+  (CONJ but and or)
+  (WH_ WH-DET WH-PRON why how when where) ; begin'g of wh-ques
+  (QUANT POSQUANT NEGQUANT)
+  (POSQUANT always all everyone everything every everybody constantly)
+  (NEGQUANT never nothing noone no-one nobody)
+  (ADV POSADV NEGADV INITADV S-ADV)
+  (POSADV always sometimes certainly course absolutely sure ok okay occasionally
+			mostly yesterday tomorrow frequently usually constantly probably
+			really truly obviously naturally ok \, also so)
+  (NEGADV seldom rarely never almost)
+  (S-ADV PERHAPS)
+  (PERHAPS maybe possibly)
+  (SUPPOSE guess imagine hope) ; aimed at things like "I suppose so"
+  (TENTATIVE PERHAPS SUPPOSE)
+  (DOUBT unlikely hardly not) ; aimed at things like "I doubt it",
+  												    ; "I don't think so", "That's unlikely"
+
+  (SELF I my myself me)
+  (FATHER dad)
+  (MOTHER mom mommy)
+  (CHILD children kid kids)
+  (SON sons)
+  (DAUGHTER daughters)
+  (SPOUSE husband wife)
+  (GRANDFATHER granddad grandpa)
+  (GRANDMOTHER granny grandma)
+  (FAMILY1 FATHER MOTHER SON DAUGHTER SPOUSE CHILD SON DAUGHTER)
+  (FAMILY2 GRANDMOTHER GRANDFATHER cousin niece nephew uncle aunt mother-in-law father-in-law)
+  (FAMILY FAMILY1 FAMILY2)
+
+  (MONEY cash assets financial)
+  (NOMONEY debt broke)
+  (MONEYTHEME MONEY NOMONEY bank account mortgage payments ends fortune)
+  (TROUBLE troubles DIFFICULT difficulty difficulties tough hard hardship challenging
+			problem problems struggle struggling)
+  (NOMORE rid lost gone left away out)
+  (NEG no not nope nah hardly little scarcely)
+  (POS yes yeah yup sure definitely certainly absolutely indeed agreed)
+
+  (MARRIAGETHEME marriage SPOUSE DIVORCE)
+  (DIVORCE divorced separation separated)
+  (LOVELIFE LOVE LOVER sex)
+  (LOVER man woman girlfriend boyfriend affair mistress)
+  (SCHOOLTHEME SCHOOLWORK TEACHER)
+  (SCHOOLWORK school class classes course courses assignment essay essays homework
+			assignments exam exams test tests grades marks study studies)
+  (TEACHER teachers instructor instructors professor professors lecturer
+			lecturers colleague colleagues)
+  (WORKTHEME WORK-BOSS SALARY office co-workers)
+  (WORK-BOSS WORK BOSS)
+  (WORK working worked job jobs)
+  (BOSS employer supervisor chairman)
+  (SALARY raise pay)
+  (SOCIALLIFE FRIEND FUN)
+  (FRIEND friends buddy buddies pal pals acquaintance acquaintances
+			friendship friendships)
+  (FUN social party parties dance dances dancing movie concert visit
+			visiting invite invited) ;SHOW
+  (PET-TYPE dog dogs cat cats canary budgy budgie budgerigar parrot
+			goldfish gerbil hamster guinea-pig guineapig guinea pig iguana turtle horse pony)
+  (PETTHEME pet-key PET-TYPE pets pet)
+
+  (BELIEVE think know SUPPOSE suspect presume guess)
+  (REMEMBER recall)
+  (PERCEIVE notice note see infer conclude realize)
+  (CONC BELIEVE REMEMBER PERCEIVE)
+  (BADSTATE unhappy sad worried TIRED depressed appalled terrible awful
+			lonely disgusted upset bored dismayed distressed shambles wrecked
+			rocks dead falling apart disintegrating pieces lousy)
+  (BADHEALTH sick wreck cancer ill illness illnesses insane SICKNESS pain
+			pains ache aches crazy hurt hurts injury injured smoke smoking
+			alcoholic alcoholism TIRED fatigued)
+  (SICKNESS sicknesses cold flu headache headaches toothache cancer
+			diabetes diabetic diabetics rabies disease)
+  (GOODHEALTH healthy well better health)
+  (HEALTH-THEME GOODHEALTH BADHEALTH)
+  (BADQUALITY stupid mean nasty silly idiotic vicious disgusting dorky
+			boring ugly smelly weird dumb old poor DIFFICULT lazy yucky DIFFICULT evil
+			wicked malicious dense insane crazy nuts phoney terrible awful dreadful
+			miserable hellish stink stinks suck sucks gross greasy)
+  (DIFFICULT tough impossible hard challenging demanding stressful)
+  (MUCH too many)
+  (HATE hates hated)
+  (DISLIKE dislikes)
+  (BADATTITUDE HATE DISLIKE afraid despise)
+  (YELL yelling yelled yells scream screaming screamed screams)
+  (BOTHER bothers bothering bug bugs bugging annoys harrass harrassing
+			harasses nag nags nagging pester pesters pestering)
+  (FIGHT fights fighting fought argue arguing argues quarrel quarreling quarreled)
+  (BADREL BADATTITUDE BOTHER HATE YELL FIGHT)
+  (KILL killed)
+  (MURDER murdered)
+  (BEAT beats beating)
+  (SHOOT shot)
+  (STAB stabbed)
+  (BATTER battered batters)
+
+  (BADOCCUR died disappeared burned crashed broke collapsed)
+  (BADEVENT death disappearance accident)
+
+  (INJURE BEAT SHOOT STAB BATTER)
+  (VIOLENCE KILL MURDER INJURE)
+  (CHEAT cheating cheats cheated)
+  (LIE lying lied)
+  (FOOL fools fooled fooling)
+  (DECEIVE deceived deceiving CHEAT LIE FOOL)
+  (ERR goof goofed blew blown mistake mistakes blunder blunders)
+  (STUPIDTHING idiot moron jerk FOOL ass weirdo pervert dork dummy
+			dum dummie dum-dum nerd bozo yoyo peabrain dingbat ding-dong
+			ding-ding freak slob goober numbskull dimwit nitwit loser
+			sleazebag cretin airhead turkey twit dweeb)
+  (SCARYTHING killer monster exam old death SICKNESS age snakes)
+  (BADTHING STUPIDTHING SCARYTHING CRIME)
+  (CRIME VIOLENCE rob robbed robbery mugging theft thief burglar
+			burglary steal stole rape raped extortion pimp extorting
+			extorted extorts rip-off mafia mob mobster)
+  (LIQUOR booze beer drink drinks drinking drank drunk alcohol alcoholic)
+  (DRUGS drug LIQUOR addict junkie hooked addicted heroin
+			cocain cocaine mainline dope ecstasy crack)
+  (BADPROP BADSTATE BADQUALITY STUPIDTHING)
+  (BADPRED BADPROP BADREL BADEVENT VIOLENCE DECEIVE BADTHING)
+  (GOODSTATE happy well fine pleased delighted cheerful glad satisfied contented joy joyful)
+  (GOODQUALITY smart clever bright nice good friendly pretty cool sexy
+			handsome good-looking kind intelligent HELPFUL lovely enjoyable
+			delightful entertaining FUN funny wonderful normal sane beautiful
+			sharp perfect delicious knowledgeable skilled)
+  (LOVE loves)
+  (LIKE likes)
+  (ADMIRE admires)
+  (UNDERSTAND understands)
+  (LISTEN listens hear hears)
+  (RESPECT respects)
+  (APPRECIATE appreciates)
+  (CARE cares)
+  (ENJOY enjoys enjoying enjoyed)
+  (GOODATTITUDE LOVE LIKE ADMIRE UNDERSTAND RESPECT stand APPRECIATE CARE ENJOY)
+  (HELP helps helped assist assists assisted)
+  (RELAXATION relax relaxes relaxing relaxed calm calms calming sooth
+			soothes soothingtherapy therapeutic)
+  (VERY quite extremely exceedingly exceptionally extraordinary tremendously
+			immensely hugely uncommonly particularly highly remarkably truly really)
+  (HELPFUL helping HELP obliging accommodating sympathetic useful)
+  (TIRED sleepy exhausted weary fatigued)
+  (SUPPORT supports supported)
+  (QUICK efficient fast)
+  (GOODTHING genius beauty sex FUN pleasure)
+  (GOODACTION HELP SUPPORT)
+  (GOODPROP GOODSTATE GOODQUALITY)
+  (GOODREL GOODATTITUDE GOODACTION)
+  (GOODPRED GOODPROP GOODREL GOODTHING)
+  (INFORM informs informed tell tells told telling assure assures assures assuring)
+  (ASSERT asserts asserted asserting say says said saying claim claims claimed states stated stating)
+  (COMMUN INFORM ASSERT)
+  (WANT need needs wish require requires)
+  (V AUX CONC BADREL VIOLENCE GOODREL COMMUN WANT)
+))
+
+
+(SETQ *TRACERULES* NIL)
