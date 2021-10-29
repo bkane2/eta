@@ -227,7 +227,7 @@
        results now\, though \. Could you explain what they mean ?) (0 :out)
 
   1 (0 How do I feel about my test results 0)
-    2 ([SAD] I could tell something was off even before today because I've been having some difficult sleeping and pain during the day \. But I\'m still not quite sure how worried I should be \.
+    2 ([SAD] I could tell something was off even before today because I\'ve been having some difficult sleeping and pain during the day \. But I\'m still not quite sure how worried I should be \.
       Could you try your best to explain the test results to me ?) (0 :out)
     2 ([SAD] I had a feeling because of my pain that my test results would not be pleasant \. But I\'m still not sure whether I understand them \. Could you please explain in the simplest terms you can ?) (0 :out)
 

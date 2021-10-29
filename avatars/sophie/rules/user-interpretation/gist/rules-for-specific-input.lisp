@@ -1162,7 +1162,7 @@
       3 (- 0 NEG 1 good idea 0)
         4 (- 0 good idea 1 NEG 0)
           5 ((You should obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
-    2 ((You should not obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
+      3 ((You should not obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
     2 (0 beneficial 0)
       3 (- 0 NEG 1 beneficial 0)
         4 ((You should obtain a second opinion about the prognosis \.) (Prognosis)) (0 :gist)
