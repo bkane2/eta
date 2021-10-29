@@ -52,9 +52,10 @@
     ;; ----------------------------------------
     ;; If spatial question, start preprocessing
     ;; ----------------------------------------
-    1 (- 0 that is finished-word 0)
-      2 (0 spatial-word 0)
-        3 (*multi-token-word-tree* (1 2 3)) (0 :subtree+clause)
+    1 (0 that is finished-word 0)
+      2 (*request-input* (1 2 3 4 5)) (0 :subtree+clause)
+    1 (0 spatial-word 0)
+      2 (*multi-token-word-tree* (1 2 3)) (0 :subtree+clause)
     ;; -----------------
     ;; Special requests
     ;; -----------------

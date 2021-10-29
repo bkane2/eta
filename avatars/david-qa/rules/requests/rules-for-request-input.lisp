@@ -32,4 +32,7 @@
     2 ((Resume \.)) (0 :gist)
   1 (0 resume 0)
     2 ((Resume \.)) (0 :gist)
+
+  1 (0 that is finished-word 0)
+    2 ((Goodbye \.)) (0 :gist)
 ))
