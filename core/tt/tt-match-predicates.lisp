@@ -294,8 +294,6 @@
                                   ; with attached word indices)
     (defparameter *type-suffixes* (make-hash-table)))
 
-(if (not (fboundp 'match)) (load "tt.lisp"))
-
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;                                                       ;;
   ;; UTILITY ROUTINES TO SUPPORT ULF PREDICATE DEFINITIONS ;;
