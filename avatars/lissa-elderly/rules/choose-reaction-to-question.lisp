@@ -1,6 +1,3 @@
-
- 
-(eval-when (load eval)
  
 (READRULES '*reaction-to-question*
   ; Very rough initial attempt. Here I decided to directly
@@ -330,6 +327,5 @@
 ;;      2 () (100 :out)
 
 
- ))
-)
+))
 

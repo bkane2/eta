@@ -30,8 +30,6 @@
 ;; high-level choice trees that choose among schemas for compound
 ;; reactions by Lissa (Allowing for latency to avoid repetitiveness).
 
-(eval-when (load eval)
-
 (READRULES '*reactions-to-input*
   ; Very rough initial attempt; the rules should be carefully
   ; designed to reflect patterns of input gist clauses responding 
@@ -115,6 +113,4 @@
    1 (15 \. 0); longer initial answer? Respond just to that
     2 (*reaction-to-assertion* (1 \.))
       (0 :subtree+clause)
- )); end of *reactions-to-input*
-
-); end of eval-when
+)); end of *reactions-to-input*
