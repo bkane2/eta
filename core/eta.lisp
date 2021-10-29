@@ -2339,10 +2339,10 @@
         (setq newclause (fill-template (first pattern) parts))
         ; Interpret recursive phrases; the car of each nonatomic phrase
         ; either gives the name of the relevant rule tree to use, or it
-        ; is 'lex-ulf!'; in the former case we proceed recursively, in
+        ; is 'lex-ulf@'; in the former case we proceed recursively, in
         ; the latter we keep the phrase as-is
         (dolist (phrase newclause)
-          (if (or (atom phrase) (eq (car phrase) 'lex-ulf!))
+          (if (or (atom phrase) (eq (car phrase) 'lex-ulf@))
             (setq ulf phrase) ; e.g., ulf of (next to) = next_to.p
             (setq ulf
               (choose-result-for (cdr phrase) (car phrase))))
