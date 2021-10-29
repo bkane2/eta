@@ -55,9 +55,12 @@
   ;; ----------------------------------------
   ;; If spatial question, start preprocessing
   ;; ----------------------------------------
-  1 (- 0 that is .FINISHED-WORD 0)
-    2 (0 .SPATIAL-WORD 0)
-      3 (*multi-token-word-tree* (1 2 3)) (0 :subtree+clause)
+  ; Avoid matching "that is finished"
+  1 (0 that is .FINISHED-WORD 0)
+    2 (*request-input* (1 2 3 4 5)) (0 :subtree+clause)
+  ; Match any spatial word feature
+  1 (0 .SPATIAL-WORD 0)
+    2 (*multi-token-word-tree* (1 2 3)) (0 :subtree+clause)
   ;; Special requests
   ;; -----------------
   1 (0 .SPECIAL-REQUEST 0)
