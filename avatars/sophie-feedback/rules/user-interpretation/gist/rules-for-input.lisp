@@ -26,6 +26,9 @@
       3 ((The doctor asked an open ended question \.)) (0 :gist)
     2 (0 [SEP] 0 How do you feel about your prognosis 0)
       3 ((The doctor asked an open ended question \.)) (0 :gist)
+    ; TODO:
+    ; "How much information do you want about your prognosis?"
+    ; "What concerns you most about the future"
     2 ((Question-Suggestion \: Do you understand your prognosis ? How much information do you want about your prognosis ? What concerns you the most for your future ?)) (0 :gist)
 
   1 (Can I trust your prognosis [SEP] 0) 
@@ -33,6 +36,9 @@
       3 ((The doctor asked an open ended question \.)) (0 :gist)
     2 (0 [SEP] 0 How do you feel about your prognosis 0)
       3 ((The doctor asked an open ended question \.)) (0 :gist)
+    ; TODO:
+    ; "How much information do you want about your prognosis?"
+    ; "What concerns you most about the future"
     2 ((Question-Suggestion \: Do you understand your prognosis ? What concerns you the most for your future ?)) (0 :gist)
 
   1 (What are my options for treatment [SEP] 0)
