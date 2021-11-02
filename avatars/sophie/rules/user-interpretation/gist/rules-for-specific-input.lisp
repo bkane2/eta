@@ -1237,7 +1237,7 @@
 
 
   1 (0 treatment-option 0)
-    2 ((Am I ready to start discussing treatment options ?) (Treatment-options)) (0 :subtree+clause)
+    2 ((Am I ready to start discussing treatment options ?) (Treatment-options)) (0 :gist)
   
   1 (0)
     2 *general-input* (0 :subtree)

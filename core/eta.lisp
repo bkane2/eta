@@ -2318,6 +2318,8 @@
       ((eq directive :subtree)
         (setf (get rule-node 'time-last-used) *count*)
         (cond
+          ; Pattern is wrong format
+          ((not (atom pattern)) (return-from choose-result-for1 nil))
           ; If subtree was already visited, skip rule
           ((member pattern visited-subtrees)
             (return-from choose-result-for1
@@ -2337,6 +2339,11 @@
       ; (after re-tagging) in the recursive search.
       ((eq directive :subtree+clause)
         (setf (get rule-node 'time-last-used) *count*)
+        ; Pattern is wrong format
+        (when (not (and (listp pattern) (= (length pattern) 2) (atom (first pattern))
+              (listp (second pattern)) (every #'atom (second pattern))))
+            (return-from choose-result-for1 nil))
+        ; Tag clause and send to subtree
         (setq newclause (instance (second pattern) parts))
         (setq new-tagged-clause (mapcar #'tagword newclause))
         (return-from choose-result-for1
