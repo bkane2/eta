@@ -658,13 +658,17 @@
     2 ((Do I have a question about my prognosis ?)) (0 :gist)
 
   ; How much do I want to know about my prognosis ?
-  1 (0 how much 3 information 3 AUX 1 you 0)
+  1 (0 how much 3 information-gen 3 AUX 1 you 0)
     2 ((How much information do I want about my prognosis ?)) (0 :gist)
-  1 (0 how much 3 information 3 I 3 you 0)
+  1 (0 how much 3 information-gen 3 I 3 you 0)
     2 ((How much information do I want about my prognosis ?)) (0 :gist)
   1 (0 how much 3 AUX 3 I 3 want-gen 3 know 0)
     2 ((How much information do I want about my prognosis ?)) (0 :gist)
   1 (0 how much 3 I 3 tell 3 you 0)
+    2 ((How much information do I want about my prognosis ?)) (0 :gist)
+  1 (0 how much 3 AUX you 3 want-gen 1 me 3 tell 0)
+    2 ((How much information do I want about my prognosis ?)) (0 :gist)
+  1 (0 how much 3 would you 3 want-gen 1 me 3 tell 0)
     2 ((How much information do I want about my prognosis ?)) (0 :gist)
 
   ; What is the prognosis that was given to me previously ?
@@ -737,13 +741,19 @@
     2 ((Who in my family do I want to tell about the prognosis ?) (Tell-family)) (0 :gist)
 
   ; How much do I want to know about my test results ?
-  1 (0 how much 3 information 3 AUX 1 you 0)
+  1 (0 how much 3 information-gen 3 AUX 1 you 0)
     2 ((How much information do you want about your test results ?)) (0 :gist)
-  1 (0 how much 3 information 3 I 3 you 0)
+  1 (0 how much 3 information-gen 3 I 3 you 0)
     2 ((How much information do you want about your test results ?)) (0 :gist)
   1 (0 how much 3 AUX 3 I 3 want-gen 3 know 0)
     2 ((How much information do you want about your test results ?)) (0 :gist)
   1 (0 how much 3 I 3 tell 3 you 0)
+    2 ((How much information do you want about your test results ?)) (0 :gist)
+  1 (0 how much 3 AUX 3 you 3 want-gen 3 know 0)
+    2 ((How much information do you want about your test results ?)) (0 :gist)
+  1 (0 how much 3 AUX you 3 want-gen 1 me 3 tell 0)
+    2 ((How much information do you want about your test results ?)) (0 :gist)
+  1 (0 how much 3 would you 3 want-gen 1 me 3 tell 0)
     2 ((How much information do you want about your test results ?)) (0 :gist)
 
   ; You will help me and my family through the treatment process \.
@@ -859,6 +869,18 @@
   1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
     2 ((Do I have a question ?)) (0 :gist)
 
+  ; meta-questions about conversation
+  1 (0 how 4 conversation 3 going 0)
+    2 ((How do I think this conversation is going ?)) (0 :gist)
+  1 (0 AUX-BASE 3 you 2 understand-gen 0 me 0)
+    2 ((Am I following what you say ?)) (0 :gist)
+  1 (0 can 3 you 2 understand-gen 0)
+    2 ((Am I following what you say ?)) (0 :gist)
+  1 (0 BE 3 you 2 understand-gen 0)
+    2 ((Am I following what you say ?)) (0 :gist)
+  1 (0 how 1 AUX-BASE 1 that sound 0)
+    2 ((How does that sound ?)) (0 :gist)
+
   ; checking the system's understanding
   1 (0 tell 0 what 1 you 1 understand-gen 0)
     2 ((What do I understand ?)) (0 :gist)
@@ -868,9 +890,13 @@
     2 ((What do I understand ?)) (0 :gist)
 
   ; asking for system's preferences for information
-  1 (0 how much 3 information 3 AUX 1 you 0)
+  1 (0 how much 3 information-gen 3 AUX 1 you 0)
     2 ((How much information do I want ?)) (0 :gist)
-  1 (0 how much 3 information 3 I 3 you 0)
+  1 (0 how much 3 information-gen 3 I 3 you 0)
+    2 ((How much information do I want ?)) (0 :gist)
+  1 (0 how much 3 AUX you 3 want-gen 1 me 3 tell 0)
+    2 ((How much information do I want ?)) (0 :gist)
+  1 (0 how much 3 would you 3 want-gen 1 me 3 tell 0)
     2 ((How much information do I want ?)) (0 :gist)
 
   ; questions about system's feelings
@@ -898,12 +924,4 @@
     2 ((Was I nervous for this appointment ?)) (0 :gist)
   1 (0 AUX 3 appointment 1 frighten 1 you 0)
     2 ((Was I nervous for this appointment ?)) (0 :gist)
-
-  ; meta-questions about conversation
-  1 (0 how 4 conversation 3 going 0)
-    2 ((How do I think this conversation is going ?)) (0 :gist)
-  1 (0 AUX-BASE 3 you 2 understand-gen 0)
-    2 ((Am I following what you say ?)) (0 :gist)
-  1 (0 how 1 AUX-BASE 1 that sound 0)
-    2 ((How does that sound ?)) (0 :gist)
 ))

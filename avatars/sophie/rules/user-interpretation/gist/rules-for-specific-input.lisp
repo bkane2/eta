@@ -1232,7 +1232,13 @@
     2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
   1 (0 how much 3 AUX 3 I 3 want-gen 3 know 0)
     2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
+  1 (0 how much 3 AUX 3 you 3 want-gen 3 know 0)
+    2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
   1 (0 how much 3 I 3 tell 3 you 0)
+    2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
+  1 (0 how much 3 AUX you 3 want-gen 1 me 3 tell 0)
+    2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
+  1 (0 how much 3 would you 3 want-gen 1 me 3 tell 0)
     2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
 
 
@@ -2409,7 +2415,13 @@
     2 (*test-results-question* (How much information do you want about your test results ?)) (0 :subtree+clause)
   1 (0 how much 3 AUX 3 I 3 want-gen 3 know 0)
     2 (*test-results-question* (How much information do you want about your test results ?)) (0 :subtree+clause)
+  1 (0 how much 3 AUX 3 you 3 want-gen 3 know 0)
+    2 (*test-results-question* (How much information do you want about your test results ?)) (0 :subtree+clause)
   1 (0 how much 3 I 3 tell 3 you 0)
+    2 (*test-results-question* (How much information do you want about your test results ?)) (0 :subtree+clause)
+  1 (0 how much 3 AUX you 3 want-gen 1 me 3 tell 0)
+    2 (*test-results-question* (How much information do you want about your test results ?)) (0 :subtree+clause)
+  1 (0 how much 3 would you 3 want-gen 1 me 3 tell 0)
     2 (*test-results-question* (How much information do you want about your test results ?)) (0 :subtree+clause)
 
   ; If the doctor gets ahead of themself and starts mentioning treatment options.
