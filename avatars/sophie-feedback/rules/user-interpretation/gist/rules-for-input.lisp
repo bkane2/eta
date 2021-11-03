@@ -123,7 +123,8 @@
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
     2 (0 [SEP] 0 I am sorry that I am sleeping poorly 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
-    2 ((Empathy-Suggestion \: What goes through your mind when you try to sleep ? Do you feel pain at night ? I\'m sorry that you\'ve been sleeping poorly \.)) (0 :gist)
+    ;; 2 ((Empathy-Suggestion \: What goes through your mind when you try to sleep ? Do you feel pain at night ? I\'m sorry that you\'ve been sleeping poorly \.)) (0 :gist)
+    2 ((Empathy-Suggestion \: What goes through your mind when you try to sleep ? I\'m sorry that you\'ve been sleeping poorly \.)) (0 :gist)
 
   1 (My pain has recently been getting worse [SEP] 0)
     2 (0 [SEP] 0 I am sorry that I am in pain 0) 
@@ -140,7 +141,8 @@
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
     2 (0 [SEP] 0 Do I have the pain frequently 0)
       3 ((The doctor gave an empathetic response \.)) (0 :gist)
-    2 ((Empathy-Suggestion \: I am sorry that you are in pain \. Can you tell me about your pain ? Has the pain become worse ?)) (0 :gist)
+    ;; 2 ((Empathy-Suggestion \: I am sorry that you are in pain \. Can you tell me about your pain ? Has the pain become worse ?)) (0 :gist)
+    2 ((Empathy-Suggestion \: I am sorry that you are in pain \. Can you tell me about your pain ?)) (0 :gist)
 
   1 (I feel mildly depressed [SEP] 0)
     2 (0 [SEP] 0 How is my mental health 0)
