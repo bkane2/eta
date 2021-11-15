@@ -132,10 +132,6 @@
   (store-time)
   (update-time)
 
-  ; Time of previous episode
-  ; Stores the constant denoting the time of the previous episode
-  (defparameter *time-prev* *time*)
-
   ; Coreference mode
   ; 0 : simply reconstruct the original ulf
   ; 1 : mode 2 but excluding i.pro and you.pro from resolved references
