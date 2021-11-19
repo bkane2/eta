@@ -23,7 +23,7 @@
   (under underneath)
   (lead leading)
   (have having)
-  (difficult hard impossible)
+  (difficult hard impossible tough challenging)
   (trouble troubles problem problems issue issues hard difficulty)
   (concentrate concentrating focus focusing)
   (recommend recommending recommended)
@@ -34,7 +34,7 @@
   (prescribe prescribes prescribed prescribed)
   (elaborate continue describe expand)
   (can could)
-  (might can)
+  (might can may)
   (maybe possible plausible conceivable perhaps conceivably possibly)
   (scale rate rating)
   (part parts section sections area areas)
@@ -64,7 +64,7 @@
   (long longer)
   (dose doses dosage dosages)
   (try trying attempt attempting)
-  (bad horrible terrible awful negative)
+  (bad horrible terrible awful negative dreadful unpleasant)
   (frightening scary worrisome upsetting distressing troubling concerning daunting alarming disturbing)
   (frightened afraid worried upset anxious scared nervous apprehensive distressed troubled uneasy concerned)
   (frightens scares worries upsets distresses troubles concerns alarms bothers)
@@ -109,6 +109,9 @@
   (body organ organs lung cell)
   (complicated complex convoluted)
   (obvious clear simple easy evident)
+  (stage stages)
+  (final last terminal)
+  (assume presume accept act)
   
   ; ASR errors
   (talking talkin)
@@ -148,7 +151,7 @@
   (body-part lung lungs bone bones chest back shoulder shoulders)
   (appreciate like love enjoy)
   (avatar-items shirt sweater pants clothes clothing style glasses hat hair haircut furniture voice)
-  (tag-question right correct)
+  (tag-question right correct accurate)
   (question questions)
   (question-word question inquiry inquiries query queries concerns concern)
   (ask-gen ask asking talk talking)
@@ -158,8 +161,9 @@
   (seldom rarely never infrequently)
   (exception anamoly outlier oddity deviation abnormality peculiarity irregularity)
   (left remaining)
-  (become became becoming get getting got)
+  (become becomes became becoming get gets getting got)
   (move moved go gone)
+  (grow grows growing grown)
 
   ; Medical history
   (quit quitting stop stopping stopped forgo forgoing)
@@ -266,6 +270,7 @@
   (idea thought)
   (beneficial helpful useful worth great good best worthwhile better)
   (should must ought)
+  (stage-four four fourth final)
 
   ; Prognosis Understanding
   (treatment treatments drugs drug therapy therapies trials trial studies study)
