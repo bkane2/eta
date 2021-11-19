@@ -1,3 +1,12 @@
+(READRULES '*reaction-to-statement-specific-session*
+; This tree can be used to define reactions to statements specific to a particular module/session. Here the rule
+; tree is empty, but it can be overridden in day1/rules to add specific rules.
+;
+'(
+
+)) ; END *reaction-to-statement-specific-session*
+
+
 (READRULES '*reaction-to-statement*
 ; Here we match any non-question statements which the user might ask, and respond to them appropriately.
 ; If some topic has enough possible gist clauses where it gets messy to put them all here, we can branch off
@@ -6,6 +15,10 @@
 ; Will have to figure out whether to make those questions beforehand through some preprocessing step (You think
 ; this makes more sense) or deal with them here somehow.
 '(
+
+  ; Preempt any reactions specific to a particular module
+  1 (0)
+    2 *reaction-to-statement-specific-session* (0 :subtree)
 
   ; The following might need changing
   1 (You are sorry that my daughter couldn\'t come today \.)

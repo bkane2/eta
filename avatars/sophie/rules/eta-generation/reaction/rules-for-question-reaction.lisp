@@ -1,9 +1,22 @@
+(READRULES '*reaction-to-question-specific-session*
+; This tree can be used to define reactions to questions specific to a particular module/session. Here the rule
+; tree is empty, but it can be overridden in day1/rules to add specific rules.
+;
+'(
+
+)) ; END *reaction-to-question-specific-session*
+
+
 (READRULES '*reaction-to-question*
 ; Here we match any important questions which may branch off into a sub-dialogue, i.e. initiate a sub-schema.
 ; A separate tree is used for matching any less relevant questions, which prompt Eta to give an answer but then
 ; return to the central track of the conversation.
 ;
 '(
+  ; Preempt any reactions specific to a particular module
+  1 (0)
+    2 *reaction-to-question-specific-session* (0 :subtree)
+
   ; Questions about pain
   1 (Can I tell you about my pain ?)
     2 *say-pain-worse* (3 :schema)

@@ -135,6 +135,8 @@
       2 (*prognosis-bargaining-graduation-input*) (0 :subtrees)
    1 (Should I get a second opinion about my prognosis ?)
       2 (*prognosis-input*) (0 :subtrees)   
+   1 (I want to talk about my prognosis today \.)
+      2 (*prognosis-input*) (0 :subtrees)
    1 (What are your questions ?)
       2 (*test-results-input*) (0 :subtrees)
       2 (*prognosis-input*) (0 :subtrees)

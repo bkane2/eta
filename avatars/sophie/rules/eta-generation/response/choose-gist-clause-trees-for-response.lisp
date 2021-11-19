@@ -68,6 +68,8 @@
     2 (*response-tree-lortab-frequency*) (0 :subtrees)
   1 (I know that my cancer has gotten worse\, but I\'m not sure how bad it is 1)
     2 (*response-tree-understanding-of-condition*) (0 :subtrees)
+  1 (I want to talk about my prognosis today 1)
+    2 (*response-tree-redirect-to-prognosis*) (0 :subtrees)
 
   ; Direct rules for elaborating questions
   ; NOTE: if there are ever multiple contexts where these are warranted with different

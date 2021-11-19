@@ -783,6 +783,16 @@
 
 )) ; END *response-tree-questions*
 
+(READRULES '*response-tree-redirect-to-prognosis*
+; (I want to talk about my prognosis today 1)
+'(
+  1 (0)
+    2 (I\'m not ready to talk about treatment options yet\. I want to figure out what\'s wrong with me and
+        what it all means for my future\.) (2 :out)
+    2 (I think we should discuss treatment in a follow up appointment after I\'ve had the chance to explain my
+        condition to my family\.) (0 :out)
+)) ; END *response-tree-redirect-to-prognosis
+
 
 
 (READRULES '*response-tree-rephrase*
