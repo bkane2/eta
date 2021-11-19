@@ -241,6 +241,9 @@
     2 (Don\'t hold anything back\. I\'m ready to hear it\. Oh\! But do try to avoid using too many technical terms\. I want to be sure I understand what\'s going to happen to me \.) (100 :out)
     2 (Please tell me all that you can\. Even if it\'s scary\, I prefer to know instead of being left in the dark\.) (0 :out)
 
+  1 (0 Do I want my family to be present when you tell me about the test results 0)
+    2 (I\'d prefer to hear about the results from you now\. Then\, afterward\, we can discuss what to tell my family\. But thank you for the offer\!) (0 :out)
+
   1 (0)
     2 (Truth be told\, I\'ve already scanned the results\, but don\'t understand what they are telling me\. It all seems very complicated \.
        Could you explain to me what they mean ?) (100 :out)
