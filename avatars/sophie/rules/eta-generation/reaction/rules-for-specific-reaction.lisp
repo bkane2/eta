@@ -584,6 +584,10 @@
     2 (Thank you\. I only wish I had more time with my grandson\. But who knows\, there\'s always at least a chance I may get more time with him \.) (100 :out)
     2 (Thank you\. I appreciate all you\'ve been doing to help me\. I\'ll try to do the best I can with the time I have left\.) (0 :out)
 
+  1 (Cancer is a bad illness \.)
+    2 (Cancer is such a challenging disease to live with \. I\'m not sure if my life will ever be normal again \. But I appreciate all you\'ve been doing to help me \.) (100 :out)
+    2 (It\'s just such a challenging disease to live with \. I hope someday we\'ll find a cure \. But until then\, I suppose I\'ve got to make the best of the time I have left \.) (0 :out)
+
   1 (My cancer is the result of my smoking \.)
     ;; 2 *ask-if-can-outlive-prognosis-quit-smoke* (100 :schema)
     2 ([SAD] I never should have smoked when I was younger \. I\'ll have to tell my grandson before I go to never smoke a cigarette in his life \. I only wish I had more time with him \.) (0 :out)

@@ -24,7 +24,7 @@
 
   1 (It is nice to meet me \.)
     2 (Thank you \, it\'s nice to meet you too \.) (100 :out)
-  
+  1 ()
   1 (0 stronger pain medication 0 help me sleep 0)
     2 *medicine-reaction* (0 :subtree)
   1 (0 sleeping poorly 0 \.)
@@ -86,6 +86,8 @@
   1 (0 wish 4 not 1 cancer 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
   1 (0 sorry 4 cancer 0)
+    2 *reason-for-cancer-reaction* (0 :subtree)
+  1 (0 cancer 3 bad 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
 
   1 (0)

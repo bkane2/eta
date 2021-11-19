@@ -50,6 +50,8 @@
     2 *ask-about-test-results* (0 :schema)
   1 (How much information do I want about my test results ?)
     2 *ask-about-test-results* (0 :schema)
+  1 (Do I want my family to be present when you tell me about the test results ?)
+    2 *ask-about-test-results* (0 :schema)
 
   ; Questions about radiation treatment
   1 (Did I get radiation treatment ?)
