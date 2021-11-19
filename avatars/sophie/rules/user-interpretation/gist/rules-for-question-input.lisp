@@ -800,6 +800,16 @@
   1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
     2 ((Do I have a question about my test results ?)) (0 :gist)
 
+  ; Do I want my family to be present when you tell me about the test results ?
+  1 (0 family-pron 0)
+    2 (0 want-gen 4 available 0)
+      3 ((Do I want my family to be present when you tell me about the test results ?) (Test-Results)) (0 :gist)
+    2 (0 want-gen 4 with 0)
+      3 ((Do I want my family to be present when you tell me about the test results ?) (Test-Results)) (0 :gist)
+    2 (0 want 4 here 0)
+      3 ((Do I want my family to be present when you tell me about the test results ?) (Test-Results)) (0 :gist)
+
+
 )) ; END *test-results-question*
 
 

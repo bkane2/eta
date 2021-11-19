@@ -1411,7 +1411,15 @@
     2 (0 never 1 know 2 but 0 I 2 doubt 0)
       3 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
     2 ((My understanding of my prognosis may be correct \.) (Prognosis-Understanding)) (0 :gist)
-  
+  1 (0 assume 4 prognosis 6 tag-question 0)
+    2 (0 prognosis 3 NEG 3 tag-question 0)
+      3 ((My understanding of my prognosis may be correct \.) (Prognosis-understanding)) (0 :gist)
+    2 (0 prognosis 3 might 3 tag-question 0)
+      3 ((My understanding of my prognosis may be correct \.) (Prognosis-understanding)) (0 :gist)
+    2 (0 maybe 0)
+      3 ((My understanding of my prognosis may be correct \.) (Prognosis-understanding)) (0 :gist)
+    2 ((My understanding of my prognosis is incorrect \.) (Prognosis-understanding)) (0 :gist)
+
   ; You may/may not have more time. (Your understanding of yor prognosis-- based on Uncle Fred --is correct/incorrect.)
   1 (0 diagnosis-more 1 time 0)
     2 (- 0 NEG 2 diagnosis-more 0)
@@ -1422,6 +1430,20 @@
       3 ((My understanding of my prognosis is correct \.) (Prognosis-Understanding)) (0 :gist)
     2 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
     
+  ; Things may/may not get better
+  1 (0 make-better 0)
+    2 (0 might 4 make-better 0)
+      3 (0 but 0)
+        4 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((My understanding of my prognosis may be correct \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 maybe 4 make-better 0)
+      3 (0 but 0)
+        4 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((My understanding of my prognosis may be correct \.) (Prognosis-Understanding)) (0 :gist)
+    2 (0 NEG 4 make-better 0)
+      3 ((My understanding of my prognosis is incorrect \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((My understanding of my prognosis may be correct \.) (Prognosis-Understanding)) (0 :gist)
+
   ; Yes / No
   1 (0 POS 0)
     2 (- 0 NEG 1 sure 0)
@@ -1944,11 +1966,11 @@
       3 ((My prognosis is that I will not live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
     2 (0 long 1 time 0)
       3 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
-    2 (0 time 4 now 0)
+    2 (0 time 6 now 0)
       3 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-Understanding)) (0 :gist)
     2 (0 now 1 time 0)
       3 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-Understanding)) (0 :gist)
-    2 (0 time 3 child 0)
+    2 (0 time 6 child 0)
       3 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-Understanding)) (0 :gist)
    
   ; More complex ways of saying yes/no
@@ -2004,7 +2026,11 @@
       3 ((My prognosis is that I will not live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
   1 (0 worth 2 shot 0)
     2 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
-  
+  1 (0 long 2 shot 0)
+    2 (0 shot 8 but 0)
+      3 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+    2 ((My prognosis is that I will not live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+
   ; I may outlive your prognosis.
   1 (0 hard 2 to 2 predict 0)
     2 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
@@ -2369,9 +2395,11 @@
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 cancer-illness 4 become 2 worse 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
-  1 (0 move 4 into 1 body-part 0)
+  1 (0 move 4 in 1 body-part 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
-  
+  1 (0 move 4 in 2 second 2 part 2 body 0)
+    2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
+
   ; The radiation doesn't seem to be helping
   1 (0 radiation 2 NEG 3 radiation-help 0)
     2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
@@ -2382,6 +2410,8 @@
   1 (0 stage four 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 advanced 1 body-part 1 cancer 0)
+    2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
+  1 (0 move 2 in 4 stage-four stage 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
 
   ; I don't know which test results you mean
@@ -2400,6 +2430,14 @@
   1 (0 you 2 think-gen 0)
     2 (*test-results-question* (how do you feel about your test results ?)) (0 :subtree+clause)
 
+  ; Do you understand your test results ?
+  1 (8 AUX-BASE 2 you understand-gen 6 diagnosis-tests 0)
+    2 (*diagnosis-details-question* (Do I know what the tests say ?)) (0 :subtree+clause)
+  1 (0 wh_ 6 AUX-BASE 2 you 2 NEG 2 understand-gen 6 diagnosis-tests 0)
+    2 (*diagnosis-details-question* (Do I know what the tests say ?)) (0 :subtree+clause)
+  
+
+
   ; asking if system has any questions
   1 (0 you 2 have 2 question-word 0)
     2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
@@ -2407,6 +2445,15 @@
     2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
   1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
     2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
+
+; Do you want me to be present when you tell your family about the cancer?
+  1 (0 family-pron 0)
+    2 (0 want-gen 4 available 0)
+      3 (*test-results-question* (do you want your family to be here when I tell you about the test results ?)) (0 :subtree+clause)
+    2 (0 want-gen 4 with 0)
+      3 (*test-results-question* (do you want your family to be here when I tell you about the test results ?)) (0 :subtree+clause)
+    2 (0 want 4 here 0)
+      3 (*test-results-question* (do you want your family to be here when I tell you about the test results ?)) (0 :subtree+clause)
 
   ; How much do you want to know about your test results?
   1 (0 how much 3 information 3 AUX 1 you 0)
@@ -2650,6 +2697,18 @@
   1 (0 sorry 0)
     2 ((You are sorry that I have cancer \.) (Reason-for-cancer)) (0 :gist)
 
+  ; Cancer is a bad illness.
+  1 (0 cancer-illness 3 be 5 difficult 0)
+    2 ((Cancer is a bad illness \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 cancer-illness 3 be 5 bad 0)
+    2 ((Cancer is a bad illness \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 difficult 5 experienced 3 cancer-illness 0)
+    2 ((Cancer is a bad illness \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 know-gen 5 difficult 3 cancer-illness 3 be 0)
+    2 ((Cancer is a bad illness \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 cancer-illness 4 NEG 3 easy 0)
+    2 ((Cancer is a bad illness \.) (Reason-for-cancer)) (0 :gist)
+
   ; My cancer is caused by a mutation that spread through my cells \.
   1 (0 mutation 2 in 2 body 0)
     2 ((My cancer is caused by a mutation that spread through my cells \.) (Reason-for-cancer)) (0 :gist)
@@ -2694,6 +2753,12 @@
   1 (0 happen 4 without 2 warning 0)
     2 ((Cancer can affect the human body suddenly \.) (Reason-for-cancer)) (0 :gist)
   1 (0 cancer-increase 4 sudden 0)
+    2 ((Cancer can affect the human body suddenly \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 cancer-illness 2 become 2 worse 4 sudden 0)
+    2 ((Cancer can affect the human body suddenly \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 difficult 3 see 1 coming 0)
+    2 ((Cancer can affect the human body suddenly \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 difficult 2 spot 0)
     2 ((Cancer can affect the human body suddenly \.) (Reason-for-cancer)) (0 :gist)
 
 )) ; END *reason-for-cancer-input*
