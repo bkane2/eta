@@ -158,6 +158,9 @@
        lot of pain\, which I guess is why I worry about my medications \.) (0 :out)
   1 (I take some pain medication and read a book before I sleep 1)
     2 (I take some Lortab about an hour before I go to bed\, and then I read a book until I start to fall asleep \.) (0 :out)
+  1 (You can call me Sophie 1)
+    2 (You can call me Sophie \.) (2 :out)
+    2 (I\'m fine with being called Sophie \.) (0 :out)
 
   ; By default, simply output the gist-clause
   1 (0)

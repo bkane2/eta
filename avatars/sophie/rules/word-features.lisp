@@ -3,6 +3,8 @@
   ; Synonymous
   (meet meeting)
   (care treatment treatments)
+  (call refer)
+  (alright okay ok fine)
   (come came)
   (pain hurt hurting)
   (medicine medicines medication medications drug drugs pill pills med meds dose)

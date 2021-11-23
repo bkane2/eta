@@ -934,4 +934,12 @@
     2 ((Was I nervous for this appointment ?)) (0 :gist)
   1 (0 AUX 3 appointment 1 frighten 1 you 0)
     2 ((Was I nervous for this appointment ?)) (0 :gist)
+
+  ; questions about how to refer to the system
+  1 (0 AUX I 1 call 1 you 1 Sophie 0)
+    2 ((Can you call me Sophie ?)) (0 :gist)
+  1 (0 wh_ 1 I 2 call 1 you 0)
+    2 ((Can you call me Sophie ?)) (0 :gist)
+  1 (0 be 2 alright 2 call 1 you 1 Sophie 0)
+    2 ((Can you call me Sophie ?)) (0 :gist)
 ))

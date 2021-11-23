@@ -142,6 +142,9 @@
       2 (*prognosis-input*) (0 :subtrees)
       2 (*reason-for-cancer-input*) (0 :subtrees)
       2 (*tell-family-input*) (0 :subtrees)
+   ; it's assumed that this question is only ever asked in the very beginning
+   1 (You can call me Sophie \.) 
+      2 (*test-results-input*) (0 :subtrees)
    
    1 (0)
       2 (*general-input*) (0 :subtrees)

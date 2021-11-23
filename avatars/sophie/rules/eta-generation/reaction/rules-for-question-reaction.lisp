@@ -234,6 +234,8 @@
     2 *explain-understanding-of-condition* (0 :schema)    
   1 (Was I nervous for this appointment ?)
     2 *mention-anxiety* (0 :schema)
+  1 (Can you call me Sophie ?)
+    2 *confirm-name* (0 :schema)
   
   1 (0)
     2 *reaction-to-question-minor* (0 :subtree)
