@@ -96,7 +96,14 @@
         ;;   5 (*reactions-to-question+clause* ((5 ?) (1 \.))) (0 :schema+args)
       ;; 3 (10 \. 10 ? 6); no intervening clauses (by above level-3 failure)
       ;;   4 (*reactions-to-question+clause* ((3 ?) (1 \.))) (0 :schema+args)
-      3 (*reactions-to-question+clause* ((3 ?) (1 \.))) (0 :schema+args)
+      3 (*reaction-to-input* (1 ?)) (0 :subtree+clause)
+    2 (0 ? 0 \.); question comes first; currently the system should ignore the
+                ; question and respond to the main point, given the nature of
+                ; the conversation. This can be changed if necessary though,
+                ; using a *reactions-to-clause+question* schema.
+      3 (*reaction-to-input* (3 \.)) (0 :subtree+clause)
+
+
 
   ; No question among the gist clauses (by earlier level-1 failure)
   1 (5 \. 0); short initial answer? Respond just to that
