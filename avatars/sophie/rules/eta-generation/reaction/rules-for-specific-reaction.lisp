@@ -427,7 +427,7 @@
     ;; 2 ([SAD] I\'m not entirely sure I understand what this means for my future \. I want to be fully prepared for the worst\,
     ;;   though \.) (100 :out)
     ;; 2 (I see \.) (100 :out)
-    2 (I guess it\'s not easy to say for sure\. I would like to be fully prepared for the future though \.) (100 :out)
+    2 (I know it\'s not easy to say for sure\. I would like to be fully prepared for the future though \.) (100 :out)
     2 ([SAD] I suppose these things can be hard to predict \.) (100 :out)
     2 (I see \.) (0 :out)
 

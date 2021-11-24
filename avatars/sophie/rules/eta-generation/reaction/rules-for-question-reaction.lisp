@@ -223,7 +223,7 @@
   1 (What scares me about my prognosis ?)
     2 *ask-about-prognosis* (0 :schema)
   1 (Do I have a question about my prognosis ?)
-    2 *ask-for-second-opinion* (0 :schema)
+    2 *ask-about-prognosis* (0 :schema)
 
   ; Questions about reason for cancer
   1 (How have you been feeling since the cancer metastasized ?)
