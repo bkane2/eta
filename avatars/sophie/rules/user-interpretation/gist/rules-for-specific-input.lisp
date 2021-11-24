@@ -1987,11 +1987,12 @@
       3 ((My prognosis is that I will not live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
     2 ((My prognosis is that I will live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
   1 (0 unusual 0)
-    2 (- 0 NEG unusual 0)
-      3 ((My prognosis is that I will not live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
-    2 (0 unusual 4 but 0)
-      3 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
-    2 ((My prognosis is that I will live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+    2 (- 0 difficult 2 prepare 0)
+      3 (- 0 NEG unusual 0)
+        4 ((My prognosis is that I will not live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+      3 (0 unusual 4 but 0)
+        4 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+      3 ((My prognosis is that I will live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
   1 (0 seldom 0)
     2 (- 0 NEG seldom 0)
       3 (- 0 seldom NEG 0)
@@ -2039,6 +2040,8 @@
   1 (0 NEG good 1 at 3 guess 0)
     2 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
   1 (0 difficult 3 answer 0)
+    2 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
+  1 (0 surprise 0)
     2 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
   1 (0 might 0)
     2 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-Understanding)) (0 :gist)
@@ -2256,6 +2259,16 @@
 (READRULES '*tell-family-input*
 ; (What should I tell my family ?)
 '(
+
+  ; What do you understand about your prognosis?
+  1 (0 tell me 4 what 1 you 1 understand-gen 0)
+    2 (*open-ended-question* (what do you understand about my condition ?)) (0 :subtree+clause)
+  1 (0 do 1 you 1 understand-gen 4 cancer-illness 0)
+    2 (*open-ended-question* (what do you understand about my condition ?)) (0 :subtree+clause)
+  1 (0 wh_ do 1 you 1 understand-gen 4 cancer-illness 0)
+    2 (*open-ended-question* (what do you understand about my condition ?)) (0 :subtree+clause)
+  1 (0 wh_ be 1 your 1 understand-gen 4 cancer-illness 0)
+    2 (*open-ended-question* (what do you understand about my condition ?)) (0 :subtree+clause)
   
   ; How much do you want your family to know about your cancer?
   1 (0 want-gen 3 family-pron 2 know-gen 0)
@@ -2760,5 +2773,10 @@
     2 ((Cancer can affect the human body suddenly \.) (Reason-for-cancer)) (0 :gist)
   1 (0 difficult 2 spot 0)
     2 ((Cancer can affect the human body suddenly \.) (Reason-for-cancer)) (0 :gist)
+
+  1 (0)
+    2 *general-input* (0 :subtree)
+  1 (0)
+    2 ((NIL Gist \: nothing found for why do I have cancer \.)) (0 :gist)
 
 )) ; END *reason-for-cancer-input*

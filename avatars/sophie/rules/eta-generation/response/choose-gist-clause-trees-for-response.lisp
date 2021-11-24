@@ -161,6 +161,10 @@
   1 (You can call me Sophie 1)
     2 (You can call me Sophie \.) (2 :out)
     2 (I\'m fine with being called Sophie \.) (0 :out)
+  1 (My goal is to survive long enough to be there for my family \.)
+    2 (Of course I want to live as long as possible\, but the most important thing to me is being able to be there for my family \.
+       My grandson is going to graduate from middle school soon \.) (2 :out)
+    2 (I just want to be able to spend more time with my family\, and to be comfortable \.) (0 :out)
 
   ; By default, simply output the gist-clause
   1 (0)

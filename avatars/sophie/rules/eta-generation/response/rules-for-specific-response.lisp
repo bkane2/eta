@@ -58,7 +58,7 @@
         that would be right for me ?) (0 :out)
   
   1 (0 The prognosis is that I cannot be cured 0)
-    2 (That\'s hard to hear \. But are you certain there\'s no cure ? Sometimes I hear about experimental treatments and such \. Do you think any of those would be 
+    2 ([SAD] That\'s hard to hear \. But are you certain there\'s no cure ? Sometimes I hear about experimental treatments and such \. Do you think any of those would be 
        right for me ?) (0 :out)
 
   1 (0)
@@ -464,7 +464,8 @@
 '(
   1 (0 Do my family know about my cancer 0)
     2 ([SAD] My family knows about my cancer already\, but they don\'t really know how bad it is\, or what it
-       means for me \. How should I discuss these with them ?) (0 :out)
+       means for me \. How should I discuss these with them ?) (100 :out)
+    2 ([SAD] I\'m still not really sure how I should break this news to my family \. I don\'t want them to be worried \.) (0 :out)
 
   1 (0 Who in my family do I want to tell about the prognosis 0)
     2 ([SAD] I imagine my son and daughter should both know\. Especially my daughter\, since I\'ve been staying with her and her grandson\. But how do I 
@@ -484,7 +485,8 @@
 
   1 (0)
     2 ([SAD] I haven\'t told my family everything yet \. I wanted to wait to talk to you first \.
-       What should I say to them ?) (0 :out)
+       What should I say to them ?) (100 :out)
+    2 ([SAD] I\'m still not really sure how I should break this news to my family \. I don\'t want them to be worried \.) (0 :out)
 
 )) ; END *response-tree-tell-family*
 
@@ -673,24 +675,24 @@
   
   1 (0 Quitting smoking will not make my prognosis better 0)
     2 ([SAD] Oh \. That\'s too bad \. I\'m glad that I quit though \. After all \, I have my grandson to think about \. Speaking of my grandson \,
-        I know the test results say one thing \, but do you think I \'ll live to see his graduation ? He\'s in middle school
+        I know the test results say one thing \, but do you think I\'ll live to see his graduation ? He\'s in middle school
         right now \.) (0 :out)
 
   1 (0 Quitting smoking might make my prognosis better 0)
     2 (Either way\, I\'m glad I quit \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
-         do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
+         do you think I\'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
   
   1 (0 Quitting smoking will make my prognosis better 0)
     2 (Either way\, I\'m glad I quit \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
-         do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
+         do you think I\'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
   
   1 (0 Healthy habits will help me outlive my prognosis 0)
     2 (Well\, either way\, I figure there\'s no harm in trying\. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
-        do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
+        do you think I\'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
 
   1 (0 Healthy habits may help me outlive my prognosis 0)
     2 (Well\, either way\, I figure there\'s no harm in trying\. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
-         do you think I \'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
+         do you think I\'ll live to see his graduation ? He\'s in middle school right now \. ) (0 :out)
 
 )) ; END *response-tree-bargaining-grandson*
 

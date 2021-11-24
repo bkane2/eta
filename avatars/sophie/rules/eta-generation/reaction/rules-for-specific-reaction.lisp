@@ -357,7 +357,8 @@
     2 (I wish I could know for sure\, but I understand how hard these things are to predict \. No matter what happens\, I\'ll have to make the best of the time I have left \.) (0 :out)
 
   1 (My prognosis is that I will not live to attend the graduation of my grandson \.)
-    2 (Oh\. That\'s very hard to hear \. But I\'m glad that you\'re telling me now\. I\'ll be sure to prepare for the worst and cherish the remaining time with my family \.) (0 :out)
+    2 ([SAD] That\'s really difficult to hear \. My grandson is the most important thing in the world to me \. He\'ll be heartbroken \.) (2 :out)
+    2 ([SAD] Oh\. That\'s very hard to hear \. But I\'m glad that you\'re telling me now\. I\'ll be sure to prepare for the worst and cherish the remaining time with my family \.) (0 :out)
 
   1 (My prognosis is that I will live to attend the graduation of my grandson \.)
     2 ([HAPPY] That\'s good to hear \. My grandson is incredibly important to me and I want to make it at least to his graduation \. I know I\'ll cherish all the time I have left with him \.) (0 :out)
@@ -487,6 +488,8 @@
 
 )) ; END *tell-family-reaction*
 
+
+
 (READRULES '*positive-reaction*
 ; (Doctor expresses positive sentiment)
 '(
@@ -497,6 +500,7 @@
     2 (Great \!) (0 :out)
 
 )) ; END *positive-reaction*
+
 
 
 (READRULES '*test-results-reaction*
@@ -571,6 +575,8 @@
     
 )) ; END *treatment-goals-reaction*
 
+
+
 (READRULES '*reason-for-cancer-reaction*
 ; (0 cause 0)
 ; (0 wish 4 not 1 cancer 0)
@@ -605,5 +611,8 @@
 
   1 (Cancer can affect the human body suddenly \.)
     2 *mention-anxiety* (0 :schema)
+
+  1 (0)
+    2 ([SAD] I just don\'t understand why this had to affect me of all people \. I\'m thankful you\'re here to help me through it \.) (0 :gist)
 
 )) ; END *reason-for-cancer-reaction*

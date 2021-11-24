@@ -898,6 +898,8 @@
     2 ((What do I understand ?)) (0 :gist)
   1 (0 wh_ do 1 you 1 understand-gen 0)
     2 ((What do I understand ?)) (0 :gist)
+  1 (0 wh_ be 1 your 1 understand-gen 0)
+    2 ((What do I understand ?)) (0 :gist)
 
   ; asking for system's preferences for information
   1 (0 how much 3 information-gen 3 AUX 1 you 0)
@@ -934,6 +936,18 @@
     2 ((Was I nervous for this appointment ?)) (0 :gist)
   1 (0 AUX 3 appointment 1 frighten 1 you 0)
     2 ((Was I nervous for this appointment ?)) (0 :gist)
+
+  ; what is the most important thing for your future ?
+  1 (0 wh_ be 3 important 3 your future 0)
+    2 ((What is the most important thing for my future ?)) (0 :gist)
+  1 (0 wh_ be 3 important 2 for you 0)
+    2 ((What is the most important thing for my future ?)) (0 :gist)
+  1 (0 wh_ 1 do 1 you 3 important 0)
+    2 ((What is the most important thing for my future ?)) (0 :gist)
+  1 (0 wh_ 1 do 1 you 3 cancer-goals 0)
+    2 ((What is the most important thing for my future ?)) (0 :gist)
+  1 (0 wh_ be 1 your 3 cancer-goals 0)
+    2 ((What is the most important thing for my future ?)) (0 :gist)
 
   ; questions about how to refer to the system
   1 (0 AUX I 1 call 1 you 1 Sophie 0)

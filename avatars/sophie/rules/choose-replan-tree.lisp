@@ -22,4 +22,6 @@
     2 *ask-about-test-results* (100 :schema)
   1 (Can I have a stronger pain medication ?)
     2 *ask-for-stronger-pain-medication* (100 :schema)
+  1 (What should I tell my family ?)
+    2 *ask-what-to-tell-family* (100 :schema)
 ))

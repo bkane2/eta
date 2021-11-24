@@ -7,6 +7,7 @@
   (alright okay ok fine)
   (come came)
   (pain hurt hurting)
+  (answer say)
   (medicine medicines medication medications drug drugs pill pills med meds dose)
   (drive drove driving)
   (appointment meeting consultation session)
@@ -122,7 +123,7 @@
   (dating taking)
 
   ; General
-  (cancer-illness cancer disease condition illness)
+  (cancer-illness cancer disease condition illness prognosis)
   (posadv-affirm certainly course absolutely sure definitely)
   (affirm pos posadv)
   (anyone-here-with-you here with alone by)
@@ -191,7 +192,7 @@
   ; Treatment goals
   (cancer-fight fight fighting battle battling treat treating cure curing)
   (cancer-live live living survive surviving cure curing remission)
-  (cancer-goals goal goals objective objectives priority priorities preference preferences value values valuing)
+  (cancer-goals goal goals objective objectives priority priorities prioritize preference preferences value values valuing)
   (treatment-option option options possibility possibilities treatments treatment care choice choices)
   (prognosis-notification-words see saw seen give shown show present presented supply supplied inform informed)
 

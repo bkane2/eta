@@ -133,6 +133,8 @@
       2 (*prognosis-bargaining-now-input*) (0 :subtrees)
    1 (Can I outlive your prognosis until the graduation of my grandson ?)
       2 (*prognosis-bargaining-graduation-input*) (0 :subtrees)
+   1 (My goal is to survive long enough to be there for my family \.)
+      2 (*prognosis-bargaining-graduation-input*) (0 :subtrees)
    1 (Should I get a second opinion about my prognosis ?)
       2 (*prognosis-input*) (0 :subtrees)   
    1 (I want to talk about my prognosis today \.)
