@@ -547,31 +547,36 @@
 
   1 (0 Do I understand my prognosis 0)
     2 ([SAD] I don\'t really understand my prognosis\, I\'m just bracing myself for the worst \. Can you tell me how
-       long you think I have ?) (0 :out)
+       long you think I have ?) (100 :out)
+    2 ([SAD] I understand that things don\'t seem to be improving\, but I don\'t really know what it means for me \.) (2 :out)
+    2 ([SAD] It seems like my condition has gotten worse\, but that\'s all I know \. How bad really is it ?) (0 :out)
   1 (0 What scares me about my prognosis 0)
     2 ([SAD] What worries me the most is just how uncertain my future is \. Some days I believe my condition will get better and others I brace myself for the worst \.
-      Is there any way you can let me know what I should expect ?) (0 :out)
+      Is there any way you can let me know what I should expect ?) (100 :out)
+    2 ([SAD] I\'m really scared about my condition getting worse \. I just don\'t know what to expect at this point \.) (0 :out)
   1 (0 How do I feel about my prognosis 0)
     2 ([SAD] I feel very anxious about my condition \. I feel like it\'s gotten worse \. I want to know what this means
-       for my future \.) (0 :out)
+       for me \.) (2 :out)
+    2 ([SAD] I\'m just scared about it getting worse \, and not being able to be there for my family \.) (0 :out)
 
    1 (0 Do I have any questions about my prognosis 0)
     2 (I was wondering whether I could get a second opinion on my prognosis ? I\'m going to be facing a lot of important decisions soon about my future and I want to be 
-       as prepared as I can \.)(100 :out)
+       as prepared as I can \.) (100 :out)
     2 (Do you think it would be beneficial to get a second opinion on my prognosis ?) (0 :out)
 
   1 (0 The test results do not appear conclusive 0)
     2 ([SAD] That\'s unfortunate\. I was hoping to get some answers today about what my future would look like\. I\'m wondering\, is there any way you could still tell me 
-       how much time I can expect ?) (0 :out)
+       how much time I can expect ?) (100 :out)
+    2 ([SAD] Is there really no way to tell what my tests mean for me ?) (0 :out)
 
   1 (0 How much information do I want about my prognosis 0)
    2 (Please give me all the information you have\. It scares me more to be left in the dark than to know what my prognosis may be \.) (100 :gist)
    2 (Don\'t hold anything back\. I think I can take it and I want to know how much time I still have \.) (0 :gist)
 
-
   1 (0 Am I ready to start discussing treatment options 0)
     2 (Hold on a moment \. Before we start talking about my options for treatment\, I need to know what these test results might mean for my future\. How long do you think 
-       I might have left ?) (0 :out)
+       I might have left ?) (2 :out)
+    2 (I need some time to digest everything and to tell my family before talking about treatment options \.) (0 :out)
 
   1 (0)
     ; OPPORTUNITY for open-ended questions: "What are your treatment goals?", "Do you understand your diagnosis?", "How do you feel about your future?"
@@ -607,10 +612,11 @@
  
   1 (0 Do I understand my prognosis 0)
     2 (My test results seem to say that I don\'t have a lot of time left \. But I know how hard these things are to predict \.
-       Are you sure that my chances aren\'t somewhat better than that ?) (0 :out)
+       Are you sure that my chances aren\'t somewhat better than that ?) (2 :out)
+    2 (I know my condition isn\'t good\. But I don\'t feel that bad at the moment \. Are you sure I can\'t improve ?) (0 :out)
 
   1 (0)
-    2 (I know how hard it is to predict someone\'s chances \. Are you sure that my prognosis is exactly right ?) (0 :out)
+    2 (I know how hard it is to predict someone\'s chances \. Are you sure that my prognosis is exactly right ?) (2 :out)
     2 (Are you sure my prognosis is correct ?) (0 :out)
 )) ; END *response-tree-prognosis-denial*
 
@@ -730,7 +736,7 @@
     2 ([SAD] I don\'t really understand it very well \. It feels like my cancer has gotten worse\, but I\'m not
        sure how bad it is \.) (100 :out)
     2 ([SAD] It feels like my condition has gotten worse recently\, but I don\'t really know what this means
-       for my future \.) (0 :out)
+       for me in the future \.) (0 :out)
   
   1 (0 How am I feeling about my condition 0)
     2 ([SAD] It feels like my condition has gotten worse \. But I\'m not yet sure how bad it really is \.) (100 :out)
