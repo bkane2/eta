@@ -914,6 +914,7 @@
   ; questions about system's feelings
   1 (0 how 1 you 3 feeling 0)
     2 ((How am I feeling about my condition ?)) (0 :gist)
+
   1 (0 tell 5 fear-words 0)
     2 ((What scares me about my condition ?)) (0 :gist)
   1 (0 elaborate 4 fear-words 0)
@@ -930,11 +931,14 @@
     2 ((What scares me about my condition ?)) (0 :gist)
   1 (0 wh_ cause you 4 fear-words 0)
     2 ((What scares me about my condition ?)) (0 :gist)
-  1 (0 be 1 you 1 frightened 5 appointment 0)
+  1 (0 wh_ 2 your future 3 anxiety-word 0)
+    2 ((What scares me about my condition ?)) (0 :gist)
+
+  1 (0 be 1 you 1 anxiety-word 5 appointment 0)
     2 ((Was I nervous for this appointment ?)) (0 :gist)  
-  1 (0 be 3 appointment 1 frightening 0)
+  1 (0 be 3 appointment 1 anxiety-word 0)
     2 ((Was I nervous for this appointment ?)) (0 :gist)
-  1 (0 AUX 3 appointment 1 frighten 1 you 0)
+  1 (0 AUX 3 appointment 1 anxiety-word 1 you 0)
     2 ((Was I nervous for this appointment ?)) (0 :gist)
 
   ; what is the most important thing for your future ?
