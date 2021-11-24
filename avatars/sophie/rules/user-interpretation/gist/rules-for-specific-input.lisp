@@ -2774,6 +2774,18 @@
   1 (0 difficult 2 spot 0)
     2 ((Cancer can affect the human body suddenly \.) (Reason-for-cancer)) (0 :gist)
 
+  ; Having cancer changes life significantly.
+  1 (0 change 3 life 0)
+    2 ((Having cancer changes life significantly \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 life 3 change 0)
+    2 ((Having cancer changes life significantly \.) (Reason-for-cancer)) (0 :gist)
+  
+  ; How have you been feeling since the cancer metastasized?
+  1 (0 wh_ 4 you 4 think-gen 0)
+    2 ((How have you been feeling since the cancer metastasized ?) (Reason-for-cancer)) (0 :gist)
+  1 (0 wh_ 4 you 4 be 0)
+    2 ((How have you been feeling since the cancer metastasized ?) (Reason-for-cancer)) (0 :gist)
+    
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
