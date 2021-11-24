@@ -104,6 +104,8 @@
     2 *reason-for-cancer-reaction* (0 :subtree)
   1 (0 why 2 have cancer 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
+  1 (0 change 0)
+    2 *reason-for-cancer-reaction* (0 :subtree)
 
   1 (0)
     2 *general-reaction* (0 :subtree)

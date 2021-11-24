@@ -612,6 +612,9 @@
   1 (Cancer can affect the human body suddenly \.)
     2 *mention-anxiety* (0 :schema)
 
+  1 (Having cancer changes life significantly \.)
+    2 *mention-anxiety* (0 :schema)
+
   1 (0)
     2 ([SAD] I just don\'t understand why this had to affect me of all people \. I\'m thankful you\'re here to help me through it \.) (0 :gist)
 

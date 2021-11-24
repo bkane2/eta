@@ -225,6 +225,10 @@
   1 (Do I have a question about my prognosis ?)
     2 *ask-for-second-opinion* (0 :schema)
 
+  ; Questions about reason for cancer
+  1 (How have you been feeling since the cancer metastasized ?)
+    2 *mention-anxiety* (0 :schema)
+
   ; Open-ended questions 
   1 (What do I understand ?)
     2 *explain-understanding-of-condition* (0 :schema)
