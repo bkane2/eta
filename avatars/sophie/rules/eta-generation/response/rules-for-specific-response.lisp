@@ -724,6 +724,15 @@
   1 (0 Cancer can affect anyone 0)
     2 (That\'s true\. Cancer is such a horrible illness\. It comes into your life without warning and completely takes it over\. It scares me a great deal how little I know now about my future \.) (0 :out)
 
+  1 (0 Having cancer changes life significantly 0)
+    2 (Everything has been so different since I was diagnosed with cancer\. I\'m just so exhausted all the time\. And I\'m worried about my future too\. Everything feels like an unknown now \.) (100 :out)
+    2 (I feel like my life has changed so much after I heard I had cancer \. Nothing feels certain anymore \.) (0 :out)
+
+  1 (0 How have you been feeling since the cancer metastasized 0)
+    2 (Truth be told\, I\'ve been exhausted\. I don\'t know if it\'s because my body is battling the cancer or because my mind is so worried it\'s going to get worse\. But I\'m just very tired\.) (100 :out)
+    2 (Honestly\, I\'ve been rather anxious recently\. I can feel something going wrong in my body\, but I have no idea what\'s going to happen \. Even now\, I have no idea how much my life is going to change\.
+       It all feels like an unknown \.) (0 :out)
+
   1 (0 I am sorry you have been feeling down recently 0)
     2 (I appreciate the kind words\. Truth be told\, I spend a lot of time worried about the future \. Everything is out of my control right now\, and it feels like there so little I can do about it\.) (0 :out)
 
