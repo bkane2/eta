@@ -1219,10 +1219,16 @@
 
   ; asking if system has any questions
   1 (0 you 2 have 2 question-word 0)
+    2 (0 medicine 0)
+      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
     2 (*prognosis-question* (Do you have a question about your prognosis ?)) (0 :subtree+clause)
   1 (0 question-word 2 you 2 have 0)
+    2 (0 medicine 0)
+      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
     2 (*prognosis-question* (Do you have a question about your prognosis ?)) (0 :subtree+clause)
   1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 (0 medicine 0)
+      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
     2 (*prognosis-question* (Do you have a question about your prognosis ?)) (0 :subtree+clause)
 
   ; How much do I want to know about my prognosis ?
@@ -2453,10 +2459,16 @@
 
   ; asking if system has any questions
   1 (0 you 2 have 2 question-word 0)
+    2 (0 medicine 0)
+      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
     2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
   1 (0 question-word 2 you 2 have 0)
+    2 (0 medicine 0)
+      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
     2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
   1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
+    2 (0 medicine 0)
+      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
     2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
 
 ; Do you want me to be present when you tell your family about the cancer?
