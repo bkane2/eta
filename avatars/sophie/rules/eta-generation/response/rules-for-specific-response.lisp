@@ -561,7 +561,7 @@
        for me \.) (2 :out)
     2 ([SAD] I\'m just scared about it getting worse \, and not being able to be there for my family \.) (0 :out)
 
-   1 (0 Do I have any questions about my prognosis 0)
+   1 (0 Do I have a question about my prognosis 0)
     2 (I was wondering whether I could get a second opinion on my prognosis ? I\'m going to be facing a lot of important decisions soon about my future and I want to be 
        as prepared as I can \.) (100 :out)
     2 (Do you think it would be beneficial to get a second opinion on my prognosis ?) (0 :out)
@@ -803,11 +803,75 @@
 (READRULES '*response-tree-redirect-to-prognosis*
 ; (I want to talk about my prognosis today 1)
 '(
-  1 (0)
+  
+  ; Responses about medication
+  1 (0 medicine 0)
+    2 (Can we save that for later ? I\'d be happy to talk about my medication\, but first I want to figure out what\'s wrong with me
+       and what it means for my future \.) (2 :out)
+    2 (I prefer not to discuss my medication before I learn more about what\'s going on with my cancer \.) (0 :out)
+
+  1 (0 medication 0)
+    2 (Can we save that for later ? I\'d be happy to talk about my medication\, but first I want to figure out what\'s wrong with me
+       and what it means for my future \.) (2 :out)
+    2 (I prefer not to discuss my medication before I learn more about what\'s going on with my cancer \.) (0 :out)
+
+  1 (0 pain med 0)
+    2 (Can we save that for later ? I\'d be happy to talk about my medication\, but first I want to figure out what\'s wrong with me
+       and what it means for my future \.) (2 :out)
+    2 (I prefer not to discuss my medication before I learn more about what\'s going on with my cancer \.) (0 :out)
+
+  1 (0 pain-med-other 0)
+    2 (Can we save that for later ? I\'d be happy to talk about my medication\, but first I want to figure out what\'s wrong with me
+       and what it means for my future \.) (2 :out)
+    2 (I prefer not to discuss my medication before I learn more about what\'s going on with my cancer \.) (0 :out)
+
+  1 (0 blood-pressure-med 0)
+    2 (Can we save that for later ? I\'d be happy to talk about my medication\, but first I want to figure out what\'s wrong with me
+       and what it means for my future \.) (2 :out)
+    2 (I prefer not to discuss my medication before I learn more about what\'s going on with my cancer \.) (0 :out)
+
+  1 (0 med-narcotic 0)
+    2 (Can we save that for later ? I\'d be happy to talk about my medication\, but first I want to figure out what\'s wrong with me
+       and what it means for my future \.) (2 :out)
+    2 (I prefer not to discuss my medication before I learn more about what\'s going on with my cancer \.) (0 :out)
+
+  1 (0 take 1 different 0)
+    2 (Can we save that for later ? I\'d be happy to talk about my medication\, but first I want to figure out what\'s wrong with me
+       and what it means for my future \.) (2 :out)
+    2 (I prefer not to discuss my medication before I learn more about what\'s going on with my cancer \.) (0 :out)
+
+  ; Responses about chemotherapy
+  1 (0 chemotherapy 0)
     2 (I\'m not ready to talk about treatment options yet\. I want to figure out what\'s wrong with me and
         what it all means for my future\.) (2 :out)
     2 (I think we should discuss treatment in a follow up appointment after I\'ve had the chance to explain my
         condition to my family\.) (0 :out)
+
+  ; Responses about comfort care
+  1 (0 comfort 1 care 0)
+    2 (I\'m not ready to talk about treatment options yet\. I want to figure out what\'s wrong with me and
+        what it all means for my future\.) (2 :out)
+    2 (I think we should discuss treatment in a follow up appointment after I\'ve had the chance to explain my
+        condition to my family\.) (0 :out)
+
+  ; Responses about treatment options
+  1 (0 treatment 1 option 0)
+    2 (I\'m not ready to talk about treatment options yet\. I want to figure out what\'s wrong with me and
+        what it all means for my future\.) (2 :out)
+    2 (I think we should discuss treatment in a follow up appointment after I\'ve had the chance to explain my
+        condition to my family\.) (0 :out)
+
+  ; Responses about treatment goals
+  1 (0 cancer-goals 0)
+    2 (I\'m not ready to talk about treatment options yet\. I want to figure out what\'s wrong with me and
+        what it all means for my future\.) (2 :out)
+    2 (I think we should discuss treatment in a follow up appointment after I\'ve had the chance to explain my
+        condition to my family\.) (0 :out)
+
+  1 (0)
+    2 (Can we talk about that later ? Right now\, I\'d just like to learn more about what my test results mean for my future \.) (2 :out)
+    2 (I don\'t think I\'m ready to talk about that now\. First\, I\'d like to know what\'s wrong with me and what my future will 
+       look like \.) (0 :out)
 )) ; END *response-tree-redirect-to-prognosis
 
 
