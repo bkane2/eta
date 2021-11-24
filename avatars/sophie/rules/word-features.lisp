@@ -103,6 +103,7 @@
   (everything all full whole entire)
   (succumb die victim)
   (stop stopped prevent prevented keep kept)
+  (change changed changing changes alter alters altering altered transform transforms transforming transformed)
   (difference change)
   (seem seemed seeming appear appeared appearing look)
   (in into)
@@ -115,6 +116,7 @@
   (stage stages)
   (final last terminal)
   (assume presume accept act)
+  (be been are were)
   
   ; ASR errors
   (talking talkin)
@@ -314,5 +316,6 @@
   (hurt-words destroy impair debilitate)
   (tumor cyst malignancy carcinoma growth neoplasm)
   (sudden suddenly unexpected unexpectedly rapid rapidly abrupt abruptly quickly quick)
+  (life living world lifestyle situation)
 
 ))
