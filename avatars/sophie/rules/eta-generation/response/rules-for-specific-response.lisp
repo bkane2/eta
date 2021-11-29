@@ -791,7 +791,7 @@
 '(
   1 (0 How do I think this conversation is going 0)
     2 (I think our conversation is going fine \. It\'s just a lot to take in\, though \. Do you have
-       any questions for me at this point ?) (0 :out)
+       any questions about my condition ?) (0 :out)
 
   1 (0 How much information do I want 0)
     2 (Please give me as much information as you can\, but try to avoid getting too technical \.
@@ -802,7 +802,7 @@
 
   1 (0 Am I following what you say 0)
     2 (I think I\'m following \. It\'s just very difficult to take in \. Do you have any specific questions
-       for me at this point ?) (0 :out)
+       for me about my condition ?) (0 :out)
     2 (This is a lot of difficult information for me to handle\, but I\'m trying my best to understand \.) (0 :out)
 
   1 (0)
