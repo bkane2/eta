@@ -891,10 +891,64 @@
 (READRULES '*response-tree-rephrase*
 ; (can 1 rephrase 1 question 1)
 '(
+
+  ; List of (NIL Gist \: ...) topics:
+  ; has cancer gotten worse
+  ; verifying whether my cancer is worse
+  ; medical history
+  ; whether addiction is a side effect of the medication
+  ; side effects of a medication
+  ; question about appointment details
+  ; chemotherapy details
+  ; diagnosis details
+  ; question about my energy
+  ; medicine
+  ; pain
+  ; radiation
+  ; sleeping well
+  ; chemotherapy
+  ; comfort care
+  ; refill of pain medication
+  ; stronger pain medication
+  ; knowing if pain medication working
+  ; prognosis
+  ; denial of prognosis
+  ; habits related bargaining of prognosis
+  ; smoking related bargaining of prognosis
+  ; health now related bargaining of prognosis
+  ; bargaining of prognosis
+  ; experimental treatments
+  ; why I am sleeping poorly
+  ; tell family
+  ; test results
+  ; treatment option
+  ; will stronger pain medication help me sleep
+  ; why do I have cancer
   1 (0 NIL Gist 0)
-    2 (I am sorry\, I\'m having trouble understanding\. Could you try saying it again\, a bit more clearly ?) (3 :out)
-    2 (I\'m still having a bit of trouble understanding\. Would you mind rephrasing ?) (3 :out)
-    2 (Could you repeat that one more time using a different phrasing ?) (0 :out)
+    ;; 2 (0 cancer 1 worse 0)
+    ;; 2 (0 medical history 0)
+    ;; 2 (0 side effect 2 medication 0)
+    ;; 2 (0 appointment details 0)
+    ;; 2 (0 chemotherapy details 0)
+    ;; 2 (0 diagnosis details 0)
+    ;; 2 (0 energy 0)
+    ;; 2 (0 pain medication 0)
+    ;; 2 (0 medicine 0)
+    ;; 2 (0 pain 0)
+    ;; 2 (0 radiation 0)
+    ;; 2 (0 sleeping 0)
+    ;; 2 (0 chemotherapy 0)
+    ;; 2 (0 comfort care 0)
+    ;; 2 (0 prognosis 0)
+    ;; 2 (0 experimental treatments 0)
+    ;; 2 (0 tell family 0)
+    ;; 2 (0 test results 0)
+    ;; 2 (0 treatment option 0)
+    ;; 2 (0 why do I have cancer 0)
+    2 (0)
+      3 (I am sorry\, I\'m having trouble understanding\. Could you try saying it again\, a bit more clearly ?) (3 :out)
+      3 (I\'m still having a bit of trouble understanding\. Would you mind rephrasing ?) (3 :out)
+      3 (Could you repeat that one more time using a different phrasing ?) (0 :out)
 
   1 (0)
     2 (I am sorry\, I didn\'t quite understand\. Can you say it again ?) (3 :out)

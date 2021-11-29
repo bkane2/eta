@@ -1480,6 +1480,7 @@
 )) ; END *prognosis-denial-input*
 
 
+
 (READRULES '*prognosis-bargaining-habits-input*
 '(
   ; Can I outlive your prognosis if I have healthy habits?
@@ -1631,7 +1632,10 @@
     2 *general-input* (0 :subtree)
   1 (0)
     2 ((NIL Gist \: nothing found for habits related bargaining of prognosis \.)) (0 :gist)
+
 )) ; END *prognosis-bargaining-habits-input*
+
+
 
 (READRULES '*prognosis-bargaining-quit-smoke-input*
 '(
@@ -1771,7 +1775,10 @@
     2 *general-input* (0 :subtree)
   1 (0)
     2 ((NIL Gist \: nothing found for smoking related bargaining of prognosis \.)) (0 :gist)
+
 )) ; END *prognosis-bargaining-quit-smoke-input*
+
+
 
 (READRULES '*prognosis-bargaining-now-input*
 '(
@@ -1955,7 +1962,9 @@
     2 *general-input* (0 :subtree)
   1 (0)
     2 ((NIL Gist \: nothing found for health now related bargaining of prognosis \.)) (0 :gist)
+
 )) ; END *prognosis-bargaining-now-input*
+
 
 
 (READRULES '*prognosis-bargaining-graduation-input*
@@ -2143,6 +2152,8 @@
     2 ((NIL Gist \: nothing found for experimental treatments \.)) (0 :gist)
 
 )) ; END *experimental-therapy-input*
+
+
 
 (READRULES '*sleep-poorly-input*
 ; (Why 1 I not 1 sleeping well ?)
@@ -2836,13 +2847,13 @@
     2 ((You do not have a question for me \.) (Ask-for-questions)) (0 :gist)
 
   1 (0)
-    2 (*test-results-input*) (0 :subtree)
+    2 *test-results-input* (0 :subtree)
   1 (0)
-    2 (*prognosis-input*) (0 :subtree)
+    2 *prognosis-input* (0 :subtree)
   1 (0)
-    2 (*reason-for-cancer-input*) (0 :subtree)
+    2 *reason-for-cancer-input* (0 :subtree)
   1 (0)
-    2 (*tell-family-input*) (0 :subtree)
+    2 *tell-family-input* (0 :subtree)
 
   1 (0)
     2 *general-input* (0 :subtree)

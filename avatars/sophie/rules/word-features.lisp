@@ -170,7 +170,7 @@
   (seldom rarely never infrequently)
   (exception anamoly outlier oddity deviation abnormality peculiarity irregularity)
   (left remaining)
-  (become becomes became becoming get gets getting got)
+  (become becomes became becoming get gets getting got gotten)
   (move moved go gone)
   (grow grows growing grown)
 
