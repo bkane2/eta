@@ -914,6 +914,8 @@
   ; questions about system's feelings
   1 (0 how 1 you 3 feeling 0)
     2 ((How am I feeling about my condition ?)) (0 :gist)
+  1 (0 how have you 1 been 0)
+    2 ((How am I feeling about my condition ?)) (0 :gist)
 
   1 (0 tell 5 fear-words 0)
     2 ((What scares me about my condition ?)) (0 :gist)
