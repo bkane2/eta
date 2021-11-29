@@ -2433,6 +2433,12 @@
   1 (0 move 2 in 4 stage-four stage 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
 
+  ; You have cancer
+  1 (0 you 1 have 1 cancer 0)
+    2 ((The test results show that I have cancer \.) (Test-results)) (0 :gist)
+  1 (0 you 1 diagnosed 2 cancer 0)
+    2 ((The test results show that I have cancer \.) (Test-results)) (0 :gist)
+
   ; I don't know which test results you mean
   1 (0 NEG 1 know 2 wh_ 1 test 0)
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)

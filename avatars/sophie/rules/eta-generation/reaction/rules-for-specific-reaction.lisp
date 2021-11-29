@@ -517,6 +517,9 @@
   1 (The test results show that my cancer has spread \.)
     2 *ask-about-prognosis* (0 :schema)
 
+  1 (The test results show that I have cancer \.)
+    2 *ask-about-test-results* (100 :schema)
+
   1 (You are not sure what my test results mean \.)
     2 *ask-about-test-results* (100 :schema)
     ;; 2 *ask-about-test-results* (100 :schema)

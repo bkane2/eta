@@ -98,7 +98,8 @@
 
   1 (0 The test results show that 0)
     2 (- 0 radiation 2 NEG working 0)
-      3 (^me know.v (ans-to '(What do my test results mean ?))) (0 :ulf)
+      3 (- 0 I have cancer 0)
+        4 (^me know.v (ans-to '(What do my test results mean ?))) (0 :ulf)
 
   1 (0 is a treatment option 0)
     2 (^me know.v (ans-to '(What are my options for treatment ?))) (0 :ulf)

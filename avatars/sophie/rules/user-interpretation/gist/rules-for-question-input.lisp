@@ -882,11 +882,11 @@
   ; meta-questions about conversation
   1 (0 how 4 conversation 3 going 0)
     2 ((How do I think this conversation is going ?)) (0 :gist)
-  1 (0 AUX-BASE 3 you 2 understand-gen 0 me 0)
+  1 (0 AUX-BASE 3 you 2 understand-gen 1 me 0)
     2 ((Am I following what you say ?)) (0 :gist)
   1 (0 can 3 you 2 understand-gen 0)
     2 ((Am I following what you say ?)) (0 :gist)
-  1 (0 BE 3 you 2 understand-gen 0)
+  1 (0 BE 3 you 2 understanding-gen 0)
     2 ((Am I following what you say ?)) (0 :gist)
   1 (0 how 1 AUX-BASE 1 that sound 0)
     2 ((How does that sound ?)) (0 :gist)

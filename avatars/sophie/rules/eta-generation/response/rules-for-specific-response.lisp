@@ -219,6 +219,11 @@
        about possible metastasis \. Could you explain what that means in simple terms ?) (100 :out)
     2 (Could you try your best to explain the test results to me ?) (0 :out)
 
+  1 (0 The test results show that I have cancer 0)
+    2 ([SAD] I already know from what my previous doctor told me that I have cancer \, but I\'m not really sure how bad it is or
+       what my test results mean \. Can you explain what this means for me ?) (100 :out)
+    2 (Could you explain whether the test results show that my cancer has gotten better or worse ?) (0 :out)
+
   1 (0 Can I tell you about my pain instead of test results 0)
     2 (I\'ll think more about my pain medication and talk to you about it another time \. I\'d like to move onto my test
        results now\, though \. Could you explain what they mean ?) (0 :out)
