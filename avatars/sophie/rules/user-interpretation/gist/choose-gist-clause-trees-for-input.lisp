@@ -139,6 +139,8 @@
       2 (*prognosis-input*) (0 :subtrees)   
    1 (I want to talk about my prognosis today \.)
       2 (*prognosis-input*) (0 :subtrees)
+   1 (Can you rephrase your question ?)
+      2 (*ask-for-questions-input*) (0 :subtrees)
    1 (What are your questions ?)
       2 (*ask-for-questions-input*) (0 :subtrees)
    ; it's assumed that this question is only ever asked in the very beginning

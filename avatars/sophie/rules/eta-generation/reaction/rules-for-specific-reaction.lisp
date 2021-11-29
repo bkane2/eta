@@ -37,9 +37,6 @@
   1 (You are not sure whether my cancer has gotten worse \.)
     2 ([SAD] That\'s not very reassuring \.) (0 :out)
 
-  1 (0)
-    2 (I see \.) (0 :out)
-
 )) ; END *cancer-worse-reaction*
 
 
@@ -145,9 +142,6 @@
     2 ([SAD] If I continue to have trouble sleeping\, I might call in for stronger pain medication later \.) (0 :out)
   1 (A stronger pain medication will not help me sleep \.)
     2 ([SAD] I guess it\'s just something I\'ll have to live with \.) (0 :out)
-
-  1 (0)
-    2 (I see \.) (0 :out)
 
 )) ; END *medicine-reaction*
 
@@ -258,9 +252,6 @@
   1 (I cannot give you a refill of pain medication \.)
     2 ([SAD] Okay\. I will try to do without it\, but if the pain gets worse I\'m going to call you back for more pain medication \.) (0 :out)
 
-  1 (0)
-    2 (Okay\, I see \.) (0 :out)
-
 )) ; END *medicine-request-reaction*
 
 
@@ -282,8 +273,6 @@
     2 (Okay\, for now I\'ll keep taking the Lortab\, and create a follow up appointment if it doesn\'t
        work after a few weeks \.) (0 :out)
 
-  1 (0)
-    2 (I see \.) (0 :out)
 )) ; END *medicine-working-reaction*
 
 
@@ -429,7 +418,6 @@
     ;; 2 (I see \.) (100 :out)
     2 (I know it\'s not easy to say for sure\. I would like to be fully prepared for the future though \.) (100 :out)
     2 ([SAD] I suppose these things can be hard to predict \.) (100 :out)
-    2 (I see \.) (0 :out)
 
 )) ; END *prognosis-reaction*
  
@@ -449,9 +437,6 @@
 
   1 (You are sorry that I am sleeping poorly \.)
     2 *ask-about-poor-sleep* (0 :schema)
-    
-  1 (0)
-    2 (Okay \.) (0 :out)
 
 )) ; END *sleep-poorly-reaction*
 
@@ -526,10 +511,6 @@
 
   1 (The test results show that the radiation is not working \.)
     2 *ask-about-prognosis* (100 :schema)
-
-  1 (0)
-    2 (Okay \.) (100 :out)
-    2 (I see \.) (0 :out)
 
 )) ; END *test-results-reaction*
 

@@ -891,6 +891,11 @@
 (READRULES '*response-tree-rephrase*
 ; (can 1 rephrase 1 question 1)
 '(
+  1 (0 NIL Gist 0)
+    2 (I am sorry\, I\'m having trouble understanding\. Could you try saying it again\, a bit more clearly ?) (3 :out)
+    2 (I\'m still having a bit of trouble understanding\. Would you mind rephrasing ?) (3 :out)
+    2 (Could you repeat that one more time using a different phrasing ?) (0 :out)
+
   1 (0)
     2 (I am sorry\, I didn\'t quite understand\. Can you say it again ?) (3 :out)
     2 (Would you mind rephrasing ?) (3 :out)

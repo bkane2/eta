@@ -148,6 +148,11 @@
     2 *ask-for-clarification* (3 :schema)
     2 *ask-for-clarification* (3 :schema)
     2 (Sorry\, I still didn\'t quite understand\. I have some more questions\, maybe we can come back to it\.) (0 :out)
+  1 (NIL Gist 0)
+    2 *ask-for-clarification* (3 :schema)
+    2 *ask-for-clarification* (3 :schema)
+    2 (Sorry\, I\'m still not hearing you very well\. I\'m just really anxious\. I have some more questions for now\,
+       maybe we can come back to it later\.) (0 :out)
   1 (0)
     2 (I see\.) (8 :out)
     2 (Okay\.) (8 :out)
