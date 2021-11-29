@@ -90,6 +90,7 @@
   (coffee caffeine)
   (anything something)
   (like same similar identical comparable as)
+  (seems looks)
   (similarity likeness commonality resemblance correspondance)
   (now present today)
   (hopeful-words hope hopeful confident optimistic believe upbeat)

@@ -156,9 +156,6 @@
   ; Were you ever married?
   1 (0 married 0)
     2 ((Am I married ?) (Anyone-here-with-you)) (0 :gist)
-  ; How are you doing today?
-  1 (0 wh_ 2 you 3 feeling 0)
-    2 ((How am I doing today ?)) (0 :gist)
 
   ; Do you live alone?
   1 (0 aux 1 you 2 live 2 alone 0)
@@ -800,7 +797,7 @@
   1 (0 you 2 think-gen 4 diagnostic-tests 0) 
     2 ((How do I feel about my test results ?) (Test-Results)) (0 :gist)
 
-    ; asking if system has any questions
+  ; Asking if system has any questions
   1 (0 you 2 have 2 question-word 0)
     2 ((Do I have a question about my test results ?)) (0 :gist)
   1 (0 question-word 2 you 2 have 0)
@@ -892,6 +889,8 @@
     2 ((How do I think this conversation is going ?)) (0 :gist)
   1 (0 AUX-BASE 3 you 2 understand-gen 1 me 0)
     2 ((Am I following what you say ?)) (0 :gist)
+  1 (0 AUX-BASE 3 sophie 2 understand-gen 0)
+    2 ((Am I following what you say ?)) (0 :gist)
   1 (0 can 3 you 2 understand-gen 0)
     2 ((Am I following what you say ?)) (0 :gist)
   1 (0 BE 3 you 2 understanding-gen 0)
@@ -920,6 +919,10 @@
     2 ((How much information do I want ?)) (0 :gist)
 
   ; questions about system's feelings
+  1 (0 wh_ 2 you 3 feeling 2 now 0)
+    2 ((How am I doing today ?)) (0 :gist)
+  1 (0 how are you 3)
+    2 ((How am I doing today ?)) (0 :gist)
   1 (0 how 1 you 3 feeling 0)
     2 ((How am I feeling about my condition ?)) (0 :gist)
   1 (0 how have you 1 been 0)

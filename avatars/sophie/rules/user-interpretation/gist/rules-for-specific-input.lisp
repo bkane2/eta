@@ -39,6 +39,7 @@
 ; - test-results
 ; - treatment-option
 ; - stronger-medicine-help-sleep
+; - ask-for-questions
 
 
 (READRULES '*cancer-worse-input*
@@ -2099,6 +2100,8 @@
 
 )) ; END *prognosis-bargaining-graduation-input*
 
+
+
 (READRULES 'experimental-therapy-input*
 ; (Do you think experimental therapies will help ?)
 '(
@@ -2696,6 +2699,8 @@
 
 )) ; END *stronger-medicine-help-sleep-input*
 
+
+
 (READRULES '*reason-for-cancer-input*
 '(
   ; You wish that I do not have cancer \.
@@ -2816,3 +2821,32 @@
     2 ((NIL Gist \: nothing found for why do I have cancer \.)) (0 :gist)
 
 )) ; END *reason-for-cancer-input*
+
+
+
+(READRULES '*ask-for-questions-input*
+; (What are your questions ?)
+'(
+  1 (3 POS 3)
+    2 (- 0 NEG sure 0)
+      3 ((You have a question for me \.) (Ask-for-questions)) (0 :gist)
+  1 (3 no 3)
+    2 ((You do not have a question for me \.) (Ask-for-questions)) (0 :gist)
+  1 (0 NEG 1 think-gen 0)
+    2 ((You do not have a question for me \.) (Ask-for-questions)) (0 :gist)
+
+  1 (0)
+    2 (*test-results-input*) (0 :subtree)
+  1 (0)
+    2 (*prognosis-input*) (0 :subtree)
+  1 (0)
+    2 (*reason-for-cancer-input*) (0 :subtree)
+  1 (0)
+    2 (*tell-family-input*) (0 :subtree)
+
+  1 (0)
+    2 *general-input* (0 :subtree)
+  1 (0)
+    2 ((NIL Gist \: nothing found for ask for questions \.)) (0 :gist)
+
+)) ; END *ask-for-questions-input*

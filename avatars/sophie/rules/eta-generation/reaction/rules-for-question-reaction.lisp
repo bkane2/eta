@@ -272,6 +272,6 @@
   1 (Am I married ?)
     2 (I was for about twenty years\. But as we got older and the kids went off to college\, things just didn\'t work out as well as we thought they would\. We separated about ten years ago and divorced two years later\.) (0 :out)
   1 (How am I doing today ?)
-    2 ([HAPPY] I\'m fine\, thank you\.) (0 :out)
+    2 ([SAD] The pain isn\'t too bad today \. I\'m mostly just anxious \.) (0 :out)
   ; Questions about family (Todo)
 ))
