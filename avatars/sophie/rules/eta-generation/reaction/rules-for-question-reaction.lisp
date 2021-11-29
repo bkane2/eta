@@ -57,6 +57,8 @@
     2 *ask-about-test-results* (0 :schema)
   1 (Do I know what the tests say ?)
     2 *ask-about-test-results* (0 :schema)
+  1 (Can I summarize my test results ?)
+    2 *ask-about-test-results* (0 :schema)
   1 (How do I feel about my test results ?)
     2 *ask-about-test-results* (0 :schema)
   1 (Do I have a question about my test results ?)

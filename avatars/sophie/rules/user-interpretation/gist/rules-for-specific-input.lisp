@@ -2457,25 +2457,31 @@
 
   ; Do you understand your test results ?
   1 (8 AUX-BASE 2 you understand-gen 6 diagnosis-tests 0)
-    2 (*diagnosis-details-question* (Do I know what the tests say ?)) (0 :subtree+clause)
+    2 (*diagnosis-details-question* (do you know what the tests say ?)) (0 :subtree+clause)
   1 (0 wh_ 6 AUX-BASE 2 you 2 NEG 2 understand-gen 6 diagnosis-tests 0)
-    2 (*diagnosis-details-question* (Do I know what the tests say ?)) (0 :subtree+clause)
+    2 (*diagnosis-details-question* (do you know what the tests say ?)) (0 :subtree+clause)
   
-
+  ; Can you explain your test results?
+  1 (0 can 2 you summarize 0)
+    2 (*diagnosis-details-question* (can you summarize your test results ?)) (0 :subtree+clause)
+  1 (0 give 1 me 2 summary 0)
+    2 (*diagnosis-details-question* (can you summarize your test results ?)) (0 :subtree+clause)
+  1 (0 tell 1 me 3 more 0)
+    2 (*diagnosis-details-question* (can you summarize your test results ?)) (0 :subtree+clause)
 
   ; asking if system has any questions
   1 (0 you 2 have 2 question-word 0)
     2 (0 medicine 0)
-      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
-    2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
+      3 (*medicine-question* (do you have a question about your medicine ?)) (0 :subtree+clause)
+    2 (*test-results-question* (do you have a question about your test results ?)) (0 :subtree+clause)
   1 (0 question-word 2 you 2 have 0)
     2 (0 medicine 0)
-      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
-    2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
+      3 (*medicine-question* (do you have a question about your medicine ?)) (0 :subtree+clause)
+    2 (*test-results-question* (do you have a question about your test results ?)) (0 :subtree+clause)
   1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
     2 (0 medicine 0)
-      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
-    2 (*test-results-question* (Do you have a question about your test results ?)) (0 :subtree+clause)
+      3 (*medicine-question* (do you have a question about your medicine ?)) (0 :subtree+clause)
+    2 (*test-results-question* (do you have a question about your test results ?)) (0 :subtree+clause)
 
 ; Do you want me to be present when you tell your family about the cancer?
   1 (0 family-pron 0)

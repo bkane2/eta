@@ -117,6 +117,8 @@
   (final last terminal)
   (assume presume accept act)
   (be been are were)
+  (summarize explain)
+  (summary explanation)
   
   ; ASR errors
   (talking talkin)

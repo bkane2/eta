@@ -219,6 +219,14 @@
   1 (8 AUX-BASE 2 you understand-gen 3 diagnosis-tests 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
 
+  ; Can you explain your test results?
+  1 (0 can 2 you summarize 3 diagnosis-tests 0)
+    2 ((Can I summarize my test results ?) (Test-results)) (0 :gist)
+  1 (0 give 1 me 2 summary 3 diagnosis-tests 0)
+    2 ((Can I summarize my test results ?) (Test-results)) (0 :gist)
+  1 (0 tell 1 me 3 more 2 about 3 diagnosis-tests 0)
+    2 ((Can I summarize my test results ?) (Test-results)) (0 :gist)
+
   ; You had tests recently, right?
   1 (0 you 3 diagnosis-tests 3 recently 0)
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)

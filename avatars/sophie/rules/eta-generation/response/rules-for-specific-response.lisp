@@ -207,11 +207,14 @@
   1 (0 What test results am I referring to 0)
     2 ([SAD] Oh\, sorry\, I assumed you were sent the results \. I had a second CT scan a couple weeks after radiation \.
        I was told that the tumor is still there\, but I wasn\'t sure how to interpret that \. They mentioned something
-       about possible metastasis \.) (0 :out)
+       about possible metastasis \.) (100 :out)
+    2 ([SAD] I\'m referring to the test results from my second CT scan \. I think you have access to them \. I just don\'t
+       know what they mean \.) (0 :out)
 
   1 (0 Do I know what the tests say 0)
     2 ([SAD] I don\'t really understand the test results \. I was just told that the tumor is still there and something about
-       possible metastasis\, but I wasn\'t sure how to interpret that \. Can you explain them ?) (0 :out)
+       possible metastasis\, but I wasn\'t sure how to interpret that \. Can you explain them ?) (100 :out)
+    2 ([SAD] I think that the results are not very good \. But I\'m having trouble interpreting them myself \.) (0 :out)
   
   1 (0 You are not sure what my test results mean 0)
     2 ([SAD] Oh\, sorry\, I assumed you were sent the test results\, from when I had my second CT scan a couple weeks after radiation \.
@@ -241,6 +244,10 @@
        you explain it to me in simple terms ?) (0 :out)
     2 ([SAD] I\'m still a little foggy on what metastasis means \. Would you mind explaining it to me again ?) (0 :out)
 
+  1 (0 Can I summarize my test results 0)
+    2 ([SAD] To be honest \, I\'m not really sure how to explain my test results \, other than that the tumor is still there \. My previous doctor mentioned
+       something about metastasis \, but I didn\'t understand it \. What does it all mean for me ?) (100 :out)
+    2 ([SAD] I think the test results showed that the tumor hasn\'t gone away\, but I can\'t really tell whether it\'s gotten better or worse \.) (0 :out)
   
   1 (0 How much information do I want about my test results 0)
     2 (Don\'t hold anything back\. I\'m ready to hear it\. Oh\! But do try to avoid using too many technical terms\. I want to be sure I understand what\'s going to happen to me \.) (100 :out)
