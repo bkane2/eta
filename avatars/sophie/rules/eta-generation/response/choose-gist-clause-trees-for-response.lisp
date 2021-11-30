@@ -115,8 +115,10 @@
        had lost fifteen pounds over the course of the past six months \. A couple of days ago after I went to the
        ER\, I made appointments to go for a bunch of tests \. That took a couple of weeks \. I had to get a bone scan\,
        and I was sent to the lung doctor for a biopsy \. After all that \, the lung doctor told me that I had lung cancer \.) (0 :out)
-  1 (I have constipation and my appetite is worse 1)
-    2 (I have constipation\, though I have had that for a year \. My appetite is worse \. I don\'t eat much anymore \.) (0 :out)
+  1 (I have pain and constipation and my appetite is worse 1)
+    2 (I have pain in my back and chest \, and now my shoulder too \. I have constipation\, though I have had that for a year \.
+       My appetite is worse \. I don\'t eat much anymore \.) (100 :out)
+    2 (It feels like my pain has spread \, and I\'m not as hungry as I used to be \.) (0 :out)
   1 (I have lost my appetite 1)
     2 (I have lost my appetite a bit \. The food looks good\, but I can only take a couple bites and then I am done \.) (0 :out)
   1 (I do not have the symptom you mentioned 1)

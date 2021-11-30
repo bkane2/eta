@@ -199,6 +199,10 @@
       3 ((Have I changed weight ?) (Symptoms)) (0 :gist)
     2 (0 symptom-appetite 0)
       3 ((Have I changed appetite ?) (Symptoms)) (0 :gist)
+  1 (0 be there 2 symptom 0)
+    2 ((What symptoms do I have ?) (Symptoms)) (0 :gist)
+  1 (0 be you 2 feeling 2 symptom 0)
+    2 ((What symptoms do I have ?) (Symptoms)) (0 :gist)
 
   ; Do you have [non-symptom]?
   1 (1 do 0 diagnosis-non-symptom 0)

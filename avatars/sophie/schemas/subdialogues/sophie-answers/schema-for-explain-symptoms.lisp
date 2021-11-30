@@ -12,7 +12,7 @@
 
 :episodes (
 
-?e1 (^me paraphrase-to.v ^you '(I have constipation and my appetite is worse \.))
+?e1 (^me paraphrase-to.v ^you '(I have pain and constipation and my appetite is worse \.))
  
 ?e2 (^you reply-to.v ?e1)
 

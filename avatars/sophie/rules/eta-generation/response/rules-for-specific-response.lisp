@@ -946,13 +946,17 @@
     ;; 2 (0 treatment option 0)
     ;; 2 (0 why do I have cancer 0)
     2 (0)
-      3 (I am sorry\, I\'m having trouble understanding\. Could you try saying it again\, a bit more clearly ?) (3 :out)
-      3 (I\'m still having a bit of trouble understanding\. Would you mind rephrasing ?) (3 :out)
-      3 (Could you repeat that one more time using a different phrasing ?) (0 :out)
+      3 (I am sorry\, I\'m having trouble understanding\. Could you try saying it again\, a bit more clearly ?) (10 :out)
+      3 (I\'m still having a bit of trouble understanding\. Would you mind rephrasing ?) (10 :out)
+      3 (Sorry\, I didn\'t catch that\. Could you repeat that one more time using a different phrasing ?) (10 :out)
+      3 (I\'m not hearing you very well\. Would you mind speaking more clearly ?) (2 :out)
+      3 (Would you mind repeating that ?) (0 :out)
 
   1 (0)
-    2 (I am sorry\, I didn\'t quite understand\. Can you say it again ?) (3 :out)
-    2 (Would you mind rephrasing ?) (3 :out)
-    2 (Could you repeat that one more time using a different phrasing ?) (0 :out)
+    2 (I am sorry\, I didn\'t quite understand\. Can you say it again ?) (10 :out)
+    2 (Would you mind rephrasing ?) (10 :out)
+    2 (Sorry\, I didn\'t catch that\. Could you repeat that one more time using a different phrasing ?) (10 :out)
+    2 (I\'m not hearing you very well\. Would you mind speaking more clearly ?) (2 :out)
+    2 (Would you mind repeating that ?) (0 :out)
 
 )) ; END *response-tree-rephrase*
