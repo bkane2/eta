@@ -1105,7 +1105,7 @@
     2 ((The prognosis is that I cannot be cured \.) (Prognosis)) (0 :gist)
 
   ; The test results show that the radiation is not working 
-  1 (0 radiation-treatment 2 NEG 2 work 0)
+  1 (0 radiation-treatment 2 NEG 2 radiation-help 0)
     2 ((The test results show that the radiation is not working \.) (Prognosis)) (0 :gist)
   1 (0 radiation-treatment 2 NEG 2 stop 4 cancer-illness 0)
     2 ((The test results show that the radiation is not working \.) (Prognosis)) (0 :gist)
@@ -2393,13 +2393,7 @@
   1 (0 NEG 2 cancer-increase 0)
     2 ((The test results show that the cancer hasn\'t spread \.) (Test-results)) (0 :gist)
   
-  ; I don't know
-  1 (0 NEG 1 sure 0)
-    2 ((You are not sure what my test results mean \.)) (0 :gist)
-  1 (0 NEG 1 know 0)
-    2 ((You are not sure what my test results mean \.)) (0 :gist)
-  
-  ; The test results do not appear conclusive .
+  ; The test results do not appear conclusive
   1 (0 difficult 2 to 2 predict 0)
     2 ((The test results do not appear conclusive \.)) (0 :gist)
   1 (0 maybe 0)
@@ -2417,6 +2411,14 @@
   1 (0 lose 1 battle 0)
     2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
 
+  ; The radiation doesn't seem to be helping
+  1 (0 radiation-treatment 2 NEG 2 have 2 effect 0)
+    2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
+  1 (0 radiation-treatment 2 NEG 3 radiation-help 0)
+    2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
+  1 (0 radiation-treatment 2 NEG 4 stop 2 cancer-illness 2 cancer-increase 0)
+    2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
+
   ; The cancer has spread
   1 (0 cancer-increase 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
@@ -2432,12 +2434,6 @@
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 move 4 in 2 second 2 part 2 body 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
-
-  ; The radiation doesn't seem to be helping
-  1 (0 radiation 2 NEG 3 radiation-help 0)
-    2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
-  1 (0 radiation 2 NEG 4 stop 2 cancer-illness 2 cancer-increase 0)
-    2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
 
   ; You have stage 4 cancer
   1 (0 stage four 0)
@@ -2458,6 +2454,12 @@
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
   1 (0 be 1 you 2 ask-gen 2 about 2 diagnosis-tests 0)
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
+
+  ; I don't know
+  1 (0 NEG 1 sure 0)
+    2 ((You are not sure what my test results mean \.)) (0 :gist)
+  1 (0 NEG 1 know 0)
+    2 ((You are not sure what my test results mean \.)) (0 :gist)
 
   ; Doctor still wants to talk about pain or sleep
   1 (0 pain 0)
@@ -2483,7 +2485,7 @@
   1 (0 tell 1 me 3 more 0)
     2 (*diagnosis-details-question* (can you summarize your test results ?)) (0 :subtree+clause)
 
-  ; asking if system has any questions
+  ; Asking if system has any questions
   1 (0 you 2 have 2 question-word 0)
     2 (0 medicine 0)
       3 (*medicine-question* (do you have a question about your medicine ?)) (0 :subtree+clause)
@@ -2497,7 +2499,7 @@
       3 (*medicine-question* (do you have a question about your medicine ?)) (0 :subtree+clause)
     2 (*test-results-question* (do you have a question about your test results ?)) (0 :subtree+clause)
 
-; Do you want me to be present when you tell your family about the cancer?
+  ; Do you want me to be present when you tell your family about the cancer?
   1 (0 family-pron 0)
     2 (0 want-gen 4 available 0)
       3 (*test-results-question* (do you want your family to be here when I tell you about the test results ?)) (0 :subtree+clause)

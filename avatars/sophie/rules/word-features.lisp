@@ -257,8 +257,8 @@
   (pain-alleviate manage control alleviate reduce ease relieve lessen diminish allay assuage palliate moderate mollify improve relieving improving lessening palliating alleviating controlling managing)
 
   ; Radiation
-  (radiation-help help better alleviate reduce comfort comfortable decrease decreasing)
-  (radiation-treatment radiation care)
+  (radiation-help help work better alleviate reduce comfort comfortable decrease decreasing)
+  (radiation-treatment radiation care therapy)
 
   ; Comfort care
   (comfort-care-word comfort palliative hospice palliation)

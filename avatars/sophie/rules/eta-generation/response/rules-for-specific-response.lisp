@@ -562,7 +562,7 @@
   1 (0 Do I understand my prognosis 0)
     2 ([SAD] I don\'t really understand my prognosis\, I\'m just bracing myself for the worst \. Can you tell me how
        long you think I have ?) (100 :out)
-    2 ([SAD] I understand that things don\'t seem to be improving\, but I don\'t really know what it means for me \.) (2 :out)
+    2 ([SAD] I understand that things don\'t seem to be improving\, but I don\'t really know what it means for me \.) (10 :out)
     2 ([SAD] It seems like my condition has gotten worse\, but that\'s all I know \. How bad really is it ?) (0 :out)
   1 (0 What scares me about my prognosis 0)
     2 ([SAD] What worries me the most is just how uncertain my future is \. Some days I believe my condition will get better and others I brace myself for the worst \.
@@ -570,7 +570,7 @@
     2 ([SAD] I\'m really scared about my condition getting worse \. I just don\'t know what to expect at this point \.) (0 :out)
   1 (0 How do I feel about my prognosis 0)
     2 ([SAD] I feel very anxious about my condition \. I feel like it\'s gotten worse \. I want to know what this means
-       for me \.) (2 :out)
+       for me \.) (10 :out)
     2 ([SAD] I\'m just scared about it getting worse \, and not being able to be there for my family \.) (0 :out)
 
    1 (0 Do I have a question about my prognosis 0)
@@ -589,7 +589,7 @@
 
   1 (0 Am I ready to start discussing treatment options 0)
     2 (Hold on a moment \. Before we start talking about my options for treatment\, I need to know what these test results might mean for my future\. How long do you think 
-       I might have left ?) (2 :out)
+       I might have left ?) (10 :out)
     2 (I need some time to digest everything and to tell my family before talking about treatment options \.) (0 :out)
 
   1 (0)
