@@ -38,6 +38,8 @@
     2 *diagnosis-details-question* (0 :subtree)
   1 (0 diagnosis-non-symptom 0)
     2 *diagnosis-details-question* (0 :subtree)
+  1 (0 cancer-illness 0)
+    2 *diagnosis-details-question* (0 :subtree)
   ; If asked about radiation treatment
   1 (0 radiation 0)
     2 *radiation-question* (0 :subtree)

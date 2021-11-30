@@ -178,6 +178,7 @@
 ; (0 diagnosis-tests 0)
 ; (0 diagnosis-symptom 0)
 ; (0 diagnosis-non-symptom 0)
+; (0 cancer-illness 0)
 '(
   ; How much weight have you lost?
   1 (0 how much symptom-weight 0 lose 0)
@@ -243,6 +244,14 @@
     2 ((How did I get my diagnosis ?) (Diagnosis-details)) (0 :gist)
   1 (0 how 0 find out 0 diagnosis 0)
     2 ((How did I get my diagnosis ?) (Diagnosis-details)) (0 :gist)
+
+  ; How has your condition gotten worse?
+  1 (0 wh_ 1 you mean 10 cancer-illness 3 worse 0)
+    2 ((How has your condition gotten worse ?) (Diagnosis-details)) (0 :gist)
+  1 (0 wh_ 1 be worse 3 your cancer-illness 0)
+    2 ((How has your condition gotten worse ?) (Diagnosis-details)) (0 :gist)
+  1 (0 how 3 cancer-illness 3 worse 0)
+    2 ((How has your condition gotten worse ?) (Diagnosis-details)) (0 :gist)
 
 )) ; END *diagnosis-details-question*
 

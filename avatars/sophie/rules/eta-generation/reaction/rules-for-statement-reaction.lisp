@@ -58,6 +58,8 @@
     2 *prognosis-reaction* (0 :subtree)
   1 (0 family 0 \.)
     2 *tell-family-reaction* (0 :subtree)
+  1 (0 tell 1 someone 0 \.)
+    2 *tell-family-reaction* (0 :subtree)
   1 (0 test results 0 \.)
     2 *test-results-reaction* (0 :subtree)
   1 (0 treatment option 0 \.)

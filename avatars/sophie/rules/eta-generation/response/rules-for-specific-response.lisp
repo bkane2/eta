@@ -299,6 +299,11 @@
     2 (The pain is primarily in the left side of my chest\, and in the middle of my back \. Recently\,
        it also moved to the right side of my chest \.) (0 :out)
 
+  1 (0 How has your condition gotten worse 0)
+    2 ([SAD] I feel like my condition has gotten worse because my pain has spread \. I now feel it in my shoulder as well as
+       my back and chest \. I\'m not sure what the test results actually show\, though \.) (100 :out)
+    2 ([SAD] I can tell my condition is worse now because the pain is worse than it used to be \.) (0 :out)
+
   1 (0 Does it hurt to 0)
     2 (It hurts whenever I take a deep breath \. It used to hurt to swallow during radiation\, but that isn\'t as bad now \.) (0 :out)
   1 (0 Did my pain come back 0)
@@ -480,8 +485,13 @@
     2 ([SAD] I\'m still not really sure how I should break this news to my family \. I don\'t want them to be worried \.) (0 :out)
 
   1 (0 Who in my family do I want to tell about the prognosis 0)
-    2 ([SAD] I imagine my son and daughter should both know\. Especially my daughter\, since I\'ve been staying with her and her grandson\. But how do I 
-       break such hard news to them? They were all hoping things would turn out maybe not amazing but\, better than this\. ) (0 :gist)
+    2 ([SAD] I imagine my son and daughter should both know \. Especially my daughter\, since I\'ve been staying with her and her grandson\. But how do I 
+       break such hard news to them? They were all hoping things would turn out maybe not amazing but\, better than this \.) (100 :out)
+    2 ([SAD] I\'ll tell my son and daughter about this first \. I just don\'t want them to be devastated \. How should I tell them ?) (0 :out)
+
+  1 (0 I should tell someone close to me about the cancer 0)
+    2 ([SAD] I\'ve talked with my daughter the most about this\, so I think I\'ll tell her first \. I trust her to help break the news to the rest of
+       my family \. How should I tell her about it\, though ? I don\'t want her to be worried \.) (0 :out)
 
   1 (0 Do I want you to be present when I tell my family about the prognosis 0)
     2 (Thank you\, but with everyone\'s schedules I think it would be hard to find time for us all to meet with you \. I can tell them myself\.
@@ -584,8 +594,8 @@
     2 ([SAD] Is there really no way to tell what my tests mean for me ?) (0 :out)
 
   1 (0 How much information do I want about my prognosis 0)
-   2 (Please give me all the information you have\. It scares me more to be left in the dark than to know what my prognosis may be \.) (100 :gist)
-   2 (Don\'t hold anything back\. I think I can take it and I want to know how much time I still have \.) (0 :gist)
+   2 (Please give me all the information you have\. It scares me more to be left in the dark than to know what my prognosis may be \.) (100 :out)
+   2 (Don\'t hold anything back\. I think I can take it and I want to know how much time I still have \.) (0 :out)
 
   1 (0 Am I ready to start discussing treatment options 0)
     2 (Hold on a moment \. Before we start talking about my options for treatment\, I need to know what these test results might mean for my future\. How long do you think 

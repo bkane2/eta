@@ -522,6 +522,10 @@
   1 (0 something 1 med-better 0)
     2 *medicine-working-input* (0 :subtree)
 
+  1 (0 cancer-illness 0)
+    2 *test-results-input* (0 :subtree)
+    2 *prognosis-input* (0 :subtree)
+
   1 (0)
     2 *general-input* (0 :subtree)
   1 (0)
@@ -1196,21 +1200,21 @@
   1 (0 wh_ 4 you 3 think-gen 0)
     2 (*prognosis-question* (what do you think about your prognosis ?)) (0 :subtree+clause)
   1 (0 tell 5 fear-words 0)
-    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (what scares you about your prognosis ?)) (0 :subtree+clause)
   1 (0 elaborate 4 fear-words 0)
-    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (what scares you about your prognosis ?)) (0 :subtree+clause)
   1 (0 wh_ 1 make 1 you 3 frightened 0)
-    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (what scares you about your prognosis ?)) (0 :subtree+clause)
   1 (0 wh_ 1 frightens 1 you 0) 
-    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (what scares you about your prognosis ?)) (0 :subtree+clause)
   1 (0 wh_ be 3 frightening 0)
-    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (what scares you about your prognosis ?)) (0 :subtree+clause)
   1 (0 wh_ 1 you 1 think-gen 3 frightening 0)
-    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (what scares you about your prognosis ?)) (0 :subtree+clause)
   1 (0 wh_ be 3 fear-words 0)
-    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (what scares you about your prognosis ?)) (0 :subtree+clause)
   1 (0 wh_ cause you 4 fear-words 0)
-    2 (*prognosis-question* (What scares you about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (what scares you about your prognosis ?)) (0 :subtree+clause)
   1 (0 AUX-BASE 3 you 2 understand-gen 0)
     2 (*prognosis-question* (do you understand your prognosis ?)) (0 :subtree+clause)
   1 (0 AUX-BASE 3 you 2 tell 6 understand-gen 0)
@@ -1221,33 +1225,36 @@
   ; asking if system has any questions
   1 (0 you 2 have 2 question-word 0)
     2 (0 medicine 0)
-      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
-    2 (*prognosis-question* (Do you have a question about your prognosis ?)) (0 :subtree+clause)
+      3 (*medicine-question* (do you have a question about your medicine ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (do you have a question about your prognosis ?)) (0 :subtree+clause)
   1 (0 question-word 2 you 2 have 0)
     2 (0 medicine 0)
-      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
-    2 (*prognosis-question* (Do you have a question about your prognosis ?)) (0 :subtree+clause)
+      3 (*medicine-question* (do you have a question about your medicine ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (do you have a question about your prognosis ?)) (0 :subtree+clause)
   1 (0 anything 1 you 2 want-gen 2 ask-gen 0)
     2 (0 medicine 0)
-      3 (*medicine-question* (Do you have a question about your medicine ?)) (0 :subtree+clause)
-    2 (*prognosis-question* (Do you have a question about your prognosis ?)) (0 :subtree+clause)
+      3 (*medicine-question* (do you have a question about your medicine ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (do you have a question about your prognosis ?)) (0 :subtree+clause)
 
   ; How much do I want to know about my prognosis ?
   1 (0 how much 3 information 3 AUX 1 you 0)
-    2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (how much information do you want about your prognosis ?)) (0 :subtree+clause)
   1 (0 how much 3 information 3 I 3 you 0)
-    2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (how much information do you want about your prognosis ?)) (0 :subtree+clause)
   1 (0 how much 3 AUX 3 I 3 want-gen 3 know 0)
-    2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (how much information do you want about your prognosis ?)) (0 :subtree+clause)
   1 (0 how much 3 AUX 3 you 3 want-gen 3 know 0)
-    2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (how much information do you want about your prognosis ?)) (0 :subtree+clause)
   1 (0 how much 3 I 3 tell 3 you 0)
-    2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (how much information do you want about your prognosis ?)) (0 :subtree+clause)
   1 (0 how much 3 AUX you 3 want-gen 1 me 3 tell 0)
-    2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (how much information do you want about your prognosis ?)) (0 :subtree+clause)
   1 (0 how much 3 would you 3 want-gen 1 me 3 tell 0)
-    2 (*prognosis-question* (How much information do you want about your prognosis ?)) (0 :subtree+clause)
+    2 (*prognosis-question* (how much information do you want about your prognosis ?)) (0 :subtree+clause)
 
+  ; How is it worse ?
+  1 (0 how be 2 worse 0)
+    2 (*diagnosis-details-question* (how has your condition gotten worse ?)) (0 :subtree+clause)
 
   1 (0 treatment-option 0)
     2 ((Am I ready to start discussing treatment options ?) (Treatment-options)) (0 :gist)
@@ -1258,6 +1265,8 @@
     2 ((NIL Gist \: nothing found for prognosis \.)) (0 :gist)
 
 )) ; END *prognosis-input*
+
+
 
 (READRULES '*prognosis-denial-input*
 ; (Can I trust your prognosis ?)
@@ -2356,7 +2365,13 @@
   1 (0 soften 1 blow 0)
     2 (- 0 NEG 2 soften 1 blow 0)
       3 ((I should reassure my family about the cancer \.) (Tell-family)) (0 :gist)
-    2 ((I tell my family the full truth about my cancer \.) (Tell-family)) (0 :gist)
+    2 ((I should tell my family the full truth about my cancer \.) (Tell-family)) (0 :gist)
+
+  ; I should tell someone close to me.
+  1 (0 share 2 someone 2 close 0)
+    2 ((I should tell someone close to me about the cancer \.) (Tell-family)) (0 :gist)
+  1 (0 share 2 close 2 family 0)
+    2 ((I should tell someone close to me about the cancer \.) (Tell-family)) (0 :gist)
 
   ; Who in my family do I want to tell about the prognosis?
   1 (0 who 3 be 3 tell 0)
@@ -2365,7 +2380,6 @@
     2 (*tell-family-question* (Who in my family do I want to tell about the prognosis ?)) (0 :subtree+clause)
   1 (0 who 6 want-gen 3 tell 0)
     2 (*tell-family-question* (Who in my family do I want to tell about the prognosis ?)) (0 :subtree+clause)
-
 
   1 (0 doctor-pron 4 be 4 available 0)
     2 ((You will be available to help me and my family during my cancer treatment \.) (Treatment-option)) (0 :gist)

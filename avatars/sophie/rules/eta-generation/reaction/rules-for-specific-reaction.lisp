@@ -443,7 +443,8 @@
 
 
 (READRULES '*tell-family-reaction*
-; (0 tell 1 family 0 \.)
+; (0 family 0 \.)
+; (0 tell 1 someone 0 \.)
 ; (Comfort care allows me to spend time with my family \.)
 '(
 
@@ -453,12 +454,16 @@
   1 (I should tell my family the full truth about my cancer \.)
     2 ([SAD] Okay \. It will be hard to give them such bleak news\, but they deserve to know the truth \.) (0 :out)
   1 (I should reassure my family about my cancer \.)
-    2 (Certainly\. I\'ll try to be gentle with them\, even if the news is bleak\. They deserve to know how much I love them \.) (100 :out)
-    2 (Of course\. I\'ll do my best to soften the blow\.) (0 :out)
+    2 (Certainly \. I\'ll try to be gentle with them\, even if the news is bleak \. They deserve to know how much I love them \.) (100 :out)
+    2 (Of course \. I\'ll do my best to soften the blow \.) (0 :out)
+
+  1 (I should tell someone close to me about the cancer \.)
+    2 *ask-what-to-tell-family* (100 :schema)
+    2 (I\'ll tell my daughter \. I trust her to help inform the rest of my family \.) (0 :out)
 
   1 (You will be available to help me and my family during my cancer treatment \.)
-    2 *ask-what-to-tell-family* (0 :schema)
-    2 (Thank you\. I can\'t tell you how happy I am to know I have you by my side throughout all this\.) (0 :out)
+    2 *ask-what-to-tell-family* (100 :schema)
+    2 (Thank you\. I can\'t tell you how happy I am to know I have you by my side throughout all this \.) (0 :out)
 
   1 (You will help me and my family through the treatment process \.)
     2 (Thank you\. Knowing that you\'ll be by our side throughout all this is a huge weight off my shoulders \.) (100 :out)
@@ -466,10 +471,10 @@
 
   1 (I should plan to spend my remaining time with my family after I tell them about the prognosis \.)
     2 (Yes\, I\'ll certainly have to talk to them about how we\'re going to make the most of our remaining time \.) (100 :out)
-    2 (That\'s right\! After all\, that\'s why I moved up to New York\, to spend as much time with them as possible\.) (0 :out)
+    2 (That\'s right\! After all\, that\'s why I moved up to New York\, to spend as much time with them as possible \.) (0 :out)
 
   1 (0)
-    2 ([SAD] Okay\. It will be difficult\, but my family and I will have to be strong \.) (0 :out)
+    2 ([SAD] Okay \. It will be difficult\, but my family and I will have to be strong \.) (0 :out)
 
 )) ; END *tell-family-reaction*
 
