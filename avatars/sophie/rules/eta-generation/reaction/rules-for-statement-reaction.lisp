@@ -36,8 +36,8 @@
   ;;                          ((Can you tell me about the side effects ?)))) (100 :schema+args)
 
   1 (It is nice to meet me \.)
-    2 (Thank you \, it\'s nice to meet you too \.) (100 :out)
-  1 ()
+    2 (Thank you \, it\'s nice to meet you as well \.) (100 :out)
+    2 (It\'s good to meet you too\.) (0 :out)
   1 (0 stronger pain medication 0 help me sleep 0)
     2 *medicine-reaction* (0 :subtree)
   1 (0 sleeping poorly 0 \.)
@@ -118,9 +118,11 @@
 (READRULES '*general-reaction*
 '(
   1 (It is nice to meet me \.)
-    2 (Thank you \, it\'s nice to meet you too \.) (100 :out)
+    2 (Thank you \, it\'s nice to meet you as well \.) (100 :out)
+    2 (It\'s nice to meet you too\.) (0 :out)
   1 (You like my 6 \.)
     2 (Thanks \, I appreciate it \. I think we should stay on topic\, though \.) (0 :out)
+    2 (That\'s kind of you to say\. I would like to stick with the subject at hand though \.) (0 :out)
   ; If doctor is just giving an indication to keep talking, react silently and continue
   1 (Continue talking \.)
     2 () (0 :out)
