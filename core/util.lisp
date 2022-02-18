@@ -707,16 +707,6 @@
 
 
 
-(defun opportunity-tag? (atm)
-;````````````````````````````````````````````````
-; If symbol is equal to [OPPORTUNITY] or [NOOPPORTUNITY],
-; it qualifies as an opportunity tag when inside an output list.
-;
-  (if (and (symbolp atm) (member atm '([OPPORTUNITY] [NOOPPORTUNITY]))) t nil)
-) ; END opportunity-tag?
-
-
-
 ;``````````````````````````````````````````````````````
 ;
 ; DISCOURSE UTIL
@@ -1031,18 +1021,6 @@
   (let ((tagged-resp (if (some #'emotion-tag? resp) resp (cons '[NEUTRAL] resp))))
     (if *emotions* tagged-resp (remove-if #'emotion-tag? tagged-resp))
 )) ; END tag-emotions
-
-
-
-(defun tag-opportunities (resp)
-;```````````````````````````````
-; Prepends each response utterance with a default [NOOPPORTUNITY] tag unless it
-; already has an explicit opportunity tag. If *mark-opportunities* is NIL, strip
-; all opportunity tags from response, otherwise return tagged response.
-;
-  (let ((tagged-resp (if (some #'opportunity-tag? resp) resp (cons '[NOOPPORTUNITY] resp))))
-    (if *mark-opportunities* tagged-resp (remove-if #'opportunity-tag? tagged-resp))
-)) ; END tag-opportunities
 
 
 
@@ -2670,6 +2648,29 @@
       (if (get rule 'time-last-used)
         (setf (get rule 'time-last-used) -100))))
 ) ; END reset-rule
+
+
+
+(defun print-matched-rules (tagged-clause rule-node matched-nodes result)
+;`````````````````````````````````````````````````````````````````````````````
+; Pretty-prints the sequence of pattern nodes that were matched in the process of
+; applying a particular rule node to a tagged clause.
+;
+  (let* ((i 1) (rule-node-str (concatenate 'string " " (string rule-node) " "))
+        (len-rule-node-str (length rule-node-str))
+        (len-padding (floor (/ (- 100 len-rule-node-str) 2))))
+  ; Format header for debug message
+  (format t "~%~%~%~v@{~a~:*~}" len-padding "*")
+  (format t "~a" rule-node-str)
+  (format t "~v@{~a~:*~}" len-padding "*")
+  ; Print input, matched nodes, result, and footer
+  (format t "~% ---- INPUT: ~a~%" tagged-clause)
+  (dolist (node matched-nodes)
+    (format t "~%~a.  ~s" i node)
+    (incf i))
+  (format t "~%~% ---- RESULT: ~a" result)
+  (format t "~%~v@{~a~:*~}~%~%~%" (+ (* 2 len-padding) len-rule-node-str) "*")
+)) ; END print-matched-rules
 
 
 

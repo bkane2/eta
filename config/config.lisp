@@ -16,15 +16,14 @@
 ;;                  explicitly specified in the output, a default [NEUTRAL] tag will be prepended.
 ;;                  NIL to disable emotion tags. Any tags at the beginning of :out directives will be stripped.
 ;;
-;; *opportunity-tags* : T to allow insertion of opportunity tags (e.g., [OPPORTUNITY]) at beginning of outputs to
-;;                      signal to an external feedback system that the user has an opportunity for a particular type
-;;                      of response. NIL to disable opportunity tags.
-;;
 ;; *dependencies* : T to include Quicklisp dependencies, NIL to only include local packages (note that some applications may not
 ;;                  work without Quicklisp dependencies).
 ;;
 ;; *safe-mode* : T to exit smoothly if exception is thrown during execution,
 ;;               NIL otherwise
+;;
+;; *debug-patterns-mode* : T to include print statements showing which patterns were matched in the process of invoking a pattern
+;;                        transduction tree; NIL otherwise.
 ;;
 ;; *user-id* : unique ID of user (potentially overwritten by sessionInfo.lisp if in live mode)
 ;;
@@ -37,8 +36,8 @@
 (defparameter *subsystems-perception* '(|Terminal| |Audio|))
 (defparameter *subsystems-specialist* '())
 (defparameter *emotion-tags* T)
-(defparameter *opportunity-tags* T)
 (defparameter *dependencies* NIL)
 (defparameter *safe-mode* NIL)
+(defparameter *debug-patterns-mode* NIL)
 (defparameter *session-number* 1)
  

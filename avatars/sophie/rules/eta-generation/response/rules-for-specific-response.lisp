@@ -212,7 +212,7 @@
 
   ; OPPORTUNITY for Open-Ended Questions: "Were you nervous about this meeting?", "Can you elaborate?"
   1 (0)
-    2 ([SAD] [OPPORTUNITY] One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
+    2 ([SAD] One thing I\'ve noticed in the last few weeks is that I haven\'t been sleeping very well \. Most nights I
        have to take medication for my pain \. I\'m not sure if it\'s only the pain\, but I keep waking up at night \.
        Do you know why I keep waking up like this ?) (100 :out)
     2 (Do you know what the specific cause of my poor sleep is ?) (0 :out)
@@ -595,7 +595,7 @@
 
   1 (0 The test results show that my cancer has spread 0)
     ; OPPORTUNITY for open-ended questions: "Do you understand your prognosis?", "What concerns you the most for your future?", "What are your treatment goals?"
-    2 ([SAD] [OPPORTUNITY] Those are not the words I wanted to hear \. I mean\, I was bracing for the worst\, since I could tell by the
+    2 ([SAD] Those are not the words I wanted to hear \. I mean\, I was bracing for the worst\, since I could tell by the
        pain that it\'s bad \. But to hear that the cancer has spread is quite depressing \. What does
        it all mean for me ?) (100 :out)
     2 ([SAD] I want you to be honest with me \. How long do you think I have left ?) (0 :out)
@@ -644,7 +644,7 @@
 
   1 (0)
     ; OPPORTUNITY for open-ended questions: "What are your treatment goals?", "Do you understand your diagnosis?", "How do you feel about your future?"
-    2 ([OPPORTUNITY] What do you think this means for me in the future ?) (100 :out)
+    2 (What do you think this means for me in the future ?) (100 :out)
     2 (How long do you think I have left at this point ?) (100 :out)
     2 (I want you to be honest with me \. How long do you think I have ?) (0 :out)
 

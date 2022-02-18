@@ -232,7 +232,7 @@
 
   1 (0)
     ; OPPORTUNITY for open-ended question: "Can you tell me a little more about your treatment goals?", "What worries you most for the future?"
-    2 ([SAD] [OPPORTUNITY] I\'d like to think some more about starting comfort care \. If I\'m not going to make it\,
+    2 ([SAD] I\'d like to think some more about starting comfort care \. If I\'m not going to make it\,
        I want to at least be comfortable and spend time with family for as long as possible \.) (100 :out)
     2 (I think that comfort care is the best option for me right now \.) (0 :out)
 
@@ -299,32 +299,32 @@
   ; OPPORTUNITY: After SOPHIE expresses her fear, the doctor could ask her "What scares you the most about your future?" or "Were you nervous for this appointment?"
   1 (I may live for number-plur elapsed-time-plur \.)
     2 *ask-if-can-trust-prognosis* (100 :schema)
-    2 ([SAD] [OPPORTUNITY] That\'s very difficult to hear\. I thought I would have more time than that\.
+    2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
       At this point\, I just hope I can enjoy those 9 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for number-total elapsed-time \.)
     2 *ask-if-can-trust-prognosis* (100 :schema)
-    2 ([SAD] [OPPORTUNITY] That\'s very difficult to hear\. I thought I would have more time than that\.
+    2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy that 9 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for several elapsed-time \.)
     2 *ask-about-prognosis* (100 :schema)
     2 *ask-if-can-trust-prognosis* (100 :schema)
-    2 ([SAD] [OPPORTUNITY] That\'s very difficult to hear\. I thought I would have more time than that\.
+    2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy those 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I do not have long left to live \.)
     2 *ask-about-prognosis* (100 :schema)
     2 *ask-if-can-trust-prognosis* (100 :schema)
-    2 ([SAD] [OPPORTUNITY] That\'s very difficult to hear\. I thought I would have more time than that\.
+    2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
        At this point\, I just hope I can enjoy my time left with family\, but I\'m afraid of what the future will bring\.) (0 :out)
   1 (The prognosis is that I may live for a elapsed-time \.)
     2 *ask-if-can-trust-prognosis* (100 :schema) 
-    2 ([SAD] [OPPORTUNITY] That\'s very difficult to hear\. I thought I would have more time than that\.
+    2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
       At this point\, I just hope I can enjoy that 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
     
   1 (The prognosis is that I cannot be cured \.)
     2 *ask-about-prognosis* (100 :schema)
     2 *ask-about-will-experimental-therapies-help* (100 :schema)
     ; OPPORTUNITY for open-ended questions: "What are your treatment goals?", "How are you feeling?", "What worries you the most?"
-    2 ([SAD] [OPPORTUNITY] I guess I need to make peace with it \.) (0 :out)
+    2 ([SAD] I guess I need to make peace with it \.) (0 :out)
 
   1 (The prognosis is that I will survive \.)
     2 ([HAPPY] My previous doctor didn\'t seem so optimistic\, so that\'s quite the relief that you think I\'ll get better \.) (100 :out)
@@ -355,7 +355,7 @@
     2 (That\'s such great news\. I can\'t tell you how happy I am to hear that\.) (0 :out)
 
   1 (I will not outlive my prognosis \.)
-    2 ([SAD] [OPPORTUNITY] That\'s frustrating\. I feel already as though there\'s so little I can do to help my future\. But at least I know I can spend
+    2 ([SAD] That\'s frustrating\. I feel already as though there\'s so little I can do to help my future\. But at least I know I can spend
        the remaining time with my family \.) (100 :out)
     2 ([SAD] That\'s hard to hear\. There\'s so much more I want to do with my family\.) (0 :out)
 
