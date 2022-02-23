@@ -1,36 +1,16 @@
-; If *responsive-mode* is enabled, we need various dependencies such as ulf2english and ulf-pragmatics.
-; Otherwise, we can just use local ttt.
-(cond
-(*dependencies*
+(defvar *supported-dependencies* '("ttt" "ulf-lib" "ulf2english" "ulf-pragmatics" "timegraph"))
 
-    ; Quickload packages
-    ;```````````````````
-    (load (truename "packages/quickload-dependencies.lisp"))
-    (quickload-packages '("ttt" "ulf-lib" "ulf2english" "ulf-pragmatics" "timegraph")))
-
-((not *dependencies*)
-
-    ; Load local ttt
-    ;``````````````````
-    (load (truename "packages/local/ttt/src/load.lisp"))
-
-    ; Load local ulf-lib
-    ;`````````````````````
-    (load (truename "packages/local/ulf-lib/load.lisp"))
-
-    ; Load local ulf2english
-    ;````````````````````````
-    (load (truename "packages/local/ulf2english/load.lisp"))
-
-    ; Load local ulf-pragmatics
-    ;```````````````````````````
-    (load (truename "packages/local/ulf-pragmatics/load.lisp"))
-
-    ; Load local timegraph
-    ;```````````````````````````
-    (load (truename "packages/local/timegraph/load.lisp"))
-    
-))
+; For each supported dependency, if it's declared as a dependency in the config file, try to quickload
+; the package. Otherwise, load the package from local packages (possibly just a stub to provide necessary symbols).
+(when *dependencies*
+    (load (truename "packages/quickload-dependencies.lisp")))
+(dolist (dependency *supported-dependencies*)
+    (cond
+        ((member dependency *dependencies* :test #'equal)
+            (quickload-package dependency))
+        ((equal dependency "ttt")
+            (load (truename "packages/local/ttt/src/load.lisp")))
+        (t (load (truename (concatenate 'string "packages/local/" dependency "/load.lisp"))))))
 
 
 ; Load core code

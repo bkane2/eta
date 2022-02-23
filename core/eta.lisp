@@ -268,7 +268,7 @@
 
 
 (defun eta (&key (subsystems-perception '(|Terminal| |Audio|)) (subsystems-specialist '())
-                 (dependencies t) (emotions nil) (read-log nil) (debug-patterns nil))
+                 (dependencies nil) (emotions nil) (read-log nil) (debug-patterns nil))
 ;``````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
 ; (now largely commented out) and controls the loop for producing,
@@ -898,7 +898,7 @@
             (store-new-contextual-facts (update-block-coordinates (remove-if-not #'verb-phrase? perceptions)))))
 
         ; Determine answers by recalling from history
-        (if *dependencies*
+        (if (subsetp '("ulf-lib" "ulf2english" "ulf-pragmatics" "timegraph") *dependencies* :test #'equal)
           (setq ans `(quote ,(recall-answer object-locations (eval user-ulf))))
           (setq ans '()))
         (format t "recalled answer: ~a~%" ans) ; DEBUGGING

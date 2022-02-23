@@ -12,7 +12,7 @@
 ;``````````````````````````````
 ; Creates and returns a new timegraph structure
 ;
-  (when *dependencies*
+  (when (member "timegraph" *dependencies* :test #'equal)
     (setf (ds-tg *ds*) (timegraph:make-timegraph)))
 ) ; END construct-timegraph
 
@@ -26,7 +26,7 @@
 ; multiple dialogues, the name and temporal relations between the dialogue episode
 ; will need to be modified.
 ;
-  (when *dependencies*
+  (when (member "timegraph" *dependencies* :test #'equal)
     (timegraph:assert-prop `(,ep-name :during E) (ds-tg *ds*)))
 ) ; END add-episode-to-timegraph
 
@@ -60,7 +60,7 @@
 ; time record structure. This requires converting the record structure to
 ; a :local-time object.
 ;
-  (when *dependencies*
+  (when (member "timegraph" *dependencies* :test #'equal)
     (timegraph:update-lower-bound-inst ep-name
       (time-record-structure-to-timestamp time-record) (ds-tg *ds*)))
 ) ; END update-lower-bound-timegraph
@@ -73,7 +73,7 @@
 ; time record structure. This requires converting the record structure to
 ; a :local-time object.
 ;
-  (when *dependencies*
+  (when (member "timegraph" *dependencies* :test #'equal)
     (timegraph:update-upper-bound-inst ep-name
       (time-record-structure-to-timestamp time-record) (ds-tg *ds*)))
 ) ; END update-lower-bound-timegraph

@@ -16,8 +16,8 @@
 ;;                  explicitly specified in the output, a default [NEUTRAL] tag will be prepended.
 ;;                  NIL to disable emotion tags. Any tags at the beginning of :out directives will be stripped.
 ;;
-;; *dependencies* : T to include Quicklisp dependencies, NIL to only include local packages (note that some applications may not
-;;                  work without Quicklisp dependencies).
+;; *dependencies* : NIL to only include local packages (note that some applications may not work without Quicklisp dependencies).
+;;                  Otherwise provide a list of quicklisp packages to be loaded at runtime.
 ;;
 ;; *safe-mode* : T to exit smoothly if exception is thrown during execution,
 ;;               NIL otherwise
