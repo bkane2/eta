@@ -67,7 +67,7 @@
     2 *ask-about-test-results* (0 :schema)
   1 (Do I want my family to be present when you tell me about the test results ?)
     2 *ask-about-test-results* (0 :schema)
-  1 (How has your condition gotten worse ?)
+  1 (How has my condition gotten worse ?)
     2 *say-pain-worse* (0 :schema)
 
   ; Questions about radiation treatment
@@ -109,9 +109,9 @@
     2 *explain-not-sleeping-well* (0 :schema)
   1 (What is my sleep routine ?)
     2 *discuss-sleep-routine* (0 :schema)
-  1 (Is your mental health keeping you awake ?)
+  1 (Is my mental health keeping me awake ?)
     2 *explain-not-sleeping-well* (0 :schema)
-  1 (Is coffee keeping you awake ?)
+  1 (Is coffee keeping me awake ?)
     2 *explain-not-sleeping-well* (0 :schema)
   1 (Can I tell you about my sleep instead of test results ?)
     2 *explain-not-sleeping-well* (100 :schema)
@@ -124,7 +124,7 @@
     2 *mention-trouble-concentrating* (0 :schema)
   1 (How is my mental health ?)
     2 *mention-mild-depression* (0 :schema)
-  1 (Is something harming your mental health ?)
+  1 (Is something harming my mental health ?)
     2 *mention-anxiety* (0 :schema)
 
   ; Questions about medicine
@@ -230,7 +230,7 @@
     2 *ask-about-prognosis* (0 :schema)
 
   ; Questions about reason for cancer
-  1 (How have you been feeling since the cancer metastasized ?)
+  1 (How have I been feeling since the cancer metastasized ?)
     2 *mention-anxiety* (0 :schema)
 
   ; Open-ended questions 

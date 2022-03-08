@@ -247,11 +247,11 @@
 
   ; How has your condition gotten worse?
   1 (0 wh_ 1 you mean 10 cancer-illness 3 worse 0)
-    2 ((How has your condition gotten worse ?) (Diagnosis-details)) (0 :gist)
+    2 ((How has my condition gotten worse ?) (Diagnosis-details)) (0 :gist)
   1 (0 wh_ 1 be worse 3 your cancer-illness 0)
-    2 ((How has your condition gotten worse ?) (Diagnosis-details)) (0 :gist)
+    2 ((How has my condition gotten worse ?) (Diagnosis-details)) (0 :gist)
   1 (0 how 3 cancer-illness 3 worse 0)
-    2 ((How has your condition gotten worse ?) (Diagnosis-details)) (0 :gist)
+    2 ((How has my condition gotten worse ?) (Diagnosis-details)) (0 :gist)
 
 )) ; END *diagnosis-details-question*
 
@@ -261,7 +261,7 @@
 ; (0 energy 0)
 '(
   1 (0 AUX-BASE 2 you 2 ment-health 2 about 0)
-    2 ((Is something harming your mental health ?) (Energy)) (0 :gist)
+    2 ((Is something harming my mental health ?) (Energy)) (0 :gist)
   1 (0 AUX-BASE 5 ment-health 5)
     2 ((How is my mental health ?) (Energy)) (0 :gist)
   1 (0 trouble 1 concentrate 0)
@@ -528,21 +528,21 @@
 
   ; Is worrying keeping you up at night?
   1 (0 be 3 ment-health 4 you 2 sleep-awake 0)
-    2 ((Is your mental health keeping you awake ?) (Sleep)) (0 :gist)
+    2 ((Is my mental health keeping me awake ?) (Sleep)) (0 :gist)
   1 (0 your 2 ment-health 4 you 2 sleep-awake 0)
-    2 ((Is your mental health keeping you awake ?) (Sleep)) (0 :gist)
+    2 ((Is my mental health keeping me awake ?) (Sleep)) (0 :gist)
 
   ; Is coffee keeping you up at night?
   1 (0 be 3 coffee 4 you 2 sleep-awake 0)
-    2 ((Is coffee keeping you awake ?) (Sleep)) (0 :gist)
+    2 ((Is coffee keeping me awake ?) (Sleep)) (0 :gist)
   1 (0 coffee 4 cause 2 you 2 sleep-awake 0)
-    2 ((Is coffee keeping you awake ?) (Sleep)) (0 :gist)
+    2 ((Is coffee keeping me awake ?) (Sleep)) (0 :gist)
   1 (0 sleep-awake 4 because 4 coffee 0)
-    2 ((Is coffee keeping you awake ?) (Sleep)) (0 :gist)
+    2 ((Is coffee keeping me awake ?) (Sleep)) (0 :gist)
   1 (0 sleep-awake 4 cause 4 coffee)
-    2 ((Is coffee keeping you awake ?) (Sleep)) (0 :gist)
+    2 ((Is coffee keeping me awake ?) (Sleep)) (0 :gist)
   1 (0 AUX-BASE 3 frequently 6 coffee 0)
-    2 ((Is coffee keeping you awake ?) (Sleep)) (0 :gist)
+    2 ((Is coffee keeping me awake ?) (Sleep)) (0 :gist)
   
 )) ; END *sleep-question*
 
@@ -760,19 +760,19 @@
 
   ; How much do I want to know about my test results ?
   1 (0 how much 3 information-gen 3 AUX 1 you 0)
-    2 ((How much information do you want about your test results ?)) (0 :gist)
+    2 ((How much information do I want about my test results ?)) (0 :gist)
   1 (0 how much 3 information-gen 3 I 3 you 0)
-    2 ((How much information do you want about your test results ?)) (0 :gist)
+    2 ((How much information do I want about my test results ?)) (0 :gist)
   1 (0 how much 3 AUX 3 I 3 want-gen 3 know 0)
-    2 ((How much information do you want about your test results ?)) (0 :gist)
+    2 ((How much information do I want about my test results ?)) (0 :gist)
   1 (0 how much 3 I 3 tell 3 you 0)
-    2 ((How much information do you want about your test results ?)) (0 :gist)
+    2 ((How much information do I want about my test results ?)) (0 :gist)
   1 (0 how much 3 AUX 3 you 3 want-gen 3 know 0)
-    2 ((How much information do you want about your test results ?)) (0 :gist)
+    2 ((How much information do I want about my test results ?)) (0 :gist)
   1 (0 how much 3 AUX you 3 want-gen 1 me 3 tell 0)
-    2 ((How much information do you want about your test results ?)) (0 :gist)
+    2 ((How much information do I want about my test results ?)) (0 :gist)
   1 (0 how much 3 would you 3 want-gen 1 me 3 tell 0)
-    2 ((How much information do you want about your test results ?)) (0 :gist)
+    2 ((How much information do I want about my test results ?)) (0 :gist)
 
   ; You will help me and my family through the treatment process \.
   1 (0 doctor-pron 4 be 2 available 2 you 4 care 0)

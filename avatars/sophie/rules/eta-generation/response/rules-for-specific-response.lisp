@@ -204,10 +204,10 @@
        back and near my chest \. That\'s when I have to take pain medication to fall back asleep \.) (100 :out)
     2 ([SAD] Whenever I wake up\, I usually feel an ache in my back and near my chest \. I usually try to take pain medication
        to help fall back asleep \.) (0 :out)
-  1 (0 Is your mental health keeping you awake 0)
+  1 (0 Is my mental health keeping me awake 0)
     2 ([SAD] I have been feeling a bit of anxiety\, which can sometimes make it difficult to fall asleep\, but usually it\'s
        my pain that keeps me awake \.) (0 :out)
-  1 (0 Is coffee keeping you awake 0)
+  1 (0 Is coffee keeping me awake 0)
     2 (I only drink two cups of decaf coffee a day\. So\, it might be more likely that my pain is keeping me awake \.) (0 :out)
 
   ; OPPORTUNITY for Open-Ended Questions: "Were you nervous about this meeting?", "Can you elaborate?"
@@ -322,7 +322,7 @@
     2 (The pain is primarily in the left side of my chest\, and in the middle of my back \. Recently\,
        it also moved to the right side of my chest \.) (0 :out)
 
-  1 (0 How has your condition gotten worse 0)
+  1 (0 How has my condition gotten worse 0)
     2 ([SAD] I feel like my condition has gotten worse because my pain has spread \. I now feel it in my shoulder as well as
        my back and chest \. I\'m not sure what the test results actually show\, though \.) (100 :out)
     2 ([SAD] I can tell my condition is worse now because the pain is worse than it used to be \.) (0 :out)
@@ -800,7 +800,7 @@
   1 (0 Was I nervous about this appointment 0)
     2 (I was a bit nervous about the appointment because I knew I\'d finally learn about what my test results mean \. But what worries me most is my future \. ) (100 :out)
     2 (I was rather anxious to come here today and learn about my test results\. But I\'m more scared about what my future could hold \.) (0 :out)
-  1 (0 Is something harming your mental health 0)
+  1 (0 Is something harming my mental health 0)
     2 (Well \. Sometimes I start to worry about my future \, and I find it difficult to stop \.) (100 :out)
     2 (Truth be told\, there are times when I just find it hard to stop worrying about my future\.) (0 :out)
   1 (0 I am sorry you have been feeling down recently 0)
@@ -820,7 +820,7 @@
     2 (Everything has been so different since I was diagnosed with cancer\. I\'m just so exhausted all the time\. And I\'m worried about my future too\. Everything feels like an unknown now \.) (100 :out)
     2 (I feel like my life has changed so much after I heard I had cancer \. Nothing feels certain anymore \.) (0 :out)
 
-  1 (0 How have you been feeling since the cancer metastasized 0)
+  1 (0 How have I been feeling since the cancer metastasized 0)
     2 (Truth be told\, I\'ve been exhausted\. I don\'t know if it\'s because my body is battling the cancer or because my mind is so worried it\'s going to get worse\. But I\'m just very tired\.) (100 :out)
     2 (Honestly\, I\'ve been rather anxious recently\. I can feel something going wrong in my body\, but I have no idea what\'s going to happen \. Even now\, I have no idea how much my life is going to change\.
        It all feels like an unknown \.) (0 :out)
