@@ -20,3 +20,4 @@ avatars/test_*
 # logs
 logs/logs_*
 logs/logs
+logs/blocks-world/logs_*
