@@ -33,7 +33,10 @@
   (when *read-log-mode*
     (ensure-directories-exist "./logs/")
     (ensure-directories-exist "./logs/logs/")
-    (ensure-directories-exist "./logs/logs_out/"))
+    (ensure-directories-exist "./logs/logs_out/")
+    (ensure-directories-exist "./logs/logs_out/text/")
+    (ensure-directories-exist "./logs/logs_out/gist/")
+    (ensure-directories-exist "./logs/logs_out/ulf/"))
 
   ; Ensure all standard input & output files for registered subsystems exist and are empty
   ; Note: input files only created for non-terminal systems,

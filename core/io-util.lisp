@@ -134,8 +134,23 @@
       (format outfile "~a : ~s~%" agent-name (remove nil gists)))
     (with-open-file (outfile fname-ulf  :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~a : ~s~%" agent-name (remove nil ulfs)))
-    (setq *print-pretty* t)
-)) ; END log-turn-write
+    (setq *print-pretty* t))
+  ; Additionally write conversation log to appropriate log directories when in read-log mode.
+  (when *read-log*
+    (let ((fname-text (concatenate 'string "logs/logs_out/text/" (pathname-name *read-log*) ".txt"))
+          (fname-gist (concatenate 'string "logs/logs_out/gist/" (pathname-name *read-log*) ".txt"))
+          (fname-ulf  (concatenate 'string "logs/logs_out/ulf/" (pathname-name *read-log*) ".txt"))
+          (text (first turn)) (gists (second turn)) (ulfs (third turn))
+          (agent-name (string-upcase (string agent))))
+      (setq *print-pretty* nil)
+      (with-open-file (outfile fname-text :direction :output :if-exists :append :if-does-not-exist :create)
+        (format outfile "~a : ~s~%" agent-name text))
+      (with-open-file (outfile fname-gist :direction :output :if-exists :append :if-does-not-exist :create)
+        (format outfile "~a : ~s~%" agent-name (remove nil gists)))
+      (with-open-file (outfile fname-ulf  :direction :output :if-exists :append :if-does-not-exist :create)
+        (format outfile "~a : ~s~%" agent-name (remove nil ulfs)))
+      (setq *print-pretty* t)))
+) ; END log-turn-write
 
 
 
@@ -259,6 +274,34 @@
       *block-coordinates*))) moves)
   (append *block-coordinates* moves)
 ) ; END update-block-coordinates
+
+
+
+(defun process-and-increment-log ()
+;`````````````````````````````````````
+; Verifies the correctness of the current tuple of log (when applicable),
+; increments the log pointer, and stores a say-to.v episode containing the
+; user input in the next log entry.
+; TODO: any perceptions apart from the say-to.v act should also be stored in
+; context here (currently only select move.v observations are stored by the
+; respective blocks-world QA actions).
+;
+  ; Verify current tuple
+  (when (and (>= *log-ptr* 0) (> (length (nth *log-ptr* *log-contents*)) 1))
+    (if (not *log-answer*) (setq *log-answer* '(PARSE FAILURE \.)))
+    (verify-log *log-answer* (nth *log-ptr* *log-contents*) *read-log*)
+    (setq *log-answer* nil))
+  ; Increment log pointer
+  (setq *log-ptr* (1+ *log-ptr*))
+  ; Read off input of next tuple and store in context
+  (let (ep-name-new (log-input (if (>= *log-ptr* (length *log-contents*))
+                      (parse-chars (coerce "bye" 'list))
+                      (parse-chars (coerce (first (nth *log-ptr* *log-contents*)) 'list)))))
+    (setq log-input `(^you say-to.v ^me ',log-input))
+    (when log-input
+      (setq ep-name-new (store-new-contextual-facts (list log-input)))
+      (push (list ep-name-new log-input) (ds-perception-queue *ds*))))
+) ; END process-and-increment-log
 
 
 

@@ -208,7 +208,8 @@
   ; Currently only supports '|Spatial-Reasoning-System|.
   (defparameter *registered-systems-specialist* nil)
 
-  ; If terminal mode and perceptive, keep list of block coordinates mimicking actual BW system.
+  ; Keep list of block coordinates mimicking actual BW system (for debugging purposes
+  ; while not connected to the BW system).
   (defparameter *block-coordinates* '(
     ((the.d (|Target| block.n))      at-loc.p ($ loc :x -3.289 :y -2.454 :z 0.488))
     ((the.d (|Starbucks| block.n))   at-loc.p ($ loc :x -2.262 :y -2.438 :z 0.493))
@@ -391,21 +392,7 @@
         ; NOTE: the following code is only relevant if (*read-log-mode* t) is set in config.lisp.
         ; TODO: this still isn't working; need to look into this more.
         (when (and (= *output-listen-prompt* 1) *read-log*)
-          ; Verify current tuple
-          (when (>= *log-ptr* 0)
-            (if (not *log-answer*) (setq *log-answer* '(PARSE FAILURE \.)))
-            (verify-log *log-answer* (nth *log-ptr* *log-contents*) *read-log*)
-            (setq *log-answer* nil))
-          ; Increment log pointer
-          (setq *log-ptr* (1+ *log-ptr*))
-          ; Read off input of next tuple and store in context
-          (let ((log-input (if (>= *log-ptr* (length *log-contents*))
-                    (parse-chars (coerce "bye" 'list))
-                    (parse-chars (coerce (first (nth *log-ptr* *log-contents*)) 'list)))))
-            (setq log-input `(^you say-to.v ^me ',log-input))
-            (when log-input
-              (setq ep-name-new (store-new-contextual-facts (list log-input)))
-              (push (list ep-name-new log-input) (ds-perception-queue *ds*))))
+          (process-and-increment-log)
           (update-plan-state plan)
           (return-from perform-next-step nil))
 
@@ -886,16 +873,17 @@
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
 
-        ; Get object locations from context
-        (setq object-locations (get-from-context '(?x at-loc.p ?y)))
-        ;; (format t "found object locations from context: ~a~%" object-locations) ; DEBUGGING
-
         ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
         ; TODO: first might need to remove stored block coordinates from context.
         (when *read-log*
           (let ((perceptions (second (nth *log-ptr* *log-contents*))))
             (if (not (listp perceptions)) (setq perceptions nil))
+            (remove-old-contextual-fact '(?x at-loc.p ?y))
             (store-new-contextual-facts (update-block-coordinates (remove-if-not #'verb-phrase? perceptions)))))
+
+        ; Get object locations from context
+        (setq object-locations (get-from-context '(?x at-loc.p ?y)))
+        ;; (format t "found object locations from context: ~a~%" object-locations) ; DEBUGGING
 
         ; Determine answers by recalling from history
         (if (subsetp '("ulf-lib" "ulf2english" "ulf-pragmatics" "timegraph") *dependencies* :test #'equal)
@@ -918,6 +906,7 @@
         (when *read-log*
           (let ((perceptions (second (nth *log-ptr* *log-contents*))))
             (if (not (listp perceptions)) (setq perceptions nil))
+            (remove-old-contextual-fact '(?x at-loc.p ?y))
             (store-new-contextual-facts (update-block-coordinates (remove-if-not #'verb-phrase? perceptions)))))
 
         ; Send query to external source
