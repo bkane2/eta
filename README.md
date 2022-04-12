@@ -11,8 +11,8 @@ Start SBCL in the top level directory, and select an avatar by entering `(defpar
 `<agent_id>` with a string corresponding to an avatar name, e.g., `"sophie"`. See below for all supported avatars. Ensure
 that the required dependencies for the chosen avatar are all satisfied.
 
-If desired, the avatar configuration can be modified by editing the corresponding configuration file in `config/` (see the
-comment at the top of the files for information about the available config options).
+If desired, the avatar configuration can be modified by editing the corresponding configuration file in `config/`. This will
+usually not be necessary, as the defaults define the intended behavior for each avatar.
 
 To begin, enter `(load "start.lisp")`. The dialogue will then begin using the top-level schema of the chosen avatar. Eta
 supports two modes of interaction by default: text input and audio input. The former can simply be entered into the command
