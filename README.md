@@ -1,5 +1,5 @@
 
-# Eta Dialogue Manager (Ver 2 - 01/06/2020):
+# Eta Dialogue Manager:
 
 ## Dependencies
 
