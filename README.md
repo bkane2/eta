@@ -1,58 +1,78 @@
 
 # Eta Dialogue Manager (Ver 2 - 01/06/2020):
 
+## Dependencies
+
+Eta minimally requires a Lisp installation to run; [Steel Bank Common Lisp](http://www.sbcl.org) is recommended. Some avatars support specialized behavior that requires additional dependencies (see below). 
+
 ## How to run
 
-Edit `config.lisp` and set the global parameters to the desired values (see the comment at the top of the file
-for information about the config options). `*avatar*` should be set to the name of one of the available avatars (in all lowercase),
-each one of which specifies a set of schemas and pattern transduction rules to guide the conversation. These options
-are discussed further below.
+Start SBCL in the top level directory, and select an avatar by entering `(defparameter *agent-id* <agent_id>)`, replacing
+`<agent_id>` with a string corresponding to an avatar name, e.g., `"sophie"`. See below for all supported avatars. Ensure
+that the required dependencies for the chosen avatar are all satisfied.
 
-Start SBCL in the top level directory and enter `(load "start.lisp")`. The dialogue will then begin using the top-level
-schema of the chosen avatar.
+If desired, the avatar configuration can be modified by editing the corresponding configuration file in `config/` (see the
+comment at the top of the files for information about the available config options).
 
-Eta has two modes: text mode, and live mode. These can be changed in `config.lisp`. Use `(defparameter *mode* nil)` for
-text mode, and `(defparameter *mode* t)` for live mode.
+To begin, enter `(load "start.lisp")`. The dialogue will then begin using the top-level schema of the chosen avatar. Eta
+supports two modes of interaction by default: text input and audio input. The former can simply be entered into the command
+line following an utterance from Eta. The latter should be written to `io/<agent_id>/in/Audio.lisp` as
+`(setq *input* "Input here")`, where the value of \*input\* is a string. This is intended to be used in conjunction
+with an automatic speech recognition program.
 
-In text mode, simply enter the query into the command line when the system prompts you to do so. The system will
-output the gist clause that was extracted, and the corresponding ulf if one was extracted. In the case of the David
-avatar used in the blocks world system, no meaningful reaction will be given by the dialogue agent in text mode, since
-answering spatial questions requires connecting with the blocks world system in live mode.
+In either case, the system will output its responses both to the command line (along with debug messages displaying the
+gist clause and logical forms extracted from the user input), as well as `io/output.txt`. Each utterance in the
+latter file is on a newline and preceeded by `#` for system utterances, and `*` (along with dummy text) for a prompt
+to listen for the user. This is intended to be used in conjunction with a text-to-speech program.
 
-In live mode, the system will await for an input to be set in `io/input.lisp` as `(setq *next-input* "Input here")`,
-where the value of \*next-input\* is a string. This is intended to be used in conjunction with an ASR program. If the
-input was a spatial question, the system will output the extracted ulf to `io/ulf.lisp` as `(setq *next-ulf* '(((PRES BE.V) THERE.PRO ...) ?))`, where the value of \*next-ulf\* is some list.
+For each connected perception or specialist subsystem apart from Audio (as defined in an avatar's config file), the system
+creates additional IO files for communication between Eta and the subsystem in `io/<agent_id>/in/` and `io/<agent_id>/out/`.
+Inputs to any input file should be written as `(setq *input* '(<query1> <query2> ...))`, where `<query1>`, `<query2>`, etc.
+are unscoped logical form (ULF) formulas that can be interpreted by Eta. Likewise, outputs are written to the corresponding
+files as `(setq *output* '(<query1> <query2> ...))`, where the queries are ULF formulas that can be interpreted by the subsystem.
 
-**NOTE**: the value of \*next-ulf\* might potentially have an additional *poss-ques* wrapper around it, e.g. `'(POSS-QUES (((PRES BE.V) THERE.PRO ...) ?))`.
-
-Eta's outputs are logged in plaintext in `io/output.txt`, with each output on a newline and preceeded by `#:`. This is intended
-to be used in conjunction with a TTS program.
-
-The following live mode features are (currently) specific to the david avatar used in the blocks world system:
-
-In the case of a spatial question, the system will await a response in `answer.lisp` as
-`(setq *next-answer* "Answer here")`, where the value of \*next-answer\* is a string. If the input
-was not a spatial question, the system will skip this step and form a reaction as normal.
-
-If `*perceptive-mode*` is enabled, after hearing a spatial question the system will await block coordinates in `perceptions.lisp`. The
-format of this is a list of coordinate propositions, e.g. `(setq *next-coords* '((|SRI | at-coords.p 1 1 1) (|Texaco| at-coords.p 1 3 1) (|Twitter| at-coords.p 1 1 2)))`.
-
-If `*responsive-mode*` is enabled, the spatial QA system will create natural language answers to questions. Otherwise, it
-will skip this step due to not having loaded the required dependencies. This mode can safely be disabled for the other avatars.
+Full logs of the conversation are also maintained in `io/<agent_id>/conversation-log/`, displaying the text of all user and
+system utterances, as well as any extracted gist-clauses or ULF formulas corresponding to each turn.
 
 ## Supported avatars
 
-### David
+### david-qa
 
-TBC
+The david-qa avatar is able to hold collaborative question-answering dialogues in a physical 'blocks world' domain, where a user
+may move around blocks on the table and ask the system questions about both the current and past states of the blocks. This avatar works in conjunction with a blocks world perceptual subsystem (i.e., vision and block tracking system) and a spatial reasoning system
+that quantitatively models spatial relationships.
 
-### Sophie
+Without interacting with these subsystems through the corresponding IO files, the
+capabilities of the david-qa avatar are limited only to semantic understanding (i.e., production of ULF formulas representing the
+meaning of the user's questions); it will not be able to give meaningful answers to questions without the required subsystems.
 
-TBC
+<!-- TODO: give more detail on the specific queries that are supported in inputs/outputs -->
 
-## Code overview
+#### Dependencies
 
-TBC
+* [Quicklisp](https://www.quicklisp.org/beta/)
+* [ASDF version 3 or above](https://asdf.common-lisp.dev/archives/asdf.lisp)
+* [TTT](https://github.com/genelkim/ttt)
+* [ulf-lib](https://github.com/genelkim/ulf-lib)
+* [ulf2english](https://github.com/genelkim/ulf2english)
+* [ulf-pragmatics](https://github.com/genelkim/ulf-pragmatics)
+* [timegraph](https://github.com/bkane2/timegraph)
+
+Follow the READMEs for installing each required package.
+
+### sophie
+
+The sophie avatar is intended to act as a virtual cancer patient, for use in helping doctors practice breaking bad news to
+patients. The system is still in active development, so may sometimes fail to understand the user. In such cases, the avatar will
+ask the user to clarify a few times, before moving on with the conversation.
+
+The system's outputs may also include emotion tags (currently limited to `[NEUTRAL]`, `[HAPPY]`, or `[SAD]`), intended to provide a
+signal to the avatar to select appropriate behavior.
+
+### sophie-feedback
+
+The sophie-feedback avatar is intended to be used in conjunction with the sophie avatar, on a separate process. At each turn of a sophie dialogue, the gist-clause extracted from the user's utterance is concatenated to the gist-clause of sophie's preceeding utterance, with a `[SEP]` token between the two gist-clauses. This string is given to the sophie-feedback avatar as input, and the
+avatar then outputs some piece of feedback on that turn (for instance, suggestions for open-ended questions the user might have asked).
 
 
 
