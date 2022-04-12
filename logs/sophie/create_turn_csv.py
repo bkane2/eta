@@ -53,7 +53,7 @@ def create_turn_csv(user_sessions):
       gists = get_gists(f)
       responses = get_responses(f)
       for ((context, input), gist, response) in zip(inputs, gists, responses):
-        data.append((u, s, context, input, gist, response))
+        data.append((u, s, context.capitalize(), input.capitalize(), gist, response.capitalize()))
 
   df = pd.DataFrame(data, columns=['User', 'Session', 'Context', 'Utterance', 'Gist', 'Response'])
   df['ASR_Error'] = np.nan
