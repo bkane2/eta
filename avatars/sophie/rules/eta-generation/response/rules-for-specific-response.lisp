@@ -242,6 +242,25 @@
        about possible metastasis \. Could you explain what that means in simple terms ?) (100 :out)
     2 (Could you try your best to explain the test results to me ?) (0 :out)
 
+  1 (0 We performed the CT scan to see how much further your cancer has progressed 0)
+    2 (Okay \. I think I get it \. The CT scan is just a way to measure how bad my cancer is \. Has it gotten any better then ? Or has it gotten worse ?) (100 :out)
+    2 (I understand \. What does my CT scan tell you then ? I don/'t feel like my cancer has gotten much better \.) (0 :out)
+
+  1 (0 You intend to explain my test results to me 0)
+    2 (Thank you \. I appreciate that you\'re taking time to make certain I understand my test results \. It would help me a great deal to hear you explain them in simple terms \.) (100 :out)
+    2 (Thank you \. Let\'s get started then \. What do my test results say about my cancer ?) (0 :out)
+
+  1 (0 You recognize how hard receiving the test results is for me 0)
+    2 (Thank you \. The condition has been hard to deal with at times \, but \, truth be told \, the worst part is not understanding what\'s going on in my own body\. It would help a great deal if you explained my test results to me in terms that I can understand \.) (0 :out)
+    
+  1 (0 The test results are unfavorable to me 0)
+    2 ([SAD] What does that mean ? Has the cancer gotten worse ?) (100 :out)
+    2 ([SAD] That means I still have cancer \, doesn\'t it ? Is it at least any better since the last time I was seen ? Or has it gotten worse ?) (0 :out)
+
+  1 (0 The test results do not appear conclusive 0)
+    2 ([SAD] Does that mean things are\'t going well ? The cancer hasn\'t gotten worse\, has it ?) (100 :out)
+    2 ([SAD] Does that mean the results don\'t say for sure whether the cancer has gotten better or worse ?) (0 :out)
+
   1 (0 The test results show that I have cancer 0)
     2 ([SAD] I already know from what my previous doctor told me that I have cancer \, but I\'m not really sure how bad it is or
        what my test results mean \. Can you explain what this means for me ?) (100 :out)
@@ -278,6 +297,14 @@
   1 (0 Do I want my family to be present when you tell me about the test results 0)
     2 (I\'d prefer to hear about the results from you now\. Then\, afterward\, we can discuss what to tell my family\. But thank you for the offer\!) (100 :out)
     2 (I\'d like to get it over with now\, if that\'s okay with you\. Then we can discuss how to give the results to my family later\.) (0 :out)
+
+  1 (0 Do I want anyone to be present when you tell me about the test results 0)
+    2 (No thank you\. I think I\'d like to hear the results from you now\. Then afterward\, if we need to\, we can talk about what to tell my family \.) (100 :out)
+    2 (I\'d rather get it over with now\, if that\'s okay with you\. Then we can talk about what to say to my family\, if we need to\. But I appreciate your asking \.) (0 :out)
+
+  1 (0 Do I have a question about my test results 0)
+    2 (My test results said that my cancer had metastasized \. What does that word mean ? Has my treatment not worked ?) (100 :out)
+    2 (I don\'t have any specific questions\, I\'m afraid\. I just want to know what my test results mean\, in terms that I can understand \.) (0 :out)
 
   1 (0)
     2 (Truth be told\, I\'ve already scanned the results\, but don\'t understand what they are telling me\. It all seems very complicated \.
@@ -337,6 +364,11 @@
   
   1 (0 Do you have the pain frequently 0)
     2 ([SAD] I seem to have the pain most of the time\, though sometimes it\'s worse than others \.) (0 :out)
+
+  
+  1 (0 What causes me to believe that my cancer has gotten worse 0)
+    2 (Well\, it feels as if over these past couple of weeks that my pain has gotten worse \. It isn\'t unbearable\, particularly when I take my pain medication\, but I do notice a change \.) (100 :out)
+    2 (I can\'t say anything for sure\, medically speaking\. I\'ve noticed my pain has gotten worse over these past couple weeks though\, so it seems as though it might be the case that my cancer has gotten worse as well \.) (0 :out)
 
 )) ; END *response-tree-pain*
 
@@ -529,7 +561,7 @@
         make it easier on her ?) (0 :out)
 
   1 (0 Do I want you to be present when I tell my family about the prognosis 0)
-    2 (Thank you\, but with everyone\'s schedules I think it would be hard to find time for us all to meet with you \. I can tell them myself\.
+    2 (Thank you\, but with everyone\'s schedules I think it would be hard to find time when we\'re all free to talk with you \. I can tell them myself\.
        I just want to know if you have any advice on breaking such hard news \.) (100 :out)
     2 (I appreciate the offer\, but I think it would take months to find a time when we were all free\. I don\'t mind telling them\, but I\'d like to know if you have any 
         advice on breaking the news\.) (0 :out)
@@ -544,6 +576,23 @@
        Is there any suggestions you have for delivering bad news ?) (100 :out)
     2 (Oh\, that\'s good to hear\. I know we\'ll have more questions in the coming months and I\'m glad to have someone on my side\. For now\, though\, I think the biggest challenge will be 
        telling my family\. Do you have any advice on how to do that ?) (0 :out)
+
+  1 (0 Do I want you to contact a family member now 0)
+    2 (Oh\, calling someone right now shouldn\'t be necessary \. I doubt anyone is actually free anyways\. All I could really use right now is some advice on how to break the news to them \.) (0 :out)
+
+  1 (0 You empathize with how hard it is for me to tell my family 0)
+    2 (It is certainly is hard\. But I know that it\'s the best thing to do in the long run\. If you have any advice on how to break the news though\, I could really use it\.) (0 :out)
+
+  1 (0 I know the best way to tell my family about my cancer 0)
+    2 (I guess I do have a fairly clear idea of what I could tell them and how they would react \. They\'d be sad\, at first\, but I think we\'d all grow closer in the end\. If you have any advice on how to make it easier for them in the moment though\, I\'d certainly appreciate it \.) (0 :out)
+
+  1 (0 What can you do to help me break the news to my family 0)
+    2 (Our schedules are all too busy to make an appointment\, so if you could just give me some advice on how to break the news to them\, I\'d really appreciate it\.) (100 :out)
+    2 (All I need is a some advice to tell them the bad news\. Given how personal the conversation will be\, I would prefer to do that part on my own \.) (0 :out)
+  
+  1 (0 My family is important to me 0)
+    2 (Even before this year\, my family has always been a huge part of my life\. I know this news is going to hit them hard \. If you have any advice on how to tell them about it\, I\'d really appreciate hearing it\.) (100 :out)
+    2 (My family is definitely important to me \. If you can give me any advice on how to make this news easier on them\, I could really use it\.) (0 :out)
 
   1 (0)
     2 ([SAD] I haven\'t told my family everything yet \. I wanted to wait to talk to you first \.
@@ -564,14 +613,18 @@
     2 ([SAD] I feared as much \, though it\'s still pretty upsetting \. How long do you think I have ?) (100 :out)
     2 ([SAD] How long specifically do you think I have left ?) (0 :out)
 
+  1 (0 The test results show that I cannot be cured 0)
+    2 ([SAD] I was worried that would be the case \, but I\'m glad that now I know \. What does that mean for my future then \, if there\'s nothing left to treat my cancer ?) (100 :out)
+    2 ([SAD] How mnay months or years do you think I have left if I can\'t be cured ?) (0 :out)
+
   1 (0 The prognosis is that my cancer should be treated with chemotherapy 0)
     2 ([SAD] I can talk about my options in a moment\, but first I just want to know how bad it really is \.
        How long do you think I have ?) (100 :out)
     2 ([SAD] Before I talk about treatment\, I just want to know how bad it really is \. How long do you think I have ?) (0 :out)
 
   1 (0 The prognosis is that my cancer should be treated with comfort care 0)
-    2 ([SAD] Comfort care does sound appealing \. But before we get too far into treatment options\, I\'d just like to know how bad it is\. How much time do you think I still have ?) (0 :out)
-    2 ([SAD] Before we get into the treatment options\, I\'d just like to know how bad it really is \. How much time do you think I still have ?) (100 :out)
+    2 ([SAD] Comfort care does sound appealing \. But before we get too far into treatment options\, I\'d just like to know how bad it is\. How much time do you think I still have ?) (100 :out)
+    2 ([SAD] Before we get into the treatment options\, I\'d just like to know how bad it really is \. How much time do you think I still have ?) (0 :out)
     
   1 (0 The prognosis is hard to predict 0)
     2 (My last doctor also just said it would be hard to predict \. I think I am ready to hear though \. Could you
@@ -609,6 +662,14 @@
     2 ([SAD] I know I\'ve been getting worse recently\, but I don\'t feel that bad yet \. How long do you think I really have left ?) (100 :out)
     2 ([SAD] I don\'t really understand \. Could you tell me specifically how long I have left ?) (0 :out)
 
+  1 (0 The prognosis is unfavorable to me 0)
+    2 ([SAD] My test results certainly didn\'t seem good either\, but I don\'t feel too bad at the moment\. Would you be able to tell me exactly how much time I have left ?) (100 :out)
+    2 ([SAD] How bad is it ? Would you be able to tell me though how much time you think I still have ?) (0 :out)
+
+  1 (0 You are sorry to inform me of a poor prognosis 0)
+    2 (Don\'t worry\. By now\, I know the tumor isn\'t going away \. I\'m just hoping I still have some time to spend with my children and grandchild \. How much longer do you think I have left ?) (100 :out)
+    2 ([SAD] How bad is it ? Would you be able to tell me though how much time you think I still have ?) (0 :out)
+
   1 (0 Do I understand my prognosis 0)
     2 ([SAD] I don\'t really understand my prognosis\, I\'m just bracing myself for the worst \. Can you tell me how
        long you think I have ?) (100 :out)
@@ -621,9 +682,13 @@
   1 (0 How do I feel about my prognosis 0)
     2 ([SAD] I feel very anxious about my condition \. I feel like it\'s gotten worse \. I want to know what this means
        for me \.) (100 :out)
-    2 ([SAD] I\'m just scared about it getting worse \, and not being able to be there for my family \.) (0 :out)
+    2 ([SAD] I know I don\'t have that long left and that\, I admit\, is scary \. But it would help if I had more of an exact figure on how long to expect\. At least \, that way\, I\'d know when to start getting my affairs in order \.) (0 :out)
 
-   1 (0 Do I have a question about my prognosis 0)
+  1 (0 How specific do I want you to be about my prognosis 0)
+    2 (I know it\'s hard to predict\, but\, if you can give me one\, I\'d like to have an specific estimate of how much time I have left \. Preferably in something like months or years \. It would help a great deal to know what to expect \.) (100 :out)
+    2 (If you would be able to tell me how many months or years I have left\, I\'d really appreciate it\. It would help a lot if things felt less uncertain \.) (0 :out)
+
+  1 (0 Do I have a question about my prognosis 0)
     2 (I was wondering whether I could get a second opinion on my prognosis ? I\'m going to be facing a lot of important decisions soon about my future and I want to be 
        as prepared as I can \.) (100 :out)
     2 (Do you think it would be beneficial to get a second opinion on my prognosis ?) (0 :out)
@@ -640,7 +705,25 @@
   1 (0 Am I ready to start discussing treatment options 0)
     2 (Hold on a moment \. Before we start talking about my options for treatment\, I need to know what these test results might mean for my future\. How long do you think 
        I might have left ?) (100 :out)
-    2 (I need some time to digest everything and to tell my family before talking about treatment options \.) (0 :out)
+    2 (I need some time to digest everything and to tell my family before talking about treatment options \.  Right now\, I only want to know what my prognosis is \.) (0 :out)
+
+  1 (0 Am I ready to discuss my treatment goals 0)
+    2 (Wait a moment \. Before we start talking about what I want for the future\, would I be able to know how much time I have left ? I think that would help me be better able to determine my goals \.) (100 :out)
+    2 (I\'m sorry\. I think I may need a little more time before I know what I want for the future \. Right now\, what I\'m hoping to get out of this appointment is to understand how much time I have left \.) (0 :out)
+
+  1 (0 Do I want anyone to be present when you tell me about the prognosis 0)
+    2 (No thank you \. I\'ve been anticipating hearing this news for so long that I\'d rather just get it over with \. Can you tell me what the test results mean for my future ?) (100 :out)
+    2 (I\'d prefer to hear it now \. I\'ve had a long time to prepare myself for both the best and the worst possibilities\, and at this point I\'d just like to know \.) (0 :out)
+
+  1 (0 Do I want my family to be present when you tell me about the prognosis 0)
+    2 (No thank you \. I\'ve been anticipating hearing this news for so long that I\'d rather just get it over with \. Tell me what you think the test results mean for my future and we can figure out how to give my family the news afterward \.) (100 :out)
+    2 (I\'d prefer to hear it now \. I\'ve had a long time to prepare myself for both the best and the worst possibilities\, and at this point I\'d just like to know \.) (0 :out)
+
+  1 (0 How prepared for the prognosis are my family 0)
+    2 (My family do know about my cancer and they know that it hasn\'t improved\, despite the treatment \. No matter the news\, good or bad\, you give me about my prognosis\, I believe they\'d be ready to hear it\.) (0 :out)
+
+  1 (0 My family is important to understanding what I want to do with my prognosis 0)
+    2 (My family is a huge part of my life \. I\'m hoping I\'ll have some time left that I can say goodbye to them\, and make memories with my grandson \. Given these test results\, how much longer do you think I have left ?) (0 :out)
 
   1 (0)
     ; OPPORTUNITY for open-ended questions: "What are your treatment goals?", "Do you understand your diagnosis?", "How do you feel about your future?"
@@ -673,6 +756,16 @@
     2 (That\'s difficult to hear \. Are you certain I don\'t have any more time ? I had an uncle Fred who was told he had two or three months to live 
        \, but he held on for a year and a half \.) (100 :out)
     2 (Is there any way that I might have more time than that ? I know that some people are told one thing but end up holding on a lot longer\.) (0 :out)
+  
+  1 (0 The prognosis is unfavorable to me 0)
+    2 (That\'s difficult to hear \. Are you certain I don\'t have any more time ? I had an uncle Fred who was told he had two or three months to live 
+       \, but he held on for a year and a half \.) (100 :out)
+    2 (Are you sure it\'s that bad ? I know that some people are told one thing but end up holding on a lot longer\.) (0 :out)
+
+  1 (0 You are sorry to inform me of a poor prognosis 0)
+    2 (That\'s difficult to hear \. Are you certain I don\'t have any more time ? I had an uncle Fred who was told he had two or three months to live 
+       \, but he held on for a year and a half \.) (100 :out)
+    2 (Are you sure it\'s that bad ? I know that some people are told one thing but end up holding on a lot longer\.) (0 :out)
 
   1 (0 The prognosis is that I may live for a elapsed-time 0)
     2 (That\'s difficult to hear \. Are you certain I don\'t have any more time than a 11 ? I had an uncle Fred who was told he had two or three months to live 
@@ -709,7 +802,7 @@
 ; (Can I outlive your prognosis if I am healthy now?)
 '(
   1 (0 Do I understand my prognosis 0)
-    2 (I know my test results say that I don\'t have a lot of time \. But I still feel pretty good right now \. ) (100 :out)
+    2 (I know my test results say that I don\'t have a lot of time \. But I still feel pretty good right now \.) (100 :out)
     2 (The tests say one thing \, but I feel okay right now \. Is there a chance I may be able to beat this ?) (0 :out)
 
   1 (0 My understanding of my prognosis may be correct 0)
@@ -757,25 +850,25 @@
 
   1 (0 Quitting smoking might make my prognosis better 0)
     2 (Either way\, I\'m glad I quit \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
-         do you think I\'ll live to see his graduation ? He\'s in middle school right now \. ) (100 :out)
+         do you think I\'ll live to see his graduation ? He\'s in middle school right now \.) (100 :out)
     2 (Well\, I\'m happy I quit \. After all\, I want to spend all the time I can with my grandson\. Do you think I could live to watch his graduation ? I know what my test 
         results say\, but is there any chance I could make it ?) (0 :out)
   
   1 (0 Quitting smoking will make my prognosis better 0)
     2 (Either way\, I\'m glad I quit \. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
-         do you think I\'ll live to see his graduation ? He\'s in middle school right now \. ) (100 :out)
+         do you think I\'ll live to see his graduation ? He\'s in middle school right now \.) (100 :out)
     2 (Well\, I\'m happy I quit\. After all\, I want to spend all the time I can with my grandson\. Do you think I could live to watch his graduation ? I know what my test 
         results say\, but is there any chance I could make it ?) (0 :out)
 
   1 (0 Healthy habits will help me outlive my prognosis 0)
     2 (Well\, either way\, I figure there\'s no harm in trying\. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
-        do you think I\'ll live to see his graduation ? He\'s in middle school right now \. ) (100 :out)
+        do you think I\'ll live to see his graduation ? He\'s in middle school right now \.) (100 :out)
     2 (I might as well give it a shot\. After all\, I want to spend all the time I can with my grandson\. Do you think I could live to watch his graduation ? I know what my test 
         results say\, but is there any chance I could make it ?) (0 :out)
 
   1 (0 Healthy habits may help me outlive my prognosis 0)
     2 (Well\, either way\, I figure there\'s no harm in trying\. After all \, I have my grandson to think about \.  I know the test results say one thing \, but 
-         do you think I\'ll live to see his graduation ? He\'s in middle school right now \. ) (100 :out)
+         do you think I\'ll live to see his graduation ? He\'s in middle school right now \.) (100 :out)
     2 (I might as well give it a shot\. After all\, I want to spend all the time I can with my grandson\. Do you think I could watch his graduation ? I know what my test 
         results say\, but is there any chance I could make it ?) (0 :out)
 
@@ -798,7 +891,7 @@
 ; (I feel nervous about my future 1)
 '(
   1 (0 Was I nervous about this appointment 0)
-    2 (I was a bit nervous about the appointment because I knew I\'d finally learn about what my test results mean \. But what worries me most is my future \. ) (100 :out)
+    2 (I was a bit nervous about the appointment because I knew I\'d finally learn about what my test results mean \. But what worries me most is my future \.) (100 :out)
     2 (I was rather anxious to come here today and learn about my test results\. But I\'m more scared about what my future could hold \.) (0 :out)
   1 (0 Is something harming my mental health 0)
     2 (Well \. Sometimes I start to worry about my future \, and I find it difficult to stop \.) (100 :out)
@@ -833,6 +926,18 @@
     2 (That\'s unfortunate to hear\. It\'s been so hard these past couple weeks\, partly because of my pain but partly because I know so little about the future\.) (100 :out)
     2 (That\'s hard to hear\. It scares me just how much of my future is unknown \.) (0 :out)
 
+  1 (0 It is expected to feel badly after learning your cancer is terminal 0)
+    2 (It was already hard enough when I learned my diagnosis a few months ago\, but at least then I knew that I would still have time\. Now\, my future feels so unknown\.) (100 :out)
+    2 (It\'s hard to hear that the time you thought you had has vanished\. It scares me how little I know about how the next several months will play out \.) (0 :out)
+
+  1 (0 How have you been feeling since the cancer metastasized 0)
+    2 ([SAD] The pain has been hard to manage\, but really the worst of it is not knowing what my future will hold\. I was hoping that would change after I learned my prognosis\, but I still feel just as scared as before \.) (100 :out)
+    2 ([SAD] When I received my diagnosis those months ago\, I felt as though cancer had taken what control I had over my own future\. I wish I could say that had changed with receiving these test results\, but now my future feels more confused than ever\.) (0 :out)
+
+  1 (0 You empathize with how hard it is to learn my cancer is terminal 0)
+    2 ([SAD] These last months have been exhausting\, but it\'s worse to learn that I don\'t have much time left at all\. I\'m just worried about how these next weeks will play out\.) (100 :out)
+    2 ([SAD] I always knew that I\'d eventually be in this position\. No one can live forever\, after all\. But I never thought it would be this soon\. I\'m so worried about how these next months will play out\.) (0 :out)
+
   1 (0)
     2 (It\'s easy for my mind to immediately jump to the worst possible conclusions \. I guess I\'m pretty worried about what the future will hold \.) (100 :out)
     2 (These days\, my mind seems to leap to the worst conclusions rather quickly\. I suppose it scares me how much is unknown about my future \.) (0 :out)
@@ -852,9 +957,10 @@
     2 ([SAD] I don\'t feel good about my condition at all \. It seems like it\'s gotten worse \.) (0 :out)
 
   1 (0 What scares me about my condition 0) 
-    2 ([SAD] What scares me most is that my condition is becoming harder and harder to live with \, but I have no idea how much worse it\'s going to get \. ) (100 :out)
+    2 ([SAD] What scares me most is that my condition is becoming harder and harder to live with \, but I have no idea how much worse it\'s going to get \.) (100 :out)
     2 ([SAD] The uncertainty is the scariest part \. If I knew what was coming \, at least I could brace myself for it \. But these days \, I can\'t tell if I\'m
         getting worse or just having a bad day \.) (0 :out)
+
         
 )) ; END *response-tree-understanding-of-condition*
 
@@ -868,6 +974,11 @@
   1 (0 The cause of my cancer is unclear 0)
     2 (I know that it\'s hard to say anything for certain\. I just wish I could know how the cancer started\. Or if there was anything that I could have done to prevent it ?) (100 :out)
     2 (I understand it can be a challenge to predict these things \. But if there\'s any way you could tell me how the cancer started\, or how I could have prevented it\, please let me know\.) (0 :out)
+
+  1 (0 You want to talk about my future instead of the reason for my cancer 0)
+    2 (I\'d be more than willing to talk about my options after I\'ve had some time to digest this news\. But for now\, I just want to know how the cancer might have started\. Or\, more than that\, if I could have done anything to stop it \.) (0 :out)
+    2 (Before we talk about what my next months might look like in terms of treatment options\, can you tell me how you think this cancer might have started ? Or\, more than that\, if I could have done anything to prevent it ?) (100 :out)
+    
 
   1 (0)
     2 (I still don\'t understand how this happened\! Just three months ago I didn\'t even know I had cancer\.) (100 :out)

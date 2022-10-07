@@ -5,7 +5,7 @@
 (READRULES '*gist-clause-trees-for-input*
 '(
    ; Direct gist clauses from schema
-   
+
    ; Outdated Sleep/Pain Schemas
    1 (Why 1 I not 1 sleeping well ?)
       2 (*sleep-poorly-input*) (0 :subtrees)
@@ -34,6 +34,8 @@
 
    ; Gist clauses from potential sub-dialogues
    1 (My pain has recently been getting worse \.)
+      2 (*pain-input*) (0 :subtrees)
+   1 (I believe my cancer has gotten worse because my pain has also gotten worse \.)
       2 (*pain-input*) (0 :subtrees)
    1 (I am here alone \.)
       2 (*appointment-input*) (0 :subtrees)
@@ -65,9 +67,13 @@
       2 (*energy-input*) (0 :subtrees)
    1 (I feel anxious about my future \.)
       2 (*energy-input*) (0 :subtrees)
+   1 (You can help me by answering all of my questions \.)
+      2 (*energy-input*) (0 :subtrees)
    1 (Will an antidepressant help me with my pain ?)
       2 (*energy-input*) (0 :subtrees)
    1 (Should I try medication before I try therapy ?)
+      2 (*energy-input*) (0 :subtrees)
+   1 (My future feels out of my control because I do not know how much time I have to live \.)
       2 (*energy-input*) (0 :subtrees)
    1 (I don\'t have allergies to any medicine \.)
       2 (*medicine-input*) (0 :subtrees)
@@ -146,7 +152,9 @@
    ; it's assumed that this question is only ever asked in the very beginning
    1 (You can call me Sophie \.) 
       2 (*test-results-input*) (0 :subtrees)
+   1 (I can hear you \.)
+      2 (*test-results-input*) (0 :subtrees)
    
-   1 (0)
+   1 (0) 
       2 (*general-input*) (0 :subtrees)
 ))
