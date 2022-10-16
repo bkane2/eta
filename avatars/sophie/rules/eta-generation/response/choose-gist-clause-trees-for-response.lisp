@@ -68,6 +68,8 @@
     2 (*response-tree-lortab-frequency*) (0 :subtrees)
   1 (I know that my cancer has gotten worse\, but I\'m not sure how bad it is 1)
     2 (*response-tree-understanding-of-condition*) (0 :subtrees)
+  1 (I believe my cancer has gotten worse because my pain has also gotten worse 1)
+    2 (*response-tree-understanding-of-condition*) (0 :subtrees)
   1 (I want to talk about my prognosis today 1)
     2 (*response-tree-redirect-to-prognosis*) (0 :subtrees)
 
@@ -98,6 +100,9 @@
   1 (Will stronger pain medication help me sleep 1)
     2 (It seems like my pain is the root of my sleeping problems \. Do you think having
        stronger pain medication would help with that ?) (0 :out)
+  1 (My future feels out of my control because I do not know how much time I have remaining to live 1) 
+    2 (To be honest\, my future has felt out of my control since my cancer diagnosis\. I\'ve been living with the fear that I\'ll wake up one morning and be unable to take care of myself\, or worse\, not wake up at all\. This news today only makes that worse \.) (100 :out)
+    2 (After the cancer diagnosis\, I began to worry that I won\'t have enough time left to do everything that I want to\. This news only worsens that fear\. I simply don\'t know how much longer I\'ll have left\.) (0 :out)
   
   ; The following are from the top-level dialogue track
   1 (How will I know if my pain medication is working 1)
@@ -163,10 +168,16 @@
   1 (You can call me Sophie 1)
     2 (You can call me Sophie \.) (2 :out)
     2 (I\'m fine with being called Sophie \.) (0 :out)
+  1 (I can hear you 1) 
+    2 (Yes\, I am able to hear you just fine \, thank you for asking \.) (100 :out)
+    2 (Oh \! Yes \, I can hear you quite well \.) (0 :out)
   1 (My goal is to survive long enough to be there for my family \.)
     2 (Of course I want to live as long as possible\, but the most important thing to me is being able to be there for my family \.
        My grandson is going to graduate from middle school soon \.) (2 :out)
     2 (I just want to be able to spend more time with my family\, and to be comfortable \.) (0 :out)
+  1 (You can help me by answering all of my questions 1)
+    2 (I think what I need the most right now is just someone who can help me understand what\'s happening to me\. All of this feels so sudden and I\'m having trouble wrapping my mind around what it means for my future\.) (100 :out)
+    2 (It may sound silly\, but right now I think what I need is a someone patient and knowledgeable who doesn\'t mind answering all of my questions\. I feel like my whole world has been upended and I\'m still trying to understand what it means for me\.) (0 :out)
 
   ; By default, simply output the gist-clause
   1 (0)

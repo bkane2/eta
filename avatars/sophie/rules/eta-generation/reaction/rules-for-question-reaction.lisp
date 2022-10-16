@@ -67,6 +67,8 @@
     2 *ask-about-test-results* (0 :schema)
   1 (Do I want my family to be present when you tell me about the test results ?)
     2 *ask-about-test-results* (0 :schema)
+  1 (Do I want anyone to be present when you tell me about the test results ?)
+    2 *ask-about-test-results* (0 :schema)
   1 (How has my condition gotten worse ?)
     2 *say-pain-worse* (0 :schema)
 
@@ -126,6 +128,8 @@
     2 *mention-mild-depression* (0 :schema)
   1 (Is something harming my mental health ?)
     2 *mention-anxiety* (0 :schema)
+  1 (What parts of my future feel out of my control ?)
+    2 *explain-why-future-feels-out-of-control* (0 :schema)
 
   ; Questions about medicine
   1 (Do I have allergies to any medicine ?)
@@ -199,6 +203,11 @@
   1 (Who in my family do I want to tell about the prognosis ?)
     2 *ask-what-to-tell-family* (100 :schema)
     2  (I\'d have to tell my son\, and certainly my daughter \. I\'m currently staying with both her and my grandson here in Rochester \, and I imagine I\'ll probably lean on her a lot more as the cancer progresses \.) (0 :out)
+  1 (Do I want you to contact a family member now ?)
+    2 *ask-what-to-tell-family* (100 :schema)
+    2 (No thank you\. My daughter is at work and my grandson is at school right now\. I\'d prefer not to bother them and I would feel comfortable telling them myself later \.) (0 :out)
+  1 (What can you do to help me break the news to my family ?)
+    2 *ask-what-to-tell-family* (0 :schema)
 
   ; Questions about treatment options
   1 (What do I understand about my treatment options ?)
@@ -228,6 +237,19 @@
     2 *ask-about-prognosis* (0 :schema)
   1 (Do I have a question about my prognosis ?)
     2 *ask-about-prognosis* (0 :schema)
+  1 (How specific do I want you to be about my prognosis ?)
+    2 *ask-about-prognosis* (0 :schema)
+  1 (Am I ready to discuss my treatment goals ?)
+    2 *ask-about-prognosis* (0 :schema)
+  1 (Do I want my family to be present when you tell me about the prognosis ?)
+    2 *ask-about-prognosis* (0 :schema)
+  1 (Do I want anyone to be present when you tell me about the prognosis ?)
+    2 *ask-about-prognosis* (0 :schema)
+  1 (How prepared for the prognosis are my family ?)
+    2 *ask-about-prognosis* (0 :schema)
+    2 (My family do know that my cancer is there and that it hasn\'t gone away \. They told me that no matter how bad it gets\, they\'re going to stick by me no matter what \.) (0 :out)
+  1 (What causes me to believe that my cancer has gotten worse ?)
+    2 *say-pain-worse* (0 :schema)
 
   ; Questions about reason for cancer
   1 (How have I been feeling since the cancer metastasized ?)
@@ -246,6 +268,11 @@
     2 *mention-anxiety* (0 :schema)
   1 (Can you call me Sophie ?)
     2 *confirm-name* (0 :schema)
+  1 (Can I hear you ?)
+    2 *confirm-doctor-is-audible* (0 :schema)
+  1 (What would help you manage your condition ?)
+    2 *say-how-to-help* (0 :schema)
+  
   
   1 (0)
     2 *reaction-to-question-minor* (0 :subtree)
@@ -273,6 +300,8 @@
     2 (I live with my daughter and her husband while I\'m here in Rochester \.) (0 :out)
   1 (Am I married ?)
     2 (I was for about twenty years\. But as we got older and the kids went off to college\, things just didn\'t work out as well as we thought they would\. We separated about ten years ago and divorced two years later\.) (0 :out)
+  1 (Can I tell you about my family ?)
+    2 (Yes\, certainly\! Let me see\, I was married for twenty years\, but separated with my ex husband when the kids went off to college\. We\'re still on good terms though\, and I was thinking of catching up with him now that I\'m back in New York\. I also have two children\, a son who lives in Utica and a daughter who lives here\, in Rochester\.She has a son\, my grandson\, who just turned twelve and is starting middle school this year\.) (0 :out)
   1 (How am I doing today ?)
     2 ([SAD] The pain isn\'t too bad today \. I\'m mostly just anxious \.) (0 :out)
   ; Questions about family (Todo)

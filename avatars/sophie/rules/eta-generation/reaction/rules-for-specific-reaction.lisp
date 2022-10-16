@@ -325,6 +325,20 @@
     2 *ask-about-will-experimental-therapies-help* (100 :schema)
     ; OPPORTUNITY for open-ended questions: "What are your treatment goals?", "How are you feeling?", "What worries you the most?"
     2 ([SAD] I guess I need to make peace with it \.) (0 :out)
+  
+  1 (The prognosis is unfavorable to me \.)
+    2 *ask-about-prognosis* (100 :schema)
+    2 *ask-if-can-trust-prognosis* (100 :schema) 
+    2 ([SAD] I had a feeling it wasn\'t going to be good news \. I suppose I should make my peace with it \.) (0 :out)
+
+  1 (You are sorry to inform me of a poor prognosis \.)
+    2 *ask-about-prognosis* (100 :schema)
+    2 *ask-if-can-trust-prognosis* (100 :schema) 
+    2 ([SAD] It\'s alright\. I had a feeling it wasn\'t going to be good news anyway\. I suppose the most I can do is try and come to terms with it \.) (0 :out)
+
+  1 (My family is important to understanding what I want to do with my prognosis \.)
+    2 *ask-about-prognosis* (100 :schema)
+    2 (My family has always been one of the most important parts of my life\, especially since I moved back to Rochester \. I\'m only hoping this prognosis won\'t be too hard on them \.) (0 :out)
 
   1 (The prognosis is that I will survive \.)
     2 ([HAPPY] My previous doctor didn\'t seem so optimistic\, so that\'s quite the relief that you think I\'ll get better \.) (100 :out)
@@ -424,8 +438,13 @@
     2 *ask-if-can-outlive-prognosis-graduation* (0 :schema) 
 
   1 (My health right now may change my prognosis \.)
-    2 (Well\, that\'s certainly better than nothing\. I hope I can keep up this good health as long as possible and spend my remaining time with my family \.) (100 :out)
-    2 (I\'m happy to hear that my health might remain for a while longer\. There\'s nothing I want more than to have the ability to spend time with my family \.) (0 :out)
+    2 (At the very least\, I hope I can keep up this good health as long as possible and spend my remaining time with my family \.) (100 :out)
+    2 (I hope that my health might remain for a while longer\. There\'s nothing I want more than to have the ability to spend time with my family \.) (0 :out)
+
+  1 (You are glad to hear that I am still feeling healthy after my prognosis \.)
+    2 (Thank you\. I hope that I can hold out for a little longer\, so I can give my grandson some good memories to look back on\.) (100 :out)
+    2 (Thank you\. It\'s good to know that my strength has not left me yet\. I still have some memories I want to make with my family\.) (100 :out)
+    
 
   1 (I should obtain a second opinion about the prognosis \.)
     2 (That\'s good to know \. In that case\, I may look into getting a second opinion on my prognosis \.) (100 :out)
@@ -438,8 +457,8 @@
     2 (I may not bother to look into it then\. Thank you for telling me in advance\.) (0 :out)
 
   1 (I should spend the time predicted by my prognosis with my family \.)
-    2 (You\'re right \. No matter how much time I have left\, being with my children and grandchild is the most important thing for me right now \.) (100 :out)
-    2 (I agree \. There\'s nothing I\'d like more than to spend every second I have left with my children and grandchildren\.) (0 :out)
+    2 (You\'re right \. No matter how much time I have left \, being with my children and grandchild is the most important thing for me right now \.) (100 :out)
+    2 (I agree \. There\'s nothing I\'d like more than to spend every second I have left with my children and grandchildren \.) (0 :out)
 
   1 (0)
     ;; 2 (I\'m not entirely sure I fully understand what this means for my future\, but I want to be prepared for the worst
@@ -505,6 +524,17 @@
     2 (Yes\, I\'ll certainly have to talk to them about how we\'re going to make the most of our remaining time \.) (100 :out)
     2 (That\'s right\! After all\, that\'s why I moved up to New York\, to spend as much time with them as possible \.) (0 :out)
 
+  1 (You empathize with how hard it is for me to tell my family \.)
+    2 *ask-what-to-tell-family* (100 :schema)
+    2 (It certainly isn\'t something I\'m looking forward to \. I know my family will be gentle about it but it still will be hard to let them know we won\'t have much more time together \.) (0 :out)
+
+  1 (My family is important to me \.)
+    2 *ask-what-to-tell-family* (0 :schema)
+
+  1 (I know the best way to tell my family about my cancer \.)
+    2 *ask-what-to-tell-family* (100 :schema)
+    2 (You\'re right\. I do have some idea what would be easiest for them to hear \. The conversation will be hard \, but I think it will bring us closer together \.) (0 :out)
+
   1 (0)
     2 ([SAD] Okay \. It will be difficult\, but my family and I will have to be strong \.) (100 :out)
     2 ([SAD] Alright\. I\'ll do what I can\, even if the conversation will be challenging\. My family has to know the truth\.) (0 :out)
@@ -531,7 +561,9 @@
 '(
   
   1 (The test results do not appear conclusive \.)
-    2 *ask-about-prognosis* (0 :schema)
+    2 *ask-about-test-results* (0 :schema)
+  1 (The test results are unfavorable to me \.)
+    2 *ask-about-test-results* (0 :schema)
 
   1 (The test results show that the cancer hasn\'t spread \.)
     2 *ask-about-prognosis* (0 :schema)
@@ -539,6 +571,15 @@
     2 *ask-about-prognosis* (0 :schema)
   1 (The test results show that my cancer has spread \.)
     2 *ask-about-prognosis* (0 :schema)
+
+  1 (We performed the CT scan to see how much further your cancer has progressed \.)
+    2 *ask-about-test-results* (0 :schema)
+  1 (You intend to explain my test results to me \.)
+    2 *ask-about-test-results* (0 :schema)
+
+  1 (You recognize how hard receiving the test results is for me \.)
+    2 *ask-about-test-results* (0 :schema)
+    2 (It has been hard but I\'m glad to have you here to help me through the worst of it \.) (0 :out)
 
   1 (The test results show that I have cancer \.)
     2 *ask-about-test-results* (0 :schema)
@@ -609,12 +650,22 @@
     2 (I wish with all my heart that I had more time\, but I imagine I\'ve just got to make the best of what I have\. Thank you for your help with everything though\.) (0 :out)
 
   1 (You are sorry that I have cancer \.)
-    2 (Thank you\. I only wish I had more time with my grandson\. But who knows\, there\'s always at least a chance I may get more time with him \.) (100 :out)
-    2 (Thank you\. I appreciate all you\'ve been doing to help me\. I\'ll try to do the best I can with the time I have left\.) (0 :out)
+    2 (I only wish I had more time with my grandson\. But I\'ll have to do my best with what I have \.) (100 :out)
+    2 (I appreciate all you\'ve been doing to help me\. I\'ll try to do the best I can with the time I have left\.) (0 :out)
+
+  1 (You empathize with how hard it is to learn my cancer is terminal \.)
+    2 *mention-anxiety* (0 :schema)
 
   1 (Cancer is a bad illness \.)
     2 (Cancer is such a challenging disease to live with \. I\'m not sure if my life will ever be normal again \. But I appreciate all you\'ve been doing to help me \.) (100 :out)
     2 (It\'s just such a challenging disease to live with \. I hope someday we\'ll find a cure \. But until then\, I suppose I\'ve got to make the best of the time I have left \.) (0 :out)
+
+  1 (It is expected to feel badly after learning your cancer is terminal \.)
+    2 *mention-anxiety* (0 :schema)
+
+  1 (You are going to help me cope with learning my cancer is terminal \.)
+    2 (Thank you\. Receiving this prognosis is hard\, but having you and my family by my side makes it a little easier \.) (100 :out)
+    2 (Thank you\. I appreciate all that you\'re doing to help my family and I get through this \.) (0 :out)
 
   1 (My cancer is the result of my smoking \.)
     ;; 2 *ask-if-can-outlive-prognosis-quit-smoke* (100 :schema)
@@ -629,6 +680,10 @@
     2 (I know it\'s hard to say for sure\. And I suppose\, in the end\, it won\'t change anything if I have cancer for one reason or another\. 
        All I can do is make the most of the time I have left \.) (0 :out)
 
+  1 (There\'s nothing you could have done to change your cancer diagnosis \.)
+    2 (It\'s a relief to hear that there\'s nothing that I could have done \. I can\'t say why\. After all\, I still do have cancer\. I guess I just don\'t want to live the rest of my life wondering if I could have changed things \.) (0 :out)
+    2 (That\'s good to hear\. When you get to my age\, you already have a number of regrets\. Feeling as though I somehow played a hand in my own cancer diagnosis would have been the worst of all of them\.) (0 :out)
+
   1 (Cancer can affect anyone \.)
     2 *mention-anxiety* (0 :schema)
 
@@ -637,6 +692,12 @@
 
   1 (Having cancer changes life significantly \.)
     2 *mention-anxiety* (0 :schema)
+
+  1 (How have you been feeling since the cancer metastasized ?)
+    2 *mention-anxiety* (0 :schema)
+
+  1 (You want to talk about my future instead of the reason for my cancer \.)
+    2 *ask-why-have-cancer* (0 :schema)
 
   1 (0)
     2 ([SAD] I just don\'t understand why this had to affect me of all people \. I\'m thankful you\'re here to help me through it \.) (100 :out)
