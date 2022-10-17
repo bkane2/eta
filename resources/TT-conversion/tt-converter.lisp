@@ -1,12 +1,14 @@
-(defparameter *files-to-convert* '(
-  ;; "more-feats.lisp"
-  "sophie-features.lisp"
-  "example-sophie.lisp"
-  "example-ulf.lisp"
-  ;; "test.lisp"
-  ;; "general-word-data.lisp"
-  "example-lissa.lisp"
-))
+;; Benjamin Kane
+;; October 2021
+;; 
+;; A tool for converting rule files in the old pattern-transduction language to rule files using TT syntax.
+;; 
+;; Usage:
+;; 1. Put directories containing rule files that you wish to convert in the old/ directory.
+;; 2. Add the directories that you wish to convert to the *dirs-to-convert* global variable.
+;; 3. Enter SBCL and type (load "tt-converter.lisp").
+;; 4. The converted rule files will appear in the new/ directory.
+
 
 (defparameter *dirs-to-convert* '(
   "avatars/david-qa/rules"
@@ -725,7 +727,7 @@
 
 (defun convert-all (feat-files-to-convert files-to-convert &key remove-comment)
 ;`````````````````````````````````````````````````````````````````````````````````
-; Converts all files in *files-to-convert* to the TT format, writing the outputs in *dir-out*.
+; Converts all files in files-to-convert to the TT format, writing the outputs in *dir-out*.
 ; feat-files are assumed to supply domain-independent word features, and so are converted prior to
 ; everything else (though still supply features for conversion of other files).
 ;
@@ -747,8 +749,6 @@
   (append new-feat-files new))
 ) ; END convert-all
 
-
-;; (convert-all '("general-word-data.lisp") *files-to-convert*)
 
 (mapcar (lambda (dir)
     (convert-all '("general-word-data.lisp") (get-files-to-convert dir)))
