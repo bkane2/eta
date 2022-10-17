@@ -5,9 +5,10 @@
 ;; 
 ;; Usage:
 ;; 1. Put directories containing rule files that you wish to convert in the old/ directory.
-;; 2. Add the directories that you wish to convert to the *dirs-to-convert* global variable.
-;; 3. Enter SBCL and type (load "tt-converter.lisp").
-;; 4. The converted rule files will appear in the new/ directory.
+;; 2. Put general-word-data.lisp (from core/resources/) in the old/ directory.
+;; 3. Add the directories that you wish to convert to the *dirs-to-convert* global variable.
+;; 4. Enter SBCL and type (load "tt-converter.lisp").
+;; 5. The converted rule files will appear in the new/ directory.
 
 
 (defparameter *dirs-to-convert* '(
