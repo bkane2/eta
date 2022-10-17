@@ -3,7 +3,6 @@
 ; tree is empty, but it can be overridden in day1/rules to add specific rules.
 ;
 '(
-
 )) ; END *reaction-to-statement-specific-session*
 
 
@@ -15,11 +14,9 @@
 ; Will have to figure out whether to make those questions beforehand through some preprocessing step (You think
 ; this makes more sense) or deal with them here somehow.
 '(
-
   ; Preempt any reactions specific to a particular module
   1 (0)
     2 *reaction-to-statement-specific-session* (0 :subtree)
-
   ; The following might need changing
   1 (you are sorry that my .DAUGHTER couldn\'t .COME today \.)
     2 (That\'s okay \. We\'ll have to discuss it with her some other time \.) (0 :out)
@@ -34,11 +31,10 @@
   ;; 1 (I think you should take med-narcotic \.)
   ;;   2 (*have-subdialogue* ((Could you tell me about some of the side effects of that ?)
   ;;                          ((Can you tell me about the side effects ?)))) (100 :schema+args)
-
-  1 (It is nice to meet me \.)
+  1 (it is nice to .MEET me \.)
     2 (Thank you \, it\'s nice to meet you as well \.) (100 :out)
-    2 (It\'s good to meet you too\.) (0 :out)
-  1 (0 stronger pain medication 0 help me sleep 0)
+    2 (It\'s good to meet you too \.) (0 :out)
+  1 (0 stronger .PAIN medication 0 .HELP me .SLEEP 0)
     2 *medicine-reaction* (0 :subtree)
   1 (0 sleeping poorly 0 \.)
     2 *sleep-poorly-reaction* (0 :subtree)
@@ -58,13 +54,13 @@
     2 *prognosis-reaction* (0 :subtree)
   1 (0 .FAMILY 0 \.)
     2 *tell-family-reaction* (0 :subtree)
-  1 (0 tell 1 someone 0 \.)
+  1 (0 .TELL 1 .SOMEONE 0 \.)
     2 *tell-family-reaction* (0 :subtree)
   1 (0 test results 0 \.)
     2 *test-results-reaction* (0 :subtree)
-  1 (0 CT scan 0 \.)
+  1 (0 ct scan 0 \.)
     2 *test-results-reaction* (0 :subtree)
-  1 (0 treatment option 0 \.)
+  1 (0 .TREATMENT .OPTION 0 \.)
     2 *treatment-option-reaction* (0 :subtree)
   1 (0 .CHEMOTHERAPY details 0 \.)
     2 *chemotherapy-details-reaction* (0 :subtree)
@@ -98,19 +94,19 @@
   ;   2 *positive-reaction* (0 :subtree)
   1 (0 .CAUSE 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
-  1 (0 reason 0)
+  1 (0 .REASON 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
-  1 (0 result 0)
+  1 (0 .RESULT 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
   1 (0 wish 4 not 1 cancer 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
   1 (0 sorry 4 cancer 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
-  1 (0 cancer 3 bad 0)
+  1 (0 cancer 3 .BAD 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
-  1 (0 why 2 have cancer 0)
+  1 (0 why 2 .HAVE cancer 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
-  1 (0 change 0)
+  1 (0 .CHANGE 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
   1 (0 cancer 2 terminal 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
@@ -118,7 +114,6 @@
     2 *reason-for-cancer-reaction* (0 :subtree)
   1 (0 glad 0)
     2 *reason-for-cancer-reaction* (0 :subtree)
-
   1 (0)
     2 *general-reaction* (0 :subtree)
 ))
@@ -126,15 +121,15 @@
 
 (READRULES '*general-reaction*
 '(
-  1 (It is nice to meet me \.)
+  1 (it is nice to .MEET me \.)
     2 (Thank you \, it\'s nice to meet you as well \.) (100 :out)
-    2 (It\'s nice to meet you too\.) (0 :out)
-  1 (You like my 6 \.)
-    2 (Thanks \, I appreciate it \. I think we should stay on topic\, though \.) (0 :out)
-    2 (That\'s kind of you to say\. I would like to stick with the subject at hand though \.) (0 :out)
-  1 (You are glad that I came to this appointment \.)
-    2 (Thank you \! I\'m glad to spend some time with you today talking about my test results \.) (0 :out)
-    2 (Thank you \! I appreciate the time you\'re taking to help me understand my test results \.) (0 :out)
+    2 (It\'s nice to meet you too \.) (0 :out)
+  1 (you .LIKE my 6 \.)
+    2 (Thanks \, I appreciate it \. I think we should stay on topic \, though \.) (0 :out)
+    2 (That\'s kind of you to say \. I would like to stick with the subject at hand though \.) (0 :out)
+  1 (you are glad that I came to this .APPOINTMENT \.)
+    2 (Thank you ! I\'m glad to spend some time with you today talking about my test results \.) (0 :out)
+    2 (Thank you ! I appreciate the time you\'re taking to help me understand my test results \.) (0 :out)
   ; If doctor is just giving an indication to keep talking, react silently and continue
   1 (continue .TALKING \.)
     2 NIL (0 :out)
@@ -147,12 +142,12 @@
     2 *ask-for-questions* (0 :schema)
   1 (am I following what you say ?)
     2 *ask-for-questions* (0 :schema)
-  1 (You have a question for me \.)
+  1 (you .HAVE a .QUESTION for me \.)
     2 *ask-for-questions* (0 :schema)
-  1 (You do not have a question for me \.)
-    2 (Okay \, I\'ll continue with my questions then \.) (2 :out)
+  1 (you .DO not .HAVE a .QUESTION for me \.)
+    2 (Okay \, i\'ll continue with my questions then \.) (2 :out)
     2 (Okay \.) (0 :out)
-  1 (How does that sound ?)
+  1 (how does that .SOUND ?)
     2 (I think what you said makes sense to me \.) (3 :out)
     2 (I think that sounds fine \.) (3 :out)
     2 (That makes sense \.) (0 :out)
@@ -163,12 +158,11 @@
     ;;   3 () (0 :out)
     2 *ask-for-clarification* (3 :schema)
     2 *ask-for-clarification* (3 :schema)
-    2 (Sorry\, I still didn\'t quite understand\. I have some more questions\, maybe we can come back to it\.) (0 :out)
+    2 (Sorry \, I still didn\'t quite understand \. I have some more questions \, maybe we can come back to it \.) (0 :out)
   1 (NIL Gist 0)
     2 *ask-for-clarification* (3 :schema)
     2 *ask-for-clarification* (3 :schema)
-    2 (Sorry\, I\'m still not hearing you very well\. I\'m just really anxious\. I have some more questions for now\,
-       maybe we can come back to it later\.) (0 :out)
+    2 (Sorry \, i\'m still not hearing you very well \. I\'m just really anxious \. I have some more questions for now \, maybe we can come back to it later \.) (0 :out)
   1 (0)
     2 (I see \.) (8 :out)
     2 (Okay \.) (8 :out)

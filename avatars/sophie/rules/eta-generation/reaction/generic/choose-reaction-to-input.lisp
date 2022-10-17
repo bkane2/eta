@@ -8,9 +8,9 @@
 '(
   1 (0 .WH_ 1 .SELF name 0)
     2 *reaction-to-question* (0 :subtree)
-  1 (0 .AUX .SELF 1 answer 1 .QUESTION 0)
+  1 (0 .AUX .SELF 1 .ANSWER 1 .QUESTION 0)
     2 *reaction-to-question* (0 :subtree)
-  1 (0 .WH_ 1 questions 1 .AUX .SELF 1 answer 0)
+  1 (0 .WH_ 1 questions 1 .AUX .SELF 1 .ANSWER 0)
     2 *reaction-to-question* (0 :subtree)
   1 (0 .AUX .SELF 0)
     2 *reaction-to-question* (0 :subtree)
