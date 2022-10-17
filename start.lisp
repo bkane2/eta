@@ -13,6 +13,11 @@
     (format nil "config/config.lisp")))
 
 
+; Hash tables used for loading word 'is-a' features
+(defparameter *isa-features* (make-hash-table)) ; the table with 'isa' data, linking atoms to dot-features
+(defparameter *underlying-feat* (make-hash-table)) ; contains feat for dot-predicates of form .feat
+
+
 (defun get-io-path (fname)
 ;``````````````````````````
 ; Yields IO path for avatar instance.

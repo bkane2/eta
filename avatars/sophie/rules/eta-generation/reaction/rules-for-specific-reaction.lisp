@@ -1,6 +1,5 @@
 ; The rules defined in this file contain reactions to specific gist-clauses of user statements (reactions to
 ; questions are defined in rules-for-question-reaction.lisp).
-
 ; All trees defined in this file should be named using format *<topic-key>-reaction*.
 ;
 ; Current list of topics:
@@ -24,14 +23,12 @@
 ; - tell-family
 ; - test-results
 ; - treatment-option
-
-
 (READRULES '*cancer-worse-reaction*
 ; (0 cancer 2 gotten worse 0)
 '(
-  1 (My cancer has gotten worse \.)
+  1 (my cancer has gotten worse \.)
     2 *ask-about-prognosis* (0 :schema)
-  1 (My cancer has not gotten worse \.)
+  1 (my cancer has not gotten worse \.)
     2 *verify-cancer-status* (100 :schema)
     2 ([HAPPY] Okay\. Well\, that makes me feel a little bit better \.) (0 :out)
   1 (You are not sure whether my cancer has gotten worse \.)
@@ -39,7 +36,6 @@
     2 ([SAD] That\'s not very reassuring \.) (0 :out)
 
 )) ; END *cancer-worse-reaction*
-
 
 
 (READRULES '*medical-history-reaction*
@@ -52,11 +48,10 @@
 )) ; END *medical-history-reaction*
 
 
-
 (READRULES '*medicine-side-effects-reaction*
 ; (0 side effect 3 medication 0)
 '(
-  1 (Addiction is not a side effect of the medication \.)
+  1 (addiction is not a side .EFFECT of the medication \.)
     2 *ask-for-stronger-pain-medication* (100 :schema)
     2 (I didn\'t know that\. It\'s good to know that stronger pain medication is an option without risking addiction \.) (0 :out)
   1 (A side effect of the medication be 2 side-effects-significant 2 \.)
@@ -65,22 +60,18 @@
   1 (A side effect of the medication be 2 side-effects-moderate 2 \.)
     2 *ask-for-stronger-pain-medication* (100 :schema)
     2 (I think I should try the medicine and see if I have problems with 8 9 10 \.) (0 :out)
-  1 (A side effect of the medication be 2 side-effects-insignificant 2 \.)
+  1 (a side .EFFECT of the medication .BE 2 .SIDE-EFFECTS-INSIGNIFICANT 2 \.)
     2 *ask-for-stronger-pain-medication* (100 :schema)
-    2 (I already have 8 9 10 \, so I think the new medicine is worth a try\.) (0 :out)
-
+    2 (I already have 8 9 10 \, so I think the new medicine is worth a try \.) (0 :out)
   1 (0)
     2 *ask-for-stronger-pain-medication* (100 :schema)
-    2 (I think it\'s worth giving it a try\.) (0 :out)
-
+    2 (I think it\'s worth giving it a try \.) (0 :out)
 )) ; END *medicine-side-effects-reaction*
-
 
 
 (READRULES '*appointment-reaction*
 '(
 )) ; END *appointment-reaction*
-
 
 
 (READRULES '*chemotherapy-details-reaction*
@@ -98,13 +89,10 @@
   1 (A side effect of chemotherapy is 6 \.)
     2 *ask-how-chemotherapy-works* (100 :schema)
     2 (I see \. I think it might be worth giving it a try \.) (0 :out)
-
   1 (0)
-    2 (Ah\, I see\. I\'ll have to read more about chemotherapy\.) (100 :out)
+    2 (Ah \, I see \. I\'ll have to read more about chemotherapy \.) (100 :out)
     2 (Good to know \. I\'ll look into chemotherapy a bit further with my daughter later \.) (0 :out)
-
 )) ; END *chemotherapy-details-reaction*
-
 
 
 (READRULES '*diagnosis-details-reaction*
@@ -112,22 +100,20 @@
 )) ; END *diagnosis-details-reaction*
 
 
-
 (READRULES '*energy-reaction*
 ; (0 energy 0 \.)
 ; (0 ment-treatment 0)
 '(
-  1 (You can give me an antidepressant \.)
+  1 (you .CAN .GIVE me an .ANTIDEPRESSANT \.)
     2 *ask-about-antidepressant* (100 :schema)
-    2 (Okay\. I\'ll give the antidepressant medication a shot\.) (0 :out)
-  1 (I should take an antidepressant \.)
+    2 (Okay \. I\'ll give the antidepressant medication a shot \.) (0 :out)
+  1 (I .SHOULD .TAKE an .ANTIDEPRESSANT \.)
     2 *ask-about-antidepressant* (100 :schema)
-    2 (Okay\. I\'ll give the antidepressant medication a shot\.) (0 :out)
-  1 (I should see a therapist \.)
+    2 (Okay \. I\'ll give the antidepressant medication a shot \.) (0 :out)
+  1 (I .SHOULD see a therapist \.)
     2 *ask-about-medication-before-therapy* (100 :schema)
-    2 (Okay\. I\'ll give the therapy a shot\.) (0 :out)
-
-  1 (I am sorry you have been feeling down recently \.)
+    2 (Okay \. I\'ll give the therapy a shot \.) (0 :out)
+  1 (I am sorry you .HAVE been .FEELING down .RECENTLY \.)
     2 *mention-anxiety* (100 :schema)
     2 (Thank you for the kind words \. They mean a lot to me right now \. I think that things will get better though as I spend more time around my family \. Especially my sweet grandson \.) (0 :out)
 
@@ -135,14 +121,12 @@
 )) ; END *energy-reaction*
 
 
-
 (READRULES '*medicine-reaction*
 ; (0 stronger pain medication 0 help me sleep 0)
-
 '(
   ;; 1 (0 you will give me more medicine 0)
   ;;   2 (Great\, thank you !) (0 :out)
-  1 (A stronger pain medication will help me sleep \.)
+  1 (a stronger .PAIN medication will .HELP me .SLEEP \.)
     2 *ask-about-pain-medication-side-effects* (100 :schema)
     2 ([SAD] If I continue to have trouble sleeping\, I might call in for stronger pain medication later \.) (0 :out)
   1 (A stronger pain medication will not help me sleep \.)
@@ -150,7 +134,6 @@
     2 ([SAD] That\'s hard to hear\. I guess I\' just have to bear with it and hope things get better\.) (0 :out)
 
 )) ; END *medicine-reaction*
-
 
 
 (READRULES '*pain-reaction*
@@ -163,16 +146,12 @@
 )) ; END *pain-reaction*
 
 
-
 (READRULES '*radiation-reaction*
 ; (0 radiation 0)
 '(
-  
   1 (0)
     2 *ask-about-will-chemotherapy-help* (0 :schema)
-
 )) ; END *radiation-reaction*
-
 
 
 (READRULES '*sleep-reaction*
@@ -180,12 +159,11 @@
 )) ; END *sleep-reaction*
 
 
-
 (READRULES '*chemotherapy-reaction*
 ; (0 chemotherapy 0 \.)
 '(
-  1 (You do not think I need chemotherapy 0)
-    2 (You do not think I need chemotherapy because I should get comfort care instead \.)
+  1 (you .DO not think I need .CHEMOTHERAPY 0)
+    2 (you .DO not think I need .CHEMOTHERAPY .BECAUSE I .SHOULD get comfort .CARE instead \.)
       3 *ask-about-comfort-care* (100 :schema)
       3 (I think holding off on chemotherapy for now makes sense\, given that my priority is just to be comfortable \.) (0 :out)
     2 (I see \. I think it will be best to hold off on chemotherapy\, at least for now \.) (100 :out)
@@ -194,21 +172,18 @@
 
   1 (0)
     2 *ask-about-chemotherapy-side-effects* (100 :schema)
-    2 *ask-how-chemotherapy-works* (100 :schema)       
+    2 *ask-how-chemotherapy-works* (100 :schema)
     2 (I see \. I think it might be worth giving it a try \.) (0 :out)
-
 )) ; END *chemotherapy-reaction*
-
 
 
 (READRULES '*comfort-care-reaction*
 ; (0 comfort care 0 \.)
 '(
-  1 (You do not think I need comfort care \.)
+  1 (you .DO not think I need comfort .CARE \.)
     2 *confirm-no-comfort-care* (100 :schema)
-    2 (Okay\, I see\. I will think about starting chemotherapy right away then\.) (0 :out)
-
-  1 (Comfort care should alleviate my pain \.)
+    2 (Okay \, I see \. I will think about starting chemotherapy right away then \.) (0 :out)
+  1 (comfort .CARE .SHOULD alleviate my .PAIN \.)
     2 *ask-how-comfort-care-works* (0 :schema)
 
   1 (You think I need comfort care \.)
@@ -217,27 +192,20 @@
 
   1 (I would need a referral to start comfort care \.)
     2 *ask-about-comfort-care* (0 :schema)
-
-  1 (Receiving comfort care in a dedicated facility is an option \.)
+  1 (receiving comfort .CARE .IN a dedicated facility is an .OPTION \.)
     2 *ask-about-comfort-care* (0 :schema)
-
-  1 (Receiving comfort care from a specialized service is an option \.)
+  1 (receiving comfort .CARE from a specialized service is an .OPTION \.)
     2 *ask-about-comfort-care* (0 :schema)
-
-  1 (Receiving comfort care in my own home is an option \.)
+  1 (receiving comfort .CARE .IN my own .HOME is an .OPTION \.)
     2 *ask-about-comfort-care* (0 :schema)
-
-  1 (Receiving comfort care from a nurse is an option \.)
+  1 (receiving comfort .CARE from a .NURSE is an .OPTION \.)
     2 *ask-about-comfort-care* (0 :schema)
-
   1 (0)
     ; OPPORTUNITY for open-ended question: "Can you tell me a little more about your treatment goals?", "What worries you most for the future?"
     2 ([SAD] I\'d like to think some more about starting comfort care \. If I\'m not going to make it\,
        I want to at least be comfortable and spend time with family for as long as possible \.) (100 :out)
     2 (I think that comfort care is the best option for me right now \.) (0 :out)
-
 )) ; END *comfort-care-reaction*
-
 
 
 (READRULES '*medicine-request-reaction*
@@ -245,10 +213,10 @@
 ; (0 refill 2 medication 0 \.)
 ; (0 med-narcotic 0 \.)
 '(
-  1 (I should take 1 med-narcotic \.)
+  1 (I .SHOULD .TAKE 1 .MED-NARCOTIC \.)
     2 *ask-about-narcotic-addiction* (100 :schema)
     2 (I think having the stronger pain medication would help \.) (0 :out)
-  1 (I should take stronger pain medication \.)
+  1 (I .SHOULD .TAKE stronger .PAIN medication \.)
     2 *ask-about-pain-medication-side-effects* (100 :schema)
     2 (I think having the stronger pain medication would help \.) (0 :out)
   1 (You can give me stronger pain medication \.)
@@ -268,17 +236,16 @@
 )) ; END *medicine-request-reaction*
 
 
-
 (READRULES '*medicine-working-reaction*
 ; (0 medication 4 work 0 \.)
 ; (0 take 3 different \.)
 '(
-  1 (I should take something different \.)
+  1 (I .SHOULD .TAKE something different \.)
     2 *ask-about-pain-medication-side-effects* (0 :schema)
-  1 (I should take med-narcotic \.)
+  1 (I .SHOULD .TAKE .MED-NARCOTIC \.)
     2 *ask-about-narcotic-addiction* (100 :schema)
     2 (I think having the stronger pain medication would help \.) (0 :out)
-  1 (I should take stronger pain medication \.)
+  1 (I .SHOULD .TAKE stronger .PAIN medication \.)
     2 *ask-about-pain-medication-side-effects* (100 :schema)
     2 (I think having the stronger pain medication would help \.) (0 :out)
 
@@ -290,14 +257,13 @@
 )) ; END *medicine-working-reaction*
 
 
-
 (READRULES '*prognosis-reaction*
 ; (0 prognosis 0 \.)
 '(
   ; I asked my doctor in Florida about what’s going to happen next, he just did not want to say. 
   ; He said” These things are always hard to predict.” 
   ; OPPORTUNITY: After SOPHIE expresses her fear, the doctor could ask her "What scares you the most about your future?" or "Were you nervous for this appointment?"
-  1 (I may live for number-plur elapsed-time-plur \.)
+  1 (I may live for .NUMBER-PLUR .ELAPSED-TIME-PLUR \.)
     2 *ask-if-can-trust-prognosis* (100 :schema)
     2 ([SAD] That\'s very difficult to hear\. I thought I would have more time than that\.
       At this point\, I just hope I can enjoy those 9 10 with family\, but I\'m afraid of what the future will bring\.) (0 :out)
@@ -346,24 +312,19 @@
 
   1 (The prognosis is that my cancer should be treated with chemotherapy \.)
     2 *ask-about-prognosis* (0 :schema)
-  1 (The prognosis is that my cancer should be treated with comfort care \.)
+  1 (the prognosis is that my cancer .SHOULD .BE treated with comfort .CARE \.)
     2 *ask-about-prognosis* (0 :schema)
-  1 (The prognosis is hard to predict \.)
+  1 (the prognosis is hard to .PREDICT \.)
     2 *ask-about-prognosis* (0 :schema)
-
-  1 (My understanding of my prognosis is incorrect \.)
-    2 *ask-if-can-outlive-prognosis-health-now* (100 :schema) 
-    2 ([SAD] Oh \. That is hard to hear \. I\'m afraid of what the future may bring \, but at least I\'ll be able to spend 
-       this remaining time with my family \. ) (0 :out)
-
-  1 (My understanding of my prognosis is correct \.)
-    2 *ask-if-can-outlive-prognosis-health-now* (100 :schema) 
-    2 ([HAPPY] That\'s great to hear \. My previous doctor wasn\'t so optimistic \, so it\'s a relief that you think I have a chance \.) (0 :out)
-
-  1 (My understanding of my prognosis may be correct \.)
-    2 *ask-if-can-outlive-prognosis-health-now* (100 :schema) 
-    2 (I have heard these things are hard to predict \. It\'s good to know at least I have a chance \. ) (0 :out)
-
+  1 (my understanding of my prognosis is .INCORRECT \.)
+    2 *ask-if-can-outlive-prognosis-health-now* (100 :schema)
+    2 ([SAD] oh \. That is hard to hear \. I\'m afraid of what the future may bring \, but at least i\'ll be able to spend this remaining time with my family \.) (0 :out)
+  1 (my understanding of my prognosis is correct \.)
+    2 *ask-if-can-outlive-prognosis-health-now* (100 :schema)
+    2 ([HAPPY] that\'s great to hear \. My previous doctor wasn\'t so optimistic \, so it\'s a relief that you think I have a chance \.) (0 :out)
+  1 (my understanding of my prognosis may .BE correct \.)
+    2 *ask-if-can-outlive-prognosis-health-now* (100 :schema)
+    2 (I have heard these things are hard to predict \. It\'s good to know at least I have a chance \.) (0 :out)
   1 (I will outlive my prognosis \.)
     2 (Oh\, that\'s good to hear\. A little bit of extra time with my children and grandchildren makes all the difference to me \.) (100 :out)
     2 (That\'s such great news\. I can\'t tell you how happy I am to hear that\.) (0 :out)
@@ -391,8 +352,7 @@
 
   1 (The majority of people do not have an accurate prognosis \.)
     2 *ask-if-can-outlive-prognosis-health-practices* (0 :schema)
-
-  1 (The majority of people have an accurate prognosis \.)
+  1 (the majority of people .HAVE an accurate prognosis \.)
     2 *ask-if-can-outlive-prognosis-health-practices* (0 :schema)
 
   1 (Quitting smoking will not make my prognosis better \.)
@@ -470,26 +430,22 @@
     2 ([SAD] I suppose these things can be hard to predict \.) (0 :out)
 
 )) ; END *prognosis-reaction*
- 
 
 
 (READRULES '*sleep-poorly-reaction*
 ; (0 sleeping poorly 0 \.)
 '(
-  1 (I am sleeping poorly because of a side effect from a medication \.)
-    2 (I see\. If the medicine is going to make me tired no matter what\, I\'d rather at least have the pain controlled \.) (0 :out)
-  1 (I am sleeping poorly because of my pain \.)
+  1 (I am sleeping poorly .BECAUSE of a side .EFFECT from a medication \.)
+    2 (I see \. If the medicine is going to make me tired no matter what \, i\'d rather at least have the pain controlled \.) (0 :out)
+  1 (I am sleeping poorly .BECAUSE of my .PAIN \.)
     2 *ask-if-stronger-medication-will-help-sleep* (0 :schema)
-  1 (I am sleeping poorly because the cancer has spread \.)
+  1 (I am sleeping poorly .BECAUSE the cancer has .SPREAD \.)
     2 *ask-if-cancer-worse* (0 :schema)
-  1 (I am sleeping poorly because of my mental health \.)
-     2 *discuss-depression* (0 :schema)
-
-  1 (You are sorry that I am sleeping poorly \.)
+  1 (I am sleeping poorly .BECAUSE of my mental health \.)
+    2 *discuss-depression* (0 :schema)
+  1 (you are sorry that I am sleeping poorly \.)
     2 *ask-about-poor-sleep* (0 :schema)
-
 )) ; END *sleep-poorly-reaction*
-
 
 
 (READRULES '*tell-family-reaction*
@@ -497,8 +453,7 @@
 ; (0 tell 1 someone 0 \.)
 ; (Comfort care allows me to spend time with my family \.)
 '(
-
-  1 (Comfort care allows me to spend time with my family \.)
+  1 (comfort .CARE allows me to .SPEND time with my .FAMILY \.)
     2 *ask-about-comfort-care* (0 :schema)
   
   1 (I should tell my family the full truth about my cancer \.)
@@ -546,12 +501,10 @@
 (READRULES '*positive-reaction*
 ; (Doctor expresses positive sentiment)
 '(
-  
   1 (0)
-    2 (Excellent \!) (100 :out)
+    2 (Excellent !) (100 :out)
     2 (Good to hear \.) (100 :out)
-    2 (Great \!) (0 :out)
-
+    2 (Great !) (0 :out)
 )) ; END *positive-reaction*
 
 
@@ -567,9 +520,9 @@
 
   1 (The test results show that the cancer hasn\'t spread \.)
     2 *ask-about-prognosis* (0 :schema)
-  1 (The test results show that I cannot be cured \.)
+  1 (the test results show that I cannot .BE cured \.)
     2 *ask-about-prognosis* (0 :schema)
-  1 (The test results show that my cancer has spread \.)
+  1 (the test results show that my cancer has .SPREAD \.)
     2 *ask-about-prognosis* (0 :schema)
 
   1 (We performed the CT scan to see how much further my cancer has progressed \.)
@@ -594,7 +547,6 @@
 )) ; END *test-results-reaction*
 
 
-
 (READRULES '*treatment-option-reaction*
 ; (0 treatment option 0 \.)
 '(
@@ -603,26 +555,18 @@
   
   1 (Radiation is a treatment option \.)
     2 *ask-about-will-radiation-help* (0 :schema)
-
-  1 (Chemotherapy is a treatment option \.)
+  1 (.CHEMOTHERAPY is a .TREATMENT .OPTION \.)
     2 *ask-about-what-happens-without-chemotherapy* (100 :schema)
     2 *ask-about-will-chemotherapy-help* (0 :schema)
-    
-  1 (Comfort care is a treatment option \.)
+  1 (comfort .CARE is a .TREATMENT .OPTION \.)
     2 *ask-how-comfort-care-works* (0 :schema)
-
-  1 (You need more tests before talking about treatment options \.)
+  1 (you need more tests .BEFORE .TALKING about .TREATMENT options \.)
     2 *ask-about-treatment-options* (100 :schema)
-    2 (I understand that some further tests might be necessary \. I\'ll try to get that done
-       before discussing treatment options \.) (0 :out)
-
+    2 (I understand that some further tests might be necessary \. I\'ll try to get that done before discussing treatment options \.) (0 :out)
   1 (0)
     2 *ask-about-treatment-options* (100 :schema)
-    2 (I will have to think about what you said more \. I have some more specific questions
-       about treatment\, though \.) (0 :out)
-
+    2 (I will have to think about what you said more \. I have some more specific questions about treatment \, though \.) (0 :out)
 )) ; END *treatment-option-reaction*
-
 
 
 (READRULES '*treatment-goals-reaction*
@@ -630,14 +574,11 @@
 ; (0 cancer-live 0)
 ; (0 cancer-goals 0)
 '(
-  1 (Do I want to try to fight the cancer ?)
+  1 (.DO I .WANT to .TRY to .FIGHT the cancer ?)
     2 *ask-about-treatment-options* (0 :schema)
-
-  1 (What are my treatment goals ?)
+  1 (what are my .TREATMENT goals ?)
     2 *ask-about-treatment-options* (0 :schema)
-    
 )) ; END *treatment-goals-reaction*
-
 
 
 (READRULES '*reason-for-cancer-reaction*
@@ -674,8 +615,7 @@
 
   1 (My cancer is caused by a mutation that spread through my cells \.)
     2 *ask-why-have-cancer* (0 :schema)
-
-  1 (The cause of my cancer is unclear \.)
+  1 (the .CAUSE of my cancer is unclear \.)
     2 *ask-why-have-cancer* (100 :schema)
     2 (I know it\'s hard to say for sure\. And I suppose\, in the end\, it won\'t change anything if I have cancer for one reason or another\. 
        All I can do is make the most of the time I have left \.) (0 :out)
@@ -686,8 +626,7 @@
 
   1 (Cancer can affect anyone \.)
     2 *mention-anxiety* (0 :schema)
-
-  1 (Cancer can affect the human body suddenly \.)
+  1 (cancer .CAN affect the human .BODY suddenly \.)
     2 *mention-anxiety* (0 :schema)
 
   1 (Having cancer changes life significantly \.)

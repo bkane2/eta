@@ -25,13 +25,10 @@
 ;;           (tell me more about your hometown ?)
 ;;           (how did you like the weather in your hometown ?)
 ;;           (How did you end up in Rochester ?)
-
 (MAPC 'ATTACHFEAT ; needed for detecting alternatives in the
-                  ; watching-or-reading question
+; watching-or-reading question
 '(
-  (spare-time-activity sports read reading watch watching play
-    playing hike hiking explore exploring walk walking walks hobby
-    hobbies painting); others? "make", "build" seem too general
+  (SPARE-TIME-ACTIVITY sports READ reading watch watching play playing hike hiking explore exploring WALK walking walks HOBBY hobbies painting) ; others? "make", "build" seem too general
 ))
 
 
@@ -39,13 +36,13 @@
 ; Choose between reaction to a question and an assertion
 ; Only one gist clause is expected here
 '(
-  1 (0 wh_ 3 SELF 0)
+  1 (0 .WH_ 3 .SELF 0)
     2 *reaction-to-question* (0 :subtree)
-  1 (0 aux SELF 0)
+  1 (0 .AUX .SELF 0)
     2 *reaction-to-question* (0 :subtree)
   1 (0 right-really 4 ?)
     2 *reaction-to-question* (0 :subtree)
-  1 (0); by default, it's an assertion
+  1 (0) ; by default, it's an assertion
     2 *reaction-to-assertion* (0 :subtree)
 ))
 
@@ -64,47 +61,44 @@
     2 *reaction-to-name-input* (0 :subtree)
   1 (0 you had 4 for breakfast 0)
     2 *reaction-to-breakfast-today-input* (0 :subtree)
-  1 (0 ice cream flavor you like 0) 
+  1 (0 ice cream flavor you .LIKE 0)
     2 *reaction-to-favorite-icecream-input* (0 :subtree)
-	1 (0 you do not 3 favorite ice cream flavor 0)
+  1 (0 you .DO not 3 favorite ice cream flavor 0)
     2 *reaction-to-favorite-icecream-input* (0 :subtree)
-  1 (0 food you like 0)
+  1 (0 food you .LIKE 0)
     2 *reaction-to-favorite-food-input* (0 :subtree)
-  1 (0 do not have a favorite food 0)
+  1 (0 .DO not .HAVE a favorite food 0)
     2 *reaction-to-favorite-food-input* (0 :subtree)
   1 (0 to get here 0)
     2 *reaction-to-how-you-got-here-input* (0 :subtree)
-
   ; where-are-you-from
-  1 (0 you are from 0) 
+  1 (0 you are from 0)
     2 *reaction-to-hometown-input* (0 :subtree)
   1 (0 the weather in your hometown 0)
     2 *reaction-to-hometown-weather-input* (0 :subtree)
-  1 (0 you do not like the weather 0)
+  1 (0 you .DO not .LIKE the weather 0)
     2 *reaction-to-hometown-weather-input* (0 :subtree)
-  1 (0 you like the weather 0)
+  1 (0 you .LIKE the weather 0)
     2 *reaction-to-hometown-weather-input* (0 :subtree)
   1 (0 where you grew up is 0)
     2 *reaction-to-describe-hometown-input* (0 :subtree)
   1 (0 you ended up in rochester 0)
     2 *reaction-to-endup-in-rochester-input* (0 :subtree)
-
   ; activities
-  1 (0 your hobby is 0) 
+  1 (0 your .HOBBY is 0)
     2 *reaction-to-hobbies-input* (0 :subtree)
-  1 (0 do not like 2 hobby 0)
-    2 *reaction-to-hobbies-input* (0 :subtree)   
-  1 (0 you do not like reading 0)
+  1 (0 .DO not .LIKE 2 .HOBBY 0)
+    2 *reaction-to-hobbies-input* (0 :subtree)
+  1 (0 you .DO not .LIKE reading 0)
     2 *reaction-to-like-to-read-input* (0 :subtree)
-  1 (0 you like reading 0)
+  1 (0 you .LIKE reading 0)
     2 *reaction-to-like-to-read-input* (0 :subtree)
-  1 (0 you like to read 0)
+  1 (0 you .LIKE to .READ 0)
     2 *reaction-to-things-like-to-read-input* (0 :subtree)
   1 (0 you spend your days 0)
     2 *reaction-to-spend-your-days-input* (0 :subtree)
-  1 (0 you like to 5 in neighborhood 0)
+  1 (0 you .LIKE to 5 in neighborhood 0)
     2 *reaction-to-things-in-neighborhood-input* (0 :subtree)
-  1 (0 you do not like to 5 in neighborhood 0)
+  1 (0 you .DO not .LIKE to 5 in neighborhood 0)
     2 *reaction-to-things-in-neighborhood-input* (0 :subtree)
 ))
-

@@ -715,67 +715,81 @@
 
 
 
-(defun tagword (word)
-;```````````````````````
-; Returns a list headed by WORD and followed by its features
-; (tags). These features are obtained from the FEATS
-; property of the word, from the FEATS property of the 
-; features (usually further words) thus obtained, etc.
-
-  ; Check if non-empty
-  (if (not (get word 'feats)) (return-from tagword (list word)))
-
-  ; Convert to symbol if necessary
-  (if (numberp word) (setq word (intern (write-to-string word))))
-
-  (let (words feats feat)
-    (setq feats (get word 'feats))
-    ;; (format t "features = ~a~%" feats) ; DEBUGGING
-    (setq words (list word))
-    ;; (format t "words = ~a~%" words) ; DEBUGGING
-
-    ; Current word/feature
-    (loop (setq feat (pop feats))
-      ;; (format t "--------------------------------------------------~%")
-	    ;; (format t "feat = ~a~%" feat)
-	    ;; (format t "feats = ~a ~%" feats)
-	    ;; (format t "membership = ~a ~%" (member feat feats)) ; DEBUGGING
-	    (if (not (find feat words)) (push feat words))
-      ;; (format t "words = ~a ~%" words) ; DEBUGGING
-      (setq feats (add-new-feats feat feats words))
-      ;; (format t "updated feature vector = ~a~%" feats) ; DEBUGGING
-
-      ; Avoid a feature cycle
-      (if (member feat feats) (setq feats (remove feat feats)))
-      (if (null feats) (return-from tagword (reverse words))))
-)) ; END tagword
-
-
-
-(defun add-new-feats (feat old-feats-list words)
-;`````````````````````````````````````````````````
-; Add new features to words list
+(defun isa (x feat)
+;````````````````````
+; x:    a symbol (e.g., 'surgeon' or 'doctor')
+; feat: another symbol (e.g., 'professional'). In general, there is
+;       no clear presumed logical relation between x and feat -- feat
+;       simply "indicates" the sort of thing x refers to, in some sense.
 ;
-  (let ((new-feats-list old-feats-list) feat-feature-list)
-    (setq feat-feature-list (get feat 'feats))
-    (loop for x in feat-feature-list do
-      (if (not (member x words)) 
-	      (setq new-feats-list (append (list x) new-feats-list))))
-  new-feats-list)
-) ; END add-new-feats
-
-
-
-(defun attachfeat (list)
-;`````````````````````````
-; Add the first element of LIST to the FEATS list ; of each 
-; remaining element; allow for symbolic atoms as features only
+; NB: an atom is always assumed to have itself as a feature; e.g., 
+;     (isa 'this 'this) is true. So using '.occupation' in a pattern
+;     will match 'occupation', even if the pattern coder wrote down
+;       (occupation physicist cobbler poet teacher ...)
+;     with the intention of using '.occupation' to match 'physicist', etc.,
+;     in a sentence like "Alice is a physicist", and concluding "Alice
+;     is employed". The sentence "Computer programming is an occupation"
+;     would then likewise lead to the conclusion "Computer programming is
+;     employed"! The moral is, if you want to use a match-predicate that
+;     is true of various expressions but not itself, define it as a
+;     !predicate rather than a feature.
 ;
-  (mapc (lambda (x)
-    (if (not (find (car list) (get x 'feats)))
-      (setf (get x 'feats) (cons (car list) (get x 'feats)))))
-  (cdr list))
-) ; END attachfeat
+; Method:
+;     Look up x in the *isa-features* hash table and see if feat appears in the
+;     retrieved list or in the lists (in the same table) associated with the
+;     retrieved features, etc., while guarding against loops. Return T if 
+;     the feature is found and NIL otherwise. Case is ignored.
+;
+  (prog (ff f closed fff)
+        (if (eq x feat) (return t))
+        ; The next 3 lines aren't needed for the 'match' function, which
+        ; looks in hash table *underlying-feat* to find the feature corres-
+        ; ponding to a dot-atom. However, in the syntax tree preprocessing 
+        ; rules, we use some predicates that directly call "isa", where the
+        ; second argument is a dotted atom. The next few lines remove the dot.
+        (if (dot-atom x) 
+            (setq x (intern (string-left-trim "." (string x)))))
+        (if (dot-atom feat) 
+            (setq feat (intern (string-left-trim "." (string feat)))))
+        (if (eq x feat) (return t))
+        ; frequent case: feat is on the list retrieved from *isa-features* for x:
+        (setq ff (gethash x *isa-features*))
+        (if (find feat ff) (return t))
+        ; maybe a feature on list ff has feature feat, etc. (iteration)
+        (if (null ff) (return nil))
+        (setq closed (list x feat)); ff will serve as the open list
+        (loop (setq f (pop ff))
+              (when (not (find f closed))
+                    (setq fff (gethash f *isa-features*))
+                    (when fff (if (find feat fff) (return-from isa t))
+                              (push f closed)
+                              (setq ff (union fff ff))
+                              (setq ff (remove f ff))); just in case
+                    (if (null ff) (return-from isa nil))))
+)) ; END isa
+
+
+
+(defun attachfeat (feat-xx)
+;````````````````````````````
+; feat-xx: a list of form (feat x1 x2 ... xk)
+;       where feat is a symbol, regarded as a feature
+;       & x1, x2, ... are symbols (perhaps allowing expressions in future?) 
+;       that will hereby be assigned feat, i.e., (isa xi feat) will be
+;       true for each xi among x1, x2, ..., xk.
+; We store feat as a feature of x1, x2, ..., xk in the *isa-features* table.
+; We avoid duplication, for any xi that already has that feature.
+; We also store feat under key .feat (the dot-prefixed version of feat)
+; in table *underlying-feat*, for easy access to feat from .feat in the 
+; 'match' function. 
+;
+ (let* ((feat (car feat-xx)) 
+        (dot-pred (intern (concatenate 'string "." (string feat)))))
+       (setf (gethash dot-pred *underlying-feat*) feat)
+       (dolist (x (cdr feat-xx))
+          (if (not (isa x feat))
+              (push feat (gethash x *isa-features*))))
+)) ; END attachfeat
 
 
 
@@ -2368,125 +2382,9 @@
 
 
 
-(defun match1 (pattern input)
-;``````````````````````````````
-; For top-level match tracing
-;
-  (match pattern input)
-) ; END match1
-
-
-
-(defun match (pattern input)
-;``````````````````````````````
-; Match decomposition pattern PATTERN against context-embedded,
-; tagged input utterance INPUT. PATTERN is a list consisting of
-; particular words or features (tags), NIL elements (meaning
-; "exactly one word"), and numbers 0 (meaning "0 or more words"),
-; 1, 2, 3, ... (interpreted as upper bounds on the number of
-; words). In addition, the first element of a pattern may be "-",
-; meaning that the INPUT should NOT match the remainder of the
-; pattern. The output, if successful (non-NIL), is a list of
-; parts of the input, one for each word, tag, NIL element, and 
-; numerical element of the pattern. A "part" is just a list
-; of words that actually occurred in the sentence, where
-; these words are initial elements of tag-lists in INPUT.
-; For "negative" patterns headed by "-", the output in case of
-; success (i.e., remainder of pattern NOT matched) is a list
-; containing the list of actual input words.
-;
-  (let (result)
-    ; If empty pattern, return nil
-    (if (null pattern) (return-from match nil))
-
-    ; If pattern starts with negation symbol '-', return input as
-    ; result if the cdr of the pattern fails to match, nil otherwise
-    (cond ((eq (car pattern) '-)
-      (setq result (match (cdr pattern) input))
-      (if result (return-from match nil)
-        (return-from match (list (mapcar #'car input))))))
-
-    ; If empty input, if pattern is simply wildcard, then return
-    ; empty list, otherwise return nil
-    (if (null input)
-      (if (and
-            (null (cdr pattern))
-            (numberp (car pattern)))
-        (return-from match '(()))
-        (return-from match nil)))
-    
-    ; Otherwise, check first element of pattern
-    (cond
-      ; Pattern starts with 0 (matches any number of words)
-      ((equal (car pattern) 0)
-        (cond
-          ; 0 only
-          ((null (cdr pattern))
-            (return-from match (list (mapcar #'car input))))
-          ; More after the 0
-          (t (setq result (match (cdr pattern) input))
-            (cond (result (return-from match (cons nil result)))
-              ; Matching 0 to null sequence failed
-              (t (setq result (match pattern (cdr input)))
-                ; Pattern with initial 0 matches (cdr input)
-                (if result
-                  (return-from match
-                    (cons (cons (caar input) (car result)) (cdr result)))
-                  (return-from match nil)))))))
-
-      ; Pattern starts with 1 (matches at most one word)
-      ((equal (car pattern) 1)
-        (cond ((null (cdr pattern))
-          (if (null input) (return-from match '(())))
-          (if (null (cdr input)) (return-from match
-            (list (list (caar input)))))
-          (return-from match nil)))
-        (setq result (match (cdr pattern) input))
-        (cond (result (return-from match (cons nil result)))
-          ; Matching 1 to null sequence failed
-          (t (setq result (match (cdr pattern) (cdr input)))
-            (if result
-              (return-from match
-                (cons (list (caar input)) result))
-              (return-from match nil)))))
-
-      ; Pattern starts with n (matches at most n words)
-      ((numberp (car pattern))
-        (setq result (match (cdr pattern) input))
-        (cond (result (return-from match (cons nil result)))
-          ; Matching number to empty sequence failed
-          (t (setq result (match (cons (- (car pattern) 1)
-                            (cdr pattern)) (cdr input)))
-            (if result
-              (return-from match
-                (cons (cons (caar input) (car result)) (cdr result)))
-              (return-from match nil)))))
-    
-      ; Pattern starts with nil (matches any single word)
-      ((null (car pattern))
-        (if (not (or (cdr pattern) (cdr input)))
-          (return-from match (list (list (caar input)))))
-        (setq result (match (cdr pattern) (cdr input)))
-        (if result
-          (return-from match (cons (list (caar input)) result))
-          (return-from match nil)))
-
-      ; Pattern starts with a word or feature (tag)
-      (t
-        (if (not (member (car pattern) (car input)))
-          (return-from match nil))
-        (if (not (or (cdr pattern) (cdr input)))
-          (return-from match (list (list (caar input)))))
-        (setq result (match (cdr pattern) (cdr input)))
-        (if result
-          (return-from match (cons (list (caar input)) result))
-          (return-from match nil))))
-)) ; END match
-
-
-
 (defun instance (pattern parts)
 ;```````````````````````````````
+; NOTE: depracated after 10/15/2021 (see 'fill-template' in tt.lisp)
 ; Top-level call to 'instance1', dealing with special case where pattern
 ; is an in-range integer and the part it indexes has just one word in it,
 ; which will be returned as result. Also this function serves for top-
@@ -2509,6 +2407,7 @@
 
 (defun instance1 (pattern parts)
 ;````````````````````````````````
+; NOTE: depracated after 10/15/2021 (see 'fill-template' in tt.lisp)
 ; Substitute the words in the ith sublist of 'parts' for any occurrences 
 ; of i in 'pattern'. This done recursively by replacing in-range integers
 ; by corresponding parts, while recursively processing other elements and

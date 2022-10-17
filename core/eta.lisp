@@ -1443,7 +1443,7 @@
 ; in light of the meaning of these reactive comments...More thought
 ; required.
 ;
-  (let (user-gist-words choice tagged-words wff schema-name args eta-gist-clause keys)
+  (let (user-gist-words choice wff schema-name args eta-gist-clause keys)
     
     (if (null user-gist-clauses)
       (return-from plan-reaction-to nil))
@@ -1469,9 +1469,7 @@
     (cond
       ; Single gist clause
       ((null (cdr user-gist-clauses_p))
-        (setq tagged-words (mapcar #'tagword (car user-gist-clauses_p)))
-        ;; (format t "~% (single clause) tagwords are ~a ~% " tagged-words) ; DEBUGGING
-        (setq choice (choose-result-for tagged-words '*reaction-to-input* :debug *debug-patterns*))
+        (setq choice (choose-result-for (car user-gist-clauses_p) '*reaction-to-input*))
         ;; (format t "~% (single clause) choice are ~a ~% " choice) ; DEBUGGING
       )
 
@@ -1480,9 +1478,7 @@
         ;; (format t "~% user-gist-words are ~a ~% " user-gist-clauses_p) ; DEBUGGING
         (setq user-gist-words (apply 'append user-gist-clauses_p))
         ;; (format t "~% user-gist-words are ~a ~% " user-gist-words) ; DEBUGGING
-        (setq tagged-words (mapcar #'tagword user-gist-words))
-        ;; (format t "~% tagwords are ~a ~% " tagged-words) ; DEBUGGING
-        (setq choice (choose-result-for tagged-words '*reactions-to-input* :debug *debug-patterns*))
+        (setq choice (choose-result-for user-gist-words '*reactions-to-input*))
         ;; (format t "~% choice is ~a ~% " choice) ; DEBUGGING
     ))
 
@@ -1557,14 +1553,12 @@
 ; (for example, if some particularly complex proposal that needs
 ; to be broken down into multiple actions).
 ;
-  (let (tagged-words choice)
+  (let (choice)
 
     (if (null proposal-gist)
       (return-from plan-proposal nil))
 
-    (setq tagged-words (mapcar #'tagword proposal-gist))
-    ;; (format t "~% proposal tagwords are ~a ~% " tagged-words) ; DEBUGGING
-    (setq choice (choose-result-for tagged-words '*output-for-proposal-tree* :debug *debug-patterns*))
+    (setq choice (choose-result-for proposal-gist '*output-for-proposal-tree*))
     ;; (format t "~% proposal choice is ~a ~% " choice) ; DEBUGGING
 
     (when (or (null choice) (equal choice '(:out)))
@@ -1588,14 +1582,12 @@
 ; tree root.
 ; NOTE: the same as plan-proposal, but uses a different rule tree.
 ;
-  (let (tagged-words choice)
+  (let (choice)
 
     (if (null correction-gist)
       (return-from plan-correction nil))
 
-    (setq tagged-words (mapcar #'tagword correction-gist))
-    ;; (format t "~% correction tagwords are ~a ~% " tagged-words) ; DEBUGGING
-    (setq choice (choose-result-for tagged-words '*output-for-correction-tree* :debug *debug-patterns*))
+    (setq choice (choose-result-for correction-gist '*output-for-correction-tree*))
     ;; (format t "~% correction choice is ~a ~% " choice) ; DEBUGGING
 
     (when (or (null choice) (equal choice '(:out)))
@@ -1860,14 +1852,12 @@
 ; generation, then it uses the context of the previous gist-clause to select
 ; the surface utterance.
 ;
-  (let (tagged-gist-clause choice tagged-prior-gist-clause relevant-tree utterance)
+  (let (choice relevant-tree utterance)
 
     ; Get the relevant pattern transduction tree given Eta's gist clause
     ;````````````````````````````````````````````````````````````````````````````````````````````````
     ;; (format t "~% gist-clause = ~a" gist-clause) ; DEBUGGING
-    (setq tagged-gist-clause (mapcar #'tagword gist-clause))
-    ;; (format t "~% tagged gist clause = ~a" tagged-gist-clause) ; DEBUGGING
-    (setq choice (choose-result-for tagged-gist-clause '*gist-clause-trees-for-response* :debug *debug-patterns*))
+    (setq choice (choose-result-for gist-clause '*gist-clause-trees-for-response*))
 
     ; Get the surface utterance using context (if applicable)
     ;````````````````````````````````````````````````````````````````````````````````````````````````
@@ -1881,10 +1871,8 @@
         (setq relevant-tree (cadr choice))
         ;; (format t "~% relevant tree = ~a" relevant-tree) ; DEBUGGING   
         ;; (format t "~% prior-gist-clause = ~a" prior-gist-clause) ; DEBUGGING
-        (setq tagged-prior-gist-clause (mapcar #'tagword prior-gist-clause))
-        ;; (format t "~% tagged gist clause = ~a" tagged-prior-gist-clause) ; DEBUGGING
         (setq utterance (cdr
-          (choose-result-for tagged-prior-gist-clause relevant-tree :debug *debug-patterns*)))))
+          (choose-result-for prior-gist-clause relevant-tree)))))
 
     ;; (format t "~% utterance = ~a" utterance) ; DEBUGGING   
 
@@ -1915,17 +1903,15 @@
 ;   wh-word is not detected but "you"/"your" is quite reliable.)
 ;   The question, by default, is reciprocal to Eta's question.
 ;
-  (let ((n (length words)) tagged-prior-gist-clause tagged-words relevant-trees sentences
+  (let ((n (length words)) relevant-trees sentences
         specific-tree thematic-tree facts gist-clauses)
 
     ; Get the relevant pattern transduction tree given the gist clause of Eta's previous utterance.
     ;````````````````````````````````````````````````````````````````````````````````````````````````
     ;; (format t "~% prior-gist-clause = ~a" prior-gist-clause) ; DEBUGGING
-    (setq tagged-prior-gist-clause (mapcar #'tagword prior-gist-clause))
-    ;; (format t "~% tagged prior gist clause = ~a" tagged-prior-gist-clause) ; DEBUGGING
     (setq relevant-trees (cdr
-      (choose-result-for tagged-prior-gist-clause '*gist-clause-trees-for-input* :debug *debug-patterns*)))
-    ;; (format t "~% this is a clue == ~a" (choose-result-for tagged-prior-gist-clause
+      (choose-result-for prior-gist-clause '*gist-clause-trees-for-input*)))
+    ;; (format t "~% this is a clue == ~a" (choose-result-for prior-gist-clause
     ;;   '*gist-clause-trees-for-input*))
     ;; (format t "~% relevant trees = ~a" relevant-trees) ; DEBUGGING   
     (setq specific-tree (first relevant-trees)) 
@@ -1934,28 +1920,24 @@
     ;; ; Get the list of gist clauses from the user's utterance, using the contextually
     ;; ; relevant pattern transduction tree.
     ;; ;```````````````````````````````````````````````````````````````````````````````````````````````````````
-    ;; (setq tagged-words (mapcar #'tagword words))
-    ;; ;; (format t "~% tagged words = ~a" tagged-words) ; DEBUGGING
-    ;; (setq facts (cdr (choose-result-for tagged-words relevant-tree :debug *debug-patterns*)))
+    ;; (setq facts (cdr (choose-result-for words relevant-tree)))
     ;; (format t "~% gist clauses = ~a" facts) ; DEBUGGING
 
     ; Split user's reply into sentences for extracting specific gist clauses
     ;`````````````````````````````````````````````````````````````````````````
     (setq sentences (split-sentences words))
     (dolist (sentence sentences)
-      (let ((tagged-sentence (mapcar #'tagword sentence)))
-        ;; (format t "~% tagged sentence = ~a" tagged-sentence) ; DEBUGGING
-        (setq clause (cdr (choose-result-for tagged-sentence specific-tree :debug *debug-patterns*)))
-        (when (atom (car clause)) (setq clause (list clause))) ; in case no topic-key
-        (when clause
-          (setq keys (second clause))
-          (store-gist (car clause) keys (ds-gist-kb-user *ds*))
-          (push (car clause) facts))))
+      (setq clause (cdr (choose-result-for sentence specific-tree)))
+      (when (atom (car clause)) (setq clause (list clause))) ; in case no topic-key
+      (when clause
+        (setq keys (second clause))
+        (store-gist (car clause) keys (ds-gist-kb-user *ds*))
+        (push (car clause) facts)))
 
     ; Form thematic answer from input (if no specific facts are extracted)
     ;``````````````````````````````````````````````````````````````````````
     (when (and (> (length sentences) 2) (null facts))
-      (setq clause (cdr (choose-result-for (mapcar #'tagword words) thematic-tree :debug *debug-patterns*)))
+      (setq clause (cdr (choose-result-for words thematic-tree)))
       (when (atom (car clause)) (setq clause (list clause))) ; in case no topic-key
       (when clause
         (setq keys (second clause))
@@ -1997,14 +1979,13 @@
 ;   block on the NVidia block", then "Add another one" should be
 ;   interpretable as "Put another red block on the current structure",
 ;   or something like that. The present program would be applied 
-;   to this. Cf., the use of the tagged prior gist clause in
+;   to this. Cf., the use of the prior gist clause in
 ;   'form-gist-clauses-from-input'.
 ;
 ; Use hierarchical choice trees for extracting the ULF.
 ;
-  (let (tagged-clause ulf)
-    (setq tagged-clause (mapcar #'tagword clause))
-    (setq ulf (choose-result-for tagged-clause '*clause-ulf-tree* :debug *debug-patterns*))
+  (let (ulf)
+    (setq ulf (choose-result-for clause '*clause-ulf-tree*))
   ulf)
 ) ; END form-ulf-from-clause
 
@@ -2018,9 +1999,8 @@
 ; TODO: currently, this only supports one inferred wff per gist-clause, but should
 ; be able to support multiple.
 ;
-  (let (tagged-clause inferred-wff)
-    (setq tagged-clause (mapcar #'tagword clause))
-    (setq inferred-wff (choose-result-for tagged-clause '*clause-inference-tree* :debug *debug-patterns*))
+  (let (inferred-wff)
+    (setq inferred-wff (choose-result-for clause '*clause-inference-tree*))
   inferred-wff)
 ) ; END form-inferences-from-gist-clause
 
@@ -2103,27 +2083,20 @@
 
 
 
-(defun choose-result-for (tagged-clause rule-node &key debug)
-;````````````````````````````````````````````````````````````````
+(defun choose-result-for (clause rule-node)
+;`````````````````````````````````````````````
 ; This is just the top-level call to 'choose-result-for', with
 ; no prior match providing a value of 'parts', i.e., 'parts' = nil;
 ; this is to enable tracing of just the top-level calls
-  (let (result matched-nodes)
-    (setq result (choose-result-for1 tagged-clause nil rule-node nil nil))
-    (when (and (listp result) (equal (car result) :matched-nodes+result))
-      (setq matched-nodes (second result))
-      (setq result (third result)))
-    (when (and debug matched-nodes)
-      (print-matched-rules tagged-clause rule-node matched-nodes result))
-    result
-)) ; END choose-result-for
+  (choose-result-for1 clause nil rule-node nil)
+) ; END choose-result-for
 
 
 
 
 
-(defun choose-result-for1 (tagged-clause parts rule-node visited-subtrees matched-nodes)
-;````````````````````````````````````````````````````````````````````````````````````````
+(defun choose-result-for1 (clause parts rule-node visited-subtrees)
+;``````````````````````````````````````````````````````````````````````````
 ; This is a generic choice-tree search program, used both for
 ; (i) finding gist clauses in user inputs (starting with selection
 ; of appropriate subtrees as a function of Eta's preceding
@@ -2143,7 +2116,7 @@
 ; is supplied  as 'rule-node' argument, and that the result is
 ; interpreted and used as intended for that choice tree.)
 ;
-; So, given a feature-tagged input clause 'tagged-clause', a list 
+; So, given an input clause 'clause', a list 
 ; 'parts' of matched parts from application of the superordiate
 ; decomposition rule (initially, nil), and the choice tree node 
 ; 'rule-node' in a tree of decomposition/result rules, we generate
@@ -2153,7 +2126,7 @@
 ; Decomposition rules (as opposed to result rules) have no
 ; 'directive' property (i.e., it is NIL). Note that in general
 ; a decomposition rule will fail if the pattern it supplies fails
-; to match 'tagged-clause', while a result rule will fail if its
+; to match 'clause', while a result rule will fail if its
 ; latency requirements prevent its (re)use until more system
 ; outputs have been generated. (This avoids repetitive outputs.)
 ;
@@ -2199,7 +2172,7 @@
 ; If the rule node has directive property :subtree, then 'pattern'
 ; will just be the name of another choice tree. If the latency 
 ; requirement is met, a result is recursively computed using the
-; named choice tree (with the same 'tagged-clause' as input).
+; named choice tree (with the same 'clause' as input).
 ; The latency will usually be 0 in this case, i.e., a particular
 ; choice subtree can usually be used again right away.
 ;
@@ -2218,9 +2191,9 @@
 ;   (*rel-ulf-tree* (to prep dir loc) (the det def) (left noun loc) (of prep))
 ;   (*np-ulf-tree* (a det indef) (red adj color) (block cube obj)) 
 ;   (*end-punc-ulf-tree* (? end-punc ques-punc))),
-; ie., a list of sublists of tagged words, with each sublist prefaced by
+; ie., a list of sublists of words, with each sublist prefaced by
 ; the name of a rule tree to be used to produce a ulf for that sublist of
-; tagged words. The instantiated reassembly rule is then processed
+; words. The instantiated reassembly rule is then processed
 ; further, by successively trying to get a result for each of the rule
 ; trees named in the sublists; if all succeed, the individual results
 ; are assembled into an overall ULF, and this is the result returned
@@ -2240,8 +2213,8 @@
 ; - :schemas (returning multiple schema names, perhaps as 
 ;   alternatives); 
 ; - :schema+args (a schema to be instantiated for the specified 
-;   args derived from the given 'tagged-clause'); 
-; - :gist (a gist clause extracted from the given 'tagged-clause,
+;   args derived from the given 'clause'); 
+; - :gist (a gist clause extracted from the given 'clause,
 ;   plus possibly a list of topic keys for storage);
 ; - :ulf (June 9/19) (returning a ulf for a phrase simple enough
 ;   to be directly interpreted);
@@ -2265,7 +2238,7 @@
   ; First make sure we have the lexical code needed for ULF computation
   (if (not (fboundp 'eval-lexical-ulfs)) (load "eval-lexical-ulfs.lisp"))
 
-  (let (directive pattern newparts newclause new-tagged-clause ulf ulfs result)
+  (let (directive pattern newparts newclause ulf ulfs result)
     ; Don't use empty choice trees
     (if (null rule-node) (return-from choose-result-for1 nil))
 
@@ -2278,9 +2251,9 @@
             (< *count* (+ (get rule-node 'time-last-used)
                           (get rule-node 'latency))))
       (return-from choose-result-for1
-        (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees matched-nodes)))
+        (choose-result-for1 clause parts (get rule-node 'next) visited-subtrees)))
 
-    ;; (format t "~% ***1*** Tagwords = ~a ~%" tagged-clause) ; DEBUGGING
+    ;; (format t "~% ***1*** Clause = ~a ~%" clause) ; DEBUGGING
     ;; (format t "~% =====2==== Pattern/output to be matched in rule ~a = ~%  ~a and directive = ~a" rule-node pattern directive) ; DEBUGGING
   
     ; Big conditional statement for dealing with all possible directives.
@@ -2293,21 +2266,21 @@
       ;``````````````````
       ; Look depth-first for more specific match, otherwise try alternatives
       ((null directive)
-        (setq newparts (match1 pattern tagged-clause))
+        (setq newparts (match1 pattern clause))
         ;; (format t "~% ----3---- new part = ~a ~%" newparts) ; DEBUGGING
 
-        ; Pattern does not match 'tagged-clause', search siblings recursively
+        ; Pattern does not match 'clause', search siblings recursively
         (if (null newparts)
           (return-from choose-result-for1
-            (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees matched-nodes)))
+            (choose-result-for1 clause parts (get rule-node 'next) visited-subtrees)))
 
         ; Pattern matched, try to obtain recursive result from children
         (setq result
-          (choose-result-for1 tagged-clause newparts (get rule-node 'children) visited-subtrees (cons pattern matched-nodes)))
+          (choose-result-for1 clause newparts (get rule-node 'children) visited-subtrees))
 
         (if result (return-from choose-result-for1 result)
                    (return-from choose-result-for1
-                      (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees matched-nodes))))
+                      (choose-result-for1 clause parts (get rule-node 'next) visited-subtrees))))
 
       ;`````````````````````
       ; :subtree directive
@@ -2322,11 +2295,10 @@
           ; If subtree was already visited, skip rule
           ((member pattern visited-subtrees)
             (return-from choose-result-for1
-              (choose-result-for1 tagged-clause parts (get rule-node 'next) visited-subtrees matched-nodes)))
+              (choose-result-for1 clause parts (get rule-node 'next) visited-subtrees)))
           ; Otherwise, go to subtree and add subtree to list of visited subtrees
           (t (return-from choose-result-for1
-            (choose-result-for1 tagged-clause parts pattern
-              (cons pattern visited-subtrees) (cons (list pattern directive) matched-nodes))))))
+            (choose-result-for1 clause parts pattern (cons pattern visited-subtrees))))))
 
       ;````````````````````````````
       ; :subtree+clause directive
@@ -2335,21 +2307,14 @@
       ; name of a tree to be searched, but rather a pair of form
       ; (<root name of tree> <reassembly pattern>), indicating that the
       ; reassembly pattern should be used together with 'parts' to reassemble
-      ; some portion of 'tagged-clause', whose results should then be used
+      ; some portion of 'clause', whose results should then be used
       ; (after re-tagging) in the recursive search.
       ((eq directive :subtree+clause)
         (setf (get rule-node 'time-last-used) *count*)
-        ; Pattern is wrong format
-        (when (not (and (listp pattern) (= (length pattern) 2) (atom (first pattern))
-              (listp (second pattern)) (every #'atom (second pattern))))
-            (return-from choose-result-for1 nil))
-        ; Tag clause and send to subtree
-        (setq newclause (instance (second pattern) parts))
-        (setq new-tagged-clause (mapcar #'tagword newclause))
+        (setq newclause (fill-template (second pattern) parts))
         (return-from choose-result-for1
-          (choose-result-for1 new-tagged-clause nil (car pattern)
-            (remove-duplicates (cons (car pattern) visited-subtrees))
-            (cons (list pattern directive) matched-nodes))))
+          (choose-result-for1 newclause nil (car pattern)
+            (remove-duplicates (cons (car pattern) visited-subtrees)))))
 
       ;````````````````````````
       ; :ulf-recur directive
@@ -2365,16 +2330,16 @@
       ; phrasal ULFs.
       ((eq directive :ulf-recur)
         ; Instantiate shallow analysis
-        (setq newclause (instance (first pattern) parts))
+        (setq newclause (fill-template (first pattern) parts))
         ; Interpret recursive phrases; the car of each nonatomic phrase
         ; either gives the name of the relevant rule tree to use, or it
-        ; is 'lex-ulf!'; in the former case we proceed recursively, in
+        ; is 'lex-ulf@'; in the former case we proceed recursively, in
         ; the latter we keep the phrase as-is
         (dolist (phrase newclause)
-          (if (or (atom phrase) (eq (car phrase) 'lex-ulf!))
+          (if (or (atom phrase) (eq (car phrase) 'lex-ulf@))
             (setq ulf phrase) ; e.g., ulf of (next to) = next_to.p
             (setq ulf
-              (choose-result-for (mapcar #'tagword (cdr phrase)) (car phrase))))
+              (choose-result-for (cdr phrase) (car phrase))))
           ; If failure, exit loop
           (when (null ulf)
             (setq ulfs nil)
@@ -2403,7 +2368,7 @@
       ; what it's getting back as result for an input, and hence what
       ; to do with it
       ((eq directive :ulf)
-        (setq result (instance pattern parts))
+        (setq result (fill-template pattern parts))
         (setq result (eval-lexical-ulfs result))
         (return-from choose-result-for1 result))
 
@@ -2413,10 +2378,8 @@
       ; Obtains a ulf result using the subtree & input specified in the pattern, and
       ; then resolves the coreferences in the resulting ulf
       ((eq directive :ulf-coref)
-        (setq newclause (instance (second pattern) parts))
-        (setq new-tagged-clause (mapcar #'tagword newclause))
-        (setq result (choose-result-for1 new-tagged-clause nil (car pattern)
-                        visited-subtrees (cons (list pattern directive) matched-nodes)))
+        (setq newclause (fill-template (second pattern) parts))
+        (setq result (choose-result-for1 newclause nil (car pattern) visited-subtrees))
         (if (and result (not (equal (car result) :out)))
           (setq result (coref-ulf result)))
         (return-from choose-result-for1 result))
@@ -2426,7 +2389,7 @@
       ;```````````````````````
       ; TODO: Implement coreference resolution (gist case)
       ((eq directive :gist-coref)
-        (setq result (cons directive (instance pattern parts)))
+        (setq result (cons directive (fill-template pattern parts)))
         (setf (get rule-node 'time-last-used) *count*)
         (setq result (coref-gist result))
         (return-from choose-result-for1 result))
@@ -2436,14 +2399,14 @@
       ;```````````````````````````````
       ((member directive '(:out :subtrees :schema :schemas 
                            :schema+args :gist :schema+ulf))
-        (setq result (cons directive (instance pattern parts)))
+        (setq result (cons directive (fill-template pattern parts)))
         (setf (get rule-node 'time-last-used) *count*)
         (return-from choose-result-for1
           (list :matched-nodes+result (reverse (cons (list pattern directive) matched-nodes)) result)))
 
       ; A directive is not recognized
       (t
-        (format t "~%*** UNRECOGNIZABLE DIRECTIVE ~s ENCOUNTERED FOR RULE ~s~%    FOR THE FOLLOWING PATTERN AND TAGGED CLAUSE: ~%    ~s,  ~s" directive rule-node pattern tagged-clause))
+        (format t "~%*** UNRECOGNIZABLE DIRECTIVE ~s ENCOUNTERED FOR RULE ~s~%    FOR THE FOLLOWING PATTERN AND CLAUSE: ~%    ~s,  ~s" directive rule-node pattern clause))
     )
 )) ; END choose-result-for1
 

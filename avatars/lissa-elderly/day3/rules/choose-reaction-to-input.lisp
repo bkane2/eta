@@ -25,14 +25,10 @@
 ;;   (How long have you lived there ?)
 ;;   (Do you have children or grandchildren ?) 
 ;;   (Do you use facebook or skype ?)
-
-
 (MAPC 'ATTACHFEAT ; needed for detecting alternatives in the
-                  ; watching-or-reading question
+; watching-or-reading question
 '(
-  (spare-time-activity sports read reading watch watching play
-    playing hike hiking explore exploring walk walking walks hobby
-    hobbies painting); others? "make", "build" seem too general
+  (SPARE-TIME-ACTIVITY sports read reading watch watching play playing hike hiking explore exploring walk walking walks hobby hobbies painting) ; others? "make", "build" seem too general
 ))
 
 
@@ -40,13 +36,13 @@
 ; Choose between reaction to a question and an assertion
 ; Only one gist clause is expected here
 '(
-  1 (0 wh_ 3 SELF 0)
+  1 (0 .WH_ 3 .SELF 0)
     2 *reaction-to-question* (0 :subtree)
-  1 (0 aux SELF 0)
+  1 (0 .AUX .SELF 0)
     2 *reaction-to-question* (0 :subtree)
   1 (0 right-really 4 ?)
     2 *reaction-to-question* (0 :subtree)
-  1 (0); by default, it's an assertion
+  1 (0) ; by default, it's an assertion
     2 *reaction-to-assertion* (0 :subtree)
 ))
 
@@ -63,21 +59,20 @@
 ; e.g., 
 '(
   ; family
-  1 (0 you live by yourself 0) 
-    2 *reaction-to-live-alone-input* (0 :subtree )
-  1 (0 you live with  0)
+  1 (0 you .LIVE by yourself 0)
+    2 *reaction-to-live-alone-input* (0 :subtree)
+  1 (0 you .LIVE with 0)
     2 *reaction-to-live-alone-input* (0 :subtree)
   1 (0 you lived there for 0)
     2 *reaction-to-how-long-lived-there-input* (0 :subtree)
-  1 (0 you have 2 child  0)
+  1 (0 you .HAVE 2 .CHILD 0)
     2 *reaction-to-children-input* (0 :subtree)
-  1 (0 you have 2 grandchild 0)
+  1 (0 you .HAVE 2 .GRANDCHILD 0)
     2 *reaction-to-children-input* (0 :subtree)
-  1 (0 you do not use social-networks 0)
+  1 (0 you .DO not .USE .SOCIAL-NETWORKS 0)
     2 *reaction-to-use-facebook-input* (0 :subtree)
-  1 (0 you use social-networks 0)
+  1 (0 you .USE .SOCIAL-NETWORKS 0)
     2 *reaction-to-use-facebook-input* (0 :subtree)
-
   ; gather-together
   1 (0 on holidays 0)
     2 *reaction-to-holidays-activities-input* (0 :subtree)
@@ -85,19 +80,17 @@
     2 *reaction-to-holidays-best-part-input* (0 :subtree)
   1 (0 the holiday you prefer is 0)
     2 *reaction-to-holidays-you-prefer-input* (0 :subtree)
-  1 (0 you have been to 1 family gathering 0)
+  1 (0 you .HAVE been to 1 .FAMILY gathering 0)
     2 *reaction-to-family-gathering-input* (0 :subtree)
   1 (0 you 3 to 2 wedding 0)
     2 *reaction-to-family-gathering-input* (0 :subtree)
-
   ; tell-me-about-you
   1 (0 your best quality is 0)
     2 *reaction-to-your-best-quality-input* (0 :subtree)
-  1 (0 thing 3 change about yourself is 0) 
+  1 (0 thing 3 change about yourself is 0)
     2 *reaction-to-want-change-about-you-input* (0 :subtree)
-  1 (0 nothing 3 change about yourself 0) 
+  1 (0 nothing 3 change about yourself 0)
     2 *reaction-to-want-change-about-you-input* (0 :subtree)
   1 (0 your wish is 0)
     2 *reaction-to-hopes-and-wishes-input* (0 :subtree)
 ))
-

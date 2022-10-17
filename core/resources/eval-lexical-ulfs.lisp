@@ -5,18 +5,18 @@
 (defun eval-lexical-ulfs (ulf)
 ;`````````````````````````````
 ; 'ulf' is an arbitrary ULF that may contain items of form 
-;      (lex-ulf! <lex-cat> <part number>),
+;      (lex-ulf@ <lex-cat> <part number>),
 ; to be replaced by atomic ULFs.
 ;
  (cond ((atom ulf) ulf)
-       ((eq (car ulf) 'lex-ulf!)
+       ((eq (car ulf) 'lex-ulf@)
         (eval (list (car ulf) 
                     (list 'quote (cadr ulf)) (list 'quote (caddr ulf)))))
        (t (cons (eval-lexical-ulfs (car ulf)) (eval-lexical-ulfs (cdr ulf))))
  )); end of eval-lexical-ulfs
 
 
-(defun lex-ulf! (cat word-sym)
+(defun lex-ulf@ (cat word-sym)
 ;`````````````````````````````
 ; Construct a ulf of the appropriate type out of 'word-sym' (a symbol such
 ; as MERCEDES, ARE, ON-TOP-OF), given the lexical category (such as NAME,
@@ -130,10 +130,10 @@
          ; Untensed verb
          ((v- verb-untensed)
             ; This is a bit hacky...
-            (if (atom (lex-ulf! 'v word-sym)) (lex-ulf! 'v word-sym)
-                (if (equal (second (lex-ulf! 'v word-sym)) (intern (format nil "~a.V" word-sym)))
+            (if (atom (lex-ulf@ 'v word-sym)) (lex-ulf@ 'v word-sym)
+                (if (equal (second (lex-ulf@ 'v word-sym)) (intern (format nil "~a.V" word-sym)))
                     (intern (format nil "~a.V" word-sym))
-                    (second (lex-ulf! 'v word-sym)))))
+                    (second (lex-ulf@ 'v word-sym)))))
          (wh-pred (case word-sym
                      (where '(at.p (what.d place.n)))
                      (when '(at.p (what.d time.n)))
@@ -162,7 +162,7 @@
          (adv-f (intern (format nil "~a.ADV-F" word-sym)))
          (mod-a (intern (format nil "~a.MOD-A" word-sym)))
          (cc (intern (format nil "~a.CC" word-sym))) )
- )); end of lex-ulf!)
+ )); end of lex-ulf@)
                    
 
 (defun stem-superlative (sup-adj); tested

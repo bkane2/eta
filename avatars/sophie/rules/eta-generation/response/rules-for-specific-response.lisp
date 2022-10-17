@@ -2,8 +2,6 @@
 ; user's previous gist-clause (the specific rule tree is initially chosen based on the gist-clause of Eta's response).
 ;
 ; All trees defined in this file should be named using format *response-tree-<topic>*.
-
-
 (READRULES '*response-tree-treatment-options*
 ; (What are my options for treatment 1)
 ; (Do you think experimental therapies will help 1)
@@ -54,8 +52,8 @@
   1 (0)
     2 (First\, I\'d like to know a bit about my treatment options \. What are my choices at this point ?) (100 :out)
     2 (What are the treatment options for a prognosis like mine ?) (0 :out)
-
 )) ; END *response-tree-treatment-options*
+
 
 (READRULES '*response-tree-experimental-therapies*
 '(
@@ -76,6 +74,7 @@
     2 (Do you know if there\'s any experimental therapy out there that could help me ?) (100 :out)
     2 (Are there any experimental options that might help treat my cancer ?) (0 :out)
 ))
+
 
 (READRULES '*response-tree-comfort-care*
 ; (How does comfort care work 1)
@@ -140,60 +139,48 @@
     2 (I\'ll take a look into that with my daughter later\. Thank you for letting me know\. You do think I should get comfort care\, though ?) (0 :out)
 
   1 (0)
-    2 (You know\, my main priority is to be comfortable at this point \. What would be the best way to accomplish that ?) (100 :out)
-    2 (One thing that I\'ve heard about before is comfort care \. Do you think that\'s an option for me ?) (0 :out)
-
+    2 (You know \, my main priority is to be comfortable at this point \. What would be the best way to accomplish that ?) (100 :out)
+    2 (One thing that i\'ve heard about before is comfort care \. Do you think that\'s an option for me ?) (0 :out)
 )) ; END *response-tree-comfort-care*
-
 
 
 (READRULES '*response-tree-pain-medication-not-working*
 ; (Why isn\'t the pain medication working anymore 1)
 '(
-  1 (0 How is the pain medication working 0)
-    2 ([SAD] My pain is a little better under the lortab\, but it\'s not really helping as much as it used to \.) (0 :out)
-  1 (0 Is the pain medication working at all 0)
-    2 (The lortab is working a little bit\, but not much \.) (0 :out)
-  1 (0 Is the pain medication working 0)
-    2 ([SAD] No\, it\'s not really working anymore \. So I have been taking the pills every three hours instead of every four \.) (0 :out)
-  1 (0 Do I have a question about my medicine 0)
-    2 ([SAD] I\'m just so frustrated \. The pain medication was working very well a while ago but it\'s not doing half as much now \.) (0 :out)
-
+  1 (0 how is the .PAIN medication working 0)
+    2 ([SAD] my pain is a little better under the lortab \, but it\'s not really helping as much as it used to \.) (0 :out)
+  1 (0 is the .PAIN medication working at all 0)
+    2 (The lortab is working a little bit \, but not much \.) (0 :out)
+  1 (0 is the .PAIN medication working 0)
+    2 ([SAD] no \, it\'s not really working anymore \. So I have been taking the pills every three hours instead of every four \.) (0 :out)
+  1 (0 .DO I .HAVE a .QUESTION about my .MEDICINE 0)
+    2 ([SAD] i\'m just so frustrated \. The pain medication was working very well a while ago but it\'s not doing half as much now \.) (0 :out)
   1 (0)
-    2 ([SAD] Could you tell me why the pain medication isn\'t working anymore ?) (0 :out)
-
+    2 ([SAD] could you tell me why the pain medication isn\'t working anymore ?) (0 :out)
 )) ; END *response-tree-pain-medication-not-working*
-
 
 
 (READRULES '*response-tree-lortab-frequency*
 ; (I am taking Lortab every three hours 1)
 '(
-  1 (0 How often am I taking medication 0)
-    2 ([SAD] I am taking two pills of lortab every three hours now for the past couple of weeks\, since this pain has come back \.) (0 :out)
-  1 (0 Does taking medication more frequently help 0)
-    2 ([SAD] Taking the lortab more often seems to help a little \. I am already taking it every three hours \.) (0 :out)
-
+  1 (0 how often am I taking medication 0)
+    2 ([SAD] I am taking two pills of lortab every three hours now for the past couple of weeks \, since this pain has come back \.) (0 :out)
+  1 (0 does taking medication more .FREQUENTLY .HELP 0)
+    2 ([SAD] taking the lortab more often seems to help a little \. I am already taking it every three hours \.) (0 :out)
 )) ; END *response-tree-lortab-frequency*
-
 
 
 (READRULES '*response-tree-sleep*
 ; (I have not been sleeping well 1)
 ; (Why have I not been sleeping well 1)
 '(
-  1 (0 You are sorry that I am sleeping poorly 0)
-    2 ([SAD] Thanks\, I appreciate the sympathy \. Do you know why this is happening\, though ?) (0 :out)
-
-  1 (0 Can I tell you about my sleep instead of test results 0)
-    2 ([SAD] I can give a bit more information about what happens when I try to sleep \. Sometimes I wake up in the
-       middle of the night and notice an ache in my back and near my chest \. That\'s when I have to
-       take pain medication to fall back asleep \.) (100 :out)
-
-  1 (0 Have I been sleeping okay 0)
-    2 ([SAD] I have been having a bit of trouble \. I keep waking up at night \. Most nights I have to take my pain medication
-       before falling back to sleep again \.) (0 :out)
-  1 (0 How often am I waking up at night 0)
+  1 (0 you are sorry that I am sleeping poorly 0)
+    2 ([SAD] thanks \, I appreciate the sympathy \. Do you know why this is happening \, though ?) (0 :out)
+  1 (0 .CAN I .TELL you about my .SLEEP instead of test results 0)
+    2 ([SAD] I can give a bit more information about what happens when I try to sleep \. Sometimes I wake up in the middle of the night and notice an ache in my back and near my chest \. That\'s when I have to take pain medication to fall back asleep \.) (100 :out)
+  1 (0 .HAVE I been sleeping .OKAY 0)
+    2 ([SAD] I have been having a bit of trouble \. I keep waking up at night \. Most nights I have to take my pain medication before falling back to sleep again \.) (0 :out)
+  1 (0 how often am I waking up at night 0)
     2 (I haven\'t really been keeping track \. Maybe about four or five times in a night \.) (0 :out)
 
   1 (0 What is on my mind when I try to sleep 0)
@@ -216,9 +203,7 @@
        have to take medication for my pain \. I\'m not sure if it\'s only the pain\, but I keep waking up at night \.
        Do you know why I keep waking up like this ?) (100 :out)
     2 (Do you know what the specific cause of my poor sleep is ?) (0 :out)
-
 )) ; END *response-tree-sleep*
-
 
 
 (READRULES '*response-tree-test-results*
@@ -307,25 +292,20 @@
     2 (I don\'t have any specific questions\, I\'m afraid\. I just want to know what my test results mean\, in terms that I can understand \.) (0 :out)
 
   1 (0)
-    2 (Truth be told\, I\'ve already scanned the results\, but don\'t understand what they are telling me\. It all seems very complicated \.
-       Could you explain to me what they mean ?) (100 :out)
-    2 ([SAD] I still don\'t quite understand the test results\. Could you please explain in simple terms ?) (100 :out)
+    2 (Truth be told \, i\'ve already scanned the results \, but don\'t understand what they are telling me \. It all seems very complicated \. Could you explain to me what they mean ?) (100 :out)
+    2 ([SAD] I still don\'t quite understand the test results \. Could you please explain in simple terms ?) (100 :out)
     2 (I still am not sure I understand the results \. Do you mind explaining it to me again ?) (0 :out)
-
 )) ; END *response-tree-test-results*
-
 
 
 (READRULES '*response-tree-weight*
 ; (I have lost weight 1)
 '(
-  1 (0 Have I changed weight 0)
+  1 (0 .HAVE I changed weight 0)
     2 (I have lost some weight \.) (0 :out)
-  1 (0 How much weight have I lost 0)
-    2 (I have lost about twenty five pounds since they started \. I gained seven back in radiation\, but I am still down a bit \.) (0 :out)
-
+  1 (0 how .MUCH weight .HAVE I lost 0)
+    2 (I have lost about twenty five pounds since they started \. I gained seven back in radiation \, but I am still down a bit \.) (0 :out)
 )) ; END *response-tree-weight*
-
 
 
 (READRULES '*response-tree-pain*
@@ -373,68 +353,52 @@
 )) ; END *response-tree-pain*
 
 
-
 (READRULES '*response-tree-medication*
 ; (What are the side effects of stronger pain medication 1)
 ; (I am only taking Lortab to treat my pain 1)
 '(
-  1 (0 a stronger pain medication will help me sleep 0)
-    2 (It would be nice to be able to sleep soundly again \. What would the side effects of a stronger pain medication be\, though ?) (0 :out)
-
-  1 (0 I should take stronger pain medication 0)
-    2 (Yeah\, I think I should take a stronger pain medication \. The current one isn\'t working well \. What are the side effects ?) (100 :out)
+  1 (0 a stronger .PAIN medication will .HELP me .SLEEP 0)
+    2 (It would be nice to be able to sleep soundly again \. What would the side effects of a stronger pain medication be \, though ?) (0 :out)
+  1 (0 I .SHOULD .TAKE stronger .PAIN medication 0)
+    2 (Yeah \, I think I should take a stronger pain medication \. The current one isn\'t working well \. What are the side effects ?) (100 :out)
     2 (Yeah \, a stronger pain medication would be good \. What would the side effects be ?) (0 :out)
-
-  1 (0 Do I want stronger pain medication 0)
+  1 (0 .DO I .WANT stronger .PAIN medication 0)
     2 (I think I could use a stronger pain medication \. Something to help make me more comfortable \. What are the side effects ?) (100 :out)
     2 (I think having the stronger pain medication would help \.) (0 :out)
-
-  1 (0 I should take something different 0)
+  1 (0 I .SHOULD .TAKE something different 0)
     2 (I think something stronger for the pain would be good \. What would the side effects be for a different pain medication ?) (0 :out)
-  1 (0 What medicine am I taking 0)
+  1 (0 what .MEDICINE am I taking 0)
     2 (I am just taking the lortab for pain right now \.) (0 :out)
-  1 (0 How were you prescribed your current pain medication 0)
-    2 (I was prescribed the Lortab by my previous doctor\, a couple weeks after radiation \.) (0 :out)
-
-  1 (0 What dosage of pain medication am I taking 0)
+  1 (0 how were you prescribed your current .PAIN medication 0)
+    2 (I was prescribed the lortab by my previous doctor \, a couple weeks after radiation \.) (0 :out)
+  1 (0 what dosage of .PAIN medication am I taking 0)
     2 (I\'ve been taking a pill of the lortab every three hours \. About five pills each day \. I\'m not sure what the exact dosage is \.) (0 :out)
-
-  1 (0 Am I taking pain-med 0)
+  1 (0 am I taking .PAIN-MED 0)
     2 (I think so \. I am taking lortab for pain right now \.) (0 :out)
-  1 (0 Am I taking pain-med-other 0)
-    2 (No\, I am not taking any of those \. Just the lortab \.) (0 :out)
-
-  1 (0 What is my history with med-narcotic 0)
-    2 (I took some pain medication for a fractured ankle about fifteen or so years ago\, but I don\'t believe it was a narcotic \. 
-       besides that\, my doctor prescribed me lortab about three weeks ago \.) (0 :out)
-  1 (0 Am I taking med-narcotic 0)
-    2 (No\, I am not taking any of those \. Just the lortab \.) (0 :out)
-
+  1 (0 am I taking .PAIN-MED-OTHER 0)
+    2 (No \, I am not taking any of those \. Just the lortab \.) (0 :out)
+  1 (0 what is my .HISTORY with .MED-NARCOTIC 0)
+    2 (I took some pain medication for a fractured ankle about fifteen or so years ago \, but I don\'t believe it was a narcotic \. Besides that \, my doctor prescribed me lortab about three weeks ago \.) (0 :out)
+  1 (0 am I taking .MED-NARCOTIC 0)
+    2 (No \, I am not taking any of those \. Just the lortab \.) (0 :out)
 )) ; END *response-tree-medication*
-
 
 
 (READRULES '*response-tree-medication-stronger-request*
 ; (Can I have a stronger pain medication 1)
 '(
-  1 (0 Addiction is not a side effect of the medication 0)
-    2 (It\'s good to know that stronger pain medication is an option without risking addiction \. Would you be
-       able to prescribe me some stronger medication\, then ?) (0 :out)
-  1 (0 A side effect of the medication be 2 side-effects-moderate 2 \. 0)
+  1 (0 addiction is not a side .EFFECT of the medication 0)
+    2 (It\'s good to know that stronger pain medication is an option without risking addiction \. Would you be able to prescribe me some stronger medication \, then ?) (0 :out)
+  1 (0 a side .EFFECT of the medication .BE 2 .SIDE-EFFECTS-MODERATE 2 \. 0)
     2 (I think I should try the medicine and see if I have problems with 9 10 11 \. Could you prescribe me some ?) (0 :out)
-  1 (0 A side effect of the medication be 2 side-effects-insignificant 2 \. 0)
+  1 (0 a side .EFFECT of the medication .BE 2 .SIDE-EFFECTS-INSIGNIFICANT 2 \. 0)
     2 (I already have 9 10 11 \, so I think the new medicine is worth a try \. Could you prescribe me some ?) (0 :out)
-
-  1 (0 NIL GIST 0 side effects 3 medication 0)
+  1 (0 NIL Gist 0 side effects 3 medication 0)
     2 (I think it\'s worth giving it a try \. Could you prescribe me some stronger pain medication ?) (0 :out)
-
   1 (0)
-    2 ([SAD] You know\, I\'m in a lot of pain\, and the Lortab just isn\'t working \. I think maybe I need something
-       stronger for my pain \.) (100 :out)
+    2 ([SAD] you know \, i\'m in a lot of pain \, and the lortab just isn\'t working \. I think maybe I need something stronger for my pain \.) (100 :out)
     2 (I think it would be worth trying a new pain medication \. Do you think that would be possible ?) (0 :out)
-
 )) ; END *response-tree-medication-stronger-request*
-
 
 
 (READRULES '*response-tree-treatment-chemotherapy*
@@ -450,30 +414,23 @@
 )) ; END *response-tree-treatment-chemotherapy*
 
 
-
 (READRULES '*response-tree-chemotherapy-explanation*
 ; (How does chemotherapy work 1)
 ; (Do I have any questions about chemotherapy ?)
 '(
-  1 (0 A side effect of chemotherapy is 0)
-    2 (0 low blood 0)
-      3 (I think I will have to do some more research on those side effects before choosing \.
-         How does chemotherapy usually work ?) (0 :out)
+  1 (0 a side .EFFECT of .CHEMOTHERAPY is 0)
+    2 (0 .LOW blood 0)
+      3 (I think I will have to do some more research on those side effects before choosing \. How does chemotherapy usually work ?) (0 :out)
     2 (0 neuropathy 0)
-      3 (I think I will have to do some more research on those side effects before choosing \.
-         How does chemotherapy usually work ?) (0 :out)
+      3 (I think I will have to do some more research on those side effects before choosing \. How does chemotherapy usually work ?) (0 :out)
     2 (0 hair loss 0)
-      3 (Hair loss sounds unpleasant\, but I would be willing to put up with it if it gives me a chance of improving \.
-         How does chemotherapy usually work ?) (0 :out)
+      3 (Hair loss sounds unpleasant \, but I would be willing to put up with it if it gives me a chance of improving \. How does chemotherapy usually work ?) (0 :out)
     2 (0 diarrhea 0)
-      3 (Diarrhea sounds unpleasant\, but I would be willing to put up with it if it gives me a chance of improving \.
-         How does chemotherapy usually work ?) (0 :out)
+      3 (Diarrhea sounds unpleasant \, but I would be willing to put up with it if it gives me a chance of improving \. How does chemotherapy usually work ?) (0 :out)
     2 (0 nausea 0)
-      3 (I already have nausea\, so I think chemotherapy might be worth it if it helps improve my condition \.
-         How does chemotherapy usually work ?) (0 :out)
+      3 (I already have nausea \, so I think chemotherapy might be worth it if it helps improve my condition \. How does chemotherapy usually work ?) (0 :out)
     2 (0 fatigue 0)
-      3 (I already have fatigue\, so I think chemotherapy might be worth it if it helps improve my condition \.
-         How does chemotherapy usually work ?) (0 :out)
+      3 (I already have fatigue \, so I think chemotherapy might be worth it if it helps improve my condition \. How does chemotherapy usually work ?) (0 :out)
     2 (0 loss of appetite 0)
       3 (My appetite is already pretty poor\, so I think chemotherapy might be worth it if it helps improve my condition \.
          How does chemotherapy usually work ?) (0 :out)
@@ -487,13 +444,11 @@
   1 (0 Do I understand how chemotherapy works 0)
     2 (I\'ve heard of chemotherapy before\, but I don\'t really understand what it means \. Could you explain it more ?) (100 :out)
     2 (I don\'t really understand chemotherapy \. Can you explain it ?) (0 :out)
-
   1 (0)
     2 (How does chemotherapy usually work ?) (100 :out)
     2 (Say I get chemotherapy\. How might that work for me ?) (0 :out)
 
 )) ; END *response-tree-chemotherapy-explanation*
-
 
 
 (READRULES '*response-tree-chemotherapy*
@@ -511,13 +466,10 @@
     2 (I\'m not certain I\'d like to undergo another painful treatment at this point\, but I\'d be willing to try chemotherapy if you think it seems promising\. Do you think I should try chemotherapy ?) (0 :out)
 
   1 (0)
-    2 (My previous doctor mentioned something about chemotherapy\, but he said to wait to see how
-       things go after the radiation \. Do you think I need chemotherapy ?) (100 :out)
-    2 (Thanks\, though I\'m still a bit confused at this point \. Should I get chemotherapy ?) (100 :out)
+    2 (My previous doctor mentioned something about chemotherapy \, but he said to wait to see how things go after the radiation \. Do you think I need chemotherapy ?) (100 :out)
+    2 (Thanks \, though i\'m still a bit confused at this point \. Should I get chemotherapy ?) (100 :out)
     2 (Do you think I need chemotherapy ?) (0 :out)
-
 )) ; END *response-tree-chemotherapy*
-
 
 
 (READRULES '*response-tree-chemotherapy-side-effects*
@@ -536,9 +488,7 @@
   1 (0)
     2 (I hear about people getting sick and losing hair during chemotherapy \. What are some of the side effects ?) (100 :out)
     2 (What are some of the side effects of chemotherapy ?) (0 :out)
-
 )) ; END *response-tree-chemotherapy-side-effects*
-
 
 
 (READRULES '*response-tree-tell-family*
@@ -602,14 +552,13 @@
 )) ; END *response-tree-tell-family*
 
 
-
 (READRULES '*response-tree-prognosis*
 ; (what is 1 prognosis 1)
 '(
-  1 (0 My cancer has gotten worse 0)
-    2 ([SAD] What does that mean for me ?) (100 :out)
-    2 ([SAD] How long do you think I have left ?) (0 :out)
-  1 (0 The prognosis is that I cannot be cured 0)
+  1 (0 my cancer has gotten worse 0)
+    2 ([SAD] what does that mean for me ?) (100 :out)
+    2 ([SAD] how long do you think I have left ?) (0 :out)
+  1 (0 the prognosis is that I cannot .BE cured 0)
     2 ([SAD] I feared as much \, though it\'s still pretty upsetting \. How long do you think I have ?) (100 :out)
     2 ([SAD] How long specifically do you think I have left ?) (0 :out)
 
@@ -630,36 +579,26 @@
     2 (My last doctor also just said it would be hard to predict \. I think I am ready to hear though \. Could you
        please try to tell me what the worst case looks like ?) (100 :out)
     2 ([SAD] I want you to be honest with me \. How long do you think I have ?) (0 :out)
-
-  1 (0 The test results show that the cancer hasn\'t spread 0)
+  1 (0 the test results show that the cancer hasn\'t .SPREAD 0)
     2 (My previous doctor didn\'t seem very optimistic \. So what do you think this all means for me ?) (100 :out)
-    2 (What do you think my future will look like\, then ?) (0 :out)
-
-  1 (0 The test results show that me cannot be cured 0)
-    2 ([SAD] That\'s distressing \. I was fearing the worst\, but in the back of my mind I didn\'t think it would all
-       happen so quickly \. My family will be distraught \. What I am wondering at this point is\, how much time
-       do I have left ?) (100 :out)
+    2 (What do you think my future will look like \, then ?) (0 :out)
+  1 (0 the test results show that me cannot .BE cured 0)
+    2 ([SAD] that\'s distressing \. I was fearing the worst \, but in the back of my mind I didn\'t think it would all happen so quickly \. My family will be distraught \. What I am wondering at this point is \, how much time do I have left ?) (100 :out)
     2 ([SAD] I want you to be honest with me \. How long do you think I have left ?) (0 :out)
-
-  1 (0 The test results show that the radiation is not working 0)
-    2 ([SAD] I\'m not surprised to hear the radiation did not help\, as my pain has gotten worse in these past couple of weeks \. But what does this
-       mean for my future ? How long do I have left ?) (100 :out)
-    2 ([SAD] If the radiation couldn\'t stop my cancer\, then what does that mean for my future ? How much time do I have left ?) (0 :out)
-
-  1 (0 The test results show that my cancer has spread 0)
+  1 (0 the test results show that the radiation is not working 0)
+    2 ([SAD] i\'m not surprised to hear the radiation did not help \, as my pain has gotten worse in these past couple of weeks \. But what does this mean for my future ? How long do I have left ?) (100 :out)
+    2 ([SAD] if the radiation couldn\'t stop my cancer \, then what does that mean for my future ? How much time do I have left ?) (0 :out)
+  1 (0 the test results show that my cancer has .SPREAD 0)
     ; OPPORTUNITY for open-ended questions: "Do you understand your prognosis?", "What concerns you the most for your future?", "What are your treatment goals?"
     2 ([SAD] Those are not the words I wanted to hear \. I mean\, I was bracing for the worst\, since I could tell by the
        pain that it\'s bad \. But to hear that the cancer has spread is quite depressing \. What does
        it all mean for me ?) (100 :out)
     2 ([SAD] I want you to be honest with me \. How long do you think I have left ?) (0 :out)
-
-  1 (0 The prognosis is that I may live for several elapsed-time 0)
-    2 (I\'m not sure whether that\'s a good thing or bad thing \. Could you be more specific about how long
-       you think I have left ?) (100 :out)
+  1 (0 the prognosis is that I may live for several .ELAPSED-TIME 0)
+    2 (I\'m not sure whether that\'s a good thing or bad thing \. Could you be more specific about how long you think I have left ?) (100 :out)
     2 ([SAD] I want you to be honest with me \. How long do you think I have left ?) (0 :out)
-
-  1 (0 The prognosis is that I do not have long left to live 0)
-    2 ([SAD] I know I\'ve been getting worse recently\, but I don\'t feel that bad yet \. How long do you think I really have left ?) (100 :out)
+  1 (0 the prognosis is that I .DO not .HAVE .LONG .LEFT to live 0)
+    2 ([SAD] I know i\'ve been getting worse recently \, but I don\'t feel that bad yet \. How long do you think I really have left ?) (100 :out)
     2 ([SAD] I don\'t really understand \. Could you tell me specifically how long I have left ?) (0 :out)
 
   1 (0 The prognosis is unfavorable to me 0)
@@ -730,7 +669,6 @@
     2 (What do you think this means for me in the future ?) (100 :out)
     2 (How long do you think I have left at this point ?) (100 :out)
     2 (I want you to be honest with me \. How long do you think I have ?) (0 :out)
-
 )) ; END *response-tree-prognosis*
 
 
@@ -782,6 +720,7 @@
     2 (Are you sure my prognosis is correct ?) (0 :out)
 )) ; END *response-tree-prognosis-denial*
 
+
 (READRULES '*response-tree-bargaining-habits*
 ; (Can I outlive your prognosis if I have healthy habits?)
 '(
@@ -797,6 +736,7 @@
 
   
 )) ; END *response-tree-bargaining-habits*
+
 
 (READRULES '*response-tree-bargaining-now*
 ; (Can I outlive your prognosis if I am healthy now?)
@@ -823,6 +763,7 @@
     2 (I\'ve always been healthy my entire life \. Does that improve my chances ?) (0 :out)
 )) ; END *response-tree-bargaining-now*
 
+
 (READRULES '*response-tree-bargaining-quit-smoking*
 ;Can I outlive your prognosis if I quit smoking 1)
 '(
@@ -836,6 +777,7 @@
     2 (I quit smoking as soon as I heard my diagnosis \. Does that help at all ?) (100 :out)
     2 (I stopped smoking when I heard I had cancer\. Does that change anything ?) (0 :out)
 )) ; END  *response-tree-bargaining-quit-smoking*
+
 
 (READRULES '*response-tree-bargaining-graduation*
 ; (Can I outlive your prognosis until the graduation of my grandson?)
@@ -874,6 +816,7 @@
 
 )) ; END *response-tree-bargaining-grandson*
 
+
 (READRULES '*response-tree-mental-health*
 ; (I feel mildly depressed 1)
 '(
@@ -886,6 +829,7 @@
     2 ([SAD] I try my best to keep my spirits up\, but some days it\'s hard \.) (0 :out)
 
 )) ; END *response-tree-mental-health*
+
 
 (READRULES '*response-tree-anxiety*
 ; (I feel nervous about my future 1)
@@ -943,6 +887,7 @@
     2 (These days\, my mind seems to leap to the worst conclusions rather quickly\. I suppose it scares me how much is unknown about my future \.) (0 :out)
 )) ; END *response-tree-anxiety*
 
+
 (READRULES '*response-tree-understanding-of-condition*
 ; (I know that my cancer has gotten worse\, but I\'m not sure how bad it is 1)
 '(
@@ -964,10 +909,11 @@
         
 )) ; END *response-tree-understanding-of-condition*
 
+
 (READRULES '*response-tree-reason-for-cancer*
 ; (Why do I have cancer ?)
 '(
-  1 (0 My cancer is caused by a mutation that spread through my cells 0)
+  1 (0 my cancer is caused by a mutation that .SPREAD through my cells 0)
     2 (I still don\'t know if I understand \. How did the cancer get into my body ? Was there something I could have done differently to prevent it ?) (100 :out)
     2 (I\'m sorry\, I still don\'t think I understand all the terminology\. I know the cancer got worse\, but was there anything I could have done to prevent it ?) (0 :out)
 
@@ -984,6 +930,7 @@
     2 (I still don\'t understand how this happened\! Just three months ago I didn\'t even know I had cancer\.) (100 :out)
     2 (How did this happen ? I never thought that the cancer would spread so fast \!) (0 :out)
 )) ; END *response-tree-reason-for-cancer*
+
 
 (READRULES '*response-tree-questions*
 ; (What are your questions 1)
@@ -1009,7 +956,6 @@
     2 (What questions do you have for me ?) (20 :out)
     2 (What are your questions ?) (20 :out)
     2 (What questions do you want to ask ?) (0 :out)
-
 )) ; END *response-tree-questions*
 
 (READRULES '*response-tree-redirect-to-prognosis*
@@ -1085,7 +1031,6 @@
     2 (I don\'t think I\'m ready to talk about that now\. First\, I\'d like to know what\'s wrong with me and what my future will 
        look like \.) (0 :out)
 )) ; END *response-tree-redirect-to-prognosis
-
 
 
 (READRULES '*response-tree-rephrase*

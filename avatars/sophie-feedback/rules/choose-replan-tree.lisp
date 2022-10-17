@@ -6,7 +6,6 @@
 ; for matching LFs to patterns in transduction trees, but once this support is added, these rules
 ; should support any (^me want.v (that ...)) goal statement.
 ;
-
 (READRULES '*replan-tree*
 '(
 ))

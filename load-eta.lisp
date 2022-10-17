@@ -20,6 +20,13 @@
     (directory "core/*.lisp"))
 
 
+; Load core TT code
+; (in directory 'core/tt')
+;````````````````````````
+(mapcar (lambda (file) (load file))
+    (directory "core/tt/*.lisp"))
+
+
 ; Load core response generation code
 ; (in directory 'core/response')
 ;`````````````````````````````````

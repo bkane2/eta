@@ -24,9 +24,8 @@
 ;;	What is a recent outdoor activity you have done?
 ;;  What is your favorite season to be outdoors?
 ;;  What do you enjoy doing when the weather keeps you indoors? 
-
 (MAPC 'ATTACHFEAT ; needed for detecting alternatives in the
-                  ; watching-or-reading question
+; watching-or-reading question
 '(
 ))
 
@@ -35,13 +34,13 @@
 ; Choose between reaction to a question and an assertion
 ; Only one gist clause is expected here
 '(
-  1 (0 wh_ 3 SELF 0)
+  1 (0 .WH_ 3 .SELF 0)
     2 *reaction-to-question* (0 :subtree)
-  1 (0 aux SELF 0)
+  1 (0 .AUX .SELF 0)
     2 *reaction-to-question* (0 :subtree)
   1 (0 right-really 4 ?)
     2 *reaction-to-question* (0 :subtree)
-  1 (0); by default, it's an assertion
+  1 (0) ; by default, it's an assertion
     2 *reaction-to-assertion* (0 :subtree)
 ))
 
@@ -58,28 +57,25 @@
 '(
   ; outdoors
   1 (0 recent outdoor activity 0)
-    2 *reaction-to-recent-outdoor-activity-input* (0 :subtree) 
+    2 *reaction-to-recent-outdoor-activity-input* (0 :subtree)
   1 (0 favorite season 2 outdoors is 0)
     2 *reaction-to-favorite-season-outdoors-input* (0 :subtree)
-  1 (0 enjoy 3 you have to stay indoors 0)
+  1 (0 .ENJOY 3 you .HAVE to stay indoors 0)
     2 *reaction-to-things-enjoy-doing-indoors-input* (0 :subtree)
-
   ; travel
-  1 (0 enjoy 2 travel 0)
+  1 (0 .ENJOY 2 travel 0)
     2 *reaction-to-travel-enjoy-input* (0 :subtree)
-  1 (0 favorite vacation 0)
+  1 (0 favorite .VACATION 0)
     2 *reaction-to-favorite-vacation-input* (0 :subtree)
   1 (0 if you win 1 free trip 0)
     2 *reaction-to-free-trip-input* (0 :subtree)
-  1 (0 you do not want 3 free trip 0)
+  1 (0 you .DO not .WANT 3 free trip 0)
     2 *reaction-to-free-trip-input* (0 :subtree)
-
   ; plan-for-today
-  1 (0 your plan after this session 0)
-    2 *reaction-to-plan-after-this-session-input* (0 :subtree) 
-	1 (0 you will have 3 for dinner tonight 0)
+  1 (0 your .PLAN after this session 0)
+    2 *reaction-to-plan-after-this-session-input* (0 :subtree)
+  1 (0 you will .HAVE 3 for .DINNER tonight 0)
     2 *reaction-to-dinner-tonight-input* (0 :subtree)
-  1 (0 you 4 to wind down before bed 0) 
+  1 (0 you 4 to .WIND down before bed 0)
     2 *reaction-to-wind-down-before-bed-input* (0 :subtree)
 ))
-

@@ -24,9 +24,8 @@
 ;;	What types of art do you enjoy ?
 ;;  Have you ever taken lessons in a kind of art ?
 ;;  How does art help you cope with negative emotions ?
-
 (MAPC 'ATTACHFEAT ; needed for detecting alternatives in the
-                  ; watching-or-reading question
+; watching-or-reading question
 '(
 ))
 
@@ -35,13 +34,13 @@
 ; Choose between reaction to a question and an assertion
 ; Only one gist clause is expected here
 '(
-  1 (0 wh_ 3 SELF 0)
+  1 (0 .WH_ 3 .SELF 0)
     2 *reaction-to-question* (0 :subtree)
-  1 (0 aux SELF 0)
+  1 (0 .AUX .SELF 0)
     2 *reaction-to-question* (0 :subtree)
   1 (0 right-really 4 ?)
     2 *reaction-to-question* (0 :subtree)
-  1 (0); by default, it's an assertion
+  1 (0) ; by default, it's an assertion
     2 *reaction-to-assertion* (0 :subtree)
 ))
 
@@ -57,43 +56,40 @@
 ;
 '(
   ; technology
-  1 (0 you do not have a smartphone 0) 
+  1 (0 you .DO not .HAVE a smartphone 0)
     2 *reaction-to-smartphone-use-input* (0 :subtree)
-  1 (0 you have a smartphone 0)
+  1 (0 you .HAVE a smartphone 0)
     2 *reaction-to-smartphone-use-input* (0 :subtree)
   1 (0 you use your smartphone for 0)
-    2 *reaction-to-smartphone-use-input* (0 :subtree) 
-  1 (0 the best part of advances in technology is 0)  
+    2 *reaction-to-smartphone-use-input* (0 :subtree)
+  1 (0 the best part of advances in technology is 0)
     2 *reaction-to-technology-best-part-input* (0 :subtree)
   1 (0 no good in advances in technology 0)
     2 *reaction-to-technology-best-part-input* (0 :subtree)
-  1 (0 the hardest part of advances in technology is 0)  
+  1 (0 the hardest part of advances in technology is 0)
     2 *reaction-to-technology-hardest-part-input* (0 :subtree)
-
   ; books-and-newspaper
-  1 (0 you do not like to read books 0) 
+  1 (0 you .DO not .LIKE to read books 0)
     2 *reaction-to-books-like-to-read-input* (0 :subtree)
-  1  (0 you like 3 books 0)
-    2 *reaction-to-books-like-to-read-input* (0 :subtree) 
-  1 (0 you do not read newspaper 0) 
+  1 (0 you .LIKE 3 books 0)
+    2 *reaction-to-books-like-to-read-input* (0 :subtree)
+  1 (0 you .DO not read newspaper 0)
     2 *reaction-to-newspaper-how-often-input* (0 :subtree)
-  1 (0 you read newspaper 0) 
+  1 (0 you read newspaper 0)
     2 *reaction-to-newspaper-how-often-input* (0 :subtree)
-  1 (0 you do not like to discuss politics 0) 
+  1 (0 you .DO not .LIKE to discuss politics 0)
     2 *reaction-to-like-politics-input* (0 :subtree)
-  1 (0 you like to discuss politics 0) 
+  1 (0 you .LIKE to discuss politics 0)
     2 *reaction-to-like-politics-input* (0 :subtree)
-
   ; arts
-  1 (0 the type of art you enjoy 0)
+  1 (0 the type of art you .ENJOY 0)
     2 *reaction-to-art-type-you-enjoy-input* (0 :subtree)
-  1 (0 do not enjoy any 2 art 0)
+  1 (0 .DO not .ENJOY any 2 art 0)
     2 *reaction-to-art-type-you-enjoy-input* (0 :subtree)
-  1 (0 you have not taken lessons in any kind of art 0)
+  1 (0 you .HAVE not taken lessons in any kind of art 0)
     2 *reaction-to-art-lessons-input* (0 :subtree)
-  1 (0 you have taken lessons in 0)
-	  2 *reaction-to-art-lessons-input* (0 :subtree)
-  1 (0 art helps one cope with stress 0)
+  1 (0 you .HAVE taken lessons in 0)
+    2 *reaction-to-art-lessons-input* (0 :subtree)
+  1 (0 art helps .ONE cope with stress 0)
     2 *reaction-to-ways-art-helps-input* (0 :subtree)
 ))
-

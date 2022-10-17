@@ -701,7 +701,7 @@
 ; TODO: currently only goals of form (^me want.v (that (^me know.v (ans-to '(...))))) are supported,
 ; and only the quoted expression is used to select a subplan. This will need to be made more general eventually.
 ;
-  (let (curr-step goal-var goal-wff bindings goal-words tagged-words choice schema-name args subplan)
+  (let (curr-step goal-var goal-wff bindings goal-words choice schema-name args subplan)
 
     ; Get current expected step, expected wff, and instantiated ep-name
     (setq curr-step (plan-curr-step plan))
@@ -718,8 +718,7 @@
       (t (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff)))
 
     ; Select subplan for replanning
-    (setq tagged-words (mapcar #'tagword goal-words))
-    (setq choice (choose-result-for tagged-words '*replan-tree*))
+    (setq choice (choose-result-for goal-words '*replan-tree*))
 
     ; Create subplan depending on directive
     (cond

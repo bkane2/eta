@@ -1,0 +1,107 @@
+;; 	What types of travel do you enjoy?
+;;	(0 enjoy 2 travel 0)
+;;	travel-enjoy
+;;	(2 What types of travel 2 enjoy 2)
+
+(MAPC 'ATTACHFEAT
+'(
+  (solo alone)
+  (friend friends)
+  (family grandchildren grandchild children child daughter daughters son sons spouse wife husband siblings brother brothers sister sisters 
+    parents mother father grandparents grandmother grandfather cousin cousins uncle aunt)
+  (short weekend multiday days)
+  (long months years)
+  (term time period)
+  (package group)
+  (backpacking hiking camping camp adventure)
+  (event bussiness)
+  (sightseeing tourism relaxing tour)
+))
+  
+
+(READRULES '*travel-enjoy-input*
+'(
+  ; Questions
+  1 (0 how 2 you 1 travel ?)
+    2 (How can I take a vacation ?) (0 :gist)
+  1 (0 how 2 you 1 have 1 vacation 0 ?)
+    2 (How can I take a vacation ?) (0 :gist)
+  1 (0 how 2 you 1 take 1 vacation 0 ?)
+    2 (How can I take a vacation ?) (0 :gist)
+  1 (0 what 2 travel 2 you 1 enjoy 0 ?)
+    2 (What types of travel do I enjoy ？) (0 :gist)
+  1 (0 how 2 travel 2 you 1 enjoy 0 ?)
+    2 (What types of travel do I enjoy ?) (0 :gist)
+
+  ; Specific answers
+  1 (0 NEG solo 0)
+    2 ((You do not enjoy to travel alone \.) (Travel-enjoy)) (0 :gist)
+  1 (0 solo 0)
+    2 ((You enjoy travel alone \.) (Travel-enjoy)) (0 :gist)
+  1 (0 with friend 0)
+    2 ((You enjoy travel with 3 \.) (Travel-enjoy)) (0 :gist)
+  1 (0 visiting friend 0)
+    2 ((You enjoy travel to visit friends \.) (Travel-enjoy)) (0 :gist)
+  1 (0 with family 0)
+    2 ((You enjoy travel with 3 \.) (Travel-enjoy)) (0 :gist)
+  1 (0 visiting family 0)
+    2 ((You enjoy travel to visit family \.) (Travel-enjoy)) (0 :gist)
+  1 (0 short term 0)
+    2 ((You enjoy travel in 2 time \.) (Travel-enjoy)) (0 :gist)
+  1 (0 long 0)
+    2 ((You enjoy travel in 2 time \.) (Travel-enjoy)) (0 :gist)
+  1 (0 package 0)
+    2 ((You enjoy 2 travel \.) (Travel-enjoy)) (0 :gist)
+  1 (0 backpacking 0)
+    2 ((You enjoy 2 travel \.) (Travel-enjoy)) (0 :gist)
+  1 (0 event 0)
+    2 ((You enjoy 2 travel \.) (Travel-enjoy)) (0 :gist)
+  1 (0 sightseeing 0)
+    2 ((You enjoy travel for 2 \.) (Travel-enjoy)) (0 :gist)
+  1 (0 NEG like 2 road trip 0)
+    2 ((You do not enjoy road trip travel \.) (Travel-enjoy)) (0 :gist)
+  1 (0 road trip 0)
+    2 ((You enjoy road trip travel \.) (Travel-enjoy)) (0 :gist)
+
+  1 (0 NEG 2 like 2 travel 0)
+    2 ((You do not enjoy to travel \.) (Travel-enjoy)) (0 :gist)
+
+  1 (0)
+      2 ((NIL gist \: Nothing found for if you enjoy travel \.) (Travel-enjoy)) (0 :gist)
+))
+
+
+(READRULES '*reaction-to-travel-enjoy-input*
+'(
+  1 (0 neg like to travel 0)
+    2 (Well\, some people do not really enjoy traveling \.) (100 :out)
+  1 (0 neg 3 travel alone 0) 
+    2 (I\, personally\, prefer silence but I understand if you like to have people around to travel with\.) (100 :out)
+  1 (0 enjoy travel solo 0) 
+    2 (Solo travel is cool\. You don\’t need to consult anyone else and can go any place you want\.) (100 :out)
+  1 (0 friend 0) 
+    2 (Traveling with friends is sweet\.) (100 :out)
+  1 (0 visiting friends 0) 
+    2 (It is great to visiting friends \. Also they can help you to have a great time\.) (100 :out)
+  1 (0 family 0) 
+    2 (Traveling with 5 is sweet\.) (100 :out)
+  1 (0 visiting family 0) 
+    2 (It is great to visiting family \. Also they can help you to have a great time\.) (100 :out)
+  1 (0 short 0) 
+    2 (It can relax myself to have a trip for several days\.) (100 :out)
+  1 (0 long 0) 
+    2 (Staying in a place for a long term helps you to experience the local culture\.) (100 :out)
+  1 (0 package 0) 
+    2 (You don\'t need to arrange everything in your trip when you travel with others\.) (100 :out)
+  1 (0 backpacking 0) 
+    2 (It sounds like you love nature\, that\'s pretty cool\.) (100 :out)
+  1 (0 event 0) 
+    2 (Travelling for a specific target is meaningful\.) (100 :out)
+  1 (0 sightseeing 0) 
+    2 (Travelling for 5 is great\. What you need to do is relaxing myself and enjoying a happy time\.) (100 :out)
+  1 (0 road trip 0) 
+    2 (Road trip means much more freedom\. You can decide the time and the desitination by yourself \.) (100 :out)
+
+  1 (0 NIL gist 0)
+    2 (That sounds like a fun way to travel\. I like seeing other cities with friends\.) (100 :out)
+))

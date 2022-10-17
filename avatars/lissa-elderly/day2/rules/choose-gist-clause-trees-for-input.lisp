@@ -28,36 +28,31 @@
 ;;
 ;;   This is why we don't simply use a verbatim match to Lissa's
 ;;   output.
-
 (READRULES '*gist-clause-trees-for-input*
 '(
-   ; rochester1
-   1 (2 how long 6 in Rochester 0)
-      2 (*how-long-in-rochester-input*) (0 :subtrees)
-   1 (6 you not 2 like 4 Rochester 1) 
-      2 (*not-like-about-rochester-input*) (0 :subtrees)
-   1 (2 what 2 you like 4 Rochester 0)
-      2 (*like-about-rochester-input*) (0 :subtrees)
-   1 (2 what 2 you 2 change 4 Rochester 0)
-      2 (*changing-rochester-input*) (0 :subtrees)
-
-   ; rochester2
-   1 (2 what 3 we 1 do 4 tour of Rochester 0)
-      2 (*tour-of-rochester-input* 
-         *thematic-tour-of-rochester-input*) (0 :subtrees)
-   1 (2 what 2 your favorite restaurant 4 in Rochester 0)
-      2 (*favorite-eatery-input*) (0 :subtrees)
-   1 (2 what 3 is 2 garbage plate 0)
-      2 (*garbage-plate-input*
-         *thematic-garbage-plate-input*) (0 :subtrees)
-   1 (3 you 5 Dinosaur Barbecue 0)
-      2 (*dinosaur-bbq-input*) (0 :subtrees)
-
-   ; pets
-   1 (2 do 1 have 1 pet 3)
-      2 (*have-a-pet-input*) (0 :subtrees)
-   1 (1 Tell me about 2 pet 3 family 2 neighbor 3) 
-      2 (*family-neighbor-pet-input*) (0 :subtrees)
-   1 (1 how 2 pets help 3)
-      2 (*pets-help-owners-input*) (0 :subtrees)
+  ; rochester1
+  1 (2 how long 6 in rochester 0)
+    2 (*how-long-in-rochester-input*) (0 :subtrees)
+  1 (6 you not 2 .LIKE 4 rochester 1)
+    2 (*not-like-about-rochester-input*) (0 :subtrees)
+  1 (2 what 2 you .LIKE 4 rochester 0)
+    2 (*like-about-rochester-input*) (0 :subtrees)
+  1 (2 what 2 you 2 change 4 rochester 0)
+    2 (*changing-rochester-input*) (0 :subtrees)
+  ; rochester2
+  1 (2 what 3 we 1 .DO 4 tour of rochester 0)
+    2 (*tour-of-rochester-input* *thematic-tour-of-rochester-input*) (0 :subtrees)
+  1 (2 what 2 your favorite .RESTAURANT 4 in rochester 0)
+    2 (*favorite-eatery-input*) (0 :subtrees)
+  1 (2 what 3 is 2 .GARBAGE plate 0)
+    2 (*garbage-plate-input* *thematic-garbage-plate-input*) (0 :subtrees)
+  1 (3 you 5 dinosaur .BARBECUE 0)
+    2 (*dinosaur-bbq-input*) (0 :subtrees)
+  ; pets
+  1 (2 .DO 1 .HAVE 1 pet 3)
+    2 (*have-a-pet-input*) (0 :subtrees)
+  1 (1 tell me about 2 pet 3 .FAMILY 2 neighbor 3)
+    2 (*family-neighbor-pet-input*) (0 :subtrees)
+  1 (1 how 2 pets .HELP 3)
+    2 (*pets-help-owners-input*) (0 :subtrees)
 ))
