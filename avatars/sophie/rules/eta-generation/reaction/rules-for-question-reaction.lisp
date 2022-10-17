@@ -270,7 +270,7 @@
     2 *confirm-name* (0 :schema)
   1 (Can I hear you ?)
     2 *confirm-doctor-is-audible* (0 :schema)
-  1 (What would help you manage your condition ?)
+  1 (What would help me manage my condition ?)
     2 *say-how-to-help* (0 :schema)
   
   

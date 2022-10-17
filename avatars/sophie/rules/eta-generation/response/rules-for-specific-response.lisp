@@ -242,7 +242,7 @@
        about possible metastasis \. Could you explain what that means in simple terms ?) (100 :out)
     2 (Could you try your best to explain the test results to me ?) (0 :out)
 
-  1 (0 We performed the CT scan to see how much further your cancer has progressed 0)
+  1 (0 We performed the CT scan to see how much further my cancer has progressed 0)
     2 (Okay \. I think I get it \. The CT scan is just a way to measure how bad my cancer is \. Has it gotten any better then ? Or has it gotten worse ?) (100 :out)
     2 (I understand \. What does my CT scan tell you then ? I don/'t feel like my cancer has gotten much better \.) (0 :out)
 
@@ -926,11 +926,11 @@
     2 (That\'s unfortunate to hear\. It\'s been so hard these past couple weeks\, partly because of my pain but partly because I know so little about the future\.) (100 :out)
     2 (That\'s hard to hear\. It scares me just how much of my future is unknown \.) (0 :out)
 
-  1 (0 It is expected to feel badly after learning your cancer is terminal 0)
+  1 (0 It is expected to feel badly after learning my cancer is terminal 0)
     2 (It was already hard enough when I learned my diagnosis a few months ago\, but at least then I knew that I would still have time\. Now\, my future feels so unknown\.) (100 :out)
     2 (It\'s hard to hear that the time you thought you had has vanished\. It scares me how little I know about how the next several months will play out \.) (0 :out)
 
-  1 (0 How have you been feeling since the cancer metastasized 0)
+  1 (0 How have I been feeling since the cancer metastasized 0)
     2 ([SAD] The pain has been hard to manage\, but really the worst of it is not knowing what my future will hold\. I was hoping that would change after I learned my prognosis\, but I still feel just as scared as before \.) (100 :out)
     2 ([SAD] When I received my diagnosis those months ago\, I felt as though cancer had taken what control I had over my own future\. I wish I could say that had changed with receiving these test results\, but now my future feels more confused than ever\.) (0 :out)
 

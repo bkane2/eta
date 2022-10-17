@@ -572,7 +572,7 @@
   1 (The test results show that my cancer has spread \.)
     2 *ask-about-prognosis* (0 :schema)
 
-  1 (We performed the CT scan to see how much further your cancer has progressed \.)
+  1 (We performed the CT scan to see how much further my cancer has progressed \.)
     2 *ask-about-test-results* (0 :schema)
   1 (You intend to explain my test results to me \.)
     2 *ask-about-test-results* (0 :schema)
@@ -660,7 +660,7 @@
     2 (Cancer is such a challenging disease to live with \. I\'m not sure if my life will ever be normal again \. But I appreciate all you\'ve been doing to help me \.) (100 :out)
     2 (It\'s just such a challenging disease to live with \. I hope someday we\'ll find a cure \. But until then\, I suppose I\'ve got to make the best of the time I have left \.) (0 :out)
 
-  1 (It is expected to feel badly after learning your cancer is terminal \.)
+  1 (It is expected to feel badly after learning my cancer is terminal \.)
     2 *mention-anxiety* (0 :schema)
 
   1 (You are going to help me cope with learning my cancer is terminal \.)
@@ -680,9 +680,9 @@
     2 (I know it\'s hard to say for sure\. And I suppose\, in the end\, it won\'t change anything if I have cancer for one reason or another\. 
        All I can do is make the most of the time I have left \.) (0 :out)
 
-  1 (There\'s nothing you could have done to change your cancer diagnosis \.)
+  1 (There\'s nothing I could have done to change my cancer diagnosis \.)
     2 (It\'s a relief to hear that there\'s nothing that I could have done \. I can\'t say why\. After all\, I still do have cancer\. I guess I just don\'t want to live the rest of my life wondering if I could have changed things \.) (0 :out)
-    2 (That\'s good to hear\. When you get to my age\, you already have a number of regrets\. Feeling as though I somehow played a hand in my own cancer diagnosis would have been the worst of all of them\.) (0 :out)
+    2 (That\'s good to hear\. When you get to my age\, you already have a number of regrets\. Feeling as though I somehow played a hand in my own cancer diagnosis would have been the worst of all of them \.) (0 :out)
 
   1 (Cancer can affect anyone \.)
     2 *mention-anxiety* (0 :schema)
@@ -693,7 +693,7 @@
   1 (Having cancer changes life significantly \.)
     2 *mention-anxiety* (0 :schema)
 
-  1 (How have you been feeling since the cancer metastasized ?)
+  1 (How have I been feeling since the cancer metastasized ?)
     2 *mention-anxiety* (0 :schema)
 
   1 (You want to talk about my future instead of the reason for my cancer \.)
