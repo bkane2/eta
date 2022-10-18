@@ -269,7 +269,8 @@
 
 
 (defun eta (&key (subsystems-perception '(|Terminal| |Audio|)) (subsystems-specialist '())
-                 (dependencies nil) (emotions nil) (read-log nil) (debug-patterns nil))
+                 (dependencies nil) (response-generator 'RULE) (emotions nil) (read-log nil)
+                 (debug-patterns nil))
 ;``````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
 ; (now largely commented out) and controls the loop for producing,
@@ -284,6 +285,8 @@
   (setq *registered-systems-perception* subsystems-perception)
   (setq *registered-systems-specialist* subsystems-specialist)
   (setq *emotions* emotions)
+  (setq *response-generator*
+    (if (member response-generator '(GPT3 RULE)) response-generator 'RULE))
   (setq *debug-patterns* debug-patterns)
   (setq *count* 0) ; Number of outputs so far
 
