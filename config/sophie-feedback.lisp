@@ -19,6 +19,11 @@
 ;; *dependencies* : NIL to only include local packages (note that some applications may not work without Quicklisp dependencies).
 ;;                  Otherwise provide a list of quicklisp packages to be loaded at runtime.
 ;;
+;; *generation-mode* : The method to use for generating responses at system reaction schema steps:
+;;                     GPT3: uses GPT-3 to generate a response using a prompt created automatically from
+;;                           the current schema, relevant knowledge, and sentence to paraphrase (if any).
+;;                     RULE (default): uses pattern transduction trees to select reactions/responses.
+;;
 ;; *safe-mode* : T to exit smoothly if exception is thrown during execution,
 ;;               NIL otherwise
 ;;
@@ -37,6 +42,7 @@
 (defparameter *subsystems-specialist* '())
 (defparameter *emotion-tags* NIL)
 (defparameter *dependencies* NIL)
+(defparameter *generation-mode* 'RULE)
 (defparameter *safe-mode* NIL)
 (defparameter *debug-patterns-mode* NIL)
  

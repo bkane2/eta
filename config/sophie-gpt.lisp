@@ -1,7 +1,7 @@
 ;;
 ;; *avatar* : specify the name of one of the available avatars to use
 ;;
-;; *read-log-mode* : If T, reads and emulates each of the log files in logs/ directory, allows user corrections, and outputs new
+;; *read-log-mode* : If T, reads and emulates each of the log files in logs/ directory, allows user corrections, Thand outputs new
 ;;                   log files in logs_out/
 ;;                   If a string corresponding to a file name, read just that file from logs/
 ;;                   (NOTE: currently only relevant to david/blocks world)
@@ -36,13 +36,13 @@
 ;;                    in a multi-session dialogue (potentially overwritten by sessionInfo.lisp if in live mode)
 ;;
 
-(defparameter *avatar* "sophie")
+(defparameter *avatar* "sophie-gpt-test")
 (defparameter *read-log-mode* NIL)
 (defparameter *subsystems-perception* '(|Terminal| |Audio|))
 (defparameter *subsystems-specialist* '())
 (defparameter *emotion-tags* T)
 (defparameter *dependencies* NIL)
-(defparameter *generation-mode* 'RULE)
+(defparameter *generation-mode* 'GPT3)
 (defparameter *safe-mode* NIL)
 (defparameter *debug-patterns-mode* NIL)
 (defparameter *session-number* 1)
