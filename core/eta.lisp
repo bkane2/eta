@@ -285,10 +285,17 @@
   (setq *registered-systems-perception* subsystems-perception)
   (setq *registered-systems-specialist* subsystems-specialist)
   (setq *emotions* emotions)
-  (setq *response-generator*
-    (if (member response-generator '(GPT3 RULE)) response-generator 'RULE))
   (setq *debug-patterns* debug-patterns)
   (setq *count* 0) ; Number of outputs so far
+
+  ; Initialize gpt3-shell (if in GPT3 generation mode and valid API key exists)
+  (setq *response-generator*
+    (if (member response-generator '(GPT3 RULE)) response-generator 'RULE))
+  (when (equal *response-generator* 'GPT3)
+    (let ((api-key (get-api-key "openai")))
+      (if api-key
+        (gpt3-shell:init api-key)
+        (setq *response-generator* 'RULE))))
 
   (when *read-log*
     (setq *log-contents* (read-log-contents *read-log*))

@@ -1,0 +1,2 @@
+(defun init (api-key &key engine response-length temperature top-p frequency-penalty presence-penalty) nil)
+(defun generate (prompt &key response-length temperature top-p frequency-penalty presence-penalty stop-seq) nil)

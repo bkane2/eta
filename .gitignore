@@ -21,3 +21,6 @@ avatars/test_*
 logs/**/logs_*
 logs/logs
 logs/**/*.csv
+
+# API keys
+config/keys

@@ -36,13 +36,13 @@
 ;;                    in a multi-session dialogue (potentially overwritten by sessionInfo.lisp if in live mode)
 ;;
 
-(defparameter *avatar* "sophie")
+(defparameter *avatar* "sophie-gpt-test")
 (defparameter *read-log-mode* NIL)
 (defparameter *subsystems-perception* '(|Terminal| |Audio|))
 (defparameter *subsystems-specialist* '())
 (defparameter *emotion-tags* T)
-(defparameter *dependencies* NIL)
-(defparameter *generation-mode* 'RULE)
+(defparameter *dependencies* '("gpt3-shell"))
+(defparameter *generation-mode* 'GPT3)
 (defparameter *safe-mode* NIL)
 (defparameter *debug-patterns-mode* NIL)
 (defparameter *session-number* 1)

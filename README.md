@@ -74,5 +74,19 @@ signal to the avatar to select appropriate behavior.
 The sophie-feedback avatar is intended to be used in conjunction with the sophie avatar, on a separate process. At each turn of a sophie dialogue, the gist-clause extracted from the user's utterance is concatenated to the gist-clause of sophie's preceeding utterance, with a `[SEP]` token between the two gist-clauses. This string is given to the sophie-feedback avatar as input, and the
 avatar then outputs some piece of feedback on that turn (for instance, suggestions for open-ended questions the user might have asked).
 
+### sophie-gpt
 
+This is an experimental avatar intended to incorporate GPT-3 based response generation into the sophie avatar. Currently the conversation is rather short/limited, and goes through the following phases:
 
+1. The avatar asks about her pain; she moves onto the next topic once the doctor expresses empathy.
+2. The avatar asks about her prognosis; she moves onto the next topic once the doctor gives an explicit answer.
+3. The avatar asks about her options for the future; she moves onto the next topic once the doctor empowers her (i.e., asks her about her goals/values).
+4. The avatar attempts to finish the conversation; the dialogue ends when the doctor says goodbye.
+
+#### Dependencies
+
+* [Quicklisp](https://www.quicklisp.org/beta/)
+* [ASDF version 3 or above](https://asdf.common-lisp.dev/archives/asdf.lisp)
+* [gpt3-shell](https://github.com/bkane2/gpt3-shell)
+
+Additionally, a valid OpenAI API key needs to be included in `config/keys/openai.txt`.

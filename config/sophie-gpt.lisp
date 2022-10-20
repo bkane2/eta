@@ -41,7 +41,7 @@
 (defparameter *subsystems-perception* '(|Terminal| |Audio|))
 (defparameter *subsystems-specialist* '())
 (defparameter *emotion-tags* T)
-(defparameter *dependencies* NIL)
+(defparameter *dependencies* '("gpt3-shell"))
 (defparameter *generation-mode* 'GPT3)
 (defparameter *safe-mode* NIL)
 (defparameter *debug-patterns-mode* NIL)
