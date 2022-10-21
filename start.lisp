@@ -95,9 +95,10 @@
               (if (probe-directory p) p)
               (if (not (pathname-name p)) p)))
           (directory directory))))))
-    ; Load all shared rules and schemas files
+    ; Load all shared rules, schemas, and knowledge files
     (load-files-recur (concatenate 'string "./avatars/" avatar-name "/schemas"))
     (load-files-recur (concatenate 'string "./avatars/" avatar-name "/rules"))
+    (load-files-recur (concatenate 'string "./avatars/" avatar-name "/knowledge"))
     ; If a multi-session avatar, load all files specific to that day
     (when (and (boundp '*session-number*) (integerp *session-number*))
       (load-files-recur (concatenate 'string "./avatars/" avatar-name "/" (format nil "day~a" *session-number*)))))

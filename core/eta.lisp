@@ -125,6 +125,10 @@
   ; Load object schemas
   (load-obj-schemas)
 
+  ; Load initial knowledge (if any)
+  (when (boundp '*init-knowledge*)
+    (mapcar #'store-in-kb *init-knowledge*))
+
   ; Time
   ; Stores the constant denoting the current time period. NOW0 is taken uniquely to refer
   ; to the beginning, with all moves/etc. occurring at subsequent times.

@@ -1548,6 +1548,46 @@
 
 ;``````````````````````````````````````````````````````
 ;
+; KNOWLEDGE BASE UTIL
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun store-in-kb (wff)
+;```````````````````````````````
+; Stores a wff in knowledge base.
+; 
+  (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)))
+    (store-fact wff (ds-kb *ds*)))
+) ; END store-in-kb
+
+
+
+(defun get-from-kb (pred-patt)
+;````````````````````````````````````
+; Retrieves a fact from knowledge base, by checking whether something matching
+; pred-patt is in the kb hash table.
+;
+  (get-matching-facts pred-patt (ds-kb *ds*))
+) ; END get-from-kb
+
+
+
+(defun remove-from-kb (pred-patt)
+;```````````````````````````````````````
+; Removes a fact from knowledge base.
+;
+  (let ((facts (get-from-kb pred-patt)))
+    (if (and facts (not (listp facts)))
+      (remove-fact pred-patt (ds-kb *ds*))
+      (remove-facts facts (ds-kb *ds*))))
+) ; END remove-from-kb
+
+
+
+;``````````````````````````````````````````````````````
+;
 ; NAME/CONCEPT/ALIAS/RECORD STRUCTURE UTIL
 ;
 ;``````````````````````````````````````````````````````
