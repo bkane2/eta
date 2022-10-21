@@ -208,6 +208,12 @@
   ; Currently only supports '|Spatial-Reasoning-System|.
   (defparameter *registered-systems-specialist* nil)
 
+  ; Set indexical variables
+  (defparameter *^me*
+    (if (and (boundp '*avatar-name*) *avatar-name*) *avatar-name* 'Eta))
+  (defparameter *^you*
+    (if (and (boundp '*user-name*) *user-name*) *user-name* '|John Doe|))
+
   ; Keep list of block coordinates mimicking actual BW system (for debugging purposes
   ; while not connected to the BW system).
   (defparameter *block-coordinates* '(

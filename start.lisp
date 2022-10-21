@@ -117,10 +117,11 @@
 
 
 
-; If live mode, load *user-id* from sessionInfo file (if it exists).
-; Otherwise, manually set *user-id* (or prompt user for input).
-;````````````````````````````````````````````````````````````````
+; If live mode, load *user-id* and *user-name* from sessionInfo file (if it exists).
+; Otherwise, manually set (or prompt user for input).
+;```````````````````````````````````````````````````````````````````````
 (defparameter *user-id* nil)
+(defparameter *user-name* nil)
 (if (probe-file (get-io-path "sessionInfo.lisp"))
   (load (get-io-path "sessionInfo.lisp")))
 (when (not *user-id*)
@@ -129,6 +130,10 @@
   ;; (princ "user id: ") (finish-output)
   ;; (setq *user-id* (write-to-string (read))))
 )
+(when (not *user-name*)
+  (format t "~%~%Enter user name ~%")
+  (princ "user name: ") (finish-output)
+  (setq *user-name* (write-to-string (read))))
 
 
 ; Clean IO files, load Eta, and load avatar-specific files

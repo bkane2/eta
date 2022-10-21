@@ -1,6 +1,8 @@
 ;;
 ;; *avatar* : specify the name of one of the available avatars to use
 ;;
+;; *avatar-name* : the full name of the avatar to use
+;;
 ;; *read-log-mode* : If T, reads and emulates each of the log files in logs/ directory, allows user corrections, Thand outputs new
 ;;                   log files in logs_out/
 ;;                   If a string corresponding to a file name, read just that file from logs/
@@ -37,6 +39,7 @@
 ;;
 
 (defparameter *avatar* "sophie-gpt-test")
+(defparameter *avatar-name* "Sophie Hallman")
 (defparameter *read-log-mode* NIL)
 (defparameter *subsystems-perception* '(|Terminal| |Audio|))
 (defparameter *subsystems-specialist* '())
