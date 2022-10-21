@@ -192,10 +192,6 @@
   ; If *emotions* is T, Eta will allow use of emotion tags at beginning of outputs.
   (defparameter *emotions* nil)
 
-  ; If *debug-patterns* is T, Eta will print additional outputs to the console
-  ; showing patterns that were matched in the process of invoking a transduction tree.
-  (defparameter *debug-patterns* nil)
-
   ; Log contents and pointer corresponding to current position in log.
   (defparameter *log-contents* nil)
   (defparameter *log-answer* nil)
@@ -269,7 +265,7 @@
 
 
 (defun eta (&key (subsystems-perception '(|Terminal| |Audio|)) (subsystems-specialist '())
-                 (dependencies nil) (emotions nil) (read-log nil) (debug-patterns nil))
+                 (dependencies nil) (emotions nil) (read-log nil))
 ;``````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
 ; (now largely commented out) and controls the loop for producing,
@@ -284,7 +280,6 @@
   (setq *registered-systems-perception* subsystems-perception)
   (setq *registered-systems-specialist* subsystems-specialist)
   (setq *emotions* emotions)
-  (setq *debug-patterns* debug-patterns)
   (setq *count* 0) ; Number of outputs so far
 
   (when *read-log*
@@ -2401,8 +2396,7 @@
                            :schema+args :gist :schema+ulf))
         (setq result (cons directive (fill-template pattern parts)))
         (setf (get rule-node 'time-last-used) *count*)
-        (return-from choose-result-for1
-          (list :matched-nodes+result (reverse (cons (list pattern directive) matched-nodes)) result)))
+        (return-from choose-result-for1 result))
 
       ; A directive is not recognized
       (t
