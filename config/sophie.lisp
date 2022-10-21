@@ -29,9 +29,6 @@
 ;; *safe-mode* : T to exit smoothly if exception is thrown during execution,
 ;;               NIL otherwise
 ;;
-;; *debug-patterns-mode* : T to include print statements showing which patterns were matched in the process of invoking a pattern
-;;                        transduction tree; NIL otherwise.
-;;
 ;; *user-id* : unique ID of user (potentially overwritten by sessionInfo.lisp if in live mode)
 ;;
 ;; *session-number* : the number session to load (a session-number of 1 corresponds to the files in the day1 directory of an avatar)
@@ -47,6 +44,5 @@
 (defparameter *dependencies* NIL)
 (defparameter *generation-mode* 'RULE)
 (defparameter *safe-mode* NIL)
-(defparameter *debug-patterns-mode* NIL)
 (defparameter *session-number* 1)
  
