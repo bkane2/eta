@@ -18,16 +18,28 @@
 ; schema-contents : the contents of the schema used to generate the plan (if any)
 ; curr-step       : the current (to be processed) step of the plan
 ; vars            : contains any local variables in plan (potentially inherited)
-; goals           : contains any goals of a plan
 ; subplan-of      : points to a plan-step that the plan is a subplan of
+; (the following fields are inherited from the schema (if any))
+; types           : contains formulas for types in plan
+; var-roles       : contains formulas for var-roles in plan
+; rigid-conds     : contains formulas for rigid conditions of plan
+; static-conds    : contains formulas for static conditions of plan
+; preconds        : contains formulas for preconditions of plan
+; goals           : contains formulas for goals of plan
 ;
   plan-name
   schema-name
   schema-contents
   curr-step
   vars
-  goals
   subplan-of
+  ; == facts inherited from schema ==
+  types
+  var-roles
+  rigid-conds
+  static-conds
+  preconds
+  goals
 ) ; END defstruct plan
 
 
@@ -166,7 +178,7 @@
         (setq type-wff (subst sk-name var type-wff)))
       ; Store type as fact in context.
       (store-in-context type-wff))
-  )
+      (push (list type-name type-wff) (plan-types plan)))
 ) ; END process-schema-types
 
 
@@ -180,8 +192,7 @@
     (dolist (var-role-pair var-role-pairs)
       (setq var-role-name (first var-role-pair))
       (setq var-role-wff (second var-role-pair))
-    )
-  )
+      (push (list var-role-name var-role-wff) (plan-var-roles plan))))
 ) ; END process-schema-var-roles
 
 
@@ -199,8 +210,7 @@
       (setq rigid-cond-name (first rigid-cond-pair))
       (setq rigid-cond-wff (second rigid-cond-pair))
       (store-in-context rigid-cond-wff)
-    )
-  )
+      (push (list rigid-cond-name rigid-cond-wff) (plan-rigid-conds plan))))
 ) ; END process-schema-rigid-conds
 
 
@@ -216,8 +226,7 @@
     (dolist (static-cond-pair static-cond-pairs)
       (setq static-cond-name (first static-cond-pair))
       (setq static-cond-wff (second static-cond-pair))
-    )
-  )
+      (push (list static-cond-name static-cond-wff) (plan-static-conds plan))))
 ) ; END process-schema-static-conds
 
 
@@ -233,8 +242,7 @@
     (dolist (precond-pair precond-pairs)
       (setq precond-name (first precond-pair))
       (setq precond-wff (second precond-pair))
-    )
-  )
+      (push (list precond-name precond-wff) (plan-preconds plan))))
 ) ; END process-schema-preconds
 
 
