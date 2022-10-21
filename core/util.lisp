@@ -345,6 +345,28 @@
 
 
 
+(defun str-split (str chr)
+;```````````````````````````
+; Given a string, split into multiple strings based on a delimiter character.
+;
+  (mapcar (lambda (l) (coerce l 'string))
+    (list-split (explode str) chr))
+) ; END str-split
+
+
+
+(defun str-join (lst str-or-chr)
+;`````````````````````````````````
+; Given a list of strings, join into one string around delimiter string/character.
+;
+  (let ((ret ""))
+    (dolist (str lst)
+      (setq ret (concatenate 'string ret str (string str-or-chr))))
+    (coerce (butlast (explode ret) (length (explode (string str-or-chr)))) 'string)
+)) ; END str-join
+
+
+
 (defun sym-contains (sym char)
 ;```````````````````````````````
 ; Returns true if a symbol contains the character given by char.
@@ -848,8 +870,8 @@
 ; Records a turn in the conversation log, as well as writing to external files.
 ;
   (let ((text (first turn)) (gists (second turn)) (ulfs (third turn))
-        (agent-name (string-upcase (string agent))))
-    (push text (first (ds-conversation-log *ds*)))
+        (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
+    (push (list agent-name text) (first (ds-conversation-log *ds*)))
     (push gists (second (ds-conversation-log *ds*)))
     (push ulfs (third (ds-conversation-log *ds*)))
     (log-turn-write turn :agent agent)
@@ -2610,6 +2632,122 @@
   (format t "~%~% ---- RESULT: ~a" result)
   (format t "~%~v@{~a~:*~}~%~%~%" (+ (* 2 len-padding) len-rule-node-str) "*")
 )) ; END print-matched-rules
+
+
+
+;``````````````````````````````````````````````````````
+;
+; GPT-3 GENERATION UTIL
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun shortname (name)
+;`````````````````````````
+; Gets the short version of a name string (if name includes a title,
+; shortname is title + last name, otherwise shortname is first name).
+;
+  (let ((parts (str-split name #\ )))
+    (cond
+      ; Includes title
+      ((and (>= (length parts) 3)
+            (member #\. (explode (first parts))))
+        (concatenate 'string (first parts) " " (str-join (cddr parts) #\ )))
+      (t (first parts)))
+)) ; END shortname
+
+
+
+(defun generate-prompt-turn-start (name)
+;`````````````````````````````````````````
+; Generates a turn start prefix for the prompt.
+;
+  (format nil "\\n~a:" (shortname name))
+) ; END generate-prompt-turn-start
+
+
+
+(defun words-to-str (wordlist)
+;````````````````````````````````
+; Converts a list of word symbols to a string.
+;
+  (format nil "~@(~{~a ~}~)" wordlist)
+) ; END words-to-str
+
+
+
+(defun preprocess-ulf-pronouns-for-prompt (ulf &key has-pron)
+;``````````````````````````````````````````````````````````````
+; If ^me is followed by (^me 's) possessive in child
+; clause, replace it with their.pro. Otherwise, if ^me
+; is encountered, replace it with the value of the indexical
+; pronoun.
+;
+  (cond
+    ((atom ulf) ulf)
+    ((equal (car ulf) '^me)
+      (cons *^me* (preprocess-ulf-pronouns-for-prompt (cdr ulf) :has-pron t)))
+    ((atom (car ulf))
+      (cons (car ulf) (preprocess-ulf-pronouns-for-prompt (cdr ulf) :has-pron has-pron)))
+    ((and (equal (car ulf) '(^me 's)) has-pron)
+      (cons 'their.pro (preprocess-ulf-pronouns-for-prompt (cdr ulf) :has-pron has-pron)))
+    (t
+      (mapcar (lambda (part) (preprocess-ulf-pronouns-for-prompt part :has-pron has-pron)) ulf)))
+) ; END preprocess-ulf-pronouns-for-prompt
+
+
+
+(defun ulf-to-str (ulf)
+;```````````````````````````
+; Converts a ULF to a string, replacing indexical
+; pronouns and possessives.
+;
+  (ulf2english:ulf2english (preprocess-ulf-pronouns-for-prompt ulf))
+) ; END ulf-to-str
+
+
+
+(defun generate-prompt-preprocess-history (history)
+;```````````````````````````````````````````````````
+; Preprocesses dialogue history into a single string.
+; History is a list of lists (agent turn), where agent
+; and turn are both strings.
+;
+  (let (turn-strs)
+    (setq turn-strs (mapcar (lambda (turn)
+      (concatenate 'string (shortname (first turn)) ": " (second turn))) history))
+    (str-join turn-strs "\\n")
+)) ; END generate-prompt-preprocess-history
+
+
+
+(defun generate-prompt (facts history)
+;````````````````````````````````````````
+; Generates a GPT-3 prompt from facts, which is a list
+; of strings, and history, which is a list of lists (agent turn)
+; where agent and turn are both strings.
+;
+  (let (prompt)
+    (setq prompt (format nil "Write a conversation between ~a and ~a. " *^you* *^me*))
+    (setq prompt (concatenate 'string prompt (str-join facts " ")))
+    (setq prompt (concatenate 'string prompt "\\n\\n"
+      (generate-prompt-preprocess-history history) (generate-prompt-turn-start (string *^me*))))
+    prompt
+)) ; END generate-prompt
+
+
+
+(defun get-gpt3-response (facts history)
+;``````````````````````````````````````````
+; Generates a GPT-3 response from facts, which is a list
+; of strings, and history, which is a list of lists (agent turn)
+; where agent and turn are both strings.
+; Returns a list of words.
+;
+  (parse-chars (coerce (gpt3-shell:generate (generate-prompt facts history)
+    :stop-seq (vector (generate-prompt-turn-start (string *^you*)) "\\n")) 'list))
+) ; END get-gpt3-response
 
 
 

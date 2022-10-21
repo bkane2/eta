@@ -210,9 +210,9 @@
 
   ; Set indexical variables
   (defparameter *^me*
-    (if (and (boundp '*avatar-name*) *avatar-name*) *avatar-name* 'Eta))
+    (if (and (boundp '*avatar-name*) *avatar-name*) (intern *avatar-name*) 'Eta))
   (defparameter *^you*
-    (if (and (boundp '*user-name*) *user-name*) *user-name* '|John Doe|))
+    (if (and (boundp '*user-name*) *user-name*) (intern *user-name*) '|John Doe|))
 
   ; Keep list of block coordinates mimicking actual BW system (for debugging purposes
   ; while not connected to the BW system).

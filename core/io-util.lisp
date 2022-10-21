@@ -126,7 +126,7 @@
         (fname-gist (concatenate 'string (get-io-path "conversation-log/") "gist.txt"))
         (fname-ulf  (concatenate 'string (get-io-path "conversation-log/") "ulf.txt"))
         (text (first turn)) (gists (second turn)) (ulfs (third turn))
-        (agent-name (string-upcase (string agent))))
+        (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
     (setq *print-pretty* nil)
     (with-open-file (outfile fname-text :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~a : ~s~%" agent-name text))
