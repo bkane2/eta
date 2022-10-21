@@ -2738,6 +2738,17 @@
 
 
 
+(defun trim-all-newlines (str)
+;````````````````````````````````
+; Trims all newline characters from the beginning of a string.
+;
+  (string-left-trim (string #\newline)
+    (string-left-trim (string #\return)
+      (string-left-trim (coerce '(#\return #\newline) 'string) str)))
+) ; END trim-all-newlines
+
+
+
 (defun get-gpt3-response (facts history)
 ;``````````````````````````````````````````
 ; Generates a GPT-3 response from facts, which is a list
@@ -2745,8 +2756,10 @@
 ; where agent and turn are both strings.
 ; Returns a list of words.
 ;
-  (parse-chars (coerce (gpt3-shell:generate (generate-prompt facts history)
-    :stop-seq (vector (generate-prompt-turn-start (string *^you*)) "\\n")) 'list))
+  (parse-chars (coerce (trim-all-newlines
+    (gpt3-shell:generate (generate-prompt facts history)
+      :stop-seq (vector (generate-prompt-turn-start (string *^you*)) "\\n")))
+    'list))
 ) ; END get-gpt3-response
 
 
