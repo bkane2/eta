@@ -11,13 +11,13 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 "Sophie wants to know more about her prognosis."
+  ?g1 (Sophie wants to know more about her prognosis \.)
   ;; ?g1 (^me want.v (to (know.v (more.d
   ;;       (n+preds {information}.n (about.p ((^me 's) prognosis.n)))))))
 )
 
 :preconds (
-  ?p1 "Sophie does not know her prognosis."
+  ?p1 (Sophie does not know her prognosis \.)
   ;; ?p1 (^me do.aux-v not (know.v ((^me 's) prognosis.n)))
 )
 
