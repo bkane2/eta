@@ -170,7 +170,7 @@
         (load "load-eta.lisp")
         (load-avatar-files *avatar*)
         (eta :read-log log :subsystems-perception *subsystems-perception* :subsystems-specialist *subsystems-specialist*
-             :emotions *emotion-tags* :dependencies *dependencies* :response-generator *generation-mode*) logs)))
+             :emotions *emotion-tags* :dependencies *dependencies* :response-generator *generation-mode*)) logs)))
 
   ; Run Eta
   ;`````````````````````````
