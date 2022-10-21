@@ -698,8 +698,6 @@
 ;```````````````````````````````````````
 ; Given an unsatisfied goal, use a transduction tree to determine an appropriate subplan to instantiate
 ; and attach to the current plan step.
-; TODO: currently only goals of form (^me want.v (that (^me know.v (ans-to '(...))))) are supported,
-; and only the quoted expression is used to select a subplan. This will need to be made more general eventually.
 ;
   (let (curr-step goal-var goal-wff bindings goal-words choice schema-name args subplan)
 
@@ -708,17 +706,8 @@
     (setq goal-var (first goal))
     (setq goal-wff (second goal))
 
-    ; Get quoted words of goal statement
-    (cond
-      ((setq bindings (bindings-from-ttt-match '(^me want.v (that (^me know.v (ans-to _!)))) goal-wff))
-        (setq goal-words (get-single-binding bindings))
-        ; Remove quote
-        (setq goal-words (cadr goal-words)))
-
-      (t (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff)))
-
     ; Select subplan for replanning
-    (setq choice (choose-result-for goal-words '*replan-tree*))
+    (setq choice (choose-result-for goal-wff '*replan-tree*))
 
     ; Create subplan depending on directive
     (cond
