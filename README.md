@@ -87,6 +87,8 @@ This is an experimental avatar intended to incorporate GPT-3 based response gene
 
 * [Quicklisp](https://www.quicklisp.org/beta/)
 * [ASDF version 3 or above](https://asdf.common-lisp.dev/archives/asdf.lisp)
+* [TTT](https://github.com/genelkim/ttt)
+* [ulf-lib](https://github.com/genelkim/ulf-lib)
 * [gpt3-shell](https://github.com/bkane2/gpt3-shell)
 
 Additionally, a valid OpenAI API key needs to be included in `config/keys/openai.txt`.
