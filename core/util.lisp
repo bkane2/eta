@@ -534,6 +534,19 @@
 
 
 
+(defun ulf-symbol? (atm)
+;```````````````````````
+; Check whether a symbol is a ULF symbol.
+; (A bit hacky; a proper way would be to enumerate
+; all the type extensions supported by ULF.)
+;
+  (let ((parts (list-split (explode atm) #\.)))
+    (and (= 2 (length parts)) (first parts) (second parts)
+         (not (equal (car (second parts)) #\ )))
+)) ; END ulf-symbol?
+
+
+
 (defun restricted-variable? (atm)
 ;``````````````````````````````````
 ; Check whether a symbol is a variable, or a variable with a restriction following it.
@@ -652,13 +665,26 @@
 
 
 
+(defun sentence? (list)
+;```````````````````````````
+; A list is a sentence if it is a flat list of symbols
+; without any ULF type extensions.
+;
+  (if (and
+        (listp list)
+        (every #'symbolp list)
+        (every (lambda (atm) (not ulf-symbol? atm)) list)) t nil)
+) ; END sentence
+
+
+
 (defun quoted-sentence? (list)
 ;````````````````````````````````````````````````
 ; Is list of form (quote (word1 word2 ... wordn)) ?
 ;
   (if (and
         (quoted-list? list)
-        (every #'symbolp (second list))) t nil)
+        (sentence (second list))) t nil)
 ) ; END quoted-sentence?
 
 
@@ -669,8 +695,7 @@
 ;
   (if (and
         (quoted-list? list)
-        (every #'listp (second list))
-        (every (lambda (s) (every #'symbolp s)) (second list))) t nil)
+        (every #'sentence? (second list))) t nil)
 ) ; END quoted-sentence-list?
 
 
@@ -1060,6 +1085,15 @@
 
 
 
+(defun untag-emotions (resp)
+;```````````````````````````````
+; Removes emotion tags from an utterance.
+;
+  (remove-if #'emotion-tag? resp)
+) ; END untag-emotions
+
+
+
 (defun dual (sentence)
 ;``````````````````````
 ; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
@@ -1414,7 +1448,7 @@
 
 (defun print-context (&key verbose key)
 ;```````````````````````````````````````
-; Prints facts in the memory. When verbose is given as true,
+; Prints facts in the context. When verbose is given as true,
 ; print all keys and associated facts as well. If key is given,
 ; print only the list of facts stored under that key.
 ;
@@ -1576,6 +1610,27 @@
 
 
 
+(defun print-kb (&key verbose key)
+;```````````````````````````````````````
+; Prints facts in the knowledge base. When verbose is given as true,
+; print all keys and associated facts as well. If key is given,
+; print only the list of facts stored under that key.
+;
+  (let (l1 l2)
+    (maphash (lambda (k v)
+      (if (equal v t) (setq l1 (cons k l1))
+        (setq l2 (cons (list k v) l2)))) (ds-kb *ds*))
+    (mapcar (lambda (f)
+      (format t "~a~%" f)) l1)
+    (when (or verbose key)
+      (format t "------------------------------------ ~%")
+      (mapcar (lambda (f)
+        (if (or (null key) (equal (first f) key))
+          (format t "~a: ~a~%~%" (first f) (second f)))) l2)))
+) ; END print-kb
+
+
+
 (defun store-in-kb (wff)
 ;```````````````````````````````
 ; Stores a wff in knowledge base.
@@ -1593,6 +1648,18 @@
 ;
   (get-matching-facts pred-patt (ds-kb *ds*))
 ) ; END get-from-kb
+
+
+
+(defun get-all-from-kb ()
+;```````````````````````````
+; Retrieves all facts from knowledge base.
+;
+  (let (ret)
+    (maphash (lambda (k v)
+      (if (equal v t) (setq ret (cons k ret)))) (ds-kb *ds*))
+    ret
+)) ; END get-all-from-kb
 
 
 
@@ -2703,7 +2770,8 @@
 ; Converts a ULF to a string, replacing indexical
 ; pronouns and possessives.
 ;
-  (ulf2english:ulf2english (preprocess-ulf-pronouns-for-prompt ulf))
+  (if (member "ulf2english" *dependencies* :test #'equal)
+    (ulf2english:ulf2english (preprocess-ulf-pronouns-for-prompt ulf)))
 ) ; END ulf-to-str
 
 

@@ -754,22 +754,29 @@
               (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
                 (get-semantic-interpretations-characterizing-episode ep-name1)))
 
-            ; Use previous user reply as context for response generation
-            (setq prev-step (find-prev-step-of-type subplan '^you '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
-            (when prev-step
-              (setq prev-step-ep-name (plan-step-ep-name prev-step))
-              (setq prev-step-wff (plan-step-wff prev-step)))
+            (cond
+              ; Use GPT3-based paraphrase model if available
+              ((equal *response-generator* 'GPT3)
+                (setq utterance (form-surface-utterance-using-language-model expr)))
+              
+              ; Otherwise, use rule-based methods to select surface utterance
+              (t
+                ; Use previous user reply as context for response generation
+                (setq prev-step (find-prev-step-of-type subplan '^you '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
+                (when prev-step
+                  (setq prev-step-ep-name (plan-step-ep-name prev-step))
+                  (setq prev-step-wff (plan-step-wff prev-step)))
 
-            (format t "~%found previous speech act: ~a (~a)~%" prev-step-ep-name prev-step-wff) ; DEBUGGING
+                (format t "~%found previous speech act: ~a (~a)~%" prev-step-ep-name prev-step-wff) ; DEBUGGING
 
-            ; Get gist-clauses corresponding to previous user speech act
-            (setq user-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
+                ; Get gist-clauses corresponding to previous user speech act
+                (setq user-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
 
-            (format t "associated gist clauses: ~a~%" user-gist-clauses) ; DEBUGGING
+                (format t "associated gist clauses: ~a~%" user-gist-clauses) ; DEBUGGING
 
-            ; Get utterance from gist-clause and prior gist-clause
-            ; TODO: for now this appends all user gist-clauses together, but there might be a better way to do it
-            (setq utterance (form-surface-utterance-from-gist-clause expr (apply #'append user-gist-clauses)))
+                ; Get utterance from gist-clause and prior gist-clause
+                ; TODO: for now this appends all user gist-clauses together, but there might be a better way to do it
+                (setq utterance (form-surface-utterance-from-gist-clause expr (apply #'append user-gist-clauses)))))
 
             ; Attach say-to.v action as subplan to paraphrase-to.v action
             (setq new-subplan
@@ -1852,6 +1859,58 @@
     (if (null facts) (return-from obviated-action nil))
   facts)
 ) ; END obviated-action
+
+
+
+
+
+(defun form-surface-utterance-using-language-model (gist-clause)
+;`````````````````````````````````````````````````````````````````
+; Given a gist-clause by Eta, generate a surface utterance using a language
+; model (currently, GPT-3).
+;
+; At the moment, this is done using unconstrained generation: the system's
+; current schema and some relevant pieces of knowledge are used to generate
+; a prompt, along with the full dialogue history, and the language model
+; generates the next response.
+;
+; In the future, more constrained methods of generation may be explored, such
+; as prompting the model to paraphrase the given gist-clause (which is currently
+; unused) given the prompt and previous turn of history.
+;
+  (let ((curr-subplan (find-curr-subplan (ds-curr-plan *ds*))) utterance
+        preconds goals relevant-knowledge facts history facts-str history-str)
+
+    ; Get preconditions and goals of schema
+    ; TODO: add other relevant schema categories here in the future
+    (setq preconds (reverse (plan-preconds curr-subplan)))
+    (setq goals (reverse (plan-goals curr-subplan)))
+
+    ; Get relevant knowledge
+    ; TODO: replace the following once a more general retrieval method is used
+    (setq relevant-knowledge (reverse (get-all-from-kb)))
+
+    ; Combine facts and convert to strings
+    (setq facts (append relevant-knowledge preconds goals))
+    (setq facts-str (remove nil (mapcar (lambda (fact)
+      (if (sentence? fact)
+        (words-to-str fact)
+        (ulf-to-str fact)))
+      facts)))
+
+    ; Get history strings (removing any emotion tags)
+    (setq history (reverse (first (ds-conversation-log *ds*))))
+    (setq history (mapcar (lambda (turn)
+      (list (first turn) (untag-emotions (second turn)))) history))
+    (setq history-str (mapcar (lambda (turn)
+      (list (string (first turn)) (words-to-str (second turn)))) history))
+
+    ; Get utterance
+    (setq utterance (get-gpt3-response facts-str history-str))
+    ;; (format t "~% utterance = ~a" utterance) ; DEBUGGING   
+
+    utterance
+)) ; END form-surface-utterance-using-language-model
 
 
 
