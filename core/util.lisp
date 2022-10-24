@@ -673,7 +673,7 @@
   (if (and
         (listp list)
         (every #'symbolp list)
-        (every (lambda (atm) (not ulf-symbol? atm)) list)) t nil)
+        (every (lambda (atm) (not (ulf-symbol? atm))) list)) t nil)
 ) ; END sentence?
 
 
