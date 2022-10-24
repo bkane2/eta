@@ -674,7 +674,7 @@
         (listp list)
         (every #'symbolp list)
         (every (lambda (atm) (not ulf-symbol? atm)) list)) t nil)
-) ; END sentence
+) ; END sentence?
 
 
 
@@ -684,7 +684,7 @@
 ;
   (if (and
         (quoted-list? list)
-        (sentence (second list))) t nil)
+        (sentence? (second list))) t nil)
 ) ; END quoted-sentence?
 
 
