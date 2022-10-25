@@ -2739,18 +2739,48 @@
 
 
 
+(defun standardize-case+punctuation (str)
+;```````````````````````````````````````````````
+; Given a string, standardize the case and punctuation.
+; 
+  ; capitalize beginning of each sentence and fix periods
+  (setq str (str-join (mapcar (lambda (substr)
+        (format nil "~@(~a~)" (string-trim " " substr)))
+      (str-split str #\.)) ". "))
+  ; fix question marks and exclamation points
+  (setq str (str-join (mapcar (lambda (substr)
+      (string-trim " " substr))
+    (str-split str #\?)) "? "))
+  (setq str (str-join (mapcar (lambda (substr)
+      (string-trim " " substr))
+    (str-split str #\!)) "! "))
+  ; fix commas
+  (setq str (str-join (mapcar (lambda (substr)
+      (string-trim " " substr))
+    (str-split str #\,)) ", "))
+  ; capitalize "I"
+  ;; TODO
+  ; fix final punctuation
+  (if (equal (last (explode str) 3) '(#\  #\. #\ ))
+    (setq str (coerce (append (butlast (explode str) 3) '(#\.)) 'string)))
+  (if (equal (last (explode str) 2) '(#\. #\ ))
+    (setq str (coerce (append (butlast (explode str) 2) '(#\.)) 'string)))
+  (if (equal (last (explode str)) '(#\ ))
+    (setq str (coerce (append (butlast (explode str)) '(#\.)) 'string)))
+  (if (not (member (car (last (explode str))) '(#\. #\? #\!)))
+    (setq str (coerce (append (explode str) '(#\.)) 'string)))
+  str
+) ; END standardize-case+punctuation
+
+
+
 (defun words-to-str (wordlist)
 ;````````````````````````````````
 ; Converts a list of word symbols to a string.
 ;
   (let (ret)
-    (setq ret (format nil "~@(~{~a ~}~)" wordlist))
-    ; fix punctuation
-    (if (equal (last (explode ret) 3) '(#\  #\. #\ ))
-      (setq ret (coerce (append (butlast (explode ret) 3) '(#\.)) 'string)))
-    (if (equal (last (explode ret)) '(#\ ))
-      (setq ret (coerce (append (butlast (explode ret)) '(#\.)) 'string)))
-    ret
+    (setq ret (format nil "~{~a ~}" wordlist))
+    (standardize-case+punctuation ret)
 )) ; END words-to-str
 
 
