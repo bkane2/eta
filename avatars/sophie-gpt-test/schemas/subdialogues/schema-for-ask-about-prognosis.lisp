@@ -14,6 +14,8 @@
   ?g1 (Sophie wants to know more about her prognosis \.)
   ;; ?g1 (^me want.v (to (know.v (more.d
   ;;       (n+preds {information}.n (about.p ((^me 's) prognosis.n)))))))
+  ?g2 (Sophie wants that the doctor is explicit \.)
+  ;; ?g2 (^me want.v (that (^you be.v explicit.a)))
 )
 
 :preconds (

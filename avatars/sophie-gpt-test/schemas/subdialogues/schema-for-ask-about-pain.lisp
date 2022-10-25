@@ -16,6 +16,8 @@
   ;;       (n+preds {information}.n (about.p ((^me 's) condition.n)))))))
   ?g2 (Sophie wants stronger pain medication \.)
   ;; ?g2 (^me want.v (k (stronger.a (pain.n medication.n))))
+  ?g3 (Sophie wants that the doctor is empathetic \.)
+  ;; ?g3 (^me want.v (that (^you be.v empathetic.a)))
 )
 
 :preconds (
