@@ -2743,8 +2743,15 @@
 ;````````````````````````````````
 ; Converts a list of word symbols to a string.
 ;
-  (format nil "~@(~{~a ~}~)" wordlist)
-) ; END words-to-str
+  (let (ret)
+    (setq ret (format nil "~@(~{~a ~}~)" wordlist))
+    ; fix punctuation
+    (if (equal (last (explode ret) 3) '(#\  #\. #\ ))
+      (setq ret (coerce (append (butlast (explode ret) 3) '(#\.)) 'string)))
+    (if (equal (last (explode ret)) '(#\ ))
+      (setq ret (coerce (append (butlast (explode ret)) '(#\.)) 'string)))
+    ret
+)) ; END words-to-str
 
 
 
@@ -2758,7 +2765,8 @@
   (cond
     ((atom ulf) ulf)
     ((equal (car ulf) '^me)
-      (cons *^me* (preprocess-ulf-pronouns-for-prompt (cdr ulf) :has-pron t)))
+      (cons (intern (shortname *^me*))
+        (preprocess-ulf-pronouns-for-prompt (cdr ulf) :has-pron t)))
     ((atom (car ulf))
       (cons (car ulf) (preprocess-ulf-pronouns-for-prompt (cdr ulf) :has-pron has-pron)))
     ((and (equal (car ulf) '(^me 's)) has-pron)
@@ -2804,7 +2812,8 @@
     (setq prompt (format nil "Write a conversation between ~:(~a~) and ~:(~a~). " *^you* *^me*))
     (setq prompt (concatenate 'string prompt (str-join facts " ")))
     (setq prompt (concatenate 'string prompt "\\n\\n"
-      (generate-prompt-preprocess-history history) (generate-prompt-turn-start (string *^me*))))
+      (generate-prompt-preprocess-history history)
+      (generate-prompt-turn-start (string *^me*))))
     prompt
 )) ; END generate-prompt
 
@@ -2833,7 +2842,7 @@
     (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq turn-start (generate-prompt-turn-start (format nil "~:(~a~)" *^you*)))
     (setq stop-seq (vector turn-start "\\n"))
-    (format t "~%  gpt-3 stop-seq: ~a~%" stop-seq) ; DEBUGGING
+    (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
     (setq generated (gpt3-shell:generate (generate-prompt facts history)
       :stop-seq stop-seq))
     (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING

@@ -1883,8 +1883,8 @@
 
     ; Get preconditions and goals of schema
     ; TODO: add other relevant schema categories here in the future
-    (setq preconds (reverse (plan-preconds curr-subplan)))
-    (setq goals (reverse (plan-goals curr-subplan)))
+    (setq preconds (mapcar #'second (reverse (plan-preconds curr-subplan))))
+    (setq goals (mapcar #'second (reverse (plan-goals curr-subplan))))
 
     ; Get relevant knowledge
     ; TODO: replace the following once a more general retrieval method is used
