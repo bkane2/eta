@@ -21,7 +21,7 @@
 
 :episodes (
 
-?e1 (^me say-to.v ^you '(Hi\, my name is Sophie\. I\'m meeting with you today to help get some questions answered about my options and my future\.))
+;; ?e1 (^me say-to.v ^you '(Hi\, my name is Sophie\. I\'m meeting with you today to help get some questions answered about my options and my future\.))
 
 ;; (pain)
 ?e2 ((set-of ^me ^you) ask-about-pain.v)
