@@ -134,7 +134,7 @@
 (when (not *user-name*)
   (format t "~%~%Enter user name ~%")
   (princ "user name: ") (finish-output)
-  (setq *user-name* (write-to-string (read))))
+  (setq *user-name* (read-line)))
 
 
 ; Clean IO files, load Eta, and load avatar-specific files

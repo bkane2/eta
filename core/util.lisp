@@ -2717,10 +2717,14 @@
 ;
   (let ((parts (str-split name #\ )))
     (cond
-      ; Includes title
+      ; Includes title, first name, and last name
       ((and (>= (length parts) 3)
             (member #\. (explode (first parts))))
         (concatenate 'string (first parts) " " (str-join (cddr parts) #\ )))
+      ; Includes title and last name
+      ((and (= (length parts) 2)
+            (member #\. (explode (first parts))))
+        (concatenate 'string (first parts) " " (second parts)))
       (t (first parts)))
 )) ; END shortname
 
@@ -2797,7 +2801,7 @@
 ; where agent and turn are both strings.
 ;
   (let (prompt)
-    (setq prompt (format nil "Write a conversation between ~a and ~a. " *^you* *^me*))
+    (setq prompt (format nil "Write a conversation between ~:(~a~) and ~:(~a~). " *^you* *^me*))
     (setq prompt (concatenate 'string prompt (str-join facts " ")))
     (setq prompt (concatenate 'string prompt "\\n\\n"
       (generate-prompt-preprocess-history history) (generate-prompt-turn-start (string *^me*))))
@@ -2824,11 +2828,17 @@
 ; where agent and turn are both strings.
 ; Returns a list of words.
 ;
-  (parse-chars (coerce (trim-all-newlines
-    (gpt3-shell:generate (generate-prompt facts history)
-      :stop-seq (vector (generate-prompt-turn-start (string *^you*)) "\\n")))
-    'list))
-) ; END get-gpt3-response
+  (let (prompt turn-start stop-seq generated)
+    (setq prompt (generate-prompt facts history))
+    (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    (setq turn-start (generate-prompt-turn-start (format nil "~:(~a~)" *^you*)))
+    (setq stop-seq (vector turn-start "\\n"))
+    (format t "~%  gpt-3 stop-seq: ~a~%" stop-seq) ; DEBUGGING
+    (setq generated (gpt3-shell:generate (generate-prompt facts history)
+      :stop-seq stop-seq))
+    (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    (parse-chars (coerce (trim-all-newlines generated) 'list))
+)) ; END get-gpt3-response
 
 
 
