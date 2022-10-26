@@ -11,20 +11,20 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (Sophie wants to know more about her condition \.)
-  ;; ?g1 (^me want.v (to (know.v (more.d
-  ;;       (n+preds {information}.n (about.p ((^me 's) condition.n)))))))
-  ?g2 (Sophie wants stronger pain medication \.)
-  ;; ?g2 (^me want.v (k (stronger.a (pain.n medication.n))))
-  ?g3 (Sophie wants that the doctor is empathetic \.)
-  ;; ?g3 (^me want.v (that (^you be.v empathetic.a)))
+  ; Sophie wants to know more about her condition
+  ?g1 (^me ((pres want.v) (to (know.v (more.d (n+preds {information}.n
+        (about.p ((^me 's) condition.n))))))))
+  ; Sophie wants stronger pain medication
+  ?g2 (^me ((pres want.v) (k (stronger.a (pain.n medication.n)))))
+  ; Sophie wants that the doctor is empathetic
+  ?g3 (^me ((pres want.v) (that (^you be.v empathetic.a))))
 )
 
 :preconds (
-  ?p1 (Sophie\'s pain has become worse recently \.)
-  ;; ?p1 (((^me 's) pain.n) (perf become.v worse.a recently.adv-e))
-  ?p2 (Sophie doesn\'t fully understand her condition \.)
-  ;; ?p2 (^me do.aux-v not (fully.adv-a understand.v ((^me 's) condition.n)))
+  ; Sophie's pain has become worse recently
+  ?p1 (((^me 's) pain.n) ((pres perf) got.v worse.a recently.adv-e))
+  ; Sophie doesn't fully understand her condition
+  ?p2 (^me ((pres do.aux-s) not (fully.adv-a understand.v ((^me 's) condition.n))))
 )
 
 :episodes (

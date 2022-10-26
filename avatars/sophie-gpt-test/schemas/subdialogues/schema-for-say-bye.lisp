@@ -11,14 +11,14 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (Sophie wants to finish the conversation \.)
-  ;; ?g1 (^me want.v (to (finish.v (the.d conversation.n))))
+  ; Sophie wants to finish the conversation
+  ?g1 (^me ((pres want.v) (to (finish.v (the.d conversation.n)))))
 )
 
 :preconds (
-  ?p1 (Sophie is done talking about her condition for now \.)
-  ;; ?p1 (^me be.v done.a ({with}.p-arg (ka (talk.v (about.p ((^me 's) condition.n)))))
-  ;;       (adv-e (for.p (k now.n))))
+  ; Sophie is done talking about her condition for now
+  ?p1 (^me ((pres be.v) done.a ({with}.p-arg (ka (talk.v (about.p ((^me 's) condition.n)))))
+        (adv-e (for.p (k now.n)))))
 )
 
 :episodes (

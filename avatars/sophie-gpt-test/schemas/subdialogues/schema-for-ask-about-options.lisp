@@ -11,17 +11,17 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (Sophie wants to know more about her possible options for treatment \.)
-  ;; ?g1 (^me want.v (to (know.v (more.d
-  ;;       (n+preds {information}.n (about.p ((^me 's)
-  ;;         (n+preds (possible.a (plur option.n)) (for.p (k treatment.n))))))))))
-  ?g2 (Sophie wants that the doctor is empowering \.)
-  ;; ?g2 (^me want.v (that (^you be.v empowering.a)))
+  ; Sophie wants to know more about her possible options for treatment
+  ?g1 (^me ((pres want.v) (to (know.v (more.d
+        (n+preds {information}.n (about.p ((^me 's)
+          (n+preds (possible.a (plur option.n)) (for.p (k treatment.n)))))))))))
+  ; Sophie wants that the doctor is empowering
+  ?g2 (^me ((pres want.v) (that (^you be.v empowering.a))))
 )
 
 :preconds (
-  ?p1 (Sophie is not currently getting treatment \.)
-  ;; ?p1 (^me (prog not currently.adv-e (get.v (k treatment.n))))
+  ; Sophie is not currently getting treatment
+  ?p1 (^me ((pres prog) not currently.adv-e (get.v (k treatment.n))))
 )
 
 :episodes (
