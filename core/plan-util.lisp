@@ -696,6 +696,11 @@
         (setq goal-clause (get-single-binding bindings))
         ; Check if goal clause is true in context
         (if (get-from-context goal-clause) t nil))
+      ; Support for tensed version as well
+      ((setq bindings (bindings-from-ttt-match '(^me ((pres want.v) (that _!))) goal-wff))
+        (setq goal-clause (get-single-binding bindings))
+        ; Check if goal clause is true in context
+        (if (get-from-context goal-clause) t nil))
 
       (t (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff)))
 )) ; END check-goal-satisfied
