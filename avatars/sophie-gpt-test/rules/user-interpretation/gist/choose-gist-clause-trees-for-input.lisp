@@ -154,6 +154,8 @@
     2 (*test-results-input*) (0 :subtrees)
   1 (I .CAN .HEAR you \.)
     2 (*test-results-input*) (0 :subtrees)
+  1 (Goodbye \.)
+    2 (*say-bye-input*) (0 :subtrees)
   1 (0)
     2 (*general-input*) (0 :subtrees)
 ))

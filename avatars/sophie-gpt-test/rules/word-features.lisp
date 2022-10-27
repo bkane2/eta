@@ -1,6 +1,7 @@
 (MAPC 'ATTACHFEAT
 '(
   ; Synonymous
+  (BYE goodbye)
   (GO going gone went)
   (MEET meeting)
   (CARE TREATMENT treatments)

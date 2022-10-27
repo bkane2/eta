@@ -1,18 +1,14 @@
 (READRULES '*replan-tree*
 '(
-  ;; 1 (why .HAVE I not been sleeping well ?)
-  ;;   2 *ask-if-stronger-medication-will-help-sleep* (100 :schema)
-  ;; 1 (.DO I need .CHEMOTHERAPY ?)
-  ;;   2 *ask-if-need-chemotherapy* (100 :schema)
-  ;; 1 (what is my prognosis ?)
-  ;;   2 *ask-about-prognosis* (100 :schema)
-  ;; ;; 2 *ask-about-prognosis* (100 :schema)
-  ;; 1 (.CAN I trust your prognosis ?)
-  ;;   2 *ask-if-can-outlive-prognosis-quit-smoke* (100 :schema)
-  ;; 1 (what .DO my test results mean ?)
-  ;;   2 *ask-about-test-results* (100 :schema)
-  ;; 1 (.CAN I .HAVE a stronger .PAIN medication ?)
-  ;;   2 *ask-for-stronger-pain-medication* (100 :schema)
-  ;; 1 (what .SHOULD I .TELL my .FAMILY ?)
-  ;;   2 *ask-what-to-tell-family* (100 :schema)
+  1 (^me ((pres want.v) (that (^you be.v empathetic.a))))
+    2 *ask-about-pain* (0 :schema)
+
+  1 (^me ((pres want.v) (that (^you be.v explicit.a))))
+    2 *ask-about-prognosis* (0 :schema)
+
+  1 (^me ((pres want.v) (that (^you be.v empowering.a))))
+    2 *ask-about-options* (0 :schema)
+
+  1 (^me ((pres want.v) (that ((the.d conversation.n) be.v over.a))))
+    2 *say-bye* (0 :schema)
 ))

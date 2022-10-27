@@ -3573,3 +3573,12 @@
   1 (0)
     2 ((NIL Gist \: nothing found for ask for questions \.)) (0 :gist)
 )) ; END *ask-for-questions-input*
+
+
+(READRULES '*say-bye-input*
+'(
+  1 (0 .BYE 0)
+    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+  1 (0)
+    2 ((NIL Gist \: nothing found for say bye \.)) (0 :gist)
+)) ; END *say-bye-input*

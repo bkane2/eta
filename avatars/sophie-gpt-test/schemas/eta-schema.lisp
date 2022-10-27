@@ -39,6 +39,7 @@
 
 ;; (say-bye)
 ?e5 ((set-of ^me ^you) say-bye.v)
+?e6 (^me say-to.v ^you '(Thank you for meeting with me today\. Bye\.))
 
 )
 

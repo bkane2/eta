@@ -11,8 +11,10 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ; Sophie wants to finish the conversation
-  ?g1 (^me ((pres want.v) (to (finish.v (the.d conversation.n)))))
+  ;; ; Sophie wants to finish the conversation
+  ;; ?g1 (^me ((pres want.v) (to (finish.v (the.d conversation.n)))))
+  ; Sophie wants that the conversation is over
+  ?g1 (^me ((pres want.v) (that ((the.d conversation.n) be.v over.a))))
 )
 
 :preconds (
