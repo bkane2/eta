@@ -467,6 +467,7 @@
           (when (plan-goals subplan)
             (setq unsatisfied-goals (remove-if #'check-goal-satisfied (plan-goals subplan)))
             (when unsatisfied-goals
+              (dolist (ug unsatisfied-goals) (format t "~%  unsatisfied goal: ~a" ug)) ; DEBUGGING
               (setq replanned? (replan-for-goal plan (car unsatisfied-goals)))
               (if replanned? (return-from update-plan-state nil))))
 
@@ -702,7 +703,9 @@
         ; Check if goal clause is true in context
         (if (get-from-context goal-clause) t nil))
 
-      (t (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff)))
+      (t
+        ;; (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff) ; DEBUGGING
+        nil))
 )) ; END check-goal-satisfied
 
 
