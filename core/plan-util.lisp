@@ -467,7 +467,7 @@
           (when (plan-goals subplan)
             (setq unsatisfied-goals (remove-if #'check-goal-satisfied (plan-goals subplan)))
             (when unsatisfied-goals
-              (dolist (ug unsatisfied-goals) (format t "~%  unsatisfied goal: ~a" ug)) ; DEBUGGING
+              ;; (dolist (ug unsatisfied-goals) (format t "~%  unsatisfied goal: ~a" ug)) ; DEBUGGING
               (setq replanned? (replan-for-goal plan (car unsatisfied-goals)))
               (if replanned? (return-from update-plan-state nil))))
 

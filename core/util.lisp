@@ -2880,14 +2880,14 @@
 ;
   (let (prompt stop-seq generated)
     (setq prompt (generate-prompt facts history))
-    (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq stop-seq (vector
       (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
       (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
-    (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
+    ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
     (setq generated (gpt3-shell:generate (generate-prompt facts history)
       :stop-seq stop-seq))
-    (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (parse-chars (coerce (trim-all-newlines generated) 'list))
 )) ; END get-gpt3-response
 
