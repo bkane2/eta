@@ -21,6 +21,8 @@
 
 :episodes (
 
+?e1 (^me say-to.v ^you '(Hi\, doctor\. I\'m meeting with you today to help get some questions answered about my condition\.))
+;; ?e1 (^me say-to.v ^you '(Hi\, doctor\. I\'m Sophie\. I\'m meeting with you today to help get some questions answered about my condition\.))
 ;; ?e1 (^me say-to.v ^you '(Hi\, my name is Sophie\. I\'m meeting with you today to help get some questions answered about my options and my future\.))
 
 ;; (pain)
