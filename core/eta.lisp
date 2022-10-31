@@ -301,6 +301,10 @@
         (gpt3-shell:init api-key)
         (setq *response-generator* 'RULE))))
 
+  ; Initialize ulf2english if among dependencies (prevents delay on first invocation)
+  (when (member "ulf2english" *dependencies*)
+    (ulf2english:ulf2english '(this.pro ((pres be.v) (= (a.d (test.n |ULF|.n)))))))
+
   (when *read-log*
     (setq *log-contents* (read-log-contents *read-log*))
     (setq *log-answer* nil)
