@@ -808,8 +808,8 @@
             (setq user-gist-clauses (get-gist-clauses-characterizing-episode user-ep-name))
             (setq user-ulf (resolve-references (get-semantic-interpretations-characterizing-episode user-ep-name)))))
 
-        (format t "~% user gist clause (for ~a) is ~a" user-ep-name user-gist-clauses) ; DEBUGGING
-        (format t "~% user ulf (for ~a) is ~a ~%" user-ep-name user-ulf) ; DEBUGGING
+        ;; (format t "~% user gist clause (for ~a) is ~a" user-ep-name user-gist-clauses) ; DEBUGGING
+        ;; (format t "~% user ulf (for ~a) is ~a ~%" user-ep-name user-ulf) ; DEBUGGING
         (setq new-subplan (plan-reaction-to user-gist-clauses user-ulf ep-name)))
 
       ; NOTE: Apart from saying and reacting, assume that Eta actions
@@ -1256,8 +1256,8 @@
         ; Get gist-clauses corresponding to previous speech act
         (setq prev-step-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
 
-        (format t "~%ETA gist clauses that the user is responding to (from episode ~a)~% = ~a " prev-step-ep-name prev-step-gist-clauses)
-        (format t "~%using gist clause: ~a~% " (car (last prev-step-gist-clauses))) ; DEBUGGING
+        ;; (format t "~%ETA gist clauses that the user is responding to (from episode ~a)~% = ~a " prev-step-ep-name prev-step-gist-clauses)
+        ;; (format t "~%using gist clause: ~a~% " (car (last prev-step-gist-clauses))) ; DEBUGGING
 
         ; Compute the "interpretation" (gist clauses) of the user input,
         ; which will be done with a gist-clause packet selected using the
@@ -1271,7 +1271,7 @@
 
         ; Remove contradicting user gist-clauses (if any)
         (setq user-gist-clauses (remove-contradiction user-gist-clauses))
-        (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
+        ;; (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
 
         ; Store user gist-clauses in memory
         (dolist (user-gist-clause user-gist-clauses)
@@ -1279,7 +1279,7 @@
 
         ; Obtain semantic interpretation(s) of the user gist-clauses
         (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
-        (format t "~%Obtained ulfs ~a for episode ~a" user-ulfs ep-name) ; DEBUGGING
+        ;; (format t "~%Obtained ulfs ~a for episode ~a" user-ulfs ep-name) ; DEBUGGING
 
         (log-turn (list words user-gist-clauses (resolve-references user-ulfs)) :agent 'user)
 
@@ -1302,7 +1302,7 @@
         ; so the gist clauses are concatenated together first.
         (setq inferred-wffs (remove nil (mapcar #'form-inferences-from-gist-clause user-gist-clauses)))
 
-        (format t "~%Inferred wffs ~a for episode ~a~%" inferred-wffs ep-name) ; DEBUGGING
+        ;; (format t "~%Inferred wffs ~a for episode ~a~%" inferred-wffs ep-name) ; DEBUGGING
 
         ; Add each inferred wff to context (characterizing ep-name)
         (dolist (inferred-wff inferred-wffs)
