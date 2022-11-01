@@ -2734,7 +2734,7 @@
 ;`````````````````````````````````````````
 ; Generates a turn start prefix for the prompt.
 ;
-  (format nil "\\n~a:" (shortname name))
+  (format nil "[N]~a:" (shortname name))
 ) ; END generate-prompt-turn-start
 
 
@@ -2830,7 +2830,7 @@
   (let (turn-strs)
     (setq turn-strs (mapcar (lambda (turn)
       (concatenate 'string (shortname (first turn)) ": " (second turn))) history))
-    (str-join turn-strs "\\n")
+    (str-join turn-strs "[N]")
 )) ; END generate-prompt-preprocess-history
 
 
@@ -2844,14 +2844,14 @@
   (let (prompt)
     (setq prompt (format nil "Write a conversation between ~:(~a~) and ~:(~a~). " *^you* *^me*))
     (setq prompt (concatenate 'string prompt (str-join facts " ")))
-    (setq prompt (concatenate 'string prompt "\\n"
+    (setq prompt (concatenate 'string prompt "[N]"
       ; Add initial greeting from user to prompt to calibrate GPT-3
       (format nil "~a Hi, ~a." (generate-prompt-turn-start (string *^you*)) (shortname (string *^me*)))
       ; If the initial dialogue turn is not Eta's, add initial greeting from Eta to calibrate GPT-3
       (if (not (equal (first (car history)) (string *^me*)))
         (format nil "~a Hi, ~a." (generate-prompt-turn-start (string *^me*)) (shortname (string *^you*)))
         "")
-      (if history "\\n" "")
+      (if history "[N]" "")
       ; TODO: only add the second line by Sophie if not detected in conversation log
       (generate-prompt-preprocess-history history)
       (generate-prompt-turn-start (string *^me*))))
