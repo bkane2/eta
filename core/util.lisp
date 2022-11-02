@@ -894,11 +894,12 @@
 ;````````````````````````````````````````````````
 ; Records a turn in the conversation log, as well as writing to external files.
 ;
-  (let ((text (first turn)) (gists (second turn)) (ulfs (third turn))
+  (let ((text (first turn)) (gists (second turn)) (ulfs (third turn)) (inferences (fourth turn))
         (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
     (push (list agent-name text) (first (ds-conversation-log *ds*)))
     (push gists (second (ds-conversation-log *ds*)))
     (push ulfs (third (ds-conversation-log *ds*)))
+    (push inferences (fourth (ds-conversation-log *ds*)))
     (log-turn-write turn :agent agent)
 )) ; END log-turn
 

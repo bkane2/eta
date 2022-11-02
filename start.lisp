@@ -41,7 +41,8 @@
     (ensure-directories-exist "./logs/logs_out/")
     (ensure-directories-exist "./logs/logs_out/text/")
     (ensure-directories-exist "./logs/logs_out/gist/")
-    (ensure-directories-exist "./logs/logs_out/ulf/"))
+    (ensure-directories-exist "./logs/logs_out/ulf/")
+    (ensure-directories-exist "./logs/logs_out/inference/"))
 
   ; Ensure all standard input & output files for registered subsystems exist and are empty
   ; Note: input files only created for non-terminal systems,
@@ -65,6 +66,8 @@
   (with-open-file (outfile (get-io-path "conversation-log/gist.txt")
     :direction :output :if-exists :supersede :if-does-not-exist :create))
   (with-open-file (outfile (get-io-path "conversation-log/ulf.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  (with-open-file (outfile (get-io-path "conversation-log/inference.txt")
     :direction :output :if-exists :supersede :if-does-not-exist :create))
 
   ; Delete the content of the sessionInfo.lisp file after reading

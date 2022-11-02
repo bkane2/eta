@@ -258,8 +258,8 @@
   (setf (ds-gist-kb-user *ds*) (make-hash-table :test #'equal))
   (setf (ds-gist-kb-eta *ds*) (make-hash-table :test #'equal))
 
-  ; Initialize conversation log ((text gists ulfs) tuple)
-  (setf (ds-conversation-log *ds*) (list nil nil nil))
+  ; Initialize conversation log ((text gists ulfs inferences) tuple)
+  (setf (ds-conversation-log *ds*) (list nil nil nil nil))
 
   ; Initialize fact hash tables
   (setf (ds-context *ds*) (make-hash-table :test #'equal))
@@ -711,7 +711,8 @@
             ; Check both episode and parent episode for gists/ulfs
             (log-turn (list expr
                 (get-gist-clauses-characterizing-episode ep-name)
-                (get-semantic-interpretations-characterizing-episode ep-name))
+                (get-semantic-interpretations-characterizing-episode ep-name)
+                nil)
               :agent (if (boundp '*agent-id*) *agent-id* 'eta))
 
             ; Output words
@@ -1281,8 +1282,6 @@
         (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
         ;; (format t "~%Obtained ulfs ~a for episode ~a" user-ulfs ep-name) ; DEBUGGING
 
-        (log-turn (list words user-gist-clauses (resolve-references user-ulfs)) :agent 'user)
-
         ; Store the semantic interpretations in memory
         (dolist (user-ulf user-ulfs)
           (store-semantic-interpretation-characterizing-episode user-ulf ep-name '^you '^me))
@@ -1307,6 +1306,8 @@
         ; Add each inferred wff to context (characterizing ep-name)
         (dolist (inferred-wff inferred-wffs)
           (store-contextual-fact-characterizing-episode inferred-wff ep-name))
+
+        (log-turn (list words user-gist-clauses (resolve-references user-ulfs) inferred-wffs) :agent 'user)
         
       )
       ;````````````````````````````
