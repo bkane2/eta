@@ -128,6 +128,9 @@
   (defvar *ds* (make-ds))
   (init-ds)
 
+  ; Global stack of discourse states at each turn
+  (defparameter *ds-stack* nil)
+
   ; Load object schemas
   (load-obj-schemas)
 
@@ -713,6 +716,9 @@
                 (get-semantic-interpretations-characterizing-episode ep-name)
                 nil)
               :agent (if (boundp '*agent-id*) *agent-id* 'eta))
+
+            ; Add discourse state to stack
+            (push (deepcopy-ds *ds*) *ds-stack*)
 
             ; Output words
             (if (member '|Audio| *registered-systems-perception*)
@@ -1307,7 +1313,10 @@
           (store-contextual-fact-characterizing-episode inferred-wff ep-name))
 
         (log-turn (list words user-gist-clauses (resolve-references user-ulfs) inferred-wffs) :agent 'user)
-        
+
+        ; Add discourse state to stack
+        (push (deepcopy-ds *ds*) *ds-stack*)
+
       )
       ;````````````````````````````
       ; User: Moving -> Trying

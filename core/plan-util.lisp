@@ -1030,3 +1030,38 @@
         (t (setq cont nil)))))
 ) ; END print-current-plan-status
 
+
+
+(defun print-plan-as-tree (plan)
+;`````````````````````````````````````````````````
+; Prints the given plan as a tree, showing the sequence of steps for each (sub)plan.
+;
+  (let ((indent-str "       "))
+    (labels (
+      (print-plan-steps-recur (plan-step direction i)
+        (when (null plan-step) (return-from print-plan-steps-recur nil))
+        (format t
+          (if (equal direction 'curr)
+            "~a>>>[~a] ~a~%"
+            "~a-  [~a] ~a~%")
+          (str-repeat indent-str i)
+          (plan-step-ep-name plan-step)
+          (plan-step-wff plan-step))
+        (when (plan-step-subplan plan-step)
+          (print-plan-as-tree-recur (plan-step-subplan plan-step) (+ i 1)))
+        (cond
+          ((equal direction 'before)
+            (print-plan-steps-recur (plan-step-prev-step plan-step) 'before i))
+          ((equal direction 'after)
+            (print-plan-steps-recur (plan-step-next-step plan-step) 'after i))))
+
+      (print-plan-as-tree-recur (plan i)
+        (when (null plan) (return-from print-plan-steps-recur nil))
+        (when (plan-curr-step plan)
+          (format t "~a|- ~a~%" (str-repeat indent-str i) (plan-plan-name plan))
+          (print-plan-steps-recur (plan-step-prev-step (plan-curr-step plan)) 'before i)
+          (print-plan-steps-recur (plan-curr-step plan) 'curr i)
+          (print-plan-steps-recur (plan-step-next-step (plan-curr-step plan)) 'after i))))
+          
+    (print-plan-as-tree-recur plan 0)
+))) ; END print-plan-as-tree
