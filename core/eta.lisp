@@ -67,6 +67,10 @@
 ; memory           : hash table of atemporal/"long-term" facts, e.g., (<wff3> ** E3) and (Now* during E3)
 ; kb               : hash table of Eta's knowledge base, containing general facts
 ; tg               : timegraph of all episodes
+; time             : the constant denoting the current time period. NOW0 is taken uniquely to refer
+;                    to the beginning, with all moves/etc. occurring at subsequent times
+; count            : number of Eta outputs generated so far (maintained for latency enforcement, i.e.,
+;                    not repeating a previously used response too soon)
 ;
 ; TODO: currently reference-list and equality-sets are separate things, though they serve a similar
 ; purpose, namely keeping track of which entities co-refer (e.g. skolem variable and noun phrase).
@@ -85,6 +89,8 @@
   memory
   kb
   tg
+  time
+  count
 ) ; END defstruct ds
 
 
@@ -129,16 +135,10 @@
   (when (boundp '*init-knowledge*)
     (mapcar #'store-in-kb *init-knowledge*))
 
-  ; Time
-  ; Stores the constant denoting the current time period. NOW0 is taken uniquely to refer
-  ; to the beginning, with all moves/etc. occurring at subsequent times.
-  (defparameter *time* 'NOW0)
+  ; Initialize time
+  (setf (ds-time *ds*) 'NOW0)
   (store-time)
   (update-time)
-
-  ; Time of previous episode
-  ; Stores the constant denoting the time of the previous episode
-  (defparameter *time-prev* *time*)
 
   ; Coreference mode
   ; 0 : simply reconstruct the original ulf
@@ -160,12 +160,11 @@
   (defparameter *delay-respond-to.v* 15) ; certainty ~0.4
   (defparameter *delay-say-to.v* 15) ; certainty ~0.4
 
-  ; Number of Eta outputs generated so far (maintained
-  ; for latency enforcement, i.e., not repeating a previously
-  ; used response too soon).
-  (defparameter *count* 0)
+  ; Initialize count
+  (setf (ds-count *ds*) 0)
 
   ; Used for keeping track of output number in output.txt.
+  ; TODO: figure out what to do with this variable when saving/rewinding dialogue state
   (defparameter *output-count* 0)
   ; Used for detecting whether to print "dummy" line to output.txt to prompt system to listen.
   (defparameter *output-listen-prompt* 0)
@@ -290,7 +289,7 @@
   (setq *registered-systems-perception* subsystems-perception)
   (setq *registered-systems-specialist* subsystems-specialist)
   (setq *emotions* emotions)
-  (setq *count* 0) ; Number of outputs so far
+  (setf (ds-count *ds*) 0) ; Number of outputs so far
 
   ; Initialize gpt3-shell (if in GPT3 generation mode and valid API key exists)
   (setq *response-generator*
@@ -693,11 +692,11 @@
             (advance-plan subplan)
             (setq new-subplan nil))
           ; Primitive say-to.v act: drop the quote, say it, increment the
-          ; *count* variable, advance the 'rest-of-plan' pointer, and
+          ; count variable, advance the 'rest-of-plan' pointer, and
           ; log the turn in the conversation history
           ((eq (car expr) 'quote)
             (setq expr (flatten (second expr)))
-            (setq *count* (1+ *count*))
+            (setf (ds-count *ds*) (1+ (ds-count *ds*)))
             (setq expr (tag-emotions expr))
 
             ; Inherit any gists/semantics from parent episode, if any
@@ -2245,7 +2244,7 @@
 ; the 'parts' list is returned (after updating 'time-last-used'). 
 ; The latency criterion uses the 'latency' property of 'rule-node' 
 ; jointly with the 'time-last-used' property and the global result 
-; count, *count*. 
+; count, (ds-count *ds*).
 ;
 ; If the rule node has directive property :subtree, then 'pattern'
 ; will just be the name of another choice tree. If the latency 
@@ -2326,7 +2325,7 @@
 
     ; If latency is being enforced, skip rule if it was used too recently
     (when (and directive *use-latency*
-            (< *count* (+ (get rule-node 'time-last-used)
+            (< (ds-count *ds*) (+ (get rule-node 'time-last-used)
                           (get rule-node 'latency))))
       (return-from choose-result-for1
         (choose-result-for1 clause parts (get rule-node 'next) visited-subtrees)))
@@ -2366,7 +2365,7 @@
       ; Recursively obtain a result from the choice tree specified via its
       ; root name, given as 'pattern'
       ((eq directive :subtree)
-        (setf (get rule-node 'time-last-used) *count*)
+        (setf (get rule-node 'time-last-used) (ds-count *ds*))
         (cond
           ; Pattern is wrong format
           ((not (atom pattern)) (return-from choose-result-for1 nil))
@@ -2388,7 +2387,7 @@
       ; some portion of 'clause', whose results should then be used
       ; (after re-tagging) in the recursive search.
       ((eq directive :subtree+clause)
-        (setf (get rule-node 'time-last-used) *count*)
+        (setf (get rule-node 'time-last-used) (ds-count *ds*))
         (setq newclause (fill-template (second pattern) parts))
         (return-from choose-result-for1
           (choose-result-for1 newclause nil (car pattern)
@@ -2468,7 +2467,7 @@
       ; TODO: Implement coreference resolution (gist case)
       ((eq directive :gist-coref)
         (setq result (cons directive (fill-template pattern parts)))
-        (setf (get rule-node 'time-last-used) *count*)
+        (setf (get rule-node 'time-last-used) (ds-count *ds*))
         (setq result (coref-gist result))
         (return-from choose-result-for1 result))
 
@@ -2478,7 +2477,7 @@
       ((member directive '(:out :subtrees :schema :schemas 
                            :schema+args :gist :schema+ulf))
         (setq result (cons directive (fill-template pattern parts)))
-        (setf (get rule-node 'time-last-used) *count*)
+        (setf (get rule-node 'time-last-used) (ds-count *ds*))
         (return-from choose-result-for1 result))
 
       ; A directive is not recognized
