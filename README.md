@@ -17,7 +17,7 @@ usually not be necessary, as the defaults define the intended behavior for each 
 To begin, enter `(load "start.lisp")`. The dialogue will then begin using the top-level schema of the chosen avatar. Eta
 supports two modes of interaction by default: text input and audio input. The former can simply be entered into the command
 line following an utterance from Eta. The latter should be written to `io/<agent_id>/in/Audio.lisp` as
-`(setq *input* '(^you say-to.v ^me "Input here"))`, where `"Input here"` corresponds to whichever text is being piped to the system
+`(setq *input* '((^you say-to.v ^me "Input here")))`, where `"Input here"` corresponds to whichever text is being piped to the system
 (e.g., by an audio speech recognition program).
 
 In either case, the system will output its responses both to the command line (along with debug messages displaying the
