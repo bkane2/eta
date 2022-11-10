@@ -90,6 +90,31 @@
 
 
 
+(defun valid-rewind-state-p (offset)
+;`````````````````````````````````````
+; Check whether a signal to rewind the dialogue state (relative offset) is valid.
+;
+  (and (integerp offset) (> offset 0) (< offset (length *ds-stack*)))
+) ; END valid-rewind-state-p
+
+
+
+(defun check-for-rewind-signal ()
+;````````````````````````````````````
+; Return t if a valid signal to rewind the dialogue state (i.e., a relative offset within
+; the range of previous dialogue states) is detected; nil otherwise.
+;
+  (load (get-io-path "rewindState.lisp"))
+  (cond
+    ((and *rewind-state* (valid-rewind-state-p *rewind-state*))
+      (with-open-file (outfile (get-io-path "rewindState.lisp")
+        :direction :output :if-exists :supersede :if-does-not-exist :create))
+      t)
+    (t nil))
+) ; END check-for-rewind-signal
+
+
+
 (defun write-subsystem (output system)
 ;`````````````````````````````````````````
 ; Writes output/"query" ULF propositions to io/out/<system>.lisp.
@@ -117,17 +142,34 @@
 
 
 
+(defun log-turn-write-all ()
+;`````````````````````````````
+; Logs all of the turns in the current conversation log.
+;
+  (mapcar (lambda (agent+text gist ulf inference)
+      (log-turn-write (list (second agent+text) gist ulf inference)
+        :agent (if (equal (first agent+text) (string *^me*)) 'eta 'user)))
+    (reverse (first (ds-conversation-log *ds*)))
+    (reverse (second (ds-conversation-log *ds*)))
+    (reverse (third (ds-conversation-log *ds*)))
+    (reverse (fourth (ds-conversation-log *ds*))))
+) ; END log-turn-write-all
+
+
+
 (defun log-turn-write (turn &key (agent 'user))
 ;```````````````````````````````````````````````
 ; Logs some a turn (a tuple (text gists ulfs)) in the conversation-log directory.
 ; Temporarily disable pretty-printing so each line in the log file corresponds to a single turn.
 ;
-  (let ((fname-text (concatenate 'string (get-io-path "conversation-log/") "text.txt"))
-        (fname-gist (concatenate 'string (get-io-path "conversation-log/") "gist.txt"))
-        (fname-ulf  (concatenate 'string (get-io-path "conversation-log/") "ulf.txt"))
-        (fname-inference  (concatenate 'string (get-io-path "conversation-log/") "inference.txt"))
-        (text (first turn)) (gists (second turn)) (ulfs (third turn)) (inferences (fourth turn))
-        (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
+  (let* ((instance-dir (format nil "~a/" *dialogue-instance*))
+         (log-dir (get-io-path "conversation-log/"))
+         (fname-text (concatenate 'string log-dir instance-dir "text.txt"))
+         (fname-gist (concatenate 'string log-dir instance-dir "gist.txt"))
+         (fname-ulf  (concatenate 'string log-dir instance-dir "ulf.txt"))
+         (fname-inf  (concatenate 'string log-dir instance-dir "inference.txt"))
+         (text (first turn)) (gists (second turn)) (ulfs (third turn)) (inferences (fourth turn))
+         (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
     (setq *print-pretty* nil)
     (with-open-file (outfile fname-text :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~a : ~s~%" agent-name text))
@@ -135,7 +177,7 @@
       (format outfile "~a : ~s~%" agent-name (remove nil (remove-if #'nil-gist-clause? gists))))
     (with-open-file (outfile fname-ulf  :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~a : ~s~%" agent-name (remove nil ulfs)))
-    (with-open-file (outfile fname-inference :direction :output :if-exists :append :if-does-not-exist :create)
+    (with-open-file (outfile fname-inf  :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~s~%" (remove nil inferences)))
     (setq *print-pretty* t))
   ; Additionally write conversation log to appropriate log directories when in read-log mode.
@@ -143,7 +185,7 @@
     (let ((fname-text (concatenate 'string "logs/logs_out/text/" (pathname-name *read-log*) ".txt"))
           (fname-gist (concatenate 'string "logs/logs_out/gist/" (pathname-name *read-log*) ".txt"))
           (fname-ulf  (concatenate 'string "logs/logs_out/ulf/" (pathname-name *read-log*) ".txt"))
-          (fname-inference (concatenate 'string "logs/logs_out/inference/" (pathname-name *read-log*) ".txt"))
+          (fname-inf  (concatenate 'string "logs/logs_out/inference/" (pathname-name *read-log*) ".txt"))
           (text (first turn)) (gists (second turn)) (ulfs (third turn)) (inferences (fourth turn))
           (agent-name (string-upcase (string agent))))
       (setq *print-pretty* nil)
@@ -153,7 +195,7 @@
         (format outfile "~a : ~s~%" agent-name (remove nil (remove-if #'nil-gist-clause? gists))))
       (with-open-file (outfile fname-ulf  :direction :output :if-exists :append :if-does-not-exist :create)
         (format outfile "~a : ~s~%" agent-name (remove nil ulfs)))
-      (with-open-file (outfile fname-inference :direction :output :if-exists :append :if-does-not-exist :create)
+      (with-open-file (outfile fname-inf  :direction :output :if-exists :append :if-does-not-exist :create)
         (format outfile "~s~%" (remove nil inferences)))
       (setq *print-pretty* t)))
 ) ; END log-turn-write

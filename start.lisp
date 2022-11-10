@@ -26,6 +26,23 @@
 ) ; END get-io-path
 
 
+(defun ensure-log-files-exist (&key (instance 0))
+;``````````````````````````````````````````````````
+; Ensure that empty conversation log files exist for the given avatar configuration and current dialogue instance.
+;
+  (let ((instance-dir (format nil "~a/" instance)))
+    (ensure-directories-exist (concatenate 'string (get-io-path "conversation-log/") instance-dir))
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "text.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create))
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "gist.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create))
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "ulf.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create))
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "inference.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create))
+)) ; END ensure-log-files-exist
+
+
 (defun clean-io-files ()
 ;``````````````````````````
 ; Overwrites all io files used by Eta with blank files.
@@ -34,6 +51,9 @@
   (ensure-directories-exist *io-path*)
   (ensure-directories-exist (get-io-path "in/"))
   (ensure-directories-exist (get-io-path "out/"))
+  ; Delete and recreate the directory to remove all dialogue instance subdirectories
+  (ensure-directories-exist (get-io-path "conversation-log/"))
+  (delete-directory (get-io-path "conversation-log/") :recursive t)
   (ensure-directories-exist (get-io-path "conversation-log/"))
   (when *read-log-mode*
     (ensure-directories-exist "./logs/")
@@ -60,22 +80,18 @@
                                       :supersede :if-does-not-exist :create)))))
   (append *subsystems-perception* *subsystems-specialist*))
 
-  ; Delete the contents of conversation-log files
-  (with-open-file (outfile (get-io-path "conversation-log/text.txt")
-    :direction :output :if-exists :supersede :if-does-not-exist :create))
-  (with-open-file (outfile (get-io-path "conversation-log/gist.txt")
-    :direction :output :if-exists :supersede :if-does-not-exist :create))
-  (with-open-file (outfile (get-io-path "conversation-log/ulf.txt")
-    :direction :output :if-exists :supersede :if-does-not-exist :create))
-  (with-open-file (outfile (get-io-path "conversation-log/inference.txt")
-    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  ; Ensure that empty conversation log files exist
+  (ensure-log-files-exist)
 
   ; Delete the content of the sessionInfo.lisp file after reading
   (with-open-file (outfile (get-io-path "sessionInfo.lisp")
     :direction :output :if-exists :supersede :if-does-not-exist :create))
   ; Delete the content of output.txt, if it exists, otherwise create
   (with-open-file (outfile (get-io-path "output.txt")
-    :direction :output :if-exists :supersede :if-does-not-exist :create))                                                                      
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  ; Delete the content of rewindState.lisp, if it exists, otherwise create
+  (with-open-file (outfile (get-io-path "rewindState.lisp")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))                                             
 ) ; END clean-io-files
 
 

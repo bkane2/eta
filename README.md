@@ -34,6 +34,11 @@ files as `(setq *output* '(<query1> <query2> ...))`, where the queries are ULF f
 Full logs of the conversation are also maintained in `io/<agent_id>/conversation-log/`, displaying the text of all user and
 system utterances, as well as any extracted gist-clauses or ULF formulas corresponding to each turn.
 
+The dialogue manager also supports the ability to rewind the dialogue state to a particular turn in the conversation log (including
+the context/memory/etc. at that time). To rewind the dialogue state, write `(setq *rewind-state* <n>)` to `io/<agent_id>/rewindState.lisp`,
+where `<n>` is a positive integer specifying the relative offset from the current turn (e.g., a value of 4 would return to four turns ago).
+A new copy of the conversation log will be created in the `io/<agent_id>/conversation-log/` directory for this new continuation of the dialogue.
+
 ## Supported avatars
 
 ### david-qa

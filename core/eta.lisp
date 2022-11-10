@@ -203,6 +203,11 @@
   (defparameter *log-answer* nil)
   (defparameter *log-ptr* 0)
 
+  ; The dialogue instance is used to keep track of multiple dialogue trajectories within
+  ; a single session (in the case where the dialogue is rewound to a previous state), and
+  ; is incremented every time a rewind occurs.
+  (defparameter *dialogue-instance* 0)
+
   ; A list of any registered perception subsystems that Eta needs to listen to.
   ; Currently only supports '|Blocks-World-System|, '|Terminal|, and '|Audio|.
   (defparameter *registered-systems-perception* nil)
@@ -238,6 +243,7 @@
   (defparameter *goal-rep* nil)
   (defparameter *obj-schemas* nil)
   (defparameter *chosen-obj-schema* nil)
+  (defparameter *rewind-state* nil)
 
 ) ; END init
 
@@ -271,6 +277,24 @@
   ; Initialize timegraph
   (construct-timegraph)
 ) ; END init-ds
+
+
+
+
+
+(defun rewind-ds (offset)
+;```````````````````````````
+; Rewind the dialogue state to a previous state in the stack of recorded states
+; (specified by a relative offset).
+;
+  (setq *ds* (nth offset *ds-stack*))
+  (setq *ds-stack* (last *ds-stack* (- (length *ds-stack*) offset)))
+  ; Restart conversation log
+  (setq *dialogue-instance* (1+ *dialogue-instance*))
+  (ensure-log-files-exist :instance *dialogue-instance*)
+  (log-turn-write-all)
+  (setq *rewind-state* nil)
+) ; END rewind-ds
 
 
 
@@ -389,6 +413,10 @@
 ; updates the plan state, removing any completed subplans.
 ;
   (let ((plan (ds-curr-plan *ds*)) subplan curr-step wff subj certainty plan-advanced?)
+
+    ; If a signal to rewind the dialogue state is detected, rewind to that state (if possible)
+    (when (check-for-rewind-signal)
+      (rewind-ds *rewind-state*))
 
     ; Find the next action from the deepest active subplan
     (setq subplan (find-curr-subplan plan))
@@ -710,15 +738,15 @@
               (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
                 (get-semantic-interpretations-characterizing-episode ep-name1)))
 
+            ; Add discourse state to stack
+            (push (deepcopy-ds *ds*) *ds-stack*)
+
             ; Check both episode and parent episode for gists/ulfs
             (log-turn (list expr
                 (get-gist-clauses-characterizing-episode ep-name)
                 (get-semantic-interpretations-characterizing-episode ep-name)
                 nil)
               :agent (if (boundp '*agent-id*) *agent-id* 'eta))
-
-            ; Add discourse state to stack
-            (push (deepcopy-ds *ds*) *ds-stack*)
 
             ; Output words
             (if (member '|Audio| *registered-systems-perception*)
@@ -1312,10 +1340,11 @@
         (dolist (inferred-wff inferred-wffs)
           (store-contextual-fact-characterizing-episode inferred-wff ep-name))
 
-        (log-turn (list words user-gist-clauses (resolve-references user-ulfs) inferred-wffs) :agent 'user)
-
         ; Add discourse state to stack
         (push (deepcopy-ds *ds*) *ds-stack*)
+
+        ; Log the user's turn
+        (log-turn (list words user-gist-clauses (resolve-references user-ulfs) inferred-wffs) :agent 'user)
 
       )
       ;````````````````````````````
