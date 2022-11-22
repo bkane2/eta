@@ -735,7 +735,7 @@
             (cond
               ((variable? expr)
                 (setq expr-new (if (equal *response-generator* 'GPT3)
-                  (form-surface-utterance-using-language-model nil)
+                  (form-surface-utterance-using-language-model)
                   nil))
                 (nsubst-variable subplan `(quote ,expr-new) expr)
                 (setq expr expr-new))
@@ -806,26 +806,26 @@
               (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
                 (get-semantic-interpretations-characterizing-episode ep-name1)))
 
+            ; Use previous user reply as context for response generation
+            (setq prev-step (find-prev-step-of-type subplan '^you '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
+            (when prev-step
+              (setq prev-step-ep-name (plan-step-ep-name prev-step))
+              (setq prev-step-wff (plan-step-wff prev-step)))
+
+            ;; (format t "~%found previous speech act: ~a (~a)~%" prev-step-ep-name prev-step-wff) ; DEBUGGING
+
+            ; Get gist-clauses corresponding to previous user speech act
+            (setq user-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
+
+            ;; (format t "associated gist clauses: ~a~%" user-gist-clauses) ; DEBUGGING
+
             (cond
               ; Use GPT3-based paraphrase model if available
               ((equal *response-generator* 'GPT3)
-                (setq utterance (form-surface-utterance-using-language-model expr)))
+                (setq utterance (form-surface-utterance-using-language-model (car user-gist-clauses) expr)))
               
               ; Otherwise, use rule-based methods to select surface utterance
               (t
-                ; Use previous user reply as context for response generation
-                (setq prev-step (find-prev-step-of-type subplan '^you '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
-                (when prev-step
-                  (setq prev-step-ep-name (plan-step-ep-name prev-step))
-                  (setq prev-step-wff (plan-step-wff prev-step)))
-
-                (format t "~%found previous speech act: ~a (~a)~%" prev-step-ep-name prev-step-wff) ; DEBUGGING
-
-                ; Get gist-clauses corresponding to previous user speech act
-                (setq user-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
-
-                (format t "associated gist clauses: ~a~%" user-gist-clauses) ; DEBUGGING
-
                 ; Get utterance from gist-clause and prior gist-clause
                 ; TODO: for now this appends all user gist-clauses together, but there might be a better way to do it
                 (setq utterance (form-surface-utterance-from-gist-clause expr (apply #'append user-gist-clauses)))))
@@ -1586,7 +1586,7 @@
         (init-plan-from-episode-list
           (list :episodes (episode-var) (create-say-to-wff
             (if (equal *response-generator* 'GPT3)
-              (form-surface-utterance-using-language-model nil)
+              (form-surface-utterance-using-language-model)
               nil)))))
 
       ; :gist directive
@@ -1938,22 +1938,26 @@
 
 
 
-(defun form-surface-utterance-using-language-model (gist-clause)
-;`````````````````````````````````````````````````````````````````
-; Given a gist-clause by Eta, generate a surface utterance using a language
-; model (currently, GPT-3).
+(defun form-surface-utterance-using-language-model (&optional prev-gist-clause gist-clause)
+;```````````````````````````````````````````````````````````````````````````````````````````
+; Generate a surface utterance using a language model (currently, GPT-3).
 ;
-; At the moment, this is done using unconstrained generation: the system's
-; current schema and some relevant pieces of knowledge are used to generate
-; a prompt, along with the full dialogue history, and the language model
-; generates the next response.
+; This will automatically generate a prompt using the system's current schema
+; and some relevant pieces of knowledge.
 ;
-; In the future, more constrained methods of generation may be explored, such
-; as prompting the model to paraphrase the given gist-clause (which is currently
-; unused) given the prompt and previous turn of history.
+; In the case where a particular Eta gist-clause is given as input, this will be
+; treated as a paraphrasing task: the prompt will be followed by several examples
+; of paraphrases (relevant examples are retrieved using pattern transduction based
+; on the given gist-clause), and the model will be prompted to paraphrase the
+; given gist-clause in the context of the previous gist-clause.
+;
+; In the case where gist-clause is nil, this will be treated as unconstrained
+; generation: the prompt will be followed by the full dialogue hisory, and the
+; model will be prompted to generate the next response.
 ;
   (let ((curr-subplan (find-curr-subplan (ds-curr-plan *ds*))) utterance
-        preconds goals relevant-knowledge facts history facts-str history-str)
+        preconds goals relevant-knowledge facts history facts-str history-str
+        choice examples examples-str)
 
     ; Get preconditions and goals of schema
     ; TODO: add other relevant schema categories here in the future
@@ -1972,15 +1976,41 @@
         (ulf-to-str fact)))
       facts)))
 
-    ; Get history strings (removing any emotion tags)
-    (setq history (reverse (first (ds-conversation-log *ds*))))
-    (setq history (mapcar (lambda (turn)
-      (list (first turn) (untag-emotions (second turn)))) history))
-    (setq history-str (mapcar (lambda (turn)
-      (list (string (first turn)) (words-to-str (second turn)))) history))
+    ; Generate response
+    (cond
+      ; Gist-clause given: Paraphrase task
+      (gist-clause
 
-    ; Get utterance
-    (setq utterance (get-gpt3-response facts-str history-str))
+        ; Get example strings
+        (setq choice (choose-result-for gist-clause '*prompt-examples-tree*))
+        (when (eq (car choice) :prompt-examples)
+          (setq examples (cdr choice)))
+        (setq examples-str
+          (mapcar (lambda (example) (mapcar #'words-to-str example)) examples))
+        
+        ; If no previous gist-clause, create a generic one
+        (when (null prev-gist-clause)
+          (setq prev-gist-clause '(Hello \.)))
+        
+        ; Get utterance
+        (setq utterance (get-gpt3-paraphrase facts-str examples-str
+          (words-to-str prev-gist-clause)
+          (words-to-str gist-clause))))
+
+
+      ; No gist clause: Unconstrained generation task
+      (t
+        ; Get history strings (removing any emotion tags)
+        (setq history (reverse (first (ds-conversation-log *ds*))))
+        (setq history (mapcar (lambda (turn)
+          (list (first turn) (untag-emotions (second turn)))) history))
+        (setq history-str (mapcar (lambda (turn)
+          (list (string (first turn)) (words-to-str (second turn)))) history))
+
+        ; Get utterance
+        (setq utterance (get-gpt3-response facts-str history-str))))
+
+
     ;; (format t "~% utterance = ~a" utterance) ; DEBUGGING   
 
     utterance
@@ -2544,8 +2574,9 @@
       ;```````````````````````````````
       ; Misc non-recursive directives
       ;```````````````````````````````
-      ((member directive '(:out :subtrees :schema :schemas 
-                           :schema+args :gist :schema+ulf))
+      ((member directive '(:out :subtrees :schema :schemas
+                           :schema+args :gist :schema+ulf
+                           :prompt-examples))
         (setq result (cons directive (fill-template pattern parts)))
         (setf (get rule-node 'time-last-used) (ds-count *ds*))
         (return-from choose-result-for1 result))

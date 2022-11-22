@@ -23,7 +23,8 @@
 
 :episodes (
 
-  ?e1 (^me paraphrase-to.v ^you '(Goodbye \.))
+  ;; ?e1 (^me paraphrase-to.v ^you '(Goodbye \.))
+  ?e1 (^me say-to.v ^you ?words)
   
   ?e2 (:repeat-until ((the.d conversation.n) be.v over.a)
   

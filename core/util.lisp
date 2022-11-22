@@ -2860,11 +2860,13 @@
 
 
 
-(defun generate-prompt-turn-start (name)
-;`````````````````````````````````````````
+(defun generate-prompt-turn-start (name &key (short t) (newline t))
+;````````````````````````````````````````````````````````````````````
 ; Generates a turn start prefix for the prompt.
 ;
-  (format nil "[N]~a:" (shortname name))
+  (if newline
+    (format nil "[N]~a:" (if short (shortname name) name))
+    (format nil "~a:" (if short (shortname name) name)))
 ) ; END generate-prompt-turn-start
 
 
@@ -2965,11 +2967,64 @@
 
 
 
-(defun generate-prompt (facts history)
-;````````````````````````````````````````
-; Generates a GPT-3 prompt from facts, which is a list
-; of strings, and history, which is a list of lists (agent turn)
-; where agent and turn are both strings.
+(defun generate-prompt-preprocess-examples (examples)
+;```````````````````````````````````````````````````````
+; Preprocesses a list of examples into a single string.
+; Examples is a list of 3-tuples of strings.
+; 
+  (let (example-strs)
+    (setq example-strs (mapcar (lambda (example)
+      (concatenate 'string
+        (format nil "\"~a " (generate-prompt-turn-start "Person A" :short nil :newline nil))
+        (first example)
+        (format nil "~a " (generate-prompt-turn-start "Person B" :short nil))
+        (second example)
+        "\"[N]"
+        (format nil "~a " (generate-prompt-turn-start (string *^you*)))
+        (first example)
+        (format nil "~a " (generate-prompt-turn-start (string *^me*)))
+        (third example)))
+      examples))
+    (str-join example-strs "[N][N]")
+)) ; END generate-prompt-preprocess-examples
+
+
+
+(defun generate-prompt-paraphrase (facts examples prev-gist-clause gist-clause)
+;``````````````````````````````````````````````````````````````````````````````````
+; Generates a GPT-3 prompt for paraphrasing from facts, which is a list of strings,
+; a list of examples (3-tuples of strings), a previous gist-clause string, and a
+; gist-clause string.
+;
+  (let (prompt)
+    (setq prompt (format nil "~:(~a~) is having a conversation with ~:(~a~). " *^you* *^me*))
+    (setq prompt (concatenate 'string prompt (str-join facts " ")))
+    (setq prompt (concatenate 'string prompt
+      (format nil "[N][N]Rewrite the following conversations as conversations between ~a and ~a:[N][N]"
+        (shortname (string *^you*)) (shortname (string *^me*)))))
+    (setq prompt (concatenate 'string prompt
+      ; Add examples to prompt
+      (generate-prompt-preprocess-examples examples)
+      "[N][N]"
+      ; Add prev-gist-clause and gist-clause to prompt
+      (format nil "\"~a " (generate-prompt-turn-start "Person A" :short nil :newline nil))
+      prev-gist-clause
+      (format nil "~a " (generate-prompt-turn-start "Person B" :short nil))
+      gist-clause
+      "\"[N]"
+      (format nil "~a " (generate-prompt-turn-start (string *^you*)))
+      prev-gist-clause
+      (generate-prompt-turn-start (string *^me*))))
+    prompt
+)) ; END generate-prompt-paraphrase
+
+
+
+(defun generate-prompt-unconstrained (facts history)
+;````````````````````````````````````````````````````````
+; Generates a GPT-3 prompt for unconstrained generation from facts,
+; which is a list of strings, and history, which is a list of
+; lists (agent turn) where agent and turn are both strings.
 ;
   (let (prompt)
     (setq prompt (format nil "Write a conversation between ~:(~a~) and ~:(~a~). " *^you* *^me*))
@@ -3001,6 +3056,29 @@
 
 
 
+(defun get-gpt3-paraphrase (facts examples prev-gist-clause gist-clause)
+;```````````````````````````````````````````````````````````````````````````
+; Generates a GPT-3 paraphrase given a prompt containing facts, which is a list of
+; strings; examples, which is a list of 3-tuples of strings representing example
+; paraphrases; prev-gist-clause, which is a string, and gist-clause, which is a string.
+; Returns a list of words.
+;
+  (let (prompt stop-seq generated)
+    (setq prompt (generate-prompt-paraphrase facts examples prev-gist-clause gist-clause))
+    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    (setq stop-seq (vector
+      (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
+      (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))
+      (generate-prompt-turn-start "Person A" :short nil)
+      (generate-prompt-turn-start "Person B" :short nil)))
+    ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
+    (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
+    ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    (parse-chars (coerce (trim-all-newlines generated) 'list))
+)) ; END get-gpt3-paraphrase
+
+
+
 (defun get-gpt3-response (facts history)
 ;``````````````````````````````````````````
 ; Generates a GPT-3 response from facts, which is a list
@@ -3009,14 +3087,13 @@
 ; Returns a list of words.
 ;
   (let (prompt stop-seq generated)
-    (setq prompt (generate-prompt facts history))
+    (setq prompt (generate-prompt-unconstrained facts history))
     ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq stop-seq (vector
       (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
       (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
-    (setq generated (gpt3-shell:generate (generate-prompt facts history)
-      :stop-seq stop-seq))
+    (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (parse-chars (coerce (trim-all-newlines generated) 'list))
 )) ; END get-gpt3-response
