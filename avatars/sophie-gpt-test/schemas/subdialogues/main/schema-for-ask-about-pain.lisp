@@ -16,8 +16,6 @@
         (about.p ((^me 's) condition.n))))))))
   ; Sophie wants stronger pain medication
   ?g2 (^me ((pres want.v) (k (stronger.a (pain.n medication.n)))))
-  ; Sophie wants that the doctor is empathetic
-  ?g3 (^me ((pres want.v) (that (^you be.v empathetic.a))))
 )
 
 :preconds (
@@ -30,10 +28,14 @@
 :episodes (
 
   ?e1 (^me paraphrase-to.v ^you '(Why has my pain been getting worse recently ?))
-  
-  ?e2 (^you reply-to.v ?e1)
 
-  ?e3 (^me react-to.v ?e2)
+  ?e2 (:repeat-until (^you be.v empathetic.a)
+  
+    ?e3 (^you reply-to.v ?e1)
+
+    ?e4 (^me react-to.v ?e3)
+
+  )
 
 )
 

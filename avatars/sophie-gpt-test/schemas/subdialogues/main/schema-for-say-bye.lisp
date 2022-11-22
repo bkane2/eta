@@ -11,10 +11,8 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ;; ; Sophie wants to finish the conversation
-  ;; ?g1 (^me ((pres want.v) (to (finish.v (the.d conversation.n)))))
-  ; Sophie wants that the conversation is over
-  ?g1 (^me ((pres want.v) (that ((the.d conversation.n) be.v over.a))))
+  ; Sophie wants to finish the conversation
+  ?g1 (^me ((pres want.v) (to (finish.v (the.d conversation.n)))))
 )
 
 :preconds (
@@ -27,9 +25,13 @@
 
   ?e1 (^me paraphrase-to.v ^you '(Goodbye \.))
   
-  ?e2 (^you reply-to.v ?e1)
+  ?e2 (:repeat-until ((the.d conversation.n) be.v over.a)
+  
+    ?e3 (^you reply-to.v ?e1)
 
-  ?e3 (^me react-to.v ?e2)
+    ?e4 (^me react-to.v ?e3)
+
+  )
 
 )
 

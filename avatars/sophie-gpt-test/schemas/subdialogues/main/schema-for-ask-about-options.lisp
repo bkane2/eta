@@ -15,8 +15,6 @@
   ?g1 (^me ((pres want.v) (to (know.v (more.d
         (n+preds {information}.n (about.p ((^me 's)
           (n+preds (possible.a (plur option.n)) (for.p (k treatment.n)))))))))))
-  ; Sophie wants that the doctor is empowering
-  ?g2 (^me ((pres want.v) (that (^you be.v empowering.a))))
 )
 
 :preconds (
@@ -28,9 +26,13 @@
 
   ?e1 (^me paraphrase-to.v ^you '(What are my options for treatment ?))
   
-  ?e2 (^you reply-to.v ?e1)
+  ?e2 (:repeat-until (^you be.v empowering.a)
+  
+    ?e3 (^you reply-to.v ?e1)
 
-  ?e3 (^me react-to.v ?e2)
+    ?e4 (^me react-to.v ?e3)
+
+  )
 
 )
 
