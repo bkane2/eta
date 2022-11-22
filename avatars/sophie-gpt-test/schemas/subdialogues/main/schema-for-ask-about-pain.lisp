@@ -28,6 +28,7 @@
 :episodes (
 
   ?e1 (^me paraphrase-to.v ^you '(Why has my pain been getting worse recently ?))
+  ;; ?e1 (^me say-to.v ^you ?words)
 
   ?e2 (:repeat-until (^you be.v empathetic.a)
   

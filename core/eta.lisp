@@ -697,7 +697,7 @@
 ;   FREQUENT OVERALL CONSISTENCY, PROBABILITY, AND UTILITY 
 ;   CALCULATIONS).
 ;
-  (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
+  (let* ((curr-step (plan-curr-step subplan)) bindings expr expr-new new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
          superstep ep-name1 user-ep-name user-ulf n user-gist-clauses user-gist-passage
          prev-step prev-step-ep-name prev-step-wff utterance query eta-ulf
@@ -728,8 +728,19 @@
           ; Primitive say-to.v act: drop the quote, say it, increment the
           ; count variable, advance the 'rest-of-plan' pointer, and
           ; log the turn in the conversation history
-          ((eq (car expr) 'quote)
-            (setq expr (flatten (second expr)))
+          ((or (quoted-sentence? expr) (variable? expr))
+
+            ; If argument is a variable, and in GPT3 generation mode, replace
+            ; variable with a generated utterance in say-to.v act and throughout schema.
+            (cond
+              ((variable? expr)
+                (setq expr-new (if (equal *response-generator* 'GPT3)
+                  (form-surface-utterance-using-language-model nil)
+                  nil))
+                (nsubst-variable subplan `(quote ,expr-new) expr)
+                (setq expr expr-new))
+              (t (setq expr (flatten (second expr)))))
+            
             (setf (ds-count *ds*) (1+ (ds-count *ds*)))
             (setq expr (tag-emotions expr))
 
