@@ -402,9 +402,14 @@
 ; 
   (add-subplan (plan-curr-step plan) subplan)
   (unless (plan-schema-name subplan)
-    (setf (plan-schema-name subplan) (plan-schema-name plan)))
-  (unless (plan-schema-contents subplan)
-    (setf (plan-schema-contents subplan) (plan-schema-contents plan)))
+    (setf (plan-schema-name subplan) (plan-schema-name plan))
+    (setf (plan-schema-contents subplan) (plan-schema-contents plan))
+    (setf (plan-types subplan) (plan-types plan))
+    (setf (plan-var-roles subplan) (plan-var-roles plan))
+    (setf (plan-rigid-conds subplan) (plan-rigid-conds plan))
+    (setf (plan-static-conds subplan) (plan-static-conds plan))
+    (setf (plan-preconds subplan) (plan-preconds plan))
+    (setf (plan-goals subplan) (plan-goals plan)))
 ) ; END add-subplan-curr-step
 
 
