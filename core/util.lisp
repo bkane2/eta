@@ -92,7 +92,7 @@
 ; using recursion: use mapcar to flatten each sublist (or if an atom is reached, create a
 ; list consisting of that atom). Then just append all of the flattened sublists together.
 ;
-  (if (not (listp lst))
+  (if (or (null lst) (not (listp lst)))
     (return-from flatten nil))
 
   ; Recursively flatten list
