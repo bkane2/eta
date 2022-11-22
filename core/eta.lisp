@@ -163,6 +163,9 @@
   (defparameter *delay-respond-to.v* 15) ; certainty ~0.4
   (defparameter *delay-say-to.v* 15) ; certainty ~0.4
 
+  ; A list of supported speech acts
+  (defparameter *speech-acts* '(say-to.v paraphrase-to.v reply-to.v react-to.v))
+
   ; Initialize count
   (setf (ds-count *ds*) 0)
 
@@ -1257,7 +1260,8 @@
 ; ((^you reply-to.v E1) ** E2)
 ;
   (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
-         user-gist-clauses user-ulfs inferred-wffs goal-step ka try-success)
+         user-gist-clauses user-ulfs inferred-wffs goal-step ka try-success
+         (curr-step (plan-curr-step plan)) (curr-step-wff (plan-step-wff curr-step)))
 
     (setq ep-name (first fact))
     (setq wff (second fact))
@@ -1280,7 +1284,7 @@
             (format t "~%*** SAY-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST OR VARIABLE" expr)))
 
         ; Use previous speech act as context for interpretation
-        (setq prev-step (find-prev-step-of-type plan '^me '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
+        (setq prev-step (find-prev-step-of-type plan '^me *speech-acts*))
         (when prev-step
           (setq prev-step-ep-name (plan-step-ep-name prev-step))
           (setq prev-step-wff (plan-step-wff prev-step)))
@@ -1289,6 +1293,12 @@
 
         ; Get gist-clauses corresponding to previous speech act
         (setq prev-step-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
+
+        ; If current plan step is a relative speech act with a past episode as an argument
+        ; (e.g., (^you reply-to.v E1)), use the gist-clauses of that episode for interpretation as well
+        (when (and (relative-speech-act? curr-step-wff) (not (equal (third curr-step-wff) prev-step-ep-name)))
+          (setq prev-step-gist-clauses (append prev-step-gist-clauses
+            (get-gist-clauses-characterizing-episode (third curr-step-wff)))))
 
         ;; (format t "~%ETA gist clauses that the user is responding to (from episode ~a)~% = ~a " prev-step-ep-name prev-step-gist-clauses)
         ;; (format t "~%using gist clause: ~a~% " (car (last prev-step-gist-clauses))) ; DEBUGGING
@@ -1322,6 +1332,10 @@
         ; Add the fact (^you reply-to.v <prev-step-ep-name>) to context (characterizing ep-name)
         (when prev-step-ep-name
           (store-contextual-fact-characterizing-episode `(^you reply-to.v ,prev-step-ep-name) ep-name))
+
+        ; If current plan step is a relative speech act, add the fact (^you reply-to.v <rel-ep-name>) as well
+        (when (and (relative-speech-act? curr-step-wff) (not (equal (third curr-step-wff) prev-step-ep-name)))
+          (store-contextual-fact-characterizing-episode `(^you reply-to.v ,(third curr-step-wff)) ep-name))
 
         ; Infer any additional facts from user gist-clauses
         ; TODO: since this is now input-driven inference rather than (gist-clause/LF) interpretation,
@@ -1545,8 +1559,6 @@
         ;; (format t "~% choice is ~a ~% " choice) ; DEBUGGING
     ))
 
-    (if (null choice) (return-from plan-reaction-to nil))
-
     ; 'choice' may be an instantiated reassembly pattern corresponding to a
     ; gist-clause (directive :gist), to be contextually paraphrased by Eta
     ; as a subplan, or a direct output (directive :out) to be spoken to the
@@ -1557,6 +1569,15 @@
     ; applying 'modify-response' to the reassembly patterns.
     ; In the case of a schema, we initiate a multistep plan.
     (cond
+      ; null choice -- use GPT3 to generate a reaction (if in GPT3 response generation mode);
+      ; otherwise generate an "empty" say-to.v action.
+      ((null choice)
+        (init-plan-from-episode-list
+          (list :episodes (episode-var) (create-say-to-wff
+            (if (equal *response-generator* 'GPT3)
+              (form-surface-utterance-using-language-model nil)
+              nil)))))
+
       ; :gist directive
       ((eq (car choice) :gist)
         (cond

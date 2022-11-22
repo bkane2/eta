@@ -860,6 +860,19 @@
 
 
 
+(defun relative-speech-act? (list)
+;`````````````````````````````````````
+; Checks whether a given list is a relative speech act WFF;
+; that is, contains an episode constant as an argument.
+; e.g., (^you reply-to.v E1)
+;
+  (and (= (length list) 3)
+       (member (second list) *speech-acts*)
+       (symbolp (third list)))
+) ; END relative-speech-act?
+
+
+
 (defun emotion-tag? (atm)
 ;````````````````````````````````````````````````
 ; If symbol is equal to [SAD], [HAPPY], or [NEUTRAL],
