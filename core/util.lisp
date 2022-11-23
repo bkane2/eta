@@ -3069,8 +3069,8 @@
     (setq stop-seq (vector
       (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
       (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))
-      (generate-prompt-turn-start "Person A" :short nil)
-      (generate-prompt-turn-start "Person B" :short nil)))
+      "Person A"
+      "Person B"))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
     (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
