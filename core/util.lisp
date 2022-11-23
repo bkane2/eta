@@ -1224,6 +1224,17 @@
 
 
 
+(defun get-emotion (resp)
+;````````````````````````````
+; Gets the emotion of a response from the tag, as a string.
+;
+  (if *emotions*
+    (string-downcase (implode (cdr (butlast (explode (car resp))))))
+    "neutral")
+) ; END get-emotion
+
+
+
 (defun dual (sentence)
 ;``````````````````````
 ; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.

@@ -175,6 +175,10 @@
   ; Used for detecting whether to print "dummy" line to output.txt to prompt system to listen.
   (defparameter *output-listen-prompt* 0)
 
+  ; Used for maintaining a buffer of consecutive Eta outputs so that they can be combined and
+  ; written as a single turn to turn-output.txt
+  (defparameter *output-buffer* nil)
+
   ; Timer parameters. Each end up being set to current system time, meaning
   ; that time elapsed can be calculated by comparing the timer values to the
   ; system time at a future point.
@@ -446,6 +450,10 @@
           (process-and-increment-log)
           (update-plan-state plan)
           (return-from perform-next-step nil))
+
+        ; Write output buffer
+        (when *output-buffer*
+          (write-output-buffer))
 
         ; Check certainty of expected plan step
         (setq certainty (plan-step-certainty curr-step))

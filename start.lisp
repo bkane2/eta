@@ -89,6 +89,11 @@
   ; Delete the content of output.txt, if it exists, otherwise create
   (with-open-file (outfile (get-io-path "output.txt")
     :direction :output :if-exists :supersede :if-does-not-exist :create))
+  ; Delete the content of turn-output.txt and turn-emotion.txt, otherwise create
+  (with-open-file (outfile (get-io-path "turn-output.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  (with-open-file (outfile (get-io-path "turn-emotion.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
   ; Delete the content of rewindState.lisp, if it exists, otherwise create
   (with-open-file (outfile (get-io-path "rewindState.lisp")
     :direction :output :if-exists :supersede :if-does-not-exist :create))                                             

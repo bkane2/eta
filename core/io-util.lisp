@@ -243,6 +243,9 @@
       :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~%#~D: ~a" *output-count* wordstring))
 
+    ; Add words to output buffer
+    (push wordlist *output-buffer*)
+
     ; Also write ETA's words to standard output:
     (format t "~% ... ")
     (dolist (word wordlist)
@@ -252,6 +255,29 @@
         (format t "~%")))
     (format t "~%")
 )) ; END say-words
+
+
+
+(defun write-output-buffer ()
+;````````````````````````````````
+; Writes buffered output to turn-output.txt, as well as any emotion
+; tags to turn-emotion.txt.
+;
+  (let ((buffer (reverse *output-buffer*)) (output "") (emotion "neutral"))
+    (setq output (str-join (mapcar (lambda (wordlist)
+        (words-to-str (untag-emotions wordlist)))
+      buffer) " "))
+    (dolist (wordlist buffer)
+      (if (equal emotion "neutral")
+        (setq emotion (get-emotion wordlist))))
+    (with-open-file (outfile (get-io-path "turn-output.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create)
+      (format outfile "~a" output))
+    (with-open-file (outfile (get-io-path "turn-emotion.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create)
+      (format outfile "~a" emotion))
+    (setq *output-buffer* nil)
+)) ; END write-output-buffer
 
 
 
