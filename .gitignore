@@ -25,3 +25,6 @@ logs/sophie-test
 
 # API keys
 config/keys
+
+# Pyenv
+env
