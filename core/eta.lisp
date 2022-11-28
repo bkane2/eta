@@ -204,6 +204,7 @@
 
   ; If *emotions* is T, Eta will allow use of emotion tags at beginning of outputs.
   (defparameter *emotions* nil)
+  (defparameter *emotions-list* '([NEUTRAL] [SAD] [HAPPY] [WORRIED] [ANGRY]))
 
   ; Log contents and pointer corresponding to current position in log.
   (defparameter *log-contents* nil)
@@ -1966,7 +1967,7 @@
 ;
   (let ((curr-subplan (find-curr-subplan (ds-curr-plan *ds*))) utterance
         preconds goals relevant-knowledge facts history facts-str history-str
-        choice examples examples-str)
+        choice examples examples-str emotion)
 
     ; Get preconditions and goals of schema
     ; TODO: add other relevant schema categories here in the future
@@ -1984,6 +1985,13 @@
         (words-to-str fact)
         (ulf-to-str fact)))
       facts)))
+
+    ; Get history strings (removing any emotion tags)
+    (setq history (reverse (first (ds-conversation-log *ds*))))
+    (setq history (mapcar (lambda (turn)
+      (list (first turn) (untag-emotions (second turn)))) history))
+    (setq history-str (mapcar (lambda (turn)
+      (list (string (first turn)) (words-to-str (second turn)))) history))
 
     ; Generate response
     (cond
@@ -2009,16 +2017,14 @@
 
       ; No gist clause: Unconstrained generation task
       (t
-        ; Get history strings (removing any emotion tags)
-        (setq history (reverse (first (ds-conversation-log *ds*))))
-        (setq history (mapcar (lambda (turn)
-          (list (first turn) (untag-emotions (second turn)))) history))
-        (setq history-str (mapcar (lambda (turn)
-          (list (string (first turn)) (words-to-str (second turn)))) history))
 
         ; Get utterance
         (setq utterance (get-gpt3-response facts-str history-str))))
 
+    ; Generate emotion tag for utterance (if enabled)
+    (when *emotions*
+      (setq emotion (get-gpt3-emotion (words-to-str utterance) (last history-str 3)))
+      (setq utterance (cons emotion utterance)))
 
     ;; (format t "~% utterance = ~a" utterance) ; DEBUGGING   
 

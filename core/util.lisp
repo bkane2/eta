@@ -875,10 +875,10 @@
 
 (defun emotion-tag? (atm)
 ;````````````````````````````````````````````````
-; If symbol is equal to [SAD], [HAPPY], or [NEUTRAL],
+; If symbol is included in *emotions-list*,
 ; it qualifies as an emotion tag when inside an output list.
 ;
-  (if (and (symbolp atm) (member atm '([SAD] [HAPPY] [NEUTRAL]))) t nil)
+  (if (and (symbolp atm) (member atm *emotions-list*)) t nil)
 ) ; END emotion-tag?
 
 
@@ -3001,6 +3001,27 @@
 
 
 
+(defun generate-prompt-emotion (utterance history emotions)
+;``````````````````````````````````````````````````````````````````````````````````
+; Generates a GPT-3 prompt for classifying an utterance string as one of the emotions in
+; emotions (a list of strings), given a dialogue history (a list of strings).
+;
+  (let (prompt)
+    (setq prompt
+      (format nil "From the following list, which emotional state most closely describes ~a's feelings?[N]"
+        (shortname (string *^me*))))
+    (setq prompt (concatenate 'string prompt
+      (str-join emotions ", ")
+      "[N][N]"
+      (generate-prompt-preprocess-history history)
+      (generate-prompt-turn-start (string *^me*))
+      " "
+      utterance
+      "[N][N]Emotional state:"))
+)) ; END generate-prompt-emotion
+
+
+
 (defun generate-prompt-paraphrase (facts examples prev-gist-clause gist-clause)
 ;``````````````````````````````````````````````````````````````````````````````````
 ; Generates a GPT-3 prompt for paraphrasing from facts, which is a list of strings,
@@ -3064,6 +3085,30 @@
     (string-left-trim (string #\return)
       (string-left-trim (coerce '(#\return #\newline) 'string) str)))
 ) ; END trim-all-newlines
+
+
+
+(defun get-gpt3-emotion (utterance history &key (emotions *emotions-list*))
+;`````````````````````````````````````````````````````````````````````````````````````````````````````````
+; Uses GPT-3 to classify the emotion of an utterance as one of the given emotions.
+;
+  (let (prompt stop-seq generated emotion)
+    (setq emotions (mapcar (lambda (e)
+        (format nil "~:(~a~)" (coerce (cdr (butlast (explode e))) 'string)))
+      emotions))
+    (setq prompt (generate-prompt-emotion utterance history emotions))
+    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    (setq stop-seq (vector
+      (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
+      (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
+    ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
+    (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
+    ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    (setq emotion (format nil "~:(~a~)" (string-trim " " (trim-all-newlines generated))))
+    (if (member emotion emotions :test #'equal)
+      (read-from-string (format nil "[~a]" emotion))
+      '[NEUTRAL])
+)) ; END get-gpt3-emotion
 
 
 
