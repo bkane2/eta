@@ -831,7 +831,7 @@
             (cond
               ; Use GPT3-based paraphrase model if available
               ((equal *response-generator* 'GPT3)
-                (setq utterance (form-surface-utterance-using-language-model (car user-gist-clauses) expr)))
+                (setq utterance (form-surface-utterance-using-language-model expr)))
               
               ; Otherwise, use rule-based methods to select surface utterance
               (t
@@ -1948,7 +1948,7 @@
 
 
 
-(defun form-surface-utterance-using-language-model (&optional prev-gist-clause gist-clause)
+(defun form-surface-utterance-using-language-model (&optional gist-clause)
 ;```````````````````````````````````````````````````````````````````````````````````````````
 ; Generate a surface utterance using a language model (currently, GPT-3).
 ;
@@ -1959,7 +1959,7 @@
 ; treated as a paraphrasing task: the prompt will be followed by several examples
 ; of paraphrases (relevant examples are retrieved using pattern transduction based
 ; on the given gist-clause), and the model will be prompted to paraphrase the
-; given gist-clause in the context of the previous gist-clause.
+; given gist-clause in the context of the previous user utterance.
 ;
 ; In the case where gist-clause is nil, this will be treated as unconstrained
 ; generation: the prompt will be followed by the full dialogue hisory, and the
@@ -1967,7 +1967,7 @@
 ;
   (let ((curr-subplan (find-curr-subplan (ds-curr-plan *ds*))) utterance
         preconds goals relevant-knowledge facts history facts-str history-str
-        choice examples examples-str emotion)
+        choice examples examples-str emotion prev-utterance)
 
     ; Get preconditions and goals of schema
     ; TODO: add other relevant schema categories here in the future
@@ -2004,14 +2004,18 @@
           (setq examples (cdr choice)))
         (setq examples-str
           (mapcar (lambda (example) (mapcar #'words-to-str example)) examples))
+
+        ; Get previous user utterance
+        (setq prev-utterance (second (car (last
+          (remove-if (lambda (turn) (equal (first turn) (string *^me*))) history)))))
         
-        ; If no previous gist-clause, create a generic one
-        (when (null prev-gist-clause)
-          (setq prev-gist-clause '(Hello \.)))
+        ; If no previous user utterance, create a generic one
+        (when (null prev-utterance)
+          (setq prev-utterance '(Hello \.)))
         
         ; Get utterance
         (setq utterance (get-gpt3-paraphrase facts-str examples-str
-          (words-to-str prev-gist-clause)
+          (words-to-str prev-utterance)
           (words-to-str gist-clause))))
 
 

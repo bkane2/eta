@@ -16,6 +16,9 @@
     2 ((You are glad that I came to this appointment \.)) (0 :gist)
   1 (0 .HAPPY-WORDS 3 you 2 here 0)
     2 ((You are glad that I came to this appointment \.)) (0 :gist)
+  ; Goodbye
+  1 (0 .BYE 0)
+    2 ((Goodbye \.) (Say-bye)) (0 :gist)
   ; If asked if family know about cancer
   1 (0 .FAMILY 2 .KNOW-GEN 0)
     2 *tell-family-question* (0 :subtree)
@@ -112,6 +115,6 @@
     2 ((NIL Question ?)) (0 :gist)
   1 (0 .TELL me 0) ; declarative question
     2 ((NIL Question ?)) (0 :gist)
-;; 1 (0)
-;;   2 ((NIL Gist)) (0 :gist)
+  1 (0)
+    2 ((NIL Gist)) (0 :gist)
 ))

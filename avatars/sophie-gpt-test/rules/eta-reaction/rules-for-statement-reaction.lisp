@@ -25,17 +25,17 @@
     2 ([SAD] I knew the prognosis would be bad \, but I wasn\'t expecting to hear that \. I don\'t know how to handle this \.) (5 :out)
     2 ([SAD] I thought I would have more time than that left \. That\'s extremely depressing to hear \.) (0 :out)
 
-  ;; ; Empowering responses
-  ;; 1 (0 do I want to try to fight the cancer 0)
-  ;;   2 (^you be.v empowering.a) (0 :ulf)
-  ;; 1 (0 what are my treatment goals 0)
-  ;;   2 (^you be.v empowering.a) (0 :ulf)
-  ;; 1 (0 what scares me about my condition 0)
-  ;;   2 (^you be.v empowering.a) (0 :ulf)
-  ;; 1 (0 what is the most important thing for my future 0)
-  ;;   2 (^you be.v empowering.a) (0 :ulf)
-  ;; 1 (0 what would help me manage my condition 0)
-  ;;   2 (^you be.v empowering.a) (0 :ulf)
+  ; Empowering responses
+  1 (0 do I want to try to fight the cancer 0)
+    2 () (0 :out)
+  1 (0 what are my treatment goals 0)
+    2 () (0 :out)
+  1 (0 what scares me about my condition 0)
+    2 () (0 :out)
+  1 (0 what is the most important thing for my future 0)
+    2 () (0 :out)
+  1 (0 what would help me manage my condition 0)
+    2 () (0 :out)
 
   ; Goodbye responses
   1 (0 goodbye 0)

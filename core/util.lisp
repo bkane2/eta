@@ -3022,10 +3022,10 @@
 
 
 
-(defun generate-prompt-paraphrase (facts examples prev-gist-clause gist-clause)
+(defun generate-prompt-paraphrase (facts examples prev-utterance gist-clause)
 ;``````````````````````````````````````````````````````````````````````````````````
 ; Generates a GPT-3 prompt for paraphrasing from facts, which is a list of strings,
-; a list of examples (3-tuples of strings), a previous gist-clause string, and a
+; a list of examples (3-tuples of strings), a previous utterance string, and a
 ; gist-clause string.
 ;
   (let (prompt)
@@ -3038,14 +3038,14 @@
       ; Add examples to prompt
       (generate-prompt-preprocess-examples examples)
       "[N][N]"
-      ; Add prev-gist-clause and gist-clause to prompt
+      ; Add prev-utterance and gist-clause to prompt
       (format nil "\"~a " (generate-prompt-turn-start "Person A" :short nil :newline nil))
-      prev-gist-clause
+      prev-utterance
       (format nil "~a " (generate-prompt-turn-start "Person B" :short nil))
       gist-clause
       "\"[N]"
       (format nil "~a " (generate-prompt-turn-start (string *^you*)))
-      prev-gist-clause
+      prev-utterance
       (generate-prompt-turn-start (string *^me*))))
     prompt
 )) ; END generate-prompt-paraphrase
@@ -3112,15 +3112,15 @@
 
 
 
-(defun get-gpt3-paraphrase (facts examples prev-gist-clause gist-clause)
+(defun get-gpt3-paraphrase (facts examples prev-utterance gist-clause)
 ;```````````````````````````````````````````````````````````````````````````
 ; Generates a GPT-3 paraphrase given a prompt containing facts, which is a list of
 ; strings; examples, which is a list of 3-tuples of strings representing example
-; paraphrases; prev-gist-clause, which is a string, and gist-clause, which is a string.
+; paraphrases; prev-utterance, which is a string, and gist-clause, which is a string.
 ; Returns a list of words.
 ;
   (let (prompt stop-seq generated)
-    (setq prompt (generate-prompt-paraphrase facts examples prev-gist-clause gist-clause))
+    (setq prompt (generate-prompt-paraphrase facts examples prev-utterance gist-clause))
     ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq stop-seq (vector
       (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))

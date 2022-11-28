@@ -19,6 +19,8 @@
     2 (*test-results-input*) (0 :subtrees)
   1 (what is my prognosis ?)
     2 (*prognosis-input*) (0 :subtrees)
+  1 (what does this mean for my future ?)
+    2 (*prognosis-input*) (0 :subtrees)
   1 (why .DO I .HAVE cancer ?)
     2 (*reason-for-cancer-input*) (0 :subtrees)
   1 (what .SHOULD I .TELL my .FAMILY ?)

@@ -23,7 +23,7 @@
 
 :episodes (
 
-  ?e1 (^me paraphrase-to.v ^you '(What is my prognosis ?))
+  ?e1 (^me paraphrase-to.v ^you '(What does this mean for my future ?))
   
   ?e2 (:repeat-until (^you be.v explicit.a)
   
