@@ -7,10 +7,12 @@
 ; this makes more sense) or deal with them here somehow.
 '(
   ; Empathetic responses
+  ;; 1 (0 you 2 sorry 0)
+  ;;   2 (I appreciate it \. It\'s all just very difficult to take in \.) (5 :out)
+  ;;   2 (Thanks \. I\'m just trying to make sense of it all \.) (5 :out)
+  ;;   2 (It\'s just very difficult to handle \.) (0 :out)
   1 (0 you 2 sorry 0)
-    2 (I appreciate it \. It\'s all just very difficult to take in \.) (5 :out)
-    2 (Thanks \. I\'m just trying to make sense of it all \.) (5 :out)
-    2 (It\'s just very difficult to handle \.) (0 :out)
+    2 () (0 :out)
   1 (0 you recognize how hard receiving the test results is for me 0)
     2 (It was difficult for me to accept the test results \. I\'m still having a hard time coping with the news \,
        but I appreciate your help \.) (5 :out)

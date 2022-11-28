@@ -1615,8 +1615,9 @@
 
       ; :out directive
       ((eq (car choice) :out)
-        (init-plan-from-episode-list
-          (list :episodes (episode-var) (create-say-to-wff (cdr choice)))))
+        (if (null (cdr choice)) nil
+          (init-plan-from-episode-list
+            (list :episodes (episode-var) (create-say-to-wff (cdr choice))))))
 
       ; :schema directive
       ((eq (car choice) :schema)
