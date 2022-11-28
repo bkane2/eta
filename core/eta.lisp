@@ -358,6 +358,10 @@
   ; The interaction continues so long as the dialogue plan has another step
   (loop while (has-next-step? (ds-curr-plan *ds*)) do
     (do-task (select-and-remove-task)))
+
+  ; Write any final buffered output
+  (when *output-buffer*
+    (write-output-buffer))
   
 ) ; END eta
 
