@@ -34,7 +34,11 @@
   
     ?e3 (^you reply-to.v ?e1)
 
-    ?e4 (^me react-to.v ?e3)
+    ?e4 (:try-in-sequence
+
+      (:if (not (^you be.v empathetic.a))
+
+        ?e5 (^me react-to.v ?e3)))
 
   )
 

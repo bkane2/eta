@@ -89,9 +89,9 @@
 (mapcar #'(lambda (x) 
       (store-topic-keys (first x) (second x) '*eta-schema*))
   '(
-    (?e2 (pain))
-    (?e3 (prognosis))
-    (?e4 (options))
-    (?e5 (say-bye))
+    (?e2 (Pain))
+    (?e3 (Prognosis))
+    (?e4 (Options))
+    (?e5 (Say-bye))
   )
 ) ; END mapcar #'store-topic-keys
