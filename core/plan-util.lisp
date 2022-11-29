@@ -516,9 +516,11 @@
     ;       as well as instantiating the non-fluent variable, e.g. '!e1'?
     (setf (get ep-name 'wff) (plan-step-wff curr-step))
     
-    ; In the case of an Eta action, transfer properties from ep-var hash tables
+    ; In the case of an Eta or joint action, transfer properties from ep-var hash tables
     (setq schema-name (plan-schema-name plan))
-    (when (eq '^me (car (plan-step-wff curr-step)))
+    (when (or (eq '^me (car (plan-step-wff curr-step))) 
+              (and (listp (car (plan-step-wff curr-step)))
+                   (member '^me (car (plan-step-wff curr-step)))))
       ; Gist clauses
       (when (get schema-name 'gist-clauses)
         (setq gist-clauses (gethash ep-var (get schema-name 'gist-clauses)))
@@ -542,8 +544,8 @@
         (setq topic-keys (gethash ep-var (get schema-name 'topic-keys)))
         (setf (get ep-name 'topic-keys) topic-keys))
 
-      ;; (format t "Topic keys attached to ~a =~% ~a~%"
-      ;;   ep-name (get ep-name 'topic-keys)) ; DEBUGGING
+      ;; (format t "Topic keys attached to ~a =~% ~a (from ~a ~a)~%"
+      ;;   ep-name (get ep-name 'topic-keys) ep-var (plan-step-wff curr-step)) ; DEBUGGING
   ))
 ) ; END instantiate-curr-step
 

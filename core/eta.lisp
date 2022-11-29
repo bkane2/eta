@@ -1938,7 +1938,7 @@
 ;
   (let (topic-keys facts)
     (setq topic-keys (get eta-action-name 'topic-keys))
-    ;; (format t "~% ****** topic key is ~a ****** ~%" topic-keys) ; DEBUGGING
+    ;; (format t "~% ****** topic key for ~a is ~a ****** ~%" eta-action-name topic-keys) ; DEBUGGING
     (if (null topic-keys) (return-from obviated-action nil))
     (setq facts (remove nil (mapcar (lambda (key) (gethash key (ds-gist-kb-user *ds*))) topic-keys)))
     ;; (format t "~% ****** gist-kb ~a ****** ~%" (ds-gist-kb-user *ds*))
