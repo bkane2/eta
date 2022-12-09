@@ -274,8 +274,8 @@
   (setf (ds-gist-kb-user *ds*) (make-hash-table :test #'equal))
   (setf (ds-gist-kb-eta *ds*) (make-hash-table :test #'equal))
 
-  ; Initialize conversation log ((text gists ulfs inferences) tuple)
-  (setf (ds-conversation-log *ds*) (list nil nil nil nil))
+  ; Initialize conversation log ((text gists ulfs inferences episodes) tuple)
+  (setf (ds-conversation-log *ds*) (list nil nil nil nil nil))
 
   ; Initialize fact hash tables
   (setf (ds-context *ds*) (make-hash-table :test #'equal))
@@ -718,7 +718,7 @@
   (let* ((curr-step (plan-curr-step subplan)) bindings expr expr-new new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
          superstep ep-name1 user-ep-name user-ulf n user-gist-clauses user-gist-passage
-         prev-step prev-step-ep-name prev-step-wff utterance query eta-ulf
+         prev-step prev-step-ep-name prev-step-wff utterance query eta-ulf eta-gist-clauses
          proposal-gist main-clause info topic suggestion ans perceptions
          perceived-actions sk-var sk-name concept-name concept-schema goal-name goal-schema)
 
@@ -770,6 +770,22 @@
               (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
                 (get-semantic-interpretations-characterizing-episode ep-name1)))
 
+            ; If using GPT3 for gist clause interpretation, add any gists found by GPT3.
+            (when (equal *gist-interpreter* 'GPT3)
+              ; Use previous user speech act as context for interpretation
+              (setq prev-step (find-prev-turn-of-agent *^you*))
+              (setq prev-step-ep-name (fifth prev-step))
+              (setq user-gist-clauses (second prev-step))
+              ; Get Eta gist clauses
+              (setq eta-gist-clauses (form-gist-clauses-using-language-model expr (car (last user-gist-clauses))))
+              (format t "~%storing Eta gist clauses for episode ~a and ~a: ~a~% " ep-name ep-name1 eta-gist-clauses) ; DEBUGGING
+              ; Store any gist clauses for episode and parent episode
+              (mapcar (lambda (gist)
+                  (when (not (member 'nil gist))
+                    (store-gist-clause-characterizing-episode gist ep-name '^me '^you)
+                    (store-gist-clause-characterizing-episode gist ep-name1 '^me '^you)))
+                eta-gist-clauses))
+
             ; Add discourse state to stack
             (push (deepcopy-ds *ds*) *ds-stack*)
 
@@ -777,7 +793,8 @@
             (log-turn (list expr
                 (get-gist-clauses-characterizing-episode ep-name)
                 (get-semantic-interpretations-characterizing-episode ep-name)
-                nil)
+                nil
+                ep-name)
               :agent (if (boundp '*agent-id*) *agent-id* 'eta))
 
             ; Output words
@@ -824,18 +841,12 @@
               (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
                 (get-semantic-interpretations-characterizing-episode ep-name1)))
 
-            ; Use previous user reply as context for response generation
-            (setq prev-step (find-prev-step-of-type subplan '^you '(say-to.v paraphrase-to.v reply-to.v react-to.v)))
-            (when prev-step
-              (setq prev-step-ep-name (plan-step-ep-name prev-step))
-              (setq prev-step-wff (plan-step-wff prev-step)))
+            ; Use previous user speech act as context for interpretation
+            (setq prev-step (find-prev-turn-of-agent *^you*))
+            (setq prev-step-ep-name (fifth prev-step))
+            (setq user-gist-clauses (second prev-step))
 
-            ;; (format t "~%found previous speech act: ~a (~a)~%" prev-step-ep-name prev-step-wff) ; DEBUGGING
-
-            ; Get gist-clauses corresponding to previous user speech act
-            (setq user-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
-
-            ;; (format t "associated gist clauses: ~a~%" user-gist-clauses) ; DEBUGGING
+            ;; (format t "found user gist clauses from previous episode ~a : ~a~%" prev-step-ep-name user-gist-clauses) ; DEBUGGING
 
             (cond
               ; Use GPT3-based paraphrase model if available
@@ -1289,7 +1300,7 @@
 ; ((^you reply-to.v E1) ** E2)
 ;
   (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
-         user-gist-clauses user-ulfs inferred-wffs goal-step ka try-success
+         user-gist-clauses user-ulfs inferred-wffs goal-step ka try-success relative-ep-name
          (curr-step (plan-curr-step plan)) (curr-step-wff (plan-step-wff curr-step)))
 
     (setq ep-name (first fact))
@@ -1312,13 +1323,10 @@
           (t
             (format t "~%*** SAY-ACTION ~a~%    BY THE USER SHOULD SPECIFY A QUOTED WORD LIST OR VARIABLE" expr)))
 
-        ; Use previous speech act as context for interpretation
-        (setq prev-step (find-prev-step-of-type plan '^me *speech-acts*))
-        (when prev-step
-          (setq prev-step-ep-name (plan-step-ep-name prev-step))
-          (setq prev-step-wff (plan-step-wff prev-step)))
-
-        ;; (format t "~%wff = ~a,~%     in the context of ~a ~a~%" wff prev-step-ep-name prev-step-wff) ; DEBUGGING
+        ; Use previous Eta speech act as context for interpretation
+        (setq prev-step (find-prev-turn-of-agent *^me*))
+        (setq prev-step-ep-name (fifth prev-step))
+        (setq prev-step-gist-clauses (second prev-step))
 
         ; Get gist-clauses corresponding to previous speech act
         (setq prev-step-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
@@ -1326,10 +1334,14 @@
         ; If current plan step is a relative speech act with a past episode as an argument
         ; (e.g., (^you reply-to.v E1)), use the gist-clauses of that episode for interpretation as well
         (when (and (relative-speech-act? curr-step-wff) (not (equal (third curr-step-wff) prev-step-ep-name)))
+          (setq relative-ep-name (third curr-step-wff))
           (setq prev-step-gist-clauses (append prev-step-gist-clauses
-            (get-gist-clauses-characterizing-episode (third curr-step-wff)))))
+            (get-gist-clauses-characterizing-episode relative-ep-name))))
 
-        (format t "~%ETA gist clauses that the user is responding to (from episode ~a)~% = ~a " prev-step-ep-name prev-step-gist-clauses)
+        (setq prev-step-gist-clauses (reverse (remove-duplicates prev-step-gist-clauses :test #'equal)))
+
+        (format t "~%ETA gist clauses that the user is responding to (from episodes ~a and ~a)~% = ~a "
+          prev-step-ep-name relative-ep-name prev-step-gist-clauses)
         (format t "~%using gist clause: ~a~% " (car (last prev-step-gist-clauses))) ; DEBUGGING
 
         ; Compute the "interpretation" (gist clauses) of the user input,
@@ -1344,7 +1356,7 @@
 
         ; Remove contradicting user gist-clauses (if any)
         (setq user-gist-clauses (remove-contradiction user-gist-clauses))
-        (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
+        (format t "~%Obtained user gist clauses ~a for episode ~a~%" user-gist-clauses ep-name) ; DEBUGGING
 
         ; Store user gist-clauses in memory
         (dolist (user-gist-clause user-gist-clauses)
@@ -1387,7 +1399,12 @@
         (push (deepcopy-ds *ds*) *ds-stack*)
 
         ; Log the user's turn
-        (log-turn (list words user-gist-clauses (resolve-references user-ulfs) inferred-wffs) :agent 'user)
+        (log-turn (list words
+            user-gist-clauses
+            (resolve-references user-ulfs)
+            inferred-wffs
+            ep-name)
+          :agent 'user)
 
       )
       ;````````````````````````````

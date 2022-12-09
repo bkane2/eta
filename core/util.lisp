@@ -1023,14 +1023,29 @@
 ;````````````````````````````````````````````````
 ; Records a turn in the conversation log, as well as writing to external files.
 ;
-  (let ((text (first turn)) (gists (second turn)) (ulfs (third turn)) (inferences (fourth turn))
+  (let ((text (first turn)) (gists (second turn)) (ulfs (third turn))
+        (inferences (fourth turn)) (episodes (fifth turn))
         (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
     (push (list agent-name text) (first (ds-conversation-log *ds*)))
     (push gists (second (ds-conversation-log *ds*)))
     (push ulfs (third (ds-conversation-log *ds*)))
     (push inferences (fourth (ds-conversation-log *ds*)))
+    (push episodes (fifth (ds-conversation-log *ds*)))
     (log-turn-write turn :agent agent)
 )) ; END log-turn
+
+
+
+(defun find-prev-turn-of-agent (agent)
+;``````````````````````````````````````````````
+; Finds the most recent turn in the conversation log from the given agent.
+;
+  (let ((clog (ds-conversation-log *ds*)) turns)
+    (setq turns (mapcar
+        (lambda (text gists ulfs inferences episodes) (list text gists ulfs inferences episodes))
+      (first clog) (second clog) (third clog) (fourth clog) (fifth clog)))
+    (car (remove-if (lambda (turn) (not (equal (first (first turn)) (string agent)))) turns))
+)) ; END find-prev-turn-of-agent
 
 
 
