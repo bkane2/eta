@@ -309,7 +309,8 @@
 
 
 (defun eta (&key (subsystems-perception '(|Terminal| |Audio|)) (subsystems-specialist '())
-                 (dependencies nil) (response-generator 'RULE) (emotions nil) (read-log nil))
+                 (dependencies nil) (response-generator 'RULE) (gist-interpreter 'RULE)
+                 (emotions nil) (read-log nil))
 ;``````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
 ; (now largely commented out) and controls the loop for producing,
@@ -326,14 +327,18 @@
   (setq *emotions* emotions)
   (setf (ds-count *ds*) 0) ; Number of outputs so far
 
-  ; Initialize gpt3-shell (if in GPT3 generation mode and valid API key exists)
+  ; Initialize gpt3-shell (if in GPT3 generation/interpretation mode and valid API key exists)
   (setq *response-generator*
     (if (member response-generator '(GPT3 RULE)) response-generator 'RULE))
-  (when (equal *response-generator* 'GPT3)
+  (setq *gist-interpreter*
+    (if (member gist-interpreter '(GPT3 RULE)) gist-interpreter 'RULE))
+  (when (or (equal *response-generator* 'GPT3) (equal *gist-interpreter* 'GPT3))
     (let ((api-key (get-api-key "openai")))
-      (if api-key
-        (gpt3-shell:init api-key)
-        (setq *response-generator* 'RULE))))
+      (cond 
+        ((null api-key)
+          (setq *response-generator* 'RULE)
+          (setq *gist-interpreter* 'RULE))
+        (t (gpt3-shell:init api-key)))))
 
   ; Initialize ulf2english if among dependencies (prevents delay on first invocation)
   (when (member "ulf2english" *dependencies*)
@@ -1324,8 +1329,8 @@
           (setq prev-step-gist-clauses (append prev-step-gist-clauses
             (get-gist-clauses-characterizing-episode (third curr-step-wff)))))
 
-        ;; (format t "~%ETA gist clauses that the user is responding to (from episode ~a)~% = ~a " prev-step-ep-name prev-step-gist-clauses)
-        ;; (format t "~%using gist clause: ~a~% " (car (last prev-step-gist-clauses))) ; DEBUGGING
+        (format t "~%ETA gist clauses that the user is responding to (from episode ~a)~% = ~a " prev-step-ep-name prev-step-gist-clauses)
+        (format t "~%using gist clause: ~a~% " (car (last prev-step-gist-clauses))) ; DEBUGGING
 
         ; Compute the "interpretation" (gist clauses) of the user input,
         ; which will be done with a gist-clause packet selected using the
@@ -1339,7 +1344,7 @@
 
         ; Remove contradicting user gist-clauses (if any)
         (setq user-gist-clauses (remove-contradiction user-gist-clauses))
-        ;; (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
+        (format t "~%Obtained user gist clauses ~a for episode ~a" user-gist-clauses ep-name) ; DEBUGGING
 
         ; Store user gist-clauses in memory
         (dolist (user-gist-clause user-gist-clauses)
@@ -2003,7 +2008,7 @@
       (gist-clause
 
         ; Get example strings
-        (setq choice (choose-result-for gist-clause '*prompt-examples-tree*))
+        (setq choice (choose-result-for gist-clause '*paraphrase-prompt-examples-tree*))
         (when (eq (car choice) :prompt-examples)
           (setq examples (cdr choice)))
         (setq examples-str
@@ -2083,6 +2088,42 @@
 
 
 
+(defun form-gist-clauses-using-language-model (words prior-gist-clause)
+;`````````````````````````````````````````````````````````````````````````````````
+; Extract gist clauses from words using a language model (currently, GPT-3), given
+; the context of the previous gist clause.
+;
+; This will generate a prompt depending on the previous gist clause, using the
+; rules stored at *gist-prompt-examples-tree*. This will allow the system to provide
+; a few relevant examples of gist clause extraction.
+;
+  (let (choice examples examples-str gist-clauses)
+
+    ; Get example strings
+    (setq choice (choose-result-for prior-gist-clause '*gist-prompt-examples-tree*))
+    (when (eq (car choice) :prompt-examples)
+      (setq examples (cdr choice)))
+    (setq examples-str
+      (mapcar (lambda (example) (mapcar #'words-to-str example)) examples))
+
+    ; If no (non-nil) prior gist clause, create a generic one
+    (when (or (null prior-gist-clause) (member 'NIL prior-gist-clause))
+      (setq prior-gist-clause '(Hello \.)))
+    
+    ; Get gist clauses
+    (setq gist-clauses (get-gpt3-gist examples-str
+      (words-to-str words)
+      (words-to-str prior-gist-clause)))
+
+    ;; (format t "~% gist-clause = ~a" gist-clause) ; DEBUGGING   
+
+    gist-clauses
+)) ; END form-gist-clauses-using-language-model
+
+
+
+
+
 (defun form-gist-clauses-from-input (words prior-gist-clause)
 ;``````````````````````````````````````````````````````````````
 ; Find a list of gist-clauses corresponding to the user's 'words',
@@ -2136,7 +2177,7 @@
 
     ; Form thematic answer from input (if no specific facts are extracted)
     ;``````````````````````````````````````````````````````````````````````
-    (when (and (> (length sentences) 2) (null facts))
+    (when (and thematic-tree (> (length sentences) 2) (null facts))
       (setq clause (cdr (choose-result-for words thematic-tree)))
       (when (atom (car clause)) (setq clause (list clause))) ; in case no topic-key
       (when clause
@@ -2147,14 +2188,21 @@
     ; 'facts' should be a concatenation of the above results in the order in
     ; which they occur in the user's input; in reacting, Eta will
     ; pay particular attention to the first clause, and any final question.
-    (setq gist-clauses (reverse facts))
+    (setq gist-clauses (remove-duplicates (reverse facts)))
+
+    ; If no gist clause extracted and using GPT3 gist interpretation mode,
+    ; use GPT3 to extract a gist clause.
+    (when (and (or (null gist-clauses) (equal gist-clauses '(NIL)))
+               (equal *gist-interpreter* 'GPT3))
+      (setq gist-clauses (form-gist-clauses-using-language-model words prior-gist-clause)))
+
+    ; If no gist clause, return (NIL Gist) in order to allow processing.
+    (when (or (null gist-clauses) (equal gist-clauses '(NIL)))
+      (setq gist-clauses (list '(NIL Gist))))
 
     ;; (format t "~% extracted gist clauses: ~a" gist-clauses) ; DEBUGGING
 	
-	  ; Allow arbitrary unexpected inputs to be processed
-    ; replace nil with (null gist-clauses)
-    (if nil (list words)
-		  gist-clauses)
+	  gist-clauses
 )) ; END form-gist-clauses-from-input
 
 

@@ -24,7 +24,15 @@
 ;; *generation-mode* : The method to use for generating responses at system reaction schema steps:
 ;;                     GPT3: uses GPT-3 to generate a response using a prompt created automatically from
 ;;                           the current schema, relevant knowledge, and sentence to paraphrase (if any).
+;;                           Note that rule-based methods can still be used on top of GPT3.
 ;;                     RULE (default): uses pattern transduction trees to select reactions/responses.
+;;
+;; *interpretation-mode* : The method to use for interpreting user utterances as gist clauses:
+;;                         GPT3: uses GPT-3 to rephrase utterances as gist clauses given context,
+;;                               using a multi-example prompt.
+;;                               Note that rule-based methods can still be used on top of GPT3; GPT3 will
+;;                               only be used as a fallback if no gist clause is found using rule-based methods.
+;;                         RULE (default): uses pattern transduction trees to extract gist clauses given context.
 ;;
 ;; *safe-mode* : T to exit smoothly if exception is thrown during execution,
 ;;               NIL otherwise
@@ -43,6 +51,7 @@
 (defparameter *emotion-tags* T)
 (defparameter *dependencies* '("ttt" "ulf-lib" "gpt3-shell" "ulf2english"))
 (defparameter *generation-mode* 'GPT3)
+(defparameter *interpretation-mode* 'GPT3)
 (defparameter *safe-mode* NIL)
 (defparameter *session-number* 1)
  

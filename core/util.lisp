@@ -2978,8 +2978,8 @@
 
 
 
-(defun generate-prompt-preprocess-examples (examples)
-;```````````````````````````````````````````````````````
+(defun generate-prompt-preprocess-paraphrase-examples (examples)
+;``````````````````````````````````````````````````````````````````
 ; Preprocesses a list of examples into a single string.
 ; Examples is a list of 3-tuples of strings.
 ; 
@@ -2997,7 +2997,26 @@
         (third example)))
       examples))
     (str-join example-strs "[N][N]")
-)) ; END generate-prompt-preprocess-examples
+)) ; END generate-prompt-preprocess-paraphrase-examples
+
+
+
+(defun generate-prompt-preprocess-gist-examples (examples)
+;````````````````````````````````````````````````````````````
+; Preprocesses a list of examples into a single string.
+; Examples is a list of 3-tuples of strings.
+; 
+  (let (example-strs)
+    (setq example-strs (mapcar (lambda (example)
+      (concatenate 'string
+        "Context: \"" (first example) "\"[N]"
+        "Utterance: \"" (second example) "\"[N]"
+        (if (equal (third example) ".")
+          "Rewritten: None"
+          (format nil "Rewritten: \"~a\"" (third example)))))
+      examples))
+    (str-join example-strs "[N][N]")
+)) ; END generate-prompt-preprocess-gist-examples
 
 
 
@@ -3036,7 +3055,7 @@
         (shortname (string *^you*)) (shortname (string *^me*)))))
     (setq prompt (concatenate 'string prompt
       ; Add examples to prompt
-      (generate-prompt-preprocess-examples examples)
+      (generate-prompt-preprocess-paraphrase-examples examples)
       "[N][N]"
       ; Add prev-utterance and gist-clause to prompt
       (format nil "\"~a " (generate-prompt-turn-start "Person A" :short nil :newline nil))
@@ -3073,7 +3092,30 @@
       (generate-prompt-preprocess-history history)
       (generate-prompt-turn-start (string *^me*))))
     prompt
-)) ; END generate-prompt
+)) ; END generate-prompt-unconstrained
+
+
+
+(defun generate-prompt-gist (examples utterance prior-gist-clause)
+;``````````````````````````````````````````````````````````````````````
+; Generates a GPT-3 prompt for rewriting an utterance (a string) as a gist
+; clause, given a prior gist clause (a string) and a set of examples (a
+; list of 3-tuples of strings).
+;
+  (let (prompt)
+    (setq prompt "I want you to rewrite the utterance sentences I give you in a maximally context-independent and explicit way, given a context sentence. ")
+    (setq prompt (concatenate 'string prompt "Only generate a single sentence, and try to keep it as short as possible, without redundant information."))
+    (setq prompt (concatenate 'string prompt
+      "[N][N]"
+      ; Add examples to prompt
+      (generate-prompt-preprocess-gist-examples examples)
+      "[N][N]"
+      ; Add prior-gist-clause and utterance to prompt
+      "Context: \"" prior-gist-clause "\"[N]"
+      "Utterance: \"" utterance "\"[N]"
+      "Rewritten:"))
+    prompt
+)) ; END generate-prompt-gist
 
 
 
@@ -3153,6 +3195,35 @@
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (parse-chars (coerce (trim-all-newlines generated) 'list))
 )) ; END get-gpt3-response
+
+
+
+(defun get-gpt3-gist (examples utterance prior-gist-clause)
+;``````````````````````````````````````````````````````````````
+; Uses GPT-3 to rewrite an utterance as a gist clause using the context
+; of the prior gist clause in the conversation, given a list of examples,
+; which are 3-tuples of strings representing example gist clause interpretations.
+; Returns a list of words, or nil if no gist clause was found.
+; TODO: flip pronouns in generated response
+; TODO: split sentences into multiple gist clauses
+;       (Words 1 . Words 2 .) => (Gist 1 .) (Gist 2 .)
+;       (Words 1 , but Words 2 .) => (Gist 1 .) (Gist 2 .)
+;
+  (let (prompt stop-seq generated)
+    (setq prompt (generate-prompt-gist examples utterance prior-gist-clause))
+    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    (setq stop-seq (vector
+      "Context:"
+      "Utterance:"
+      "Rewritten:"))
+    ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
+    (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
+    (setq generated (string-trim '(#\" #\ ) (trim-all-newlines generated)))
+    ;; (format t "~%  gpt-3 gist:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    (if (member (string-downcase generated) '("none" "nil") :test #'equal)
+      nil
+      (list (parse-chars (coerce generated 'list))))
+)) ; END get-gpt3-gist
 
 
 
