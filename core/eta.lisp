@@ -2188,13 +2188,12 @@
     ; 'facts' should be a concatenation of the above results in the order in
     ; which they occur in the user's input; in reacting, Eta will
     ; pay particular attention to the first clause, and any final question.
-    (setq gist-clauses (remove-duplicates (reverse facts)))
+    (setq gist-clauses (remove-duplicates (remove nil (reverse facts))))
 
-    ; If no gist clause extracted and using GPT3 gist interpretation mode,
-    ; use GPT3 to extract a gist clause.
-    (when (and (or (null gist-clauses) (equal gist-clauses '(NIL)))
-               (equal *gist-interpreter* 'GPT3))
-      (setq gist-clauses (form-gist-clauses-using-language-model words prior-gist-clause)))
+    ; If using GPT3 gist interpretation mode, use GPT3 to extract additional gist clause(s).
+    (when (equal *gist-interpreter* 'GPT3)
+      (setq gist-clauses (append gist-clauses
+        (form-gist-clauses-using-language-model words prior-gist-clause))))
 
     ; If no gist clause, return (NIL Gist) in order to allow processing.
     (when (or (null gist-clauses) (equal gist-clauses '(NIL)))
