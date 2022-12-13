@@ -102,6 +102,7 @@
 
 (DUALS 'I 'YOU)
 (SETF (GET 'ME 'SUBST) 'YOU)
+(SETF (GET 'YOU1 'SUBST) 'I)
 (SETF (GET 'YOU2 'SUBST) 'ME) ; objective case!
 (DUALS 'MY 'YOUR)
 (DUALS 'MINE 'YOURS)

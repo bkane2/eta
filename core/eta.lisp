@@ -777,7 +777,7 @@
               (setq prev-step-ep-name (fifth prev-step))
               (setq user-gist-clauses (second prev-step))
               ; Get Eta gist clauses
-              (setq eta-gist-clauses (form-gist-clauses-using-language-model expr (car (last user-gist-clauses))))
+              (setq eta-gist-clauses (form-gist-clauses-using-language-model expr (car (last user-gist-clauses)) '^me))
               (format t "~%storing Eta gist clauses for episode ~a and ~a: ~a~% " ep-name ep-name1 eta-gist-clauses) ; DEBUGGING
               ; Store any gist clauses for episode and parent episode
               (mapcar (lambda (gist)
@@ -1610,9 +1610,7 @@
     ; as a subplan, or a direct output (directive :out) to be spoken to the
     ; user as a subplan. Otherwise it may be the name of a schema (to be initialized).
     ; In the first case we create a 1-step subplan whose action is of
-    ; the type (^me paraphrase-to.v ^you '(...)) or (^me say-to.v ^you '(...)),
-    ; respectively, where in the latter case the verbal output is adjusted by
-    ; applying 'modify-response' to the reassembly patterns.
+    ; the type (^me paraphrase-to.v ^you '(...)) or (^me say-to.v ^you '(...)), respectively.
     ; In the case of a schema, we initiate a multistep plan.
     (cond
       ; null choice -- use GPT3 to generate a reaction (if in GPT3 response generation mode);
@@ -2105,14 +2103,19 @@
 
 
 
-(defun form-gist-clauses-using-language-model (words prior-gist-clause)
-;`````````````````````````````````````````````````````````````````````````````````
+(defun form-gist-clauses-using-language-model (words prior-gist-clause &optional (agent '^you))
+;`````````````````````````````````````````````````````````````````````````````````````````````````
 ; Extract gist clauses from words using a language model (currently, GPT-3), given
 ; the context of the previous gist clause.
 ;
 ; This will generate a prompt depending on the previous gist clause, using the
 ; rules stored at *gist-prompt-examples-tree*. This will allow the system to provide
 ; a few relevant examples of gist clause extraction.
+;
+; If the argument agent is given as '^me (i.e., interpreting an Eta utterance), the pronouns in
+; the prior gist clause will be swapped in order to match the correct frame of reference. If the
+; agent is '^you (i.e., interpreting a user utterance), the pronouns in the resulting gist clause
+; will be swapped.
 ;
   (let (choice examples examples-str gist-clauses)
 
@@ -2126,13 +2129,21 @@
     ; If no (non-nil) prior gist clause, create a generic one
     (when (or (null prior-gist-clause) (member 'NIL prior-gist-clause))
       (setq prior-gist-clause '(Hello \.)))
+
+    ; If Eta is agent, swap pronouns in prior gist clause
+    (when (equal agent '^me)
+      (setq prior-gist-clause (swap-duals prior-gist-clause)))
     
     ; Get gist clauses
     (setq gist-clauses (get-gpt3-gist examples-str
-      (words-to-str words)
+      (words-to-str (untag-emotions words))
       (words-to-str prior-gist-clause)))
 
-    ;; (format t "~% gist-clause = ~a" gist-clause) ; DEBUGGING   
+    ; If Eta is agent, swap pronouns in each resulting gist clause
+    (when (equal agent '^you)
+      (setq gist-clauses (mapcar #'swap-duals gist-clauses)))
+
+    ;; (format t "~% gist-clauses = ~a" gist-clauses) ; DEBUGGING   
 
     gist-clauses
 )) ; END form-gist-clauses-using-language-model
@@ -2210,7 +2221,7 @@
     ; If using GPT3 gist interpretation mode, use GPT3 to extract additional gist clause(s).
     (when (equal *gist-interpreter* 'GPT3)
       (setq gist-clauses (append gist-clauses
-        (form-gist-clauses-using-language-model words prior-gist-clause))))
+        (form-gist-clauses-using-language-model words prior-gist-clause '^you))))
 
     ; If no gist clause, return (NIL Gist) in order to allow processing.
     (when (or (null gist-clauses) (equal gist-clauses '(NIL)))

@@ -860,6 +860,37 @@
 
 
 
+(defun punct? (atm)
+;```````````````````````
+; Checks whether an atom is a punctuation symbol.
+;
+  (and (symbolp atm) (member atm '(? ! \, \. \: \;)))
+) ; END punct?
+
+
+
+(defun nonpunct? (atm)
+;```````````````````````
+; Checks whether an atom is not a punctuation symbol.
+;
+  (and (symbolp atm) (not (punct? atm)))
+) ; END nonpunct?
+
+
+
+(defun presubst-nonblocker? (atm)
+;`````````````````````````````````
+; Checks whether an atom is not a particular conjunction or subordinating
+; verb that blocks 'you from being substituted with 'you2 (for use by
+; the presubst function).
+;
+  (and (symbolp atm) (not (or (punct? atm) (member atm
+    '(and or but that because if so when then why think see guess
+      believe hope do can would should than know i you - --)))))
+) ; END presubst-nonblocker?
+
+
+
 (defun relative-speech-act? (list)
 ;`````````````````````````````````````
 ; Checks whether a given list is a relative speech act WFF;
@@ -1202,19 +1233,13 @@
 
 
 
-(defun modify-response (resp)
+(defun swap-duals (wordlist)
 ;``````````````````````````````
-; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
-; (\bme\b|\bmy\b|\bI\b|\bmine\b|\byou\b|\byour\b|\byours\b|\byou\\'re\b)
-; A set of word-level operations, formerly part of the main (doolittle)
-; program, to prepare choice-packet-derived responses for proper output.
-; Changes YOU ARE to YOU ARE2 in preparation for replacement of YOU ARE2
-; by I AM (whereas ARE remains ARE), and similarly for some other words.
+; Swaps dual words in a word list; e.g., changes YOU ARE to I AM, and
+; I AM to YOU ARE, and similarly for other words.
 ;
-  (compress
-    (dual
-      (presubst resp)))
-) ; END modify-response
+  (dual (presubst wordlist))
+) ; END swap-duals
 
 
 
@@ -1252,7 +1277,6 @@
 
 (defun dual (sentence)
 ;``````````````````````
-; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
 ; Replaces 'I' by 'you', 'you' by 'I', 'my' by 'your', etc.
 ;
   (cond
@@ -1278,8 +1302,7 @@
 
 
 (defun presubst (response)
-;`````````````````````````````
-; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
+;`````````````````````````````````````
 ; This function is applied to eta's responses before 
 ; their "dual" is formed and printed out. It helps avoid 
 ; outputs like
@@ -1289,65 +1312,40 @@
 ;      WHY DO YOU SAY YOUR BROTHERS ARE STUPID
 ; (as the dual of WHY DO I SAY YOUR BROTHERS ARE STUPID).
 ;
-; It replaces ARE by ARE2 when preceded by YOU (In turn, DUAL
-; will replace YOU by I and ARE2 by AM, so that YOU ARE
-; becomes I AM (whereas WE ARE, THEY ARE, etc., remain
-; unchanged). Similarly it replaces YOU by YOU2 when it is
-; the last word, or when it is not one of the first two
-; words and is not preceded by certain conjunctions (AND,
-; OR, BUT, THAT, BECAUSE, IF, WHEN, THEN, WHY, ...) or
-; by certain subordinating verbs (THINK, BELIEVE, KNOW,...)
-; This is in preparation for replacement of YOU2 by ME
-; (rather than I) when DUAL is applied. This could be
-; done in a more sophisticated way by using MATCH! 
-; WAS -> WAS2 (after I) and WERE -> WERE2 (after YOU)
-; have not been implemented.
+; It replaces ARE by ARE2 when preceded or followed by YOU
+; (In turn, DUAL will replace YOU by I and ARE2 by AM, so
+; that YOU ARE becomes I AM (whereas WE ARE, THEY ARE, etc.,
+; remain unchanged). Similarly, it replaces WERE by WERE2,
+; and WAS by WAS2.
 ;
-  (cond
-    ((null response) nil)
-    ; After the initial call, if the input is more than one word,
-    ; a number = max(1, no. of words processed) is maintained as
-    ; cdr of 'response', while the actual remainder of the response
-    ; is in 'car response'
-    ((null (cdr response))
-      (cond
-        ((member (car response) '(you you\. you! you?))
-          '(you2))
-        (t response)))
-    ((numberp (cdr response))
-      (cond
-        ((null (car response)) nil)
-        ((null (cdar response)) (presubst (car response)))
-        ; Response has a 0 or 1 flag as cdr, and the car contains
-        ; at least two words
-        (t (cond
-          ((and
-              (eq (caar response) 'you)
-              (eq (cadar response) 'are))
-            (cons 'you (cons 'are2 (presubst (cons (cddar response) 1)))))
-          ((= 0 (cdr response))
-            (cons (caar response) (presubst (cons (cdar response) 1))))
-          ; At least 1 word has been processed, i.e. cdr is 1, and there
-          ; are 2 or more words left
-          (t (cond
-            ((or
-                (not (eq (cadar response) 'you))
-                (and (cddar response) (eq (caddar response) 'are))
-                (member (caar response)
-                  '(and or but that because if so when then why think
-                  see guess believe hope than know i you - --))
-                (member (car (last (coerce (string (caar response)) 'list)))
-                  '(#\, #\. #\; #\! #\? #\:) :test #'char-equal))
-              (cons (caar response) (presubst (cons (cdar response) 1))))
-            ; You (second element of (car response)) to be replaced by you2
-            (t (cons (caar response)
-              (cons 'you2 (presubst (cons (cddar response) 1)))))))))))
-
-    ; (cdr response) is non-numeric, so that this is the first call, with
-    ; 'response' containing 2 or more words
-    (t (presubst (cons response 0)))
-    
-)) ; END presubst
+; It also replaces YOU by YOU2 when it is the last word, or
+; when it is not one of the first two words and is not preceded
+; by certain conjunctions (AND, OR, BUT, THAT, BECAUSE, IF, WHEN,
+; THEN, WHY, ...) or by certain subordinating verbs (THINK, BELIEVE,
+; KNOW,...), or when it follows 'to'.
+;
+; This is in preparation for replacement of YOU2 by ME
+; (rather than I) when DUAL is applied.
+;
+  (ttt:apply-rules '(
+    ; are -> are2
+    (/ (_*1 you are _*2) (_*1 you1 are2 _*2))
+    (/ (_*1 are you _*2) (_*1 are2 you1 _*2))
+    ; was -> was2
+    (/ (_*1 I was _*2) (_*1 I was2 _*2))
+    (/ (_*1 was I _*2) (_*1 was2 I _*2))
+    ; were -> were2
+    (/ (_*1 you were _*2) (_*1 you1 were2 _*2))
+    (/ (_*1 were you _*2) (_*1 were2 you1 _*2))
+    ; you -> you2
+    (/ (_*1 you punct? _*2) (_*1 you2 punct? _*2))
+    (/ (_*1 to you _*2) (_*1 to you2 _*2))
+    (/ (_!1 (! presubst-nonblocker?) you _*) (_!1 ! you2 _*))
+    (/ (_!1 _!2 (* nonpunct?) (! presubst-nonblocker?) you _*) (_!1 _!2 * ! you2 _*))
+    (/ (_*1 punct? _!1 (! presubst-nonblocker?) you _*2) (_*1 punct? _!1 ! you2 _*2))
+    (/ (_*1 punct? _!1 _!2 (* nonpunct?) (! presubst-nonblocker?) you _*2) (_*1 punct? _!1 _!2 * ! you2 _*2)))
+  response)
+) ; END presubst
 
 
 
@@ -3219,14 +3217,15 @@
 ; of the prior gist clause in the conversation, given a list of examples,
 ; which are 3-tuples of strings representing example gist clause interpretations.
 ; Returns a list of words, or nil if no gist clause was found.
-; TODO: flip pronouns in generated response
-; TODO: split sentences into multiple gist clauses
-;       (Words 1 . Words 2 .) => (Gist 1 .) (Gist 2 .)
-;       (Words 1 , but Words 2 .) => (Gist 1 .) (Gist 2 .)
+;
+; TODO: currently, the full generation is treated as a single gist clause, even
+; if multiple sentences are generated. In the future, we may want to split these
+; up based on punctuation (but we'd need to be certain that GPT-3 is reliable in
+; having each generated sentence be fully explicit and context-independent).
 ;
   (let (prompt stop-seq generated)
     (setq prompt (generate-prompt-gist examples utterance prior-gist-clause))
-    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq stop-seq (vector
       "Context:"
       "Utterance:"
@@ -3234,7 +3233,7 @@
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
     (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
     (setq generated (string-trim '(#\" #\ ) (trim-all-newlines generated)))
-    ;; (format t "~%  gpt-3 gist:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    (format t "~%  gpt-3 gist:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (if (member (string-downcase generated) '("none" "nil") :test #'equal)
       nil
       (list (parse-chars (coerce generated 'list))))

@@ -41,6 +41,41 @@
 ; be created tailored for different contexts in order to improve performance.
 ;
 '(
+  ;; 1 (Why has my pain been getting worse recently ?)
+  ;;   2 (
+  ;;       ; 1 - statement
+  ;;       ((Why has my pain been getting worse recently ?)
+  ;;        (I\'m really sorry to hear about your pain\, Sophie \. Unfortunately\, I took a look at your test results\, and it seems that your cancer has spread \.)
+  ;;        (I am sorry that you are in pain \. Your test results show that your cancer has spread \.))
+  ;;       ; 2 - statement
+  ;;       ((Why has my pain been getting worse recently ?)
+  ;;        (Pain can be caused by a number of different things \. It\'s difficult to say for sure without knowing a bit more\, but it seems like it may be related to your cancer \.)
+  ;;        (Your pain may be caused by your cancer \.))
+  ;;       ; 3 - statement
+  ;;       ((Why has my pain been getting worse recently ?)
+  ;;        (Unfortunately I\'m not really sure why your pain has been getting worse\, Sophie \.)
+  ;;        (I am not sure why your pain is worse \.))
+  ;;       ; 4 - none
+  ;;       ((Why has my pain been getting worse recently ?)
+  ;;        (Unfortunately Sophie)
+  ;;        nil)
+  ;;       ; 5 - none
+  ;;       ((Why has my pain been getting worse recently ?)
+  ;;        (Goo goo ga joob \.)
+  ;;        nil)
+  ;;       ; 6 - question
+  ;;       ((Why has my pain been getting worse recently ?)
+  ;;        (It\'s a bit difficult to say without more information\, Sophie \. Could you tell me where it hurts ?)
+  ;;        (Where is your pain ?))
+  ;;       ; 7 - question
+  ;;       ((Why has my pain been getting worse recently ?)
+  ;;        (I\'m sorry to hear that you\'re in pain\, I know how awful that must feel \. What are you currently taking for it ?)
+  ;;        (I am sorry that you are in pain \. What are you taking to treat your pain ?))
+  ;;       ; 8 - question
+  ;;       ((Why has my pain been getting worse recently ?)
+  ;;        (As I understand\, you got tested a few weeks ago \. Do you know what your results show ?)
+  ;;        (Do you understand your test results ?)))
+  ;;     (0 :prompt-examples)
   1 (0)
     2 (
         ; 1 - statement
@@ -58,23 +93,27 @@
         ((What do my test results show ?)
          (Unfortunately\, it seems like you\'re not going to make it \.)
          (Your test results indicate a poor prognosis \.))
-        ; 4 - none
+        ; 4 - statement
+        ((Are there any other treatments available ?)
+         (Sadly\, no \.)
+         (There are no other treatments available \.))
+        ; 5 - none
         ((What is my prognosis ?)
          (Unfortunately Sophie)
          nil)
-        ; 5 - none
+        ; 6 - none
         ((What are my treatment options ?)
          (Goo goo ga joob \.)
          nil)
-        ; 6 - question
+        ; 7 - question
         ((Your treatment options are aggressive chemotherapy or palliative care \.)
          (I don\'t really know much about either of those \. What would you recommend ?)
          (Which treatment option do you recommend ?))
-        ; 7 - question
+        ; 8 - question
         ((What are my treatment options ?)
          (What\'s most important to you\, Sophie ?)
          (What are your treatment goals ?))
-        ; 8 - question
+        ; 9 - question
         ((What is my prognosis ?)
          (How much do you understand so far ?)
          (How much do you currently understand about your prognosis ?)))
