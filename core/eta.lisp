@@ -2513,7 +2513,7 @@
   ; First make sure we have the lexical code needed for ULF computation
   (if (not (fboundp 'eval-lexical-ulfs)) (load "eval-lexical-ulfs.lisp"))
 
-  (let (directive pattern newparts newclause ulf ulfs result)
+  (let (directive pattern newparts newparts-option newclause ulf ulfs result)
     ; Don't use empty choice trees
     (if (null rule-node) (return-from choose-result-for1 nil))
 
@@ -2541,7 +2541,16 @@
       ;``````````````````
       ; Look depth-first for more specific match, otherwise try alternatives
       ((null directive)
-        (setq newparts (match1 pattern clause))
+        (cond
+          ; If pattern is disjunctive, try to match any option within the disjunction
+          ((equal (car pattern) :or)
+            (dolist (pattern-option (cdr pattern))
+              (setq newparts-option (match1 pattern-option clause))
+              (when (and (null newparts) newparts-option)
+                (setq newparts newparts-option))))
+          ; Otherwise, try to match pattern
+          (t (setq newparts (match1 pattern clause))))
+
         ;; (format t "~% ----3---- new part = ~a ~%" newparts) ; DEBUGGING
 
         ; Pattern does not match 'clause', search siblings recursively
