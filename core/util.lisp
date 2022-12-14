@@ -3225,7 +3225,7 @@
 ;
   (let (prompt stop-seq generated)
     (setq prompt (generate-prompt-gist examples utterance prior-gist-clause))
-    (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq stop-seq (vector
       "Context:"
       "Utterance:"
@@ -3233,7 +3233,7 @@
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
     (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
     (setq generated (string-trim '(#\" #\ ) (trim-all-newlines generated)))
-    (format t "~%  gpt-3 gist:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    ;; (format t "~%  gpt-3 gist:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (if (member (string-downcase generated) '("none" "nil") :test #'equal)
       nil
       (list (parse-chars (coerce generated 'list))))
