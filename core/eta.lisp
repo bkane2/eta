@@ -2173,7 +2173,7 @@
 ;   The question, by default, is reciprocal to Eta's question.
 ;
   (let ((n (length words)) relevant-trees sentences
-        specific-tree thematic-tree facts gist-clauses)
+        specific-trees thematic-trees facts gist-clauses)
 
     ; Get the relevant pattern transduction tree given the gist clause of Eta's previous utterance.
     ;````````````````````````````````````````````````````````````````````````````````````````````````
@@ -2183,8 +2183,16 @@
     ;; (format t "~% this is a clue == ~a" (choose-result-for prior-gist-clause
     ;;   '*gist-clause-trees-for-input*))
     ;; (format t "~% relevant trees = ~a" relevant-trees) ; DEBUGGING   
-    (setq specific-tree (first relevant-trees)) 
-    (setq thematic-tree (second relevant-trees))  
+
+    ; A subtree is specific by default, or if in list with :specific keyword; if in a list with
+    ; the :thematic keyword, it's treated as a thematic tree.
+    (dolist (tree relevant-trees)
+      (cond
+        ((and (listp tree) (equal :thematic (first tree)))
+          (push (second tree) thematic-trees))
+        ((and (listp tree) (equal :specific (first tree)))
+          (push (second tree) specific-trees))
+        (t (push tree specific-trees))))
 
     ;; ; Get the list of gist clauses from the user's utterance, using the contextually
     ;; ; relevant pattern transduction tree.
@@ -2195,23 +2203,25 @@
     ; Split user's reply into sentences for extracting specific gist clauses
     ;`````````````````````````````````````````````````````````````````````````
     (setq sentences (split-sentences words))
-    (dolist (sentence sentences)
-      (setq clause (cdr (choose-result-for sentence specific-tree)))
-      (when (atom (car clause)) (setq clause (list clause))) ; in case no topic-key
-      (when clause
-        (setq keys (second clause))
-        (store-gist (car clause) keys (ds-gist-kb-user *ds*))
-        (push (car clause) facts)))
+    (dolist (specific-tree (reverse specific-trees))
+      (dolist (sentence sentences)
+        (setq clause (cdr (choose-result-for sentence specific-tree)))
+        (when (atom (car clause)) (setq clause (list clause))) ; in case no topic-key
+        (when clause
+          (setq keys (second clause))
+          (store-gist (car clause) keys (ds-gist-kb-user *ds*))
+          (push (car clause) facts))))
 
     ; Form thematic answer from input (if no specific facts are extracted)
     ;``````````````````````````````````````````````````````````````````````
-    (when (and thematic-tree (> (length sentences) 2) (null facts))
-      (setq clause (cdr (choose-result-for words thematic-tree)))
-      (when (atom (car clause)) (setq clause (list clause))) ; in case no topic-key
-      (when clause
-        (setq keys (second clause))
-        (store-gist (car clause) keys (ds-gist-kb-user *ds*))
-        (push (car clause) facts)))
+    (when (and thematic-trees (> (length sentences) 2) (null facts))
+      (dolist (thematic-tree (reverse thematic-trees))
+        (setq clause (cdr (choose-result-for words thematic-tree)))
+        (when (atom (car clause)) (setq clause (list clause))) ; in case no topic-key
+        (when clause
+          (setq keys (second clause))
+          (store-gist (car clause) keys (ds-gist-kb-user *ds*))
+          (push (car clause) facts))))
 
     ; 'facts' should be a concatenation of the above results in the order in
     ; which they occur in the user's input; in reacting, Eta will
