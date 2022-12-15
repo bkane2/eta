@@ -15,6 +15,8 @@
   (^me ((pres have.v) (k (n+preds pain.n (in.p ((^me 's) chest.n))))))
   ;; (Sophie is taking Lortab for her pain \.)
   (^me ((pres take.v) (k |Lortab|.n) (adv-a (for.p ((^me 's) pain.n)))))
+  ;; (Sophie has an uncle Fred who outlived his prognosis \.)
+  (^me ((pres have.v) (an.d (n+preds uncle.n (= |Fred|) (who.rel ((past outlive.v) (his.d prognosis.n)))))))
   ;; (Sophie wants to be able to watch her grandson graduate \.)
   (^me ((pres want.v) (to (be.v able.a (to (watch.v ((^me 's) grandson.n) (ke graduate.v)))))))
 ))

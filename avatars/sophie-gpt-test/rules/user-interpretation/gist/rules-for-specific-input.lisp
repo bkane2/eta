@@ -1,5 +1,3 @@
-; NOTE: these rules were copied from the original SOPHIE system; they may need to be adjusted for the new modules.
-;
 ; The rules defined in this file contain context-sensitive responses that might be expected based on the
 ; question that SOPHIE previously asked. User questions are paraphrased and sent to the corresponding
 ; question tree (in rules-for-question-input.lisp) using :subtree+clause.
@@ -12,6 +10,9 @@
 ; All trees defined in this file should be named using format *<topic-key>-input*.
 ;
 ; Current list of topics:
+;
+;
+; Current list of unused topics from the previous version:
 ; - cancer-worse
 ; - cancer-worse-verification
 ; - medical-history
@@ -66,10 +67,6 @@
     2 ((My cancer has not gotten worse \.) (Cancer-worse)) (0 :gist)
   1 (0 .CANCER-ILLNESS 2 worse 0)
     2 ((My cancer has gotten worse \.) (Cancer-worse)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for has cancer gotten worse \.)) (0 :gist)
 )) ; END *cancer-worse-input*
 
 
@@ -91,10 +88,6 @@
     2 ((My cancer has not gotten worse \.) (Cancer-worse)) (0 :gist)
   1 (0 .CANCER-ILLNESS 2 worse 0)
     2 ((My cancer has gotten worse \.) (Cancer-worse)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for verifying whether my cancer is worse \.)) (0 :gist)
 )) ; END *cancer-worse-verification-input*
 
 
@@ -155,10 +148,6 @@
   ; Your history with mental health
   1 (0 you 5 .EXPERIENCED 5 .MENT-HEALTH 0)
     2 *energy-input* (0 :subtree)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for medical history \.)) (0 :gist)
 )) ; END *medical-history-input*
 
 
@@ -177,10 +166,6 @@
     2 ((A side effect of the medication is addiction \.) (Medicine-addiction)) (0 :gist)
   1 (0 may 1 side-effect-addition 0)
     2 ((A side effect of the medication is addiction \.) (Medicine-addiction)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for whether addiction is a side effect of the medication \.)) (0 :gist)
 )) ; END *medicine-side-effects-addiction-input*
 
 
@@ -203,10 +188,6 @@
     2 ((A side effect of the medication is fatigue \.) (Medicine-side-effects)) (0 :gist)
   1 (0 .SIDE-EFFECT-APPETITE 0)
     2 ((A side effect of the medication is loss of appetite \.) (Medicine-side-effects)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for side effects of a medication \.)) (0 :gist)
 )) ; END *medicine-side-effects-input*
 
 
@@ -252,10 +233,6 @@
     2 ((You are sorry that my daughter couldn\'t come today \.) (Anyone-here-with-you)) (0 :gist)
   1 (0 I .BE sorry 0)
     2 ((You are sorry that my daughter couldn\'t come today \.) (Anyone-here-with-you)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for question about appointment details \.)) (0 :gist)
 )) ; END *appointment-input*
 
 
@@ -312,10 +289,6 @@
     2 ((A side effect of chemotherapy is hair loss \.) (Chemotherapy-side-effects)) (0 :gist)
   1 (0 .COMFORT-CARE-WORD 0)
     2 *comfort-care-input* (0 :subtree)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for chemotherapy details \.)) (0 :gist)
 )) ; END *chemotherapy-details-input*
 
 
@@ -337,10 +310,6 @@
     2 (*diagnosis-details-question* (how much weight have you lost ?)) (0 :subtree+clause)
   1 (0 .WH_ .DO 2 .LOSE 0)
     2 (*diagnosis-details-question* (how much weight have you lost ?)) (0 :subtree+clause)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for diagnosis details \.)) (0 :gist)
 )) ; END *diagnosis-details-input*
 
 
@@ -384,10 +353,6 @@
     2 (*energy-question* (what parts of your future feel out of your control ?)) (0 :subtree+clause)
   1 (0 sorry 0)
     2 ((I am sorry you have been feeling down recently \.) (Energy)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for question about my energy \.)) (0 :gist)
 )) ; END *energy-input*
 
 
@@ -429,10 +394,6 @@
     2 (*medicine-question* (do you have a question about your medicine ?)) (0 :subtree+clause)
   1 (0 .ANYTHING 1 you 2 .WANT-GEN 2 .ASK-GEN 0)
     2 (*medicine-question* (do you have a question about your medicine ?)) (0 :subtree+clause)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for medicine \.)) (0 :gist)
 )) ; END *medicine-input*
 
 
@@ -499,10 +460,6 @@
     2 *prognosis-input* (0 :subtree)
   1 (0 .ANTICIPATE 8 .ELAPSED-TIME 0)
     2 *prognosis-input* (0 :subtree)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for pain \.)) (0 :gist)
 )) ; END *pain-input*
 
 
@@ -523,10 +480,6 @@
     2 *chemotherapy-input* (0 :subtree)
   1 (0 .COMFORT-CARE-WORD 0)
     2 *comfort-care-input* (0 :subtree)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for radiation \.)) (0 :gist)
 )) ; END *radiation-verification-input*
 
 
@@ -536,10 +489,6 @@
 '(
   1 (0 .DO it 1 .PAIN-RETURN 0)
     2 (*general-input* (did the pain return ?)) (0 :subtree+clause)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for radiation \.)) (0 :gist)
 )) ; END *radiation-input*
 
 
@@ -553,10 +502,6 @@
     2 (*sleep-question* (is your mental health keeping you awake ?)) (0 :subtree+clause)
   1 (0 .COFFEE 0)
     2 (*sleep-question* (is coffee keeping you awake ?)) (0 :subtree+clause)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for sleeping well \.)) (0 :gist)
 )) ; END *sleep-input*
 
 
@@ -643,10 +588,6 @@
     2 ((You do not think I need chemotherapy \.) (Chemotherapy)) (0 :gist)
   1 (0 .CANCER-GOALS 0)
     2 (*treatment-option-question* (what are your treatment goals ?)) (0 :subtree+clause)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for chemotherapy \.)) (0 :gist)
 )) ; END *chemotherapy-input*
 
 
@@ -730,10 +671,6 @@
     2 ((You do not think I need comfort care \.) (Comfort-care)) (0 :gist)
   1 (0 .CANCER-GOALS 0)
     2 (*treatment-option-question* (what are your treatment goals ?)) (0 :subtree+clause)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for comfort care \.)) (0 :gist)
 )) ; END *comfort-care-input*
 
 
@@ -759,10 +696,6 @@
     2 (*comfort-care-question* (do you understand how comfort care works ?)) (0 :subtree+clause)
   1 (0 .CANCER-GOALS 0)
     2 (*treatment-option-question* (what are your treatment goals ?)) (0 :subtree+clause)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for verifying whether I need comfort care \.)) (0 :gist)
 )) ; END *comfort-care-verification-input*
 
 
@@ -819,10 +752,6 @@
     2 ((You cannot give me a refill of pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 .NEGADV 0)
     2 ((You cannot give me a refill of pain medication \.) (Medicine-request)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for refill of pain medication \.)) (0 :gist)
 )) ; END *medicine-refill-request-input*
 
 
@@ -863,10 +792,6 @@
     2 ((You cannot give me stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 .NEGADV 0)
     2 ((You cannot give me stronger pain medication \.) (Medicine-request)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for stronger pain medication \.)) (0 :gist)
 )) ; END *medicine-stronger-request-input*
 
 
@@ -941,10 +866,6 @@
     2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
   1 (0 you 5 .PAIN 3 .GO away 5 .MED-TIME-GEN 0)
     2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for knowing if pain medication working \.)) (0 :gist)
 )) ; END *medicine-working-input*
 
 
@@ -1396,10 +1317,6 @@
     2 ((The prognosis is unfavorable to me \.)) (0 :gist)
   1 (0 .BAD 0)
     2 ((The prognosis is unfavorable to me \.)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for prognosis \.)) (0 :gist)
 )) ; END *prognosis-input*
 
 
@@ -1692,10 +1609,6 @@
     2 (- 0 .NEGADV 4 but 0)
       3 ((My understanding of my prognosis may be correct \.) (Prognosis-understanding)) (0 :gist)
     2 ((My understanding of my prognosis is correct \.) (Prognosis-understanding)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for denial of prognosis \.)) (0 :gist)
 )) ; END *prognosis-denial-input*
 
 
@@ -1836,10 +1749,6 @@
     2 ((Healthy habits may help me outlive my prognosis \.) (Prognosis-understanding)) (0 :gist)
   1 (0 .NEGADV 0)
     2 ((Healthy habits will not help me outlive my prognosis \.) (Prognosis-understanding)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for habits related bargaining of prognosis \.)) (0 :gist)
 )) ; END *prognosis-bargaining-habits-input*
 
 
@@ -1972,10 +1881,6 @@
     2 ((Quitting smoking might make my prognosis better \.) (Prognosis-understanding)) (0 :gist)
   1 (0 .NEGADV 0)
     2 ((Quitting smoking will not make my prognosis better \.) (Prognosis-understanding)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for smoking related bargaining of prognosis \.)) (0 :gist)
 )) ; END *prognosis-bargaining-quit-smoke-input*
 
 
@@ -2174,10 +2079,6 @@
     2 ((My health right now may improve my prognosis \.) (Prognosis-understanding)) (0 :gist)
   1 (0 .NEGADV 0)
     2 ((My health right now does not change my prognosis \.) (Prognosis-understanding)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for health now related bargaining of prognosis \.)) (0 :gist)
 )) ; END *prognosis-bargaining-now-input*
 
 
@@ -2308,10 +2209,6 @@
     2 ((My prognosis is that I might live to attend the graduation of my grandson \.) (Prognosis-understanding)) (0 :gist)
   1 (0 .NEGADV 0)
     2 ((My prognosis is that I will not live to attend the graduation of my grandson \.) (Prognosis-understanding)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for bargaining of prognosis \.)) (0 :gist)
 )) ; END *prognosis-bargaining-graduation-input*
 
 
@@ -2348,10 +2245,6 @@
     2 (- 0 .NEG .TRY 0)
       3 ((Experimental treatments might make my prognosis better \.) (Experimental-treatment)) (0 :gist)
     2 ((Experimental treatments might make my prognosis better \.) (Experimental-treatment)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for experimental treatments \.)) (0 :gist)
 )) ; END *experimental-therapy-input*
 
 
@@ -2451,17 +2344,12 @@
     2 (*pain-question* (can you tell me about your pain ?)) (0 :subtree+clause)
   1 (0 sorry 0)
     2 ((You are sorry that I am sleeping poorly \.) (Sleeping-poorly)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for why I am sleeping poorly \.)) (0 :gist)
 )) ; END *sleep-poorly-input*
 
 
 (READRULES '*tell-family-input*
 ; (What should I tell my family ?)
 '(
-  ;; (format nil "Entered family input.")
   ;; Can I tell you about my family?
   1 (0 .TELL 2 .DOCTOR-PRON 2 about 2 .FAMILY-PRON 0)
     2 (*tell-family-question* (can you tell me about your family ?)) (0 :subtree+clause)
@@ -2827,10 +2715,6 @@
       3 ((My family is important to me \.) (Tell-family)) (0 :gist)
     2 (0 .BE 4 .PART 3 .LIFE 0)
       3 ((My family is important to me \.) (Tell-family)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for tell family \.)) (0 :gist)
 )) ; END *tell-family-input*
 
 
@@ -3162,10 +3046,6 @@
     2 (*test-results-question* (how do you feel about your test results ?)) (0 :subtree+clause)
   1 (0 prognosis 0)
     2 *prognosis-input* (0 :subtree)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for test results \.)) (0 :gist)
 )) ; END *test-results-input*
 
 
@@ -3249,10 +3129,6 @@
     2 (*treatment-option-question* (do you have a question about your treatment options ?)) (0 :subtree+clause)
   1 (0 .ANYTHING 1 you 2 .WANT-GEN 2 .ASK-GEN 0)
     2 (*treatment-option-question* (do you have a question about your treatment options ?)) (0 :subtree+clause)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for treatment option \.)) (0 :gist)
 )) ; END *treatment-option-input*
 
 
@@ -3316,10 +3192,6 @@
   ; How do you feel on your medication?
   1 (0 .AUX-BASE 3 you 4 .THINK-GEN 0)
     2 (*medicine-question* (how are you feeling on the medicine ?)) (0 :subtree+clause)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for will stronger pain medication help me sleep \.)) (0 :gist)
 )) ; END *stronger-medicine-help-sleep-input*
 
 
@@ -3557,10 +3429,6 @@
     2 ((You want to talk about my future instead of the reason for my cancer \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .TREATMENT-OPTION 4 .MOVE 2 forward 0)
     2 ((You want to talk about my future instead of the reason for my cancer \.) (Reason-for-cancer)) (0 :gist)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for why do I have cancer \.)) (0 :gist)
 )) ; END *reason-for-cancer-input*
 
 
@@ -3584,10 +3452,6 @@
     2 *tell-family-input* (0 :subtree)
   1 (0)
     2 *open-ended-question* (0 :subtree)
-  1 (0)
-    2 *general-input* (0 :subtree)
-  1 (0)
-    2 ((NIL Gist \: nothing found for ask for questions \.)) (0 :gist)
 )) ; END *ask-for-questions-input*
 
 
@@ -3595,6 +3459,4 @@
 '(
   1 (0 .BYE 0)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)
-  1 (0)
-    2 ((NIL Gist \: nothing found for say bye \.)) (0 :gist)
 )) ; END *say-bye-input*

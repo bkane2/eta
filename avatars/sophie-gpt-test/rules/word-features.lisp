@@ -1,13 +1,14 @@
 (MAPC 'ATTACHFEAT
 '(
   ; Synonymous
+  (NICE good great pleasure)
   (BYE goodbye)
   (GO going gone went)
   (MEET meeting)
   (CARE TREATMENT treatments)
   (CALL refer)
   (ALRIGHT OKAY ok fine)
-  (COME came)
+  (COME came coming)
   (CLOSE closest)
   (PAIN hurt hurting)
   (ANSWER answered answering say)
@@ -64,7 +65,7 @@
   (TRIGGER triggers triggered triggering)
   (PROVOKE provokes provoking provoked)
   (CAUSE causing caused TRIGGER triggered triggering PROVOKE provoked provoking produce produced producing RESULT resulted resulting)
-  (REASON CAUSE source origin root)
+  (REASON reasons CAUSE source origin root)
   (MAKE-CHANGE-WORDS CAUSE CREATE)
   (RECENTLY recent lately)
   (CHANCE chances)
@@ -280,7 +281,7 @@
   (PAIN-RETURN COME back return)
   (PAINFUL unpleasant distressing)
   (PAIN unpleasantness suffering agony affliction discomfort hurt)
-  (MAKE-WORSE worse worsen harm hurt)
+  (MAKE-WORSE worse worsen worsening harm hurt)
   (PAIN-ALLEVIATE treat manage control alleviate reduce ease relieve lessen diminish allay assuage palliate moderate mollify IMPROVE relieving improving lessening palliating alleviating controlling managing)
   ; Radiation
   (RADIATION-HELP HELP WORK better alleviate reduce comfort comfortable decrease decreasing)
