@@ -367,6 +367,36 @@
 
 
 
+(defun str-replace (str substr1 substr2)
+;`````````````````````````````````````````
+; Given a string, and two substrings, replace all occurrences of the first substring
+; with the second substring.
+;
+  (let ((chr (explode str)) (rep (explode substr1)) (new (explode substr2)))
+    (labels ((replace-recur (l1 l2 buff)
+      (cond
+        ((and (null l1) (null l2)) new)
+        ((and (null l1) l2) nil)
+        ((and l1 (null l2))
+          (append new (replace-recur l1 rep nil)))
+        ((char-equal (car l1) (car l2))
+          (replace-recur (cdr l1) (cdr l2) (cons (car l1) buff)))
+        (t (append (reverse buff) (list (car l1))
+          (replace-recur (cdr l1) rep nil))))))
+      (coerce (replace-recur chr rep nil) 'string)
+))) ; END str-replace
+
+
+
+(defun str-repeat (str n)
+; ``````````````````````````
+; Repeats a string n times
+;
+  (format nil "~v@{~A~:*~}" n str)
+) ; END str-repeat
+
+
+
 (defun sym-contains (sym char)
 ;```````````````````````````````
 ; Returns true if a symbol contains the character given by char.
@@ -496,15 +526,6 @@
     ; Ensure any numbers are symbols
     (mapcar (lambda (w) (if (numberp w) (intern (write-to-string w)) w)) res))
 ) ; END str-to-output
-
-
-
-(defun str-repeat (str n)
-; ``````````````````````````
-; Repeats a string n times
-;
-  (format nil "~v@{~A~:*~}" n str)
-) ; END str-repeat
 
 
 
@@ -2915,7 +2936,7 @@
       (string-trim " " substr))
     (str-split str #\,)) ", "))
   ; capitalize "I"
-  ;; TODO
+  (setq str (str-replace str " i " " I "))
   ; fix final punctuation
   (if (equal (last (explode str) 3) '(#\  #\. #\ ))
     (setq str (coerce (append (butlast (explode str) 3) '(#\.)) 'string)))
