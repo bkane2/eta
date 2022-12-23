@@ -35,7 +35,7 @@
 
 ;; Load timegraph Choose between the following two lines depending on
 ;; whether you want the files compiled into FASLs or not:
-(asdf:operate 'asdf:load-op 'timegraph) ;; Compile and load as necessary
-;(asdf:operate 'asdf:load-source-op 'timegraph) ;; Doesn't compile
+;; (asdf:operate 'asdf:load-op 'timegraph) ;; Compile and load as necessary
+(asdf:operate 'asdf:load-source-op 'timegraph) ;; Doesn't compile
 
 
