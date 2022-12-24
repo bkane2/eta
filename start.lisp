@@ -175,7 +175,7 @@
   (*safe-mode*
     (handler-case (eta :subsystems-perception *subsystems-perception* :subsystems-specialist *subsystems-specialist*
                        :emotions *emotion-tags* :dependencies *dependencies* :response-generator *generation-mode*
-                       :gist-interpreter *interpretation-mode*)
+                       :gist-interpreter *interpretation-mode* :parser *parser-mode*)
       (error (c)
         (error-message "Execution of Eta failed due to an internal error.")
         (values 0 c))))
@@ -197,13 +197,13 @@
         (load-avatar-files *avatar*)
         (eta :read-log log :subsystems-perception *subsystems-perception* :subsystems-specialist *subsystems-specialist*
              :emotions *emotion-tags* :dependencies *dependencies* :response-generator *generation-mode*
-             :gist-interpreter *interpretation-mode*)) logs)))
+             :gist-interpreter *interpretation-mode* :parser *parser-mode*)) logs)))
 
   ; Run Eta
   ;`````````````````````````
   (t (eta :subsystems-perception *subsystems-perception* :subsystems-specialist *subsystems-specialist*
           :emotions *emotion-tags* :dependencies *dependencies* :response-generator *generation-mode*
-          :gist-interpreter *interpretation-mode*)))
+          :gist-interpreter *interpretation-mode* :parser *parser-mode*)))
 
 
 ; Write user gist clauses to file

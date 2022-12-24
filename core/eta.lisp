@@ -309,7 +309,7 @@
 
 
 (defun eta (&key (subsystems-perception '(|Terminal| |Audio|)) (subsystems-specialist '())
-                 (dependencies nil) (response-generator 'RULE) (gist-interpreter 'RULE)
+                 (dependencies nil) (response-generator 'RULE) (gist-interpreter 'RULE) (parser 'RULE)
                  (emotions nil) (read-log nil))
 ;``````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
@@ -327,11 +327,14 @@
   (setq *emotions* emotions)
   (setf (ds-count *ds*) 0) ; Number of outputs so far
 
-  ; Initialize gpt3-shell (if in GPT3 generation/interpretation mode and valid API key exists)
+  (setq *parser*
+    (if (member parser '(BLLIP RULE)) parser 'RULE))
   (setq *response-generator*
     (if (member response-generator '(GPT3 RULE)) response-generator 'RULE))
   (setq *gist-interpreter*
     (if (member gist-interpreter '(GPT3 RULE)) gist-interpreter 'RULE))
+
+  ; Initialize gpt3-shell (if in GPT3 generation/interpretation mode and valid API key exists)
   (when (or (equal *response-generator* 'GPT3) (equal *gist-interpreter* 'GPT3))
     (let ((api-key (get-api-key "openai")))
       (cond 
@@ -343,6 +346,10 @@
   ; Initialize ulf2english if among dependencies (prevents delay on first invocation)
   (when (member "ulf2english" *dependencies*)
     (ulf2english:ulf2english '(this.pro ((pres be.v) (= (a.d (test.n |ULF|.n)))))))
+
+  ; Initialize lenulf if among dependencies (prevents delay on first invocation)
+  (when (equal *parser* 'BLLIP)
+    (parse-str-to-ulf-bllip "This is a test sentence."))
 
   (when *read-log*
     (setq *log-contents* (read-log-contents *read-log*))
@@ -2249,28 +2256,21 @@
 (defun form-ulf-from-clause (clause)
 ;`````````````````````````````````````
 ; Find the ULF corresponding to the user's 'clause' (a gist clause).
-; **Right now, this uses *spatial-question-ulf-tree* directly, instead of
-;   using, say *clause-ulf-tree*, as a general starting point for any
-;   sentential input. When *clause-ulf-tree* has been designed 
-;   (branching to subtrees for assertions, questions, requests, etc.)
-;   it should replace *spatial-question-ulf-tree* below.
 ;
-; **For initial experimentation, the "raw" question rather than any
-;   gist clause derived from it is processed. The idea is that we
-;   would transform inputs like "What's to the right of it?" or
-;   "Add another one" into gist clauses, using the prior utterance
-;   or action. This should be possible with the existing gist clause
-;   mechanisms. For example, if the prior utterance was "Put a red
-;   block on the NVidia block", then "Add another one" should be
-;   interpretable as "Put another red block on the current structure",
-;   or something like that. The present program would be applied 
-;   to this. Cf., the use of the prior gist clause in
-;   'form-gist-clauses-from-input'.
+; Use hierarchical choice trees for extracting the ULF, starting from
+; the root *clause-ulf-tree*.
 ;
-; Use hierarchical choice trees for extracting the ULF.
+; If no ULF is obtained from hierarchical pattern transduction, and the
+; BLLIP-based symbolic ULF parser is enabled as a dependency, then use
+; the parser to obtain a ULF.
 ;
   (let (ulf)
     (setq ulf (choose-result-for clause '*clause-ulf-tree*))
+
+    ; If using BLLIP parser mode and no ULF, use parser to obtain ULF.
+    (when (equal *parser* 'BLLIP)
+      (setq ulf (parse-str-to-ulf-bllip (words-to-str clause))))
+
   ulf)
 ) ; END form-ulf-from-clause
 

@@ -34,6 +34,12 @@
 ;;                               only be used as a fallback if no gist clause is found using rule-based methods.
 ;;                         RULE (default): uses pattern transduction trees to extract gist clauses given context.
 ;;
+;; *parser-mode* : The method to use for parsing gist clauses into ULFs:
+;;                 BLLIP: uses the ULF parser created by Len Schubert based on the Charniak BLLIP parser. Requires
+;;                        both the :lenulf and :standardize-ulf packages to be included in the dependencies, and for
+;;                        BLLIP to be installed locally, with the correct path specified in the :lenulf package.
+;;                 RULE (default): uses pattern transduction trees to parse gist clauses into ULF.
+;;
 ;; *safe-mode* : T to exit smoothly if exception is thrown during execution,
 ;;               NIL otherwise
 ;;
@@ -52,6 +58,7 @@
 (defparameter *dependencies* NIL)
 (defparameter *generation-mode* 'RULE)
 (defparameter *interpretation-mode* 'RULE)
+(defparameter *parser-mode* 'RULE)
 (defparameter *safe-mode* NIL)
 (defparameter *session-number* 1)
  

@@ -3,7 +3,7 @@
 ;;
 ;; *avatar-name* : the full name of the avatar to use
 ;;
-;; *read-log-mode* : If T, reads and emulates each of the log files in logs/ directory, allows user corrections, and outputs new
+;; *read-log-mode* : If T, reads and emulates each of the log files in logs/ directory, allows user corrections, Thand outputs new
 ;;                   log files in logs_out/
 ;;                   If a string corresponding to a file name, read just that file from logs/
 ;;                   (NOTE: currently only relevant to david/blocks world)
@@ -43,6 +43,9 @@
 ;; *safe-mode* : T to exit smoothly if exception is thrown during execution,
 ;;               NIL otherwise
 ;;
+;; *debug-patterns-mode* : T to include print statements showing which patterns were matched in the process of invoking a pattern
+;;                        transduction tree; NIL otherwise.
+;;
 ;; *user-id* : unique ID of user (potentially overwritten by sessionInfo.lisp if in live mode)
 ;;
 ;; *session-number* : the number session to load (a session-number of 1 corresponds to the files in the day1 directory of an avatar)
@@ -55,10 +58,11 @@
 (defparameter *subsystems-perception* '(|Terminal| |Audio|))
 (defparameter *subsystems-specialist* '())
 (defparameter *emotion-tags* T)
-(defparameter *dependencies* '("ttt" "ulf-lib" "gpt3-shell" "ulf2english"))
+(defparameter *dependencies* '("ttt" "ulf-lib" "gpt3-shell" "ulf2english" "lenulf" "standardize-ulf"))
 (defparameter *generation-mode* 'GPT3)
 (defparameter *interpretation-mode* 'GPT3)
-(defparameter *parser-mode* 'RULE)
+(defparameter *parser-mode* 'BLLIP)
 (defparameter *safe-mode* NIL)
+(defparameter *debug-patterns-mode* NIL)
 (defparameter *session-number* 1)
  
