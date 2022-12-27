@@ -86,6 +86,16 @@
 
 
 
+(defun choose-random-element (l)
+;``````````````````````````````````
+; Chooses a random element from a list
+;
+  (if (and (listp l) (>= (length l) 1))
+    (nth (random (length l)) l))
+) ; END choose-random-element
+
+
+
 (defun flatten (lst)
 ;````````````````````````
 ; Flattens an arbitrary list using mapcar. Note that we can do this fairly easily

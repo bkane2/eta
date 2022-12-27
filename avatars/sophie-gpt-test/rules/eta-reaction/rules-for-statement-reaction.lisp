@@ -14,16 +14,20 @@
   ;; 1 (0 you 2 sorry 2 I am in pain 0)
   ;;   2 () (0 :out)
   1 (0 you recognize how hard receiving the test results is for me 0)
-    2 (It was difficult for me to accept the test results \. I\'m still having a hard time coping with the news \,
-       but I appreciate your help \.) (5 :out)
-    2 (It\'s just a lot for me to take in at once \.) (5 :out)
-    2 (It\'s never easy to hear things like this \. I think I just need time \.) (0 :out)
+    2 (:or
+        (It was difficult for me to accept the test results \. I\'m still having a hard time coping with the news \,
+        but I appreciate your help \.)
+        (It\'s just a lot for me to take in at once \.)
+        (It\'s never easy to hear things like this \. I think I just need time \.))
+      (0 :out)
 
   ; Explicit responses
   1 (0 the prognosis is that I may live for 0)
-    2 ([SAD] That\'s really difficult to hear \. I thought for sure I would have longer than that \.) (5 :out)
-    2 ([SAD] I knew the prognosis would be bad \, but I wasn\'t expecting to hear that \. I don\'t know how to handle this \.) (5 :out)
-    2 ([SAD] I thought I would have more time than that left \. That\'s extremely depressing to hear \.) (0 :out)
+    2 (:or
+        ([SAD] That\'s really difficult to hear \. I thought for sure I would have longer than that \.)
+        ([SAD] I knew the prognosis would be bad \, but I wasn\'t expecting to hear that \. I don\'t know how to handle this \.)
+        ([SAD] I thought I would have more time than that left \. That\'s extremely depressing to hear \.))
+      (0 :out)
 
   ;; ; Empowering responses
   ;; 1 (0 do I want to try to fight the cancer 0)

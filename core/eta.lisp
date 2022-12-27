@@ -1599,6 +1599,7 @@
     (cond
       ; Single gist clause
       ((null (cdr user-gist-clauses_p))
+        ;; (format t "~% user-gist-words are ~a ~% " user-gist-words)
         (setq choice (choose-result-for (car user-gist-clauses_p) '*reaction-to-input*))
         ;; (format t "~% (single clause) choice are ~a ~% " choice) ; DEBUGGING
       )
@@ -2694,7 +2695,11 @@
       ((member directive '(:out :subtrees :schema :schemas
                            :schema+args :gist :schema+ulf
                            :prompt-examples))
-        (setq result (cons directive (fill-template pattern parts)))
+        (setq result (fill-template pattern parts))
+        ; If result is disjunctive, randomly choose one element
+        (when (equal (car result) :or)
+          (setq result (choose-random-element (cdr result))))
+        (setq result (cons directive result))
         (setf (get rule-node 'time-last-used) (ds-count *ds*))
         (return-from choose-result-for1 result))
 
