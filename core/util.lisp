@@ -2895,21 +2895,26 @@
 
 
 
-(defun shortname (name)
-;`````````````````````````
+(defun shortname (name &key firstname)
+;``````````````````````````````````````
 ; Gets the short version of a name string (if name includes a title,
 ; shortname is title + last name, otherwise shortname is first name).
+; If :firstname t is given, return only first name.
 ;
   (let ((parts (str-split name #\ )))
     (cond
       ; Includes title, first name, and last name
       ((and (>= (length parts) 3)
             (member #\. (explode (first parts))))
-        (concatenate 'string (first parts) " " (str-join (cddr parts) #\ )))
+        (if firstname
+          (second parts)
+          (concatenate 'string (first parts) " " (str-join (cddr parts) #\ ))))
       ; Includes title and last name
       ((and (= (length parts) 2)
             (member #\. (explode (first parts))))
-        (concatenate 'string (first parts) " " (second parts)))
+        (if firstname
+          ""
+          (concatenate 'string (first parts) " " (second parts))))
       (t (first parts)))
 )) ; END shortname
 
@@ -2972,27 +2977,110 @@
 
 
 
-(defun preprocess-ulf-pronouns-for-prompt (ulf &key has-pron)
-;``````````````````````````````````````````````````````````````
-; If ^me is followed by (^me 's) possessive in child
-; clause, replace it with their.pro. Otherwise, if ^me
-; is encountered, replace it with the value of the indexical
-; pronoun.
+(defun get-pron-case (name case)
+;```````````````````````````````````
+; Gets the appropriate third person pronoun case based on
+; the lists of female and male first names in resources.
+;
+; TODO: in the future we will likely want to have the
+; user enter their pronouns, to avoid potential misgendering.
+;
+  (let ((firstname (intern (shortname name :firstname t))))
+    (cond
+      ; Subjective -> he/she/they
+      ((member case '(subjective subj)) (cond
+        ((equal (get firstname 'entity-type) 'male.n)
+          'he.pro)
+        ((equal (get firstname 'entity-type) 'female.n)
+          'she.pro)
+        (t 'they.pro)))
+      ; Objective -> him/her/them
+      ((member case '(objective obj)) (cond
+        ((equal (get firstname 'entity-type) 'male.n)
+          'him.pro)
+        ((equal (get firstname 'entity-type) 'female.n)
+          'her.pro)
+        (t 'them.pro)))
+      ; Possessive -> his/her/their
+      ((member case '(possessive poss)) (cond
+        ((equal (get firstname 'entity-type) 'male.n)
+          'his.d)
+        ((equal (get firstname 'entity-type) 'female.n)
+          'her.d)
+        (t 'their.d))))
+)) ; END get-pron-case
+
+
+
+(defun preprocess-ulf-pronouns-for-prompt1 (ulf)
+;``````````````````````````````````````````````````
+; Wrapper function for preprocess-ulf-pronouns-for-prompt
+;
+  (first (preprocess-ulf-pronouns-for-prompt ulf))
+) ; END preprocess-ulf-pronouns-for-prompt1
+
+
+
+(defun preprocess-ulf-pronouns-for-prompt (ulf &key me-pron you-pron)
+;``````````````````````````````````````````````````````````````````````
+; Preprocess a ULF for prompt generation by replacing indexical variables
+; ^me and ^you with either the shortname of the corresponding agent, or
+; the appropriate anaphoric pronoun if the name has previously been used.
+;
+; TODO: this function is a bit messy; it should be optimized in the future.
 ;
   (cond
-    ((atom ulf) ulf)
+    ; If ^me is encountered as an object (non-car of a list),
+    ; replace with them/her/him (if anaphoric) or the value of ^me.
+    ((equal ulf '^me)
+      (list (if me-pron
+        (get-pron-case *^me* 'obj)
+        (intern (shortname *^me*)))
+      t you-pron))
+    ; If ^you is encountered as an object (non-car of a list),
+    ; replace with them/her/him (if anaphoric) or the value of ^you.
+    ((equal ulf '^you)
+      (list (if you-pron
+        (get-pron-case *^you* 'obj)
+        (intern (shortname *^you*)))
+      me-pron t))
+    ; Non-indexical atom.
+    ((atom ulf)
+      (list ulf me-pron you-pron))
+    ; If ^me is encountered as a subject (car of a list),
+    ; replace with they/she/he (if anaphoric) or the value of ^me.
     ((equal (car ulf) '^me)
-      (cons (intern (shortname *^me*))
-        (preprocess-ulf-pronouns-for-prompt (cdr ulf) :has-pron t)))
+      (list (cons (if me-pron
+              (get-pron-case *^me* 'subj)
+              (intern (shortname *^me*)))
+        (first (preprocess-ulf-pronouns-for-prompt (cdr ulf) :me-pron t :you-pron you-pron)))
+      t you-pron))
+    ; If ^you is encountered as a subject (car of a list),
+    ; replace with they/she/he (if anaphoric) or the value of ^you.
     ((equal (car ulf) '^you)
-      (cons (intern (shortname *^you*))
-        (preprocess-ulf-pronouns-for-prompt (cdr ulf) :has-pron has-pron)))
-    ((atom (car ulf))
-      (cons (car ulf) (preprocess-ulf-pronouns-for-prompt (cdr ulf) :has-pron has-pron)))
-    ((and (equal (car ulf) '(^me 's)) has-pron)
-      (cons 'their.pro (preprocess-ulf-pronouns-for-prompt (cdr ulf) :has-pron has-pron)))
-    (t
-      (mapcar (lambda (part) (preprocess-ulf-pronouns-for-prompt part :has-pron has-pron)) ulf)))
+      (list (cons (if you-pron
+              (get-pron-case *^you* 'subj)
+              (intern (shortname *^you*)))
+        (first (preprocess-ulf-pronouns-for-prompt (cdr ulf) :me-pron me-pron :you-pron t)))
+      me-pron t))
+    ; If possessive subject with ^me and anaphoric, replace with their/her/his.
+    ((and (equal (car ulf) '(^me 's)) me-pron)
+      (list (cons (get-pron-case *^me* 'poss)
+        (first (preprocess-ulf-pronouns-for-prompt (cdr ulf) :me-pron t :you-pron you-pron)))
+      t you-pron))
+    ; If possessive subject with ^you and anaphoric, replace with their/her/his.
+    ((and (equal (car ulf) '(^you 's)) you-pron)
+      (list (cons (get-pron-case *^you* 'poss)
+        (first (preprocess-ulf-pronouns-for-prompt (cdr ulf) :me-pron me-pron :you-pron t)))
+      me-pron t))
+    ; Otherwise, recur on each element in list
+    (t (list (mapcar (lambda (part)
+        (let ((result (preprocess-ulf-pronouns-for-prompt part :me-pron me-pron :you-pron you-pron)))
+          (setq me-pron (second result))
+          (setq you-pron (third result))
+          (first result)))
+        ulf)
+      me-pron you-pron)))
 ) ; END preprocess-ulf-pronouns-for-prompt
 
 
@@ -3003,7 +3091,7 @@
 ; pronouns and possessives.
 ;
   (if (member "ulf2english" *dependencies* :test #'equal)
-    (ulf2english:ulf2english (preprocess-ulf-pronouns-for-prompt ulf)))
+    (ulf2english:ulf2english (preprocess-ulf-pronouns-for-prompt1 ulf)))
 ) ; END ulf-to-str
 
 
