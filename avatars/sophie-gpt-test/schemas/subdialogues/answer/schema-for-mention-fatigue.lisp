@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-fatigue.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie has been fatigued
+  ?p1 (^me ((pres perf) (be.v fatigued.a)))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I have been fatigued \.))

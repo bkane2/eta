@@ -10,6 +10,19 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-antidepressant.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to lessen her pain
+  ?g1 (^me ((pres want.v) (to (lessen.v ((^me 's) pain.n)))))
+  ; Sophie wants to know whether taking an antidepressant will help with her pain
+  ?g2 (^me ((pres want.v) (to (know.v (whether ((ka (take.v (an.d antidepressant.n)))
+        ((pres will.aux-s) (help.v (with.p-arg ((^me 's) pain.n))))))))))
+)
+
+:preconds (
+  ; Sophie is not currently taking antidepressants
+  ?p1 (^me ((pres prog) not currently.adv-e (take.v (k (plur antidepressant.n)))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Will an antidepressant help with my pain ?))

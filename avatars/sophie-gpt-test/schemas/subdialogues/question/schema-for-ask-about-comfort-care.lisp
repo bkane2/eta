@@ -11,7 +11,15 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(Should I get comfort care ?)))))
+  ; Sophie wants to know whether she should get comfort care
+  ?g1 (^me ((pres want.v) (to (know.v (whether
+        (^me ((pres should.aux-s) (get.v (k (comfort.n care.n))))))))))
+)
+
+:preconds (
+  ; Sophie does not know whether she should get comfort care
+  ?p1 (^me ((pres do.aux-s) not (know.v (whether
+        (^me ((pres should.aux-s) (get.v (k (comfort.n care.n)))))))))
 )
 
 :episodes (

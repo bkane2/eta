@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-blood-medication.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie is taking Cozar to help with blood pressure
+  ?p1 (^me ((pres prog) (take.v |Cozar| ({for}.p (to (help.v (with.p-arg (k (blood.n pressure.n)))))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I am taking Cozar to help with blood pressure \.))

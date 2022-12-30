@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) discuss-smoking-habits.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie has a history of smoking
+  ?p1 (^me ((pres have.v) (a.d (n+preds history.n (of.p (ka smoke.v))))))
+  ; Sophie quit smoking six months ago
+  ?p2 (^me ((past quit.v) (ka smoke.v) (adv-e (sub (six.d (plur month.n)) (ago.p *h)))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I have a history of smoking but quit six months ago \.))

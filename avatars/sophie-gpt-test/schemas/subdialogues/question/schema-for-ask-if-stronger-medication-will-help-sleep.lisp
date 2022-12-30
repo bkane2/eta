@@ -10,13 +10,15 @@
 '(event-schema :header (((set-of ^me ^you) ask-if-stronger-medication-will-help-sleep.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
-; TODO: although inquiring about a stronger pain medication might be the ultimate goal of the agent
-; pursuing this line of questioning, it isn't the immediate goal, and so shouldn't be the immediate
-; goal of this schema. However, this is currently necessary (until Eta is modified to support multiple
-; inferences from the same gist clause) to prevent the agent from asking this question in the case where
-; the agent already has "stronger" knowledge that they're being prescribed a stronger pain medication.
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(Can I have a stronger pain medication ?)))))
+  ; Sophie wants to know whether stronger pain medication will help her sleep
+  ?g1 (^me ((pres want.v) (to (know.v (whether ((k (stronger.a (pain.n medication.n)))
+        ((pres will.aux-s) (help.v ^me (ke sleep.v)))))))))
+)
+
+:preconds (
+  ; Sophie is having trouble with sleeping
+  ?p1 (^me ((pres perf) ((prog have.v) trouble.a (with.p-arg (ka sleep.v)))))
 )
 
 :episodes (

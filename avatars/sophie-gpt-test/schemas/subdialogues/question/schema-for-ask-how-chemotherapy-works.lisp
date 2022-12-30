@@ -11,7 +11,15 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(How does chemotherapy work ?)))))
+  ; Sophie wants to know how chemotherapy works
+  ?g1 (^me ((pres want.v) (to (know.v (ans-to
+        (sub how.pq ((k chemotherapy.n) ((pres work.v) *h))))))))
+)
+
+:preconds (
+  ; Sophie does not understand how chemotherapy works
+  ?p1 (^me ((pres do.aux-s) not (understand.v (ans-to
+        (sub how.pq ((k chemotherapy.n) ((pres work.v) *h)))))))
 )
 
 :episodes (

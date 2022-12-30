@@ -10,13 +10,20 @@
 '(event-schema :header (((set-of ^me ^you) ask-how-long-to-know-pain-medication-working.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
-; TODO: although inquiring about a stronger pain medication might be the ultimate goal of the agent
-; pursuing this line of questioning, it isn't the immediate goal, and so shouldn't be the immediate
-; goal of this schema. However, this is currently necessary (until Eta is modified to support multiple
-; inferences from the same gist clause) to prevent the agent from asking this question in the case where
-; the agent already has "stronger" knowledge that they're being prescribed a stronger pain medication.
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(Can I have a stronger pain medication ?)))))
+  ; Sophie wants to know whether her pain medication is working
+  ?g1 (^me ((pres want.v) (to (know.v (whether
+        (((^me 's) (pain.n medication.n)) ((pres be.v) working.a)))))))
+  ; Sophie wants to know how she can tell whether her pain medication is working
+  ?g2 (^me ((pres want.v) (to (know.v (ans-to
+        (sub how.pq (^me ((pres can.aux-s) (tell.v
+          (whether (((^me 's) (pain.n medication.n)) ((pres be.v) working.a))) *h)))))))))
+)
+
+:preconds (
+  ; Sophie does not know whether her pain medication is working
+  ?p1 (^me ((pres do.aux-s) not (know.v (whether
+        (((^me 's) (pain.n medication.n)) ((pres be.v) working.a))))))
 )
 
 :episodes (

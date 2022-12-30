@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) explain-not-sleeping-well.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants the user to know she hasn't been sleeping well
+  ?g1 (^me ((pres want.v) ^you (to (know.v (tht (^me ((pres perf) not ((prog sleep.v) well.adv-a))))))))
+)
+
+:preconds (
+  ; Sophie has not been sleeping well
+  ?p1 (^me ((pres perf) not ((prog sleep.v) well.adv-a)))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I have not been sleeping well \.))

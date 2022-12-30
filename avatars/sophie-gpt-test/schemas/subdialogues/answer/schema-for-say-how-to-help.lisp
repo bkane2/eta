@@ -10,6 +10,15 @@
 '(event-schema :header (((set-of ^me ^you) say-how-to-help.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants the user to know that they can help by answering all of her questions
+  ?g1 (^me ((pres want.v) ^you (to (know.v (that (^you ((pres can.aux-s)
+        (help.v (by.p-arg (ka (answer.v (all_of.d ((^me 's) (plur question.n))))))))))))))
+)
+
+:preconds (
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(You can help me by answering all of my questions \.))

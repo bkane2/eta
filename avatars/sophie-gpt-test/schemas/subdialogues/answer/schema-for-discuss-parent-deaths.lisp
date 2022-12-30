@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) discuss-parent-deaths.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie's mother died from diabetes
+  ?p1 (((^me 's) mother.n) ((past die.v) (adv-a (from.p (k diabetes.n)))))
+  ; Sophie's father died from prostate cancer
+  ?p2 (((^me 's) father.n) ((past die.v) (adv-a (from.p (k (prostate.n cancer.n))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(My mother died from diabetes and my father died from prostate cancer \.))

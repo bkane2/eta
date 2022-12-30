@@ -10,6 +10,15 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-will-radiation-help.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know whether radiation will help her
+  ?g1 (^me ((pres want.v) (to (know.v (whether
+        ((k radiation.n) ((pres will.aux-s) (help.v ^me))))))))
+)
+
+:preconds (
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Do you think radiation will help ?))

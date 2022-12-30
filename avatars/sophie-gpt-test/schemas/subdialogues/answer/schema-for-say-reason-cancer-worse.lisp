@@ -10,6 +10,19 @@
 '(event-schema :header (((set-of ^me ^you) say-reason-cancer-worse.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants the user to know why she believes her cancer has become worse
+  ?g1 (^me ((pres want.v) ^you (to (know.v (ans-to (sub why.pq
+        (^me ((pres believe.v) (tht (((^me 's) cancer.n) ((pres perf)
+          (become.v worse.a ({because}.ps *h)))))))))))))
+)
+
+:preconds (
+  ; Sophie believes her cancer has become worse because her pain has been becoming worse
+  ?p1 (^me ((pres believe.v) (tht (((^me 's) cancer.n) ((pres perf) (become.v worse.a
+        (because.ps (((^me 's) pain.n) ((pres perf) ((prog become.v) worse.a))))))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I believe my cancer has gotten worse because my pain has also gotten worse \.))

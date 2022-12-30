@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) deny-allergies.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; The user wants to know whether Sophie is allergic to any medicine
+  ?g1 (^you ((pres want.v) (to (know.v (whether (^me ((pres be.v) allergic.a (to.p-arg (any.d medicine.n)))))))))
+)
+
+:preconds (
+  ; Sophie is not allergic to any medicine
+  ?p1 (^me ((pres be.v) not allergic.a (to.p-arg (any.d medicine.n))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I don\'t have allergies to any medicine \.))

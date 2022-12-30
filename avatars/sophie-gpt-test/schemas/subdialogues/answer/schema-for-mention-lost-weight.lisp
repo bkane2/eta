@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-lost-weight.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie has lost weight
+  ?p1 (^me ((pres perf) (lose.v (k weight.n))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I have lost weight \.))

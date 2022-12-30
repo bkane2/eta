@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-treatment-options.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know her options for treatment
+  ?g1 (^me ((pres want.v) (to (know.v ((^me 's) (n+preds (plur option.n) (for.p (k treatment.n))))))))
+)
+
+:preconds (
+  ; Sophie does not know her options for treatment
+  ?p1 (^me ((pres do.aux-s) not (know.v ((^me 's) (n+preds (plur option.n) (for.p (k treatment.n)))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(What are my options for treatment ?))

@@ -10,6 +10,19 @@
 '(event-schema :header (((set-of ^me ^you) verify-cancer-status.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know more about her condition
+  ?g1 (^me ((pres want.v) (to (know.v more.a (about.p-arg ((^me 's) condition.n))))))
+  ; Sophie wants to confirm that the user does not think her cancer has gotten worse
+  ?g2 (^me ((pres want.v) (to (confirm.v (that (^you ((pres do.aux-s) not (think.v
+        (tht (((^me 's) cancer.n) ((pres perf) (got.v worse.a))))))))))))
+)
+
+:preconds (
+  ; The user doesn't think Sophie's cancer has gotten worse
+  ?p1 (^you ((pres do.aux-s) not (think.v (tht (((^me 's) cancer.n) ((pres perf) (got.v worse.a)))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Are you sure the cancer has not gotten worse ?))

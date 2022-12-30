@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-lortab-frequency.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie is taking Lortab every three hours
+  ?p1 (^me ((pres prog) (take.v |Lortab| (adv-e ({for}.p (every.d (three.a (plur hour.n))))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I am taking Lortab every three hours \.))

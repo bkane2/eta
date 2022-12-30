@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) redirect-to-prognosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to talk about her prognosis
+  ?g1 (^me ((pres want.v) (to (talk.v (adv-a (about.p ((^me 's) prognosis.n)))))))
+)
+
+:preconds (
+  ; The user is not currently talking about Sophie's prognosis
+  ?p1 (^you ((pres prog) not currently.adv-e (talk.v (adv-a (about.p ((^me 's) prognosis.n))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I want to talk about my prognosis today \.))

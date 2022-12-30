@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) discuss-drinking-habits.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie had a history of alcohol abuse
+  ?p1 (^me ((past have.v) (a.d (n+preds history.n (of.p (alcohol.n abuse.n))))))
+  ; Sophie does not drink now
+  ?p2 (^me ((pres do.aux-s) not (drink.v now.adv-e)))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I have a history of alcohol abuse but do not drink now \.))

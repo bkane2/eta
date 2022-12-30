@@ -11,7 +11,13 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(Why do I have cancer ?)))))
+  ; Sophie wants to know why she has cancer
+  ?g1 (^me ((pres want.v) (to (know.v (ans-to (sub why.pq (^me ((pres have.v) (k cancer.n) *h))))))))
+)
+
+:preconds (
+  ; Sophie does not understand why she has cancer
+  ?p1 (^me ((pres do.aux-s) not (understand.v (ans-to (sub why.pq (^me ((pres have.v) (k cancer.n) *h)))))))
 )
 
 :episodes (

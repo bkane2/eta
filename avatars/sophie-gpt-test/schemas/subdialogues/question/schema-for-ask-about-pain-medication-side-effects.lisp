@@ -10,6 +10,18 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-pain-medication-side-effects.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know the side effects of stronger pain medication
+  ?g1 (^me ((pres want.v) (to (know.v
+        (the.d (n+preds (side.a (plur effect.n)) (of.p (k (stronger.a (pain.n medication.n))))))))))
+)
+
+:preconds (
+  ; Sophie does not know the side effects of stronger pain medication
+  ?p1 (^me ((pres do.aux-s) not (know.v
+        (the.d (n+preds (side.a (plur effect.n)) (of.p (k (stronger.a (pain.n medication.n)))))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(What are the side effects of stronger pain medication ?))

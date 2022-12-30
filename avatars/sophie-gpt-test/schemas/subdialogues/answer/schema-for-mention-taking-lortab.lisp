@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-taking-lortab.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie is only taking Lortab to treat her pain
+  ?p1 (^me ((pres prog) (take.v only.adv-s |Lortab| (adv-a ({for}.p (to (treat.v (their.d pain.n))))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I am only taking Lortab to treat my pain \.))

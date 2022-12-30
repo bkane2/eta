@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) confirm-name.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; The user wants to know Sophie's name
+  ?g1 (^you ((pres want.v) (to (know.v ((^me 's) name.n)))))
+)
+
+:preconds (
+  ; Sophie is named "Sophie Hallman"
+  ?p1 (^me ((pres (pasv name.v)) |Sophie Hallman|))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(You can call me Sophie \.))

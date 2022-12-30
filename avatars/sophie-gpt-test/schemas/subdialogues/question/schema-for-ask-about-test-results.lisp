@@ -11,7 +11,14 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(What do my test results mean ?)))))
+  ; Sophie wants to know what her test results mean
+  ?g1 (^me ((pres want.v) (to (know.v (ans-to
+        (sub what.pro (((^me 's) (test.n (plur result.n))) ((pres mean.v) *h))))))))
+)
+
+:preconds (
+  ; Sophie does not understand her test results
+  ?p1 (^me ((pres do.aux-s) not (understand.v ((^me 's) (test.n (plur result.n))))))
 )
 
 :episodes (

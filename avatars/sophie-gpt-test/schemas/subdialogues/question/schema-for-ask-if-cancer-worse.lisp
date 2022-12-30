@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) ask-if-cancer-worse.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know whether her cancer has gotten worse
+  ?g1 (^me ((pres want.v) (to (know.v (whether (((^me 's) cancer.n) ((pres perf) (got.v worse.a))))))))
+)
+
+:preconds (
+  ; Sophie does not understand her condition
+  ?p1 (^me ((pres do.aux-s) not (understand.v ((^me 's) condition.n))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Has the cancer gotten worse ?))

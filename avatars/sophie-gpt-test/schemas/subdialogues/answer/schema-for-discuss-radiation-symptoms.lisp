@@ -10,6 +10,15 @@
 '(event-schema :header (((set-of ^me ^you) discuss-radiation-symptoms.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie had some hair loss and redness at the site of radiation
+  ?p1 (^me ((past have.v) ((some.d (hair.n loss.n)) and.cc (k redness.n))
+        (at.p-arg (the.d (n+preds site.n (of.p (k radiation.n)))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I had some hair loss and redness at the site of radiation \.))

@@ -11,7 +11,14 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(What should I tell my family ?)))))
+  ; Sophie wants to know what she should tell her family
+  ?g1 (^me ((pres want.v) (to (know.v (ans-to (sub what.pro
+        (^me ((pres should.aux-s) (tell.v ((^me 's) family.n) *h)))))))))
+)
+
+:preconds (
+  ; Sophie hasn't told her family about her cancer yet
+  ?p1 (^me ((pres perf) not (tell.v ((^me 's) family.n) (about.p-arg ((^me 's) cancer.n)) yet.adv-e)))
 )
 
 :episodes (

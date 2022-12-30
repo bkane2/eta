@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-anxiety.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie feels anxious about her future
+  ?p1 (^me ((pres feel.v) anxious.a (about.p-arg ((^me 's) future.n))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I feel anxious about my future \.))

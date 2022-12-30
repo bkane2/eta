@@ -11,7 +11,13 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(Can I have a stronger pain medication ?)))))
+  ; Sophie wants a stronger pain medication
+  ?g1 (^me ((pres want.v) (a.d (stronger.a (pain.n medication.n)))))
+)
+
+:preconds (
+  ; Sophie's current pain medication isn't working well
+  ?p1 (((^me 's) (current.a (pain.n medication.n))) ((pres prog) not (work.v well.a)))
 )
 
 :episodes (

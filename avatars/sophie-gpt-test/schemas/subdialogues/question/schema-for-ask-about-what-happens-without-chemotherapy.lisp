@@ -10,6 +10,18 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-what-happens-without-chemotherapy.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know what her treatment options are without chemotherapy
+  ?g1 (^me ((pres want.v) (to (know.v (ans-to
+        (sub what.pro (((^me 's) (treatment.n (plur option.n))) ((pres be.v) (= *h)
+          (adv-a (without.p (k chemotherapy.n)))))))))))
+)
+
+:preconds (
+  ; Sophie is unsure about chemotherapy
+  ?p1 (^me ((pres be.v) unsure.a (about.p-arg (k chemotherapy.n))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(What are my treatment options if I do not do chemotherapy ?))

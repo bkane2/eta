@@ -10,6 +10,17 @@
 '(event-schema :header (((set-of ^me ^you) ask-why-pain-medication-not-working.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know why her pain medication isn't working anymore
+  ?g1 (^me ((pres want.v) (to (know.v (ans-to (sub why.pq (((^me 's) (pain.n medication.n))
+        ((pres prog) not (work.v anymore.adv-e *h)))))))))
+)
+
+:preconds (
+  ; Sophie's pain medication isn't working anymore
+  ?p1 (((^me 's) (pain.n medication.n)) ((pres prog) not (work.v anymore.adv-e)))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Why isn\'t the pain medication working anymore ?))

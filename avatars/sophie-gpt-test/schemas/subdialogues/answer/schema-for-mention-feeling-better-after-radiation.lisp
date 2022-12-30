@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-feeling-better-after-radiation.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie was feeling a little better after radiation
+  ?p1 (^me ((past prog) (feel.v (a_little.mod-a better.a) (adv-e (after.p (k radiation.n))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I was feeling a little better after radiation \.))

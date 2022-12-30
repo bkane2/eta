@@ -10,6 +10,15 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-narcotic-addiction.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know whether she can get addicted to narcotics
+  ?g1 (^me ((pres want.v) (to (know.v (whether
+        (^me ((pres can.aux-s) (get.v (addicted.a (to.p-arg (k (plur narcotic.n))))))))))))
+)
+
+:preconds (
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Can I get addicted to narcotics ?))

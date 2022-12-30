@@ -10,6 +10,18 @@
 '(event-schema :header (((set-of ^me ^you) explain-understanding-of-condition.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants the user to know her understanding of her condition
+  ?g1 (^me ((pres want.v) ^you (to (know.v (their.d (n+preds understanding.n (of.p ((^me 's) condition.n))))))))
+)
+
+:preconds (
+  ; Sophie knows that her cancer got worse
+  ?p1 (^me ((pres know.v) (that (((^me 's) cancer.n) ((past got.v) worse.a)))))
+  ; Sophie does not know just how bad her cancer is
+  ?p2 (^me ((pres do.aux-s) not (know.v (ans-to (sub (just.mod-a (how.mod-a bad.a)) (((^me 's) cancer.n) ((pres be.v) *h)))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I know that my cancer has gotten worse\, but I\'m not sure how bad it is \.))

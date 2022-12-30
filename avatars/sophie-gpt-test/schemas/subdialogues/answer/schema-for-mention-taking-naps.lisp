@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-taking-naps.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie usually takes a nap during the day
+  ?p1 (^me usually.adv-e ((pres take.v) (a.d nap.n) (adv-e (during.p (the.d day.n)))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I usually take a nap during the day \.))

@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) explain-how-got-diagnosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants the user to know how she got her diagnosis
+  ?g1 (^me ((pres want.v) ^you (to (know.v (ans-to (sub how.pq (^me ((past got.v) ((^me 's) diagnosis.n) *h))))))))
+)
+
+:preconds (
+  ; Sophie got her diagnosis after visiting a lung doctor
+  ?p1 (^me ((past got.v) ((^me 's) diagnosis.n) (after.ps (^me ((past visit.v) (a.d (lung.n doctor.n)))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I got my diagnosis after visiting a lung doctor \.))

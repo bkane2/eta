@@ -11,7 +11,14 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(Why have I not been sleeping well ?)))))
+  ; Sophie wants to know why she hasn't been sleeping well
+  ?g1 (^me ((pres want.v) (to (know.v (ans-to
+        (sub why.pq (^me ((pres perf) not ((prog sleep.v) well.a *h)))))))))
+)
+
+:preconds (
+  ; Sophie hasn't been sleeping well
+  ?p1 (^me ((pres perf) not ((prog sleep.v) well.a)))
 )
 
 :episodes (

@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) explain-here-alone.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie is here alone
+  ?p1 (^me ((pres be.v) here.adv-e alone.adv-a))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I am here alone \.))

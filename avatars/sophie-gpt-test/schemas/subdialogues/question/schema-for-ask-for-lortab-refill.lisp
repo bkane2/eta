@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) ask-for-lortab-refill.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants a refill of her Lortab
+  ?g1 (^me ((pres want.v) (a.d (n+preds refill.n (of.p ((^me 's) |Lortab|.n))))))
+)
+
+:preconds (
+  ; Sophie is out of her Lortab
+  ?p1 (^me ((pres be.v) (out.a (of.p-arg ((^me 's) |Lortab|.n)))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I would like a refill of medicine \.))

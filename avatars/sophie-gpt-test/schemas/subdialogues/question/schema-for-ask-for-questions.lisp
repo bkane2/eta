@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) ask-for-questions.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know what questions the user has
+  ?g1 (^me ((pres want.v) (to (know.v (ans-to (sub (what.d (plur question.n)) (^you ((pres have.v) *h))))))))
+)
+
+:preconds (
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(What are your questions ?))

@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) say-pain-worse.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie's pain has recently been getting worse
+  ?p1 (((^me 's) pain.n) ((pres perf) recently.adv-e ((prog get.v) worse.a)))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(My pain has recently been getting worse \.))

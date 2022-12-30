@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-lost-appetite.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie has lost her appetite
+  ?p1 (^me ((pres perf) (lose.v ((^me 's) appetite.n))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I have lost my appetite \.))

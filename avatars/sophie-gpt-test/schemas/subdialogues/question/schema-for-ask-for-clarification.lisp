@@ -10,6 +10,16 @@
 '(event-schema :header (((set-of ^me ^you) ask-for-clarification.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants the user to rephrase their question
+  ?g1 (^me ((pres want.v) ^you (to (rephrase.v ((^you 's) question.n)))))
+)
+
+:preconds (
+  ; Sophie did not understand the user's question
+  ?p1 (^me ((past do.aux-s) not (understand.v ((^you 's) question.n))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Can you rephrase your question ?))

@@ -11,7 +11,13 @@
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(Do I need chemotherapy ?)))))
+  ; Sophie wants to know whether she needs chemotherapy
+  ?g1 (^me ((pres want.v) (to (know.v (whether (^me ((pres need.v) (k chemotherapy.n))))))))
+)
+
+:preconds (
+  ; Sophie does not know whether she needs chemotherapy
+  ?p1 (^me ((pres do.aux-s) not (know.v (whether (^me ((pres need.v) (k chemotherapy.n)))))))
 )
 
 :episodes (

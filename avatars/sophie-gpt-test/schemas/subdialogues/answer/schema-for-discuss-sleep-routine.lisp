@@ -10,6 +10,15 @@
 '(event-schema :header (((set-of ^me ^you) discuss-sleep-routine.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie takes some pain medication and reads a book before she sleeps
+  ?p1 (^me ((((pres take.v) (some.d (pain.n medication.n))) and.cc ((pres read.v) (a.d book.n)))
+        (adv-e (before.p (ke (^me sleep.v))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I take some pain medication and read a book before I sleep \.))

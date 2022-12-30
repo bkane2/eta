@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-mild-depression.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie feels mildly depressed
+  ?p1 (^me ((pres feel.v) (mildly.mod-a depressed.a)))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I feel mildly depressed \.))

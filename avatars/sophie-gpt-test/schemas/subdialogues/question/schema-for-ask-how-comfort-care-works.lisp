@@ -10,6 +10,18 @@
 '(event-schema :header (((set-of ^me ^you) ask-how-comfort-care-works.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know how comfort care works
+  ?g1 (^me ((pres want.v) (to (know.v (ans-to
+        (sub how.pq ((k (comfort.n care.n)) ((pres work.v) *h))))))))
+)
+
+:preconds (
+  ; Sophie does not understand how comfort care works
+  ?p1 (^me ((pres do.aux-s) not (understand.v (ans-to
+        (sub how.pq ((k (comfort.n care.n)) ((pres work.v) *h)))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(How does comfort care work ?))

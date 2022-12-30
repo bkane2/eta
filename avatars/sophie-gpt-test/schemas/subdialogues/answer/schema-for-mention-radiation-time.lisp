@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-radiation-time.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie had radiation treatment for five weeks
+  ?p1 (^me ((past have.v) (k (radiation.n treatment.n)) (adv-e (for.p (five.d (plur week.n))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I had radiation treatment for five weeks \.))

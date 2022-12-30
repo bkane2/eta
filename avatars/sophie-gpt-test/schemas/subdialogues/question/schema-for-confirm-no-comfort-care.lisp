@@ -10,6 +10,19 @@
 '(event-schema :header (((set-of ^me ^you) confirm-no-comfort-care.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to know more about her treatment options
+  ?g1 (^me ((pres want.v) (to (know.v more.a (about.p-arg ((^me 's) (treatment.n (plur option.n))))))))
+  ; Sophie wants to confirm that the user does not think she needs comfort care
+  ?g2 (^me ((pres want.v) (to (confirm.v (that (^you ((pres do.aux-s) not (think.v
+        (tht (^me ((pres need.v) (k (comfort.n care.n)))))))))))))
+)
+
+:preconds (
+  ; The user doesn't think Sophie needs comfort care
+  ?p1 (^you ((pres do.aux-s) not (think.v (tht (^me ((pres need.v) (k (comfort.n care.n))))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(Are you sure that I do not need comfort care ?))

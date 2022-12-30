@@ -10,6 +10,14 @@
 '(event-schema :header (((set-of ^me ^you) mention-trouble-concentrating.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+)
+
+:preconds (
+  ; Sophie has trouble concentrating
+  ?p1 (^me ((pres have.v) trouble.a ({with}.p-arg (ka concentrate.v))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I have had trouble concentrating \.))

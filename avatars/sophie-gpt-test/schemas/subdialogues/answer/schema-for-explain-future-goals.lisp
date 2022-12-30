@@ -10,6 +10,18 @@
 '(event-schema :header (((set-of ^me ^you) explain-future-goals.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants to explain her goals to the user
+  ?g1 (^me ((pres want.v) (to (explain.v ((^me 's) (plur goal.n)) (to.p-arg ^you)))))
+)
+
+:preconds (
+  ; Sophie's goal is to survive for enough time to be there for her family
+  ?p1 (((^me 's) goal.n) ((pres be.v) (to.p-arg (ke (survive.v
+        (adv-e (for.p (enough.d (n+preds time.n
+          ({for}.p (to (be.v there.adv-e (adv-a (for.p ((^me 's) family.n)))))))))))))))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(My goal is to survive long enough to be there for my family \.))

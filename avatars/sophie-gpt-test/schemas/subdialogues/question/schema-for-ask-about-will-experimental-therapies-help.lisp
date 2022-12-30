@@ -10,9 +10,13 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-will-experimental-therapies-help.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
-
 :goals (
-  ?g1 (^me want.v (that (^me know.v (ans-to '(Do you think experimental therapies will help ?)))))
+  ; Sophie wants to know whether experimental treatments will help her
+  ?g1 (^me ((pres want.v) (to (know.v (whether
+        ((k (experimental.a (plur treatment.n))) ((pres will.aux-s) (help.v ^me))))))))
+)
+
+:preconds (
 )
 
 :episodes (

@@ -10,6 +10,20 @@
 '(event-schema :header (((set-of ^me ^you) explain-symptoms.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
+:goals (
+  ; Sophie wants the user to know her symptoms
+  ?g1 (^me ((pres want.v) ^you (to (know.v ((^me 's) (plur symptom.n))))))
+)
+
+:preconds (
+  ; Sophie has pain
+  ?p1 (^me ((pres have.v) (k pain.n)))
+  ; Sophie has constipation
+  ?p2 (^me ((pres have.v) (k constipation.n)))
+  ; Sophie's appetite is worse
+  ?p3 (((^me 's) appetite.n) ((pres be.v) worse.a))
+)
+
 :episodes (
 
 ?e1 (^me paraphrase-to.v ^you '(I have pain and constipation and my appetite is worse \.))
