@@ -22,11 +22,13 @@
                 (load (truename (concatenate 'string "packages/local/" dependency "/load.lisp"))))))
     (defvar *dependencies-loaded* t))
 
-; If GPT3 generation mode and GPT3-shell not provided as a dependency, print warning and change mode to RULE.
-(when (and (equal *generation-mode* 'GPT3) (not (member "gpt3-shell" *dependencies* :test #'equal)))
-    (format t "~% --- Warning: GPT3 generation mode requires gpt3-shell to be listed as a dependency in the config file.")
-    (format t "~%              Changing generation mode to RULE.~%")
-    (setq *generation-mode* 'RULE))
+; If GPT3 generation/interpretation mode and GPT3-shell not provided as a dependency, print warning and change mode to RULE.
+(when (and (or (equal *generation-mode* 'GPT3) (equal *interpretation-mode* 'GPT3))
+           (not (member "gpt3-shell" *dependencies* :test #'equal)))
+    (format t "~% --- Warning: GPT3 generation/interpretation mode requires gpt3-shell to be listed as a dependency in the config file.")
+    (format t "~%              Changing generation/interpretation mode to RULE.~%")
+    (setq *generation-mode* 'RULE)
+    (setq *interpretation-mode* 'RULE))
 
 ; If BLLIP parser mode and lenulf + standardize-ulf are not provided as dependencies, print warning and change mode to RULE.
 (when (and (equal *parser-mode* 'BLLIP) (not (member "lenulf" *dependencies* :test #'equal))
