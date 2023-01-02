@@ -3276,7 +3276,7 @@
       (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
       (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
-    (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (setq emotion (format nil "~:(~a~)" (string-trim " " (trim-all-newlines generated))))
     (if (member emotion emotions :test #'equal)
@@ -3302,7 +3302,7 @@
       "Person A"
       "Person B"))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
-    (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (parse-chars (coerce (trim-all-newlines generated) 'list))
 )) ; END get-gpt3-paraphrase
@@ -3323,7 +3323,7 @@
       (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
       (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
-    (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (parse-chars (coerce (trim-all-newlines generated) 'list))
 )) ; END get-gpt3-response
@@ -3350,13 +3350,23 @@
       "Utterance:"
       "Rewritten:"))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
-    (setq generated (gpt3-shell:generate prompt :stop-seq stop-seq))
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
     (setq generated (string-trim '(#\" #\ ) (trim-all-newlines generated)))
     ;; (format t "~%  gpt-3 gist:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (if (member (string-downcase generated) '("none" "nil") :test #'equal)
       nil
       (list (parse-chars (coerce generated 'list))))
 )) ; END get-gpt3-gist
+
+
+
+(defun gpt3-generate (api-key prompt &key stop-seq)
+;``````````````````````````````````````````````````````````
+; A wrapper function for calling the gpt3-shell package.
+; 
+  (gpt3-shell:generate-safe 'gpt3-shell:generate-with-key
+    (list (get-api-key "openai") prompt :stop-seq stop-seq))
+) ; END gpt3-generate
 
 
 

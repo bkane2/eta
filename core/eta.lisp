@@ -334,14 +334,19 @@
   (setq *gist-interpreter*
     (if (member gist-interpreter '(GPT3 RULE)) gist-interpreter 'RULE))
 
-  ; Initialize gpt3-shell (if in GPT3 generation/interpretation mode and valid API key exists)
+  ; Check for API key if using gpt3-shell
   (when (or (equal *response-generator* 'GPT3) (equal *gist-interpreter* 'GPT3))
-    (let ((api-key (get-api-key "openai")))
-      (cond 
-        ((null api-key)
-          (setq *response-generator* 'RULE)
-          (setq *gist-interpreter* 'RULE))
-        (t (gpt3-shell:init api-key)))))
+    (when (null (get-api-key "openai"))
+      (format t "~% --- Warning: GPT3 generation/interpretation mode requires a valid")
+      (format t "~%              OpenAI API key to be provided in config/keys/openai.txt.")
+      (format t "~%              Changing generation/interpretation mode to RULE.~%")
+      (setq *response-generator* 'RULE)
+      (setq *gist-interpreter* 'RULE)))
+
+  ; Initialize gpt3-shell (if in GPT3 generation/interpretation mode and valid API key exists)
+  ; NOTE: currently unused because the API key is passed as an argument to the generation function.
+  ;; (when (or (equal *response-generator* 'GPT3) (equal *gist-interpreter* 'GPT3))
+  ;;   (gpt3-shell:init api-key))
 
   ; Initialize ulf2english if among dependencies (prevents delay on first invocation)
   (when (member "ulf2english" *dependencies*)
