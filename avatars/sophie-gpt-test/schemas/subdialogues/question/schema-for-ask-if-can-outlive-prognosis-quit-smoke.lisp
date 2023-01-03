@@ -20,8 +20,10 @@
 )
 
 :preconds (
+  ; Sophie stopped smoking after hearing her diagnosis
+  ?p1 (^me ((past stop.v) (ka smoke.v) (adv-e (after.p (ka (hear.v ((^me 's) diagnosis.n)))))))
   ; Sophie doesn't fully accept her prognosis
-  ?p1 (^me ((pres do.aux-s) not fully.adv-a (accept.v ((^me 's) prognosis.n))))
+  ?p2 (^me ((pres do.aux-s) not fully.adv-a (accept.v ((^me 's) prognosis.n))))
 )
 
 :episodes (
