@@ -23,6 +23,19 @@
         ((I am sorry that you are in pain \.)
          (What is my prognosis ?)
          (I\'m just worried about what this all means for me \. I want to be able to be there for my children and grandchildren \. What do you think this means for me in the future ?))
+        ; 4
+        ((Why are you here today ?)
+         (I feel anxious about my future \.)
+         (You know\, I feel extremely anxious just thinking about my condition \. I don\'t like not knowing what will happen to me in a month from now \.))
+        ; 5
+        ((It\'s nice to meet you \.)
+         (Is comfort care an option for me ?)
+         (I\'ve been trying to learn more about my condition\, and heard about comfort care \. Do you think that\'s an option for me at this point ?))
+        ; 6
+        ((One option for treatment is chemotherapy \.)
+         (Is comfort care an option for me ?)
+         (I\'d like to hear a bit about my other options\, since I\'m worried about the side effects of chemotherapy \. I\'ve heard about something called
+          comfort care before \. Do you think that might be an option for me ?))
       )
       (0 :prompt-examples)
 ))
