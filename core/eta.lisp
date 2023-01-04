@@ -2564,6 +2564,12 @@
               (setq newparts-option (match1 pattern-option clause))
               (when (and (null newparts) newparts-option)
                 (setq newparts newparts-option))))
+          ; If pattern is a subtree to match, try to match that subtree
+          ((equal (car pattern) :subtree)
+            (when (and (atom (second pattern)) (not (member (second pattern) visited-subtrees)))
+              (setq newparts-option
+                (choose-result-for1 clause parts (second pattern) (cons (second pattern) visited-subtrees)))
+              (if newparts-option (setq newparts '(:seq)))))
           ; Otherwise, try to match pattern
           (t (setq newparts (match1 pattern clause))))
 
