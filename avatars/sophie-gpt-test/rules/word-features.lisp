@@ -154,8 +154,6 @@
   (DATING taking)
   ; General
   (CANCER-ILLNESS cancer disease condition illness prognosis TUMOR)
-  (POSADV-AFFIRM certainly course absolutely sure definitely)
-  (AFFIRM POS POSADV)
   (ANYONE-HERE-WITH-YOU here with ALONE by)
   (KNOW-GEN KNOW knew knowing sure aware UNDERSTAND understood understanding)
   (LEARN-GEN LEARN learned learning discover discovered discovering see saw seeing KNOW-GEN)
