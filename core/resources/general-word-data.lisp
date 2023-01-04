@@ -119,6 +119,7 @@
   (FINISH finished done quit stop terminate)
   (FOREIGN francais deutsch italiano espanol francais \? deutsch \? italiano \? espanol \?)
   (END-PUNC - ? ! \. \: \;)
+  (CLAUSE-PUNC END-PUNC \,)
   (THEME-KEY pet-key chat1-opening chat1-rochester chat1-movies
     ; we could add other keys, as a flag for
     ; adhering to a particular theme (i.e., capture
@@ -220,8 +221,13 @@
   (TROUBLE troubles DIFFICULT difficulty difficulties tough hard hardship challenging
 			problem problems struggle struggling)
   (NOMORE rid lost gone left away out)
-  (NEG no not nope nah hardly little scarcely)
-  (POS yes yeah yup sure definitely certainly absolutely indeed agreed)
+
+  (DENY no nah nope)
+  (DENY-ADV not hardly little barely scarcely incorrect untrue)
+  (NEG DENY DENY-ADV disagree disagreed)
+  (AFFIRM yes yeah yup indeed)
+  (AFFIRM-ADV certainly absolutely sure definitely correct true)
+  (POS AFFIRM AFFIRM-ADV agree agreed)
 
   (MARRIAGETHEME marriage SPOUSE DIVORCE)
   (DIVORCE divorced separation separated)
