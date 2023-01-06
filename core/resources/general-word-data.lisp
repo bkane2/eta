@@ -252,10 +252,10 @@
 			goldfish gerbil hamster guinea-pig guineapig guinea pig iguana turtle horse pony)
   (PETTHEME pet-key PET-TYPE pets pet)
 
-  (BELIEVE think know SUPPOSE suspect presume guess)
+  (BELIEVE think SUPPOSE suspect presume guess)
   (REMEMBER recall)
   (PERCEIVE notice note see infer conclude realize)
-  (CONC BELIEVE REMEMBER PERCEIVE)
+  (CONC BELIEVE REMEMBER PERCEIVE know)
   (BADSTATE unhappy sad worried TIRED depressed appalled terrible awful
 			lonely disgusted upset bored dismayed distressed shambles wrecked
 			rocks dead falling apart disintegrating pieces lousy)
