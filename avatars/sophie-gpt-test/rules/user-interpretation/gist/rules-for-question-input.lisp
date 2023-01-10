@@ -492,7 +492,7 @@
   1 (0 you 2 .SLEEP 1 .MUCH 0)
     2 ((Have I been sleeping okay ?) (Sleep)) (0 :gist)
   ; How often are you waking up at night?
-  1 (0 how .FREQUENTLY 0)
+  1 (0 how 1 .FREQUENTLY 4 .WAKE 0)
     2 ((How often am I waking up at night ?) (Waking-frequency)) (0 :gist)
   ; Do you sleep during the day?
   1 (0 .SLEEP 2 during 3 .DAY 0)

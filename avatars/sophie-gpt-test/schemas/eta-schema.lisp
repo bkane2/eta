@@ -25,6 +25,11 @@
 ;; ?e1 (^me say-to.v ^you '(Hi\, doctor\. I\'m Sophie\. I\'m meeting with you today to help get some questions answered about my condition\.))
 ;; ?e1 (^me say-to.v ^you '(Hi\, my name is Sophie\. I\'m meeting with you today to help get some questions answered about my options and my future\.))
 
+; For testing schemas
+;; ?e2 (:repeat-until ((the.d conversation.n) be.v over.a)
+;;   ?e3 ((set-of ^me ^you) ask-about-narcotic-addiction.v)
+;; )
+
 ;; (pain)
 ?e2 ((set-of ^me ^you) ask-about-pain.v)
 

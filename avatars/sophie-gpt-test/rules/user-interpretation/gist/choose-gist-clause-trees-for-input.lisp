@@ -132,7 +132,6 @@
     (I .HAVE had .TROUBLE concentrating \.)
     (I feel mildly depressed \.)
     (I feel anxious about my future \.)
-    (you .CAN .HELP me by answering all of my questions \.)
     (will an .ANTIDEPRESSANT .HELP me with my .PAIN ?)
     (.SHOULD I .TRY medication .BEFORE I .TRY .THERAPY ?)
     (my future feels out of my control .BECAUSE I .DO not .KNOW how .MUCH time I .HAVE to live \.))
@@ -179,9 +178,13 @@
        *general-input*) (0 :subtrees)
 
   1 (:or
-    (has the cancer gotten worse ?)
-    (are you sure the cancer has not gotten worse ?))
+    (has the cancer gotten worse ?))
     2 (*cancer-worse-input*
+       *general-input*) (0 :subtrees)
+  
+  1 (:or
+    (are you sure the cancer has not gotten worse ?))
+    2 (*cancer-worse-verification-input*
        *general-input*) (0 :subtrees)
   
   1 (:or
@@ -190,9 +193,18 @@
        *general-input*) (0 :subtrees)
 
   1 (:or
-    (.SHOULD I get a .SECOND opinion about my prognosis ?)
+    (.SHOULD I get a .SECOND opinion about my prognosis ?))
+    2 (*prognosis-second-opinion-input*
+       *general-input*) (0 :subtrees)
+
+  1 (:or
     (.CAN I trust your prognosis ?))
-    2 (*prognosis-denial-input*
+    2 (*prognosis-trust-input*
+       *general-input*) (0 :subtrees)
+
+  1 (:or
+    (.CAN I outlive your prognosis like my uncle Fred did ?))
+    2 (*prognosis-bargaining-uncle-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
@@ -218,6 +230,11 @@
        *general-input*) (0 :subtrees)
 
   1 (:or
+    (.CAN I outlive your prognosis 0))
+    2 (*prognosis-bargaining-input*
+       *general-input*) (0 :subtrees)
+
+  1 (:or
     (.CAN you rephrase your .QUESTION ?)
     (what are your questions ?))
     2 (*ask-for-questions-input*
@@ -227,7 +244,7 @@
     (Goodbye \.))
     2 (*say-bye-input*
        *general-input*) (0 :subtrees)
-       
+
   1 (0)
     2 (*general-input*) (0 :subtrees)
 ))

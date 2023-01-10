@@ -20,7 +20,7 @@
   1 (0 .BYE 0)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)
 
-
+  ; TODO: add possible empathetic/explicit/empowering statements here that might be missed 
 
   ; General questions
   ; TODO: copy over questions from question trees

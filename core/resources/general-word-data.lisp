@@ -166,13 +166,18 @@
   (PRON INDEX-PRON QUANT-PRON REFL-PRON ANA-PRON WH-PRON REL-PRON)
   (WH-DET which what whose how_many)
   (WH-PRON who whom what which)
+  (CLEFT-PRON it that there)
 
+  (CLEFT it\'s that\'s there\'s)
   (INDEX-DET that those these this)
   (DET the a an my your his her its our their all every each any INDEX-DET
 			some many ONE TWO THREE another other WH-DET TWO THREE FOUR FIVE SIX
 			SEVEN EIGHT NINE TEN ELEVEN TWELVE)
   (NP_ PRON DET) ; the beginning of a noun phrase
   (MODAL can will shall could would should might may ought)
+  (CAN could)
+  (CAN\'T couldn\'t)
+  (INTEROG that whether if)
   (NECESSITY need HAVE)
   (HAVE has had)
   (BE am are is was were)
@@ -201,6 +206,9 @@
   (TENTATIVE PERHAPS SUPPOSE)
   (DOUBT unlikely hardly not) ; aimed at things like "I doubt it",
   												    ; "I don't think so", "That's unlikely"
+  (RECOMMEND suggest endorse advocate approve)
+  (COMMUNICATIVE say tell answer)
+  (GENERAL-PREP for with)
 
   (SELF I my myself me)
   (FATHER dad)
@@ -223,11 +231,19 @@
   (NOMORE rid lost gone left away out)
 
   (DENY no nah nope)
-  (DENY-ADV not hardly little barely scarcely incorrect untrue)
-  (NEG DENY DENY-ADV disagree disagreed)
+  (UNTRUTH-ADV incorrect inaccurate untrue)
+  (DENY-ADV not never zero hardly little barely scarcely incorrect inaccurate untrue)
+  (DISAGREE disagreed doubt)
+  (NEG DENY DENY-ADV DISAGREE)
+  (NEG-MOD really quite very exactly entirely all completely)
+  (UNCERTAINTY-ADV unsure uncertain unsure unknown undetermined unforeseeable unpredictable debatable)
   (AFFIRM yes yeah yup indeed)
-  (AFFIRM-ADV certainly absolutely sure definitely correct true)
-  (POS AFFIRM AFFIRM-ADV agree agreed)
+  (CERTAINTY-ADV certainly certain sure)
+  (TRUTH-ADV correct accurate true)
+  (AFFIRM-ADV certainly certain absolutely really quite completely exactly entirely sure definitely correct accurate true)
+  (AGREE agreed)
+  (POS AFFIRM AFFIRM-ADV AGREE)
+  (AFFIRM-BELIEF know think believe feel understand understanding belief beliefs thought feeling)
 
   (MARRIAGETHEME marriage SPOUSE DIVORCE)
   (DIVORCE divorced separation separated)
@@ -286,6 +302,9 @@
   (SHOOT shot)
   (STAB stabbed)
   (BATTER battered batters)
+
+  (CHANCE chances)
+  (ODDS CHANCE prospects likelihood probability possibility possibilities potential)
 
   (BADOCCUR died disappeared burned crashed broke collapsed)
   (BADEVENT death disappearance accident)
