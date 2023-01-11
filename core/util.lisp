@@ -2529,6 +2529,20 @@
 
 
 
+(defun print-schema-names (&key surface-english)
+;````````````````````````````````````````````````````
+; Prints all of the dialogue schema names (if :surface-english t
+; is given, convert from ULF to words)).
+;
+  (maphash (lambda (k v) (format t "~a~%"
+      (if surface-english
+        (string-downcase (str-replace (string (car (sym-split k 2))) "-" " "))
+        (string-downcase (string k)))))
+    *schemas*)
+) ; END print-schema-names
+
+
+
 (defun schema-header? (x)
 ;``````````````````````````
 ; Predicate which returns true if x is a schema header, e.g. 'discuss-food.v'.
