@@ -52,7 +52,7 @@
 ;;                    in a multi-session dialogue (potentially overwritten by sessionInfo.lisp if in live mode)
 ;;
 
-(defparameter *avatar* "sophie-gpt-test")
+(defparameter *avatar* "sophie-gpt")
 (defparameter *avatar-name* "Sophie Hallman")
 (defparameter *read-log-mode* NIL)
 (defparameter *subsystems-perception* '(|Terminal| |Audio|))
