@@ -4,54 +4,57 @@
 ; All trees defined in this file should be named using format *<topic-key>-input*.
 ;
 ; Current list of topics:
-; - cancer-worse [+]
-; - cancer-worse-verification [+]
-; - medical-history [+]
-; - medicine-side-effects [+]
-; - medicine-side-effects-addiction [+]
-; - appointment [+]
-; - chemotherapy-details [+]
-; - diagnosis-details [+]
-; - energy [+]
-; - medicine [+]
-; - pain [+]
-; - radiation [+]
-; - radiation-verification [+]
-; - chemotherapy [+]
+; - cancer-worse
+; - cancer-worse-verification
+; - medical-history
+; - medicine-side-effects
+; - medicine-side-effects-addiction
+; - appointment
+; - chemotherapy-details
+; - diagnosis-details
+; - energy
+; - medicine
+; - pain
+; - radiation
+; - radiation-verification
+; - chemotherapy
 ;       (Chemotherapy will not help me live longer \.)
 ;       (Chemotherapy may help me live longer but may cause .SIDE-EFFECTS-ALL \.)
 ;       (Chemotherapy may help me live longer but may have bad side effects \.)
 ;       (Chemotherapy may help me live longer but may have bad side effects \.)
 ;       (Chemotherapy may help me live longer \.)
-; - comfort-care [+]
-; - comfort-care-verification [+]
-; - medicine-refill-request [+]
-; - medicine-stronger-request [+]
-; - medicine-working [+]
-; - prognosis [+]
+; - comfort-care
+; - comfort-care-verification
+; - medicine-refill-request
+; - medicine-stronger-request
+; - medicine-working
+; - prognosis
 ;       (How do my goals depend on my prognosis ?)
 ;       (There are many treatment options that may impact my prognosis \.)
 ;       (We should focus on my symptoms before talking about my prognosis \.)
 ;       (My prognosis is that we will increase my medication over time \.)
 ;       (My prognosis is that I may have some time left to spend with family \.)
-; - prognosis-second-opinion [+]
+; - prognosis-second-opinion
 ;       (A second opinion would not change anything about the prognosis \.)
 ;       (A second opinion may give me different information on my prognosis \.)
-; - prognosis-trust [+]
+; - prognosis-trust
 ;       (I can trust your prognosis \.)
 ;       (It is up to me whether I trust your prognosis \.)
-; - prognosis-bargaining-uncle [+]
-; - prognosis-bargaining-habits [+]
+; - prognosis-bargaining-uncle
+; - prognosis-bargaining-habits
 ;       (Healthy habits may help me outlive my prognosis but it is unlikely \.)
-; - prognosis-bargaining-quit-smoke [+]
+; - prognosis-bargaining-quit-smoke
 ;       (It is too late for quitting smoking to affect your prognosis \.)
-; - prognosis-bargaining-now [+]
+; - prognosis-bargaining-now
 ;       (My health right now is not a good predictor of my prognosis \.)
-; - prognosis-bargaining-graduation [+]
+; - prognosis-bargaining-graduation
 ;       (When does my grandson graduate ?)
+;       (How old is my grandson ?)
+;       (What school grade is my grandson ?)
+;       (What school does my grandson go to ?)
 ;       (My prognosis will not allow me to attend the graduation of my grandson \.)
 ;       (My prognosis might allow me to attend the graduation of my grandson \.)
-; - prognosis-bargaining [+]
+; - prognosis-bargaining
 ;       (There is some chance I could outlive my prognosis \.)
 ;       (It is unlikely that I outlive my prognosis \.)
 ;       (My prognosis is hard to predict but likely accurate \.)
@@ -59,19 +62,19 @@
 ;       (My prognosis is hard to predict \.)
 ;       (I should assume that my prognosis is accurate \.)
 ;       (I should be hopeful that I outlive my prognosis \.)
-; - experimental-therapy [+]
-; - sleep-poorly [+]
-; - tell-family [+]
-; - test-results [+]
-; - treatment-option [+]
+; - experimental-therapy
+; - sleep-poorly
+; - tell-family
+; - test-results
+; - treatment-option
 ;       (How do you feel about your treatment options ?)
-; - stronger-medicine-help-sleep [+]
+; - stronger-medicine-help-sleep
 ;       (A stronger pain medication may help me sleep \.)
-; - ask-for-questions [+]
-; - say-bye [+]
+; - ask-for-questions
+; - say-bye
 ;
 
-(READRULES '*cancer-worse-input* ; [*]
+(READRULES '*cancer-worse-input*
 ; (Has the cancer gotten worse ?)
 '(
   1 (0 .CANCER-ILLNESS 2 .NEG 2 worse 0)
@@ -92,7 +95,7 @@
 )) ; END *cancer-worse-input*
 
 
-(READRULES '*cancer-worse-verification-input* ; [*]
+(READRULES '*cancer-worse-verification-input*
 ; (Are you sure the cancer has not gotten worse ?)
 '(
   1 (0 .CANCER-ILLNESS 2 .NEG 2 worse 0)
@@ -117,7 +120,7 @@
 )) ; END *cancer-worse-verification-input*
 
 
-(READRULES '*medical-history-input* ; [*]
+(READRULES '*medical-history-input*
 ; (I have a history of alcohol abuse but do not drink now \.)
 ; (I have a history of alcohol abuse \.)
 ; (I do not drink often now \.) 
@@ -160,11 +163,17 @@
   1 (0 .WH_ 2 .AUX-BASE 3 .PARENT 3 .DIE 0)
     2 ((How did my parents die ?) (Medical-history)) (0 :gist)
   ; Have you ever taken any other drugs?
-  1 (0 .AUX-BASE 1 .PRON 3 .RECREATIONAL 0)
+  1 (0 .AUX-BASE 1 .PRON 3 .DRUGS-RECREATIONAL 0)
     2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
-  1 (0 .PRON 1 .AUX-BASE 3 .RECREATIONAL 0)
+  1 (0 .PRON 1 .AUX-BASE 3 .DRUGS-RECREATIONAL 0)
     2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
-  1 (0 .PRON 3 .HISTORY 3 .RECREATIONAL 0)
+  1 (0 .PRON 3 .HISTORY 3 .DRUGS-RECREATIONAL 0)
+    2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
+  1 (0 .AUX-BASE 1 .PRON 3 recreational .DRUGS 0)
+    2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
+  1 (0 .PRON 1 .AUX-BASE 3 recreational .DRUGS 0)
+    2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
+  1 (0 .PRON 3 .HISTORY 3 recreational .DRUGS 0)
     2 ((Have I ever taken any other drugs ?) (Medical-history)) (0 :gist)
 
   ; Questions related to symptoms
@@ -180,7 +189,7 @@
 )) ; END *medical-history-input*
 
 
-(READRULES '*medicine-side-effects-input* ; [*]
+(READRULES '*medicine-side-effects-input*
 ; (What are the side effects of stronger pain medication ?)
 '(
   1 (0 hair 0)
@@ -202,7 +211,7 @@
 )) ; END *medicine-side-effects-input*
 
 
-(READRULES '*medicine-side-effects-addiction-input* ; [*]
+(READRULES '*medicine-side-effects-addiction-input*
 ; (Can I get addicted to narcotics ?)
 '(
   1 (0 .LOW 1 risk 0)
@@ -225,37 +234,33 @@
 )) ; END *medicine-side-effects-addiction-input*
 
 
-(READRULES '*appointment-input* ; [*]
+(READRULES '*appointment-input*
 ; (I am here alone \.)
 '(
   ; Asking about where your daughter works
-  1 (0 where does 3 .WORK 0)
+  1 (0 .WH_ 1 .AUX-BASE 5 .CAREER 0)
     2 (0 she 0)
       3 ((Where does my daughter work ?) (Anyone-here-with-you)) (0 :gist)
-    2 (0 your .DAUGHTER 0)
+    2 (0 .DAUGHTER 0)
       3 ((Where does my daughter work ?) (Anyone-here-with-you)) (0 :gist)
     2 (0 he 0)
       3 ((Where does my son work ?) (Anyone-here-with-you)) (0 :gist)
-    2 (0 your .SON 0)
+    2 (0 .SON 0)
       3 ((Where does my son work ?) (Anyone-here-with-you)) (0 :gist)
-  1 (0 how old .BE 0)
+  1 (0 .WH_ .AGE 0)
     2 (0 she 0)
       3 ((How old is my daughter ?)) (0 :gist)
-    2 (0 your .DAUGHTER 0)
+    2 (0 .DAUGHTER 0)
       3 ((How old is my daughter ?)) (0 :gist)
     2 (0 he 0)
       3 ((How old is my son ?)) (0 :gist)
-    2 (0 your .SON 0)
+    2 (0 .SON 0)
       3 ((How old is my son ?)) (0 :gist)
   ; Do you have grandchildren or children?
-  1 (0 children 0)
-    2 ((Do I have any children ?) (Anyone-here-with-you)) (0 :gist)
-  1 (0 .CHILD 0)
-    2 ((Do I have any children ?) (Anyone-here-with-you)) (0 :gist)
-  1 (0 grandchildren 0)
+  1 (0 have 1 .GRANDCHILD 0)
     2 ((Do I have any grandchildren ?) (Anyone-here-with-you)) (0 :gist)
-  1 (0 grandchild 0)
-    2 ((Do I have any grandchildren ?) (Anyone-here-with-you)) (0 :gist)
+  1 (0 have 1 .CHILD 0)
+    2 ((Do I have any children ?) (Anyone-here-with-you)) (0 :gist)
   ; Were you ever married?
   1 (0 .MARRIED 0)
     2 ((Am I married ?) (Anyone-here-with-you)) (0 :gist)
@@ -270,7 +275,7 @@
 )) ; END *appointment-input*
 
 
-(READRULES '*chemotherapy-details-input* ; [*]
+(READRULES '*chemotherapy-details-input*
 ; (What are the side effects of chemotherapy ?)
 ; (How does chemotherapy work ?)
 '(
@@ -326,7 +331,7 @@
 )) ; END *chemotherapy-details-input*
 
 
-(READRULES '*diagnosis-details-input* ; [*]
+(READRULES '*diagnosis-details-input*
 ; (I got my diagnosis after visiting a lung doctor \.)
 ; (I have lost 1 weight \.)
 '(
@@ -350,7 +355,7 @@
 )) ; END *diagnosis-details-input*
 
 
-(READRULES '*energy-input* ; [*]
+(READRULES '*energy-input*
 ; (I have been fatigued \.)
 ; (I have had trouble concentrating \.)
 ; (I feel mildly depressed \.)
@@ -401,7 +406,7 @@
 )) ; END *energy-input*
 
 
-(READRULES '*medicine-input* ; [*]
+(READRULES '*medicine-input*
 ; (I don\'t have allergies to any medicine \.)
 ; (I am only taking Lortab to treat my pain \.)
 ; (I am taking Cozar to help with blood pressure \.)
@@ -455,7 +460,7 @@
 )) ; END *medicine-input*
 
 
-(READRULES '*pain-input* ; [*]
+(READRULES '*pain-input*
 ; (My pain has recently been getting worse \.)
 ; (Why has my pain been getting worse recently ?)
 ; (I believe my cancer has gotten worse because my pain has also gotten worse \.)
@@ -530,7 +535,7 @@
 )) ; END *pain-input*
 
 
-(READRULES '*radiation-input* ; [*]
+(READRULES '*radiation-input*
 ; (I had radiation treatment for five weeks \.)
 ; (I was feeling a little better after radiation \.)
 '(
@@ -539,7 +544,7 @@
 )) ; END *radiation-input*
 
 
-(READRULES '*radiation-verification-input* ; [*]
+(READRULES '*radiation-verification-input*
 ; (Do you think radiation will help ?)
 '(
   1 (:subtree *match-affirm*)
@@ -557,7 +562,7 @@
 )) ; END *radiation-verification-input*
 
 
-(READRULES '*chemotherapy-input* ; [*]
+(READRULES '*chemotherapy-input*
 ; (Do I need chemotherapy ?)
 ; (Do you think chemotherapy will help ?)
 '(
@@ -664,12 +669,12 @@
     2 ((You do not think I need chemotherapy \.) (Chemotherapy)) (0 :gist)
   
   ; If doctor mentions anything about prognosis
-  1 (0 prognosis 0)
+  1 (0 .PROGNOSIS-WORD 0)
     2 *prognosis-input* (0 :subtree)
 )) ; END *chemotherapy-input*
 
 
-(READRULES '*comfort-care-input* ; [*]
+(READRULES '*comfort-care-input*
 ; (Should I get comfort care ?)
 ; (How does comfort care work ?)
 '(
@@ -751,12 +756,12 @@
     2 ((You do not think I need comfort care \.) (Comfort-care)) (0 :gist)
 
   ; If doctor mentions anything about prognosis
-  1 (0 prognosis 0)
+  1 (0 .PROGNOSIS-WORD 0)
     2 *prognosis-input* (0 :subtree)
 )) ; END *comfort-care-input*
 
 
-(READRULES '*comfort-care-verification-input* ; [*]
+(READRULES '*comfort-care-verification-input*
 ; (Are you sure that I do not need comfort care ?)
 '(
   ; Various yes/no possibilities 
@@ -790,7 +795,7 @@
 )) ; END *comfort-care-verification-input*
 
 
-(READRULES '*medicine-refill-request-input* ; [*]
+(READRULES '*medicine-refill-request-input*
 ; (I would like a refill of medicine \.)
 '(
   ; You should take morphine
@@ -839,7 +844,7 @@
 )) ; END *medicine-refill-request-input*
 
 
-(READRULES '*medicine-stronger-request-input* ; [*]
+(READRULES '*medicine-stronger-request-input*
 ; (Can I have a stronger pain medication ?)
 '(
   ; You should take morphine
@@ -874,7 +879,7 @@
 )) ; END *medicine-stronger-request-input*
 
 
-(READRULES '*medicine-working-input* ; [*]
+(READRULES '*medicine-working-input*
 ; (How will I know if my pain medication is working ?)
 ; (Why isn\'t the pain medication working anymore ?)
 '(
@@ -952,7 +957,7 @@
 )) ; END *medicine-working-input*
 
 
-(READRULES '*prognosis-input* ; [*]
+(READRULES '*prognosis-input*
 ; (What 2 the prognosis 3 ?)
 ; (What 2 my prognosis ?)
 ; (What 3 mean for 1 future ?)
@@ -1325,7 +1330,7 @@
 )) ; END *prognosis-input*
 
 
-(READRULES '*prognosis-second-opinion-input* ; [*]
+(READRULES '*prognosis-second-opinion-input*
 ; (Should I get a second opinion about my prognosis ?)
 '(
   ; You should (not)
@@ -1367,7 +1372,7 @@
 )) ; END *prognosis-second-opinion-input*
 
 
-(READRULES '*prognosis-trust-input* ; [*]
+(READRULES '*prognosis-trust-input*
 ; (Can I trust your prognosis ?)
 '(
   ; Other doctors will tell you the same thing
@@ -1390,7 +1395,7 @@
 )) ; END *prognosis-trust-input*
 
 
-(READRULES '*prognosis-bargaining-uncle-input* ; [*]
+(READRULES '*prognosis-bargaining-uncle-input*
 ; (Can I outlive your prognosis like my uncle Fred did ?)
 '(
   ; There are not many people like your uncle
@@ -1413,7 +1418,7 @@
 )) ; END *prognosis-bargaining-uncle-input*
 
 
-(READRULES '*prognosis-bargaining-habits-input* ; [*]
+(READRULES '*prognosis-bargaining-habits-input*
 ; (Can I outlive your prognosis if I have healthy habits ?)
 '(
   ; Will not change the prognosis
@@ -1451,7 +1456,7 @@
 )) ; END *prognosis-bargaining-habits-input*
 
 
-(READRULES '*prognosis-bargaining-quit-smoke-input* ; [*]
+(READRULES '*prognosis-bargaining-quit-smoke-input*
 ; (Can I outlive your prognosis if I quit smoking ?)
 '(
   ; It's too late
@@ -1469,7 +1474,7 @@
 )) ; END *prognosis-bargaining-quit-smoke-input*
 
 
-(READRULES '*prognosis-bargaining-now-input* ; [*]
+(READRULES '*prognosis-bargaining-now-input*
 ; (Can I outlive your prognosis if I am healthy now ?)
 '(
   ; How you feel right now is (not) a good predictor
@@ -1514,14 +1519,30 @@
 )) ; END *prognosis-bargaining-now-input*
 
 
-(READRULES '*prognosis-bargaining-graduation-input* ; [*]
+(READRULES '*prognosis-bargaining-graduation-input*
 ; (Can I outlive my prognosis until the graduation of my grandson ?) 
 '(
   ; When is it?
-  1 (0 when 2 .BE 1 it 0)
+  1 (0 when 2 .BE 1 .CLEFT-PRON 0)
     2 ((When does my grandson graduate ?)) (0 :gist)
   1 (0 when 2 .GRAD-WORDS 0)
     2 ((When does my grandson graduate ?)) (0 :gist)
+
+  ; How old is he?
+  1 (0 .WH_ .AGE 0)
+    2 ((How old is my grandson ?)) (0 :gist)
+
+  ; What grade is he?
+  1 (0 .WH_ .GRADE 0)
+    2 ((What school grade is my grandson ?)) (0 :gist)
+  1 (0 .AUX-BASE 4 .SCHOOL-TYPE 0)
+    2 ((What school grade is my grandson ?)) (0 :gist)
+
+  ; Where does he go to school?
+  1 (0 where 3 go to 1 school 0)
+    2 ((What school does my grandson go to ?)) (0 :gist)
+  1 (0 .WH_ school 0)
+    2 ((What school does my grandson go to ?)) (0 :gist)
 
   ; You (do not) have enough time left
   1 (0 .NEG 1 .TIME-ENOUGH .TIME-WORDS 0)
@@ -1553,7 +1574,7 @@
 )) ; END *prognosis-bargaining-graduation-input*
 
 
-(READRULES '*prognosis-bargaining-input* ; [*]
+(READRULES '*prognosis-bargaining-input*
 ; (Can I outlive your prognosis 0)
 '(
   ; ... But
@@ -1738,7 +1759,7 @@
 )) ; END *prognosis-bargaining-input*
 
 
-(READRULES 'experimental-therapy-input* ; [*]
+(READRULES 'experimental-therapy-input*
 ; (Do you think experimental therapies will help ?)
 '(
   ; Experimental treatments will/will not/might make my prognosis better .
@@ -1773,7 +1794,7 @@
 )) ; END *experimental-therapy-input*
 
 
-(READRULES '*sleep-poorly-input* ; [*]
+(READRULES '*sleep-poorly-input*
 ; (Why 1 I not 1 sleeping well ?)
 ; (I have not been sleeping well \.)
 '(
@@ -1886,7 +1907,7 @@
 )) ; END *sleep-poorly-input*
 
 
-(READRULES '*tell-family-input* ; [*]
+(READRULES '*tell-family-input*
 ; (What should I tell my family ?)
 '(
   ; Can you tell me about your family?
@@ -2068,7 +2089,7 @@
     2 ((I should tell my family the full truth about my cancer \.) (Tell-family)) (0 :gist)
   1 (0 .HAVE 3 .HONEST 2 .CONVERSATION 0)
     2 ((I should tell my family the full truth about my cancer \.) (Tell-family)) (0 :gist)
-  1 (0 .TELL 2 .FAMILY-PRON 6 prognosis 0)
+  1 (0 .TELL 2 .FAMILY-PRON 6 .PROGNOSIS-WORD 0)
     2 ((I should tell my family the full truth about my cancer \.) (Tell-family)) (0 :gist)
   1 (0 .TELL 2 .FAMILY-PRON 4 no 2 .CURE 0)
     2 ((I should tell my family the full truth about my cancer \.) (Tell-family)) (0 :gist)
@@ -2261,7 +2282,7 @@
 )) ; END *tell-family-input*
 
 
-(READRULES '*test-results-input* ; [*]
+(READRULES '*test-results-input*
 ; (What do my test results mean ?)
 '(
   ; We performed the CT scan to see how much further my cancer has progressed \.
@@ -2593,12 +2614,12 @@
   1 (0 .BE 4 you 2 .THINK-GEN 6 .DIAGNOSIS-TESTS 0)
     2 ((How do I feel about my test results ?) (Test-results)) (0 :gist)
 
-  1 (0 prognosis 0)
+  1 (0 .PROGNOSIS-WORD 0)
     2 *prognosis-input* (0 :subtree)
 )) ; END *test-results-input*
 
 
-(READRULES '*treatment-option-input* ; [*]
+(READRULES '*treatment-option-input*
 ; (What are my options for treatment ?)
 ; (What are my treatment options if I do not do chemotherapy ?)
 '(
@@ -2648,21 +2669,21 @@
   1 (0 .DIAGNOSIS-MORE 3 .DIAGNOSIS-TESTS 0)
     2 ((You need more tests before talking about treatment options \.) (Options)) (0 :gist)
   ; Prognosis related questions
-  1 (0 you 2 .THINK-GEN 6 prognosis 0)
+  1 (0 you 2 .THINK-GEN 6 .PROGNOSIS-WORD 0)
     2 ((How do I feel about my prognosis ?)) (0 :gist)
-  1 (0 you 2 .FEELING 6 prognosis 0)
+  1 (0 you 2 .FEELING 6 .PROGNOSIS-WORD 0)
     2 ((How do I feel about my prognosis ?)) (0 :gist)
-  1 (0 .QUESTION-WORD 4 prognosis 0)
+  1 (0 .QUESTION-WORD 4 .PROGNOSIS-WORD 0)
     2 ((Do I have a question about my prognosis ?)) (0 :gist)
-  1 (0 .ASK-GEN 4 prognosis 0)
+  1 (0 .ASK-GEN 4 .PROGNOSIS-WORD 0)
     2 ((Do I have a question about my prognosis ?)) (0 :gist)
-  1 (0 .WH_ 4 .BE 4 prognosis 0)
+  1 (0 .WH_ 4 .BE 4 .PROGNOSIS-WORD 0)
     2 ((What is the prognosis that was given to me previously ?)) (0 :gist)
-  1 (0 .AUX-BASE 4 .TELL 6 prognosis 0)
+  1 (0 .AUX-BASE 4 .TELL 6 .PROGNOSIS-WORD 0)
     2 ((What is the prognosis that was given to me previously ?)) (0 :gist)
-  1 (0 .MODAL 4 .KNOW-GEN 6 prognosis 0)
+  1 (0 .MODAL 4 .KNOW-GEN 6 .PROGNOSIS-WORD 0)
     2 ((What is the prognosis that was given to me previously ?)) (0 :gist)
-  1 (0 .MODAL 4 .MORE-INFO 6 prognosis 0)
+  1 (0 .MODAL 4 .MORE-INFO 6 .PROGNOSIS-WORD 0)
     2 ((What is the prognosis that was given to me previously ?)) (0 :gist)
   ; What do you know/think about your options?
   1 (0 how 4 you 3 .FEELING 0)
@@ -2673,11 +2694,11 @@
     2 ((What do I understand about my treatment options ?) (Treatment-option)) (0 :gist)
   ; Do you have any questions?
   1 (0 you 2 .HAVE 2 .QUESTION-WORD 0)
-    2 ((Do I have a question about my treatment options \?)) (0 :gist)
+    2 ((Do I have a question about my treatment options ?)) (0 :gist)
   1 (0 .QUESTION-WORD 2 you 2 .HAVE 0)
-    2 ((Do I have a question about my treatment options \?)) (0 :gist)
+    2 ((Do I have a question about my treatment options ?)) (0 :gist)
   1 (0 .ANYTHING 1 you 2 .WANT-GEN 2 .ASK-GEN 0)
-    2 ((Do I have a question about my treatment options \?)) (0 :gist)
+    2 ((Do I have a question about my treatment options ?)) (0 :gist)
 )) ; END *treatment-option-input*
 
 
@@ -2741,7 +2762,7 @@
 )) ; END *stronger-medicine-help-sleep-input*
 
 
-(READRULES '*reason-for-cancer-input* ; [*]
+(READRULES '*reason-for-cancer-input*
 '(
   ; You wish that I do not have cancer \.
   1 (0 .DOCTOR-PRON 4 wish 4 .BE 1 different 0)
@@ -2978,7 +2999,7 @@
 )) ; END *reason-for-cancer-input*
 
 
-(READRULES '*ask-for-questions-input* ; [*]
+(READRULES '*ask-for-questions-input*
 ; (What are your questions ?)
 '(
   ; Check for any specific questions the user might ask
@@ -2994,12 +3015,14 @@
 )) ; END *ask-for-questions-input*
 
 
-(READRULES '*say-bye-input* ; [*]
+(READRULES '*say-bye-input*
 ; (Goodbye \.)
 '(
   1 (0 .BYE 0)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)
   1 (0 talk 2 again 2 soon 0)
+    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+  1 (0 talk to you 1 soon 0)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)
   1 (0 talk 2 again 2 next 2 .APPOINTMENT 0)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)

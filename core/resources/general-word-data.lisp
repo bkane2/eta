@@ -326,8 +326,10 @@
 			burglary steal stole rape raped extortion pimp extorting
 			extorted extorts rip-off mafia mob mobster)
   (LIQUOR booze beer drink drinks drinking drank drunk alcohol alcoholic)
-  (DRUGS drug LIQUOR addict junkie hooked addicted heroin
-			cocain cocaine mainline dope ecstasy crack)
+  (DRUGS drug)
+  (DRUGS-ADDICTIVE LIQUOR addict junkie hooked addicted heroin meth
+			cocain cocaine mainline dope ecstasy crack opiates opioids)
+  (DRUGS-RECREATIONAL DRUGS-ADDICTIVE marijuana weed lsd shrooms)
   (BADPROP BADSTATE BADQUALITY STUPIDTHING)
   (BADPRED BADPROP BADREL BADEVENT VIOLENCE DECEIVE BADTHING)
   (GOODSTATE happy well fine pleased delighted cheerful glad satisfied contented joy joyful)
