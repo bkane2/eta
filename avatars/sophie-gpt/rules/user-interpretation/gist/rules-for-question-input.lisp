@@ -32,7 +32,7 @@
 
 ; Define any useful predicates here:
 (defpred !not-non-alcoholic x (not (isa x 'non-alcoholic)))
-(defpred !not-medicine-gen x (not isa x 'medicine-gen))
+(defpred !not-medicine-gen x (not (isa x 'medicine-gen)))
 
 
 (READRULES '*question-input*
