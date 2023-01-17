@@ -790,7 +790,7 @@
               (setq user-gist-clauses (second prev-step))
               ; Get Eta gist clauses
               (setq eta-gist-clauses (form-gist-clauses-using-language-model expr (car (last user-gist-clauses)) '^me))
-              (format t "~%storing Eta gist clauses for episode ~a and ~a: ~a~% " ep-name ep-name1 eta-gist-clauses) ; DEBUGGING
+              (format t "~%  * Storing Eta gist clauses for episode ~a and ~a:~%   ~a ~%" ep-name ep-name1 eta-gist-clauses) ; DEBUGGING
               ; Store any gist clauses for episode and parent episode
               (mapcar (lambda (gist)
                   (when (not (member 'nil gist))
@@ -858,7 +858,9 @@
             (setq prev-step-ep-name (fifth prev-step))
             (setq user-gist-clauses (second prev-step))
 
-            ;; (format t "found user gist clauses from previous episode ~a : ~a~%" prev-step-ep-name user-gist-clauses) ; DEBUGGING
+            (format t "~% ========== Eta Action ==========") ; DEBUGGING
+            (format t "~%  * Found user gist clauses (from previous episode ~a): ~a " prev-step-ep-name user-gist-clauses) ; DEBUGGING
+            (format t "~%  * Paraphrasing utterance: ~a " expr) ; DEBUGGING
 
             (cond
               ; Use GPT3-based paraphrase model if available
@@ -1352,9 +1354,10 @@
 
         (setq prev-step-gist-clauses (reverse (remove-duplicates prev-step-gist-clauses :test #'equal)))
 
-        (format t "~%ETA gist clauses that the user is responding to (from episodes ~a and ~a)~% = ~a "
+        (format t "~% ========== User Interpretation ==========")
+        (format t "~%  * ETA gist clauses that the user is responding to (from episodes ~a and ~a)~%   = ~a "
           prev-step-ep-name relative-ep-name prev-step-gist-clauses)
-        (format t "~%using gist clause: ~a~% " (car (last prev-step-gist-clauses))) ; DEBUGGING
+        (format t "~%  * Using gist clause for context: ~a " (car (last prev-step-gist-clauses))) ; DEBUGGING
 
         ; Compute the "interpretation" (gist clauses) of the user input,
         ; which will be done with a gist-clause packet selected using the
@@ -1368,7 +1371,7 @@
 
         ; Remove contradicting user gist-clauses (if any)
         (setq user-gist-clauses (remove-contradiction user-gist-clauses))
-        (format t "~%Obtained user gist clauses ~a for episode ~a~%" user-gist-clauses ep-name) ; DEBUGGING
+        (format t "~%  * Obtained user gist clauses (for episode ~a): ~a ~%" ep-name user-gist-clauses) ; DEBUGGING
 
         ; Store user gist-clauses in memory
         (dolist (user-gist-clause user-gist-clauses)
@@ -1598,24 +1601,26 @@
     ; Remove 'nil' gist clauses (unless the only gist clause is the 'nil' gist clause)
     (setq user-gist-clauses_p (purify-func user-gist-clauses))
 
+    (format t "~% ========== Eta Action ==========") ; DEBUGGING
+
     ; We use either choice tree '*reaction-to-input*' or
     ; '*reactions-to-input*' (note plural) depending on whether
     ; we have one or more gist clauses.
     (cond
       ; Single gist clause
       ((null (cdr user-gist-clauses_p))
-        ;; (format t "~% user-gist-words are ~a ~% " user-gist-words)
+        (format t "~%  * Reacting to single user clause: ~a " user-gist-words) ; DEBUGGING
         (setq choice (choose-result-for (car user-gist-clauses_p) '*reaction-to-input*))
-        ;; (format t "~% (single clause) choice are ~a ~% " choice) ; DEBUGGING
+        (format t "~%  * Chose reaction: ~a " choice) ; DEBUGGING
       )
 
       ; Multiple gist clauses
       (t
-        ;; (format t "~% user-gist-words are ~a ~% " user-gist-clauses_p) ; DEBUGGING
+        (format t "~%  * Reacting to concatenation of multiple user clauses:~%   ~a " user-gist-clauses_p) ; DEBUGGING
         (setq user-gist-words (apply 'append user-gist-clauses_p))
         ;; (format t "~% user-gist-words are ~a ~% " user-gist-words) ; DEBUGGING
         (setq choice (choose-result-for user-gist-words '*reactions-to-input*))
-        ;; (format t "~% choice is ~a ~% " choice) ; DEBUGGING
+        (format t "~%  * Chose reaction: ~a " choice) ; DEBUGGING
     ))
 
     ; 'choice' may be an instantiated reassembly pattern corresponding to a
@@ -2030,7 +2035,7 @@
     (setq history-str (mapcar (lambda (turn)
       (list (string (first turn)) (words-to-str (second turn)))) history))
 
-    (format t "~%generating response using schema: ~a~% "
+    (format t "~%  * Generating response using schema: ~a "
       (plan-schema-name (find-curr-subplan (ds-curr-plan *ds*)))) ; DEBUGGING
 
     ; Generate response
@@ -2070,7 +2075,7 @@
       (setq emotion (get-gpt3-emotion (words-to-str utterance) (last history-str 3)))
       (setq utterance (cons emotion utterance)))
 
-    ;; (format t "~% utterance = ~a" utterance) ; DEBUGGING   
+    ;; (format t "~%  * Generated utterance = ~a" utterance) ; DEBUGGING   
 
     utterance
 )) ; END form-surface-utterance-using-language-model
