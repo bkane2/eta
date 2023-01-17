@@ -2030,6 +2030,9 @@
     (setq history-str (mapcar (lambda (turn)
       (list (string (first turn)) (words-to-str (second turn)))) history))
 
+    (format t "~%generating response using schema: ~a~% "
+      (plan-schema-name (find-curr-subplan (ds-curr-plan *ds*)))) ; DEBUGGING
+
     ; Generate response
     (cond
       ; Gist-clause given: Paraphrase task
