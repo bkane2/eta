@@ -6,6 +6,8 @@
 ; need to expand this with various possible non-query
 ; questions, such as "can you answer wh-questions?".
 '(
+  1 (0 ?) ; anything ending with ?
+    2 *reaction-to-question* (0 :subtree)
   1 (0 .WH_ 1 .SELF name 0)
     2 *reaction-to-question* (0 :subtree)
   1 (0 .AUX .SELF 1 .ANSWER 1 .QUESTION 0)
@@ -13,8 +15,6 @@
   1 (0 .WH_ 1 questions 1 .AUX .SELF 1 .ANSWER 0)
     2 *reaction-to-question* (0 :subtree)
   1 (0 .AUX .SELF 0)
-    2 *reaction-to-question* (0 :subtree)
-  1 (0 ?) ; anything ending with ?
     2 *reaction-to-question* (0 :subtree)
   1 (.WH_ 0) ; wh or how question
     2 *reaction-to-question* (0 :subtree)

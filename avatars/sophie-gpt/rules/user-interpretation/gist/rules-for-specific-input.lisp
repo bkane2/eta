@@ -70,6 +70,7 @@
 ;       (How do you feel about your treatment options ?)
 ; - stronger-medicine-help-sleep
 ;       (A stronger pain medication may help me sleep \.)
+; - reason-for-cancer
 ; - ask-for-questions
 ; - say-bye
 ;
@@ -270,7 +271,7 @@
   ; Expressing sympathy about daughter not being able to make it
   1 (0 that .BE too .BAD 0)
     2 ((You are sorry that my daughter couldn\'t come today \.) (Anyone-here-with-you)) (0 :gist)
-  1 (0 I .BE sorry 0)
+  1 (0 I .BE 1 sorry 0)
     2 ((You are sorry that my daughter couldn\'t come today \.) (Anyone-here-with-you)) (0 :gist)
 )) ; END *appointment-input*
 
@@ -450,7 +451,7 @@
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
   1 (0 some 2 .MED-BETTER 2 medication 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
-  ; Asking if system has any questions
+  ; Do you have any questions?
   1 (0 you 2 .HAVE 2 .QUESTION-WORD 0)
     2 ((Do I have a question about my medicine ?) (Medicine)) (0 :gist)
   1 (0 .QUESTION-WORD 2 you 2 .HAVE 0)
@@ -503,7 +504,7 @@
     2 ((Is the pain medication working at all ?) (Medicine-working)) (0 :gist)
   1 (0 .AUX-BASE 1 it 3 .DO .ANYTHING 0)
     2 ((Is the pain medication working at all ?) (Medicine-working)) (0 :gist)
-  ; I'm sorry
+  ; I'm sorry.
   1 (0 .SELF 2 sorry 0)
     2 ((You are sorry that I am in pain \.) (Pain)) (0 :gist)
   
@@ -566,7 +567,7 @@
 ; (Do I need chemotherapy ?)
 ; (Do you think chemotherapy will help ?)
 '(
-  ; No, I think you should do comfort care instead
+  ; No, I think you should do comfort care instead.
   1 (0 .PALLIATIVE .CARE 0 .NEG 1 .MED-HELP 0)
     2 ((You do not think I need chemotherapy because I should get comfort care instead \.) (Chemotherapy)) (0 :gist)
   1 (0 hospice 0 .NEG 1 .MED-HELP 0)
@@ -586,12 +587,12 @@
   1 (0 .COMFORT-CARE-WORD 0)
     2 *comfort-care-input* (0 :subtree)
 
-  ; Chemotherapy will not help
+  ; Chemotherapy will not help.
   1 (0 .NEG 1 .MAKE-CHANGE-WORDS 2 CANCER-LIVE 0)
     2 ((Chemotherapy will not help me live longer \.) (Chemotherapy)) (0 :gist)
   1 (0 .NEG 1 .MED-HELP 0)
     2 ((Chemotherapy will not help me live longer \.) (Chemotherapy)) (0 :gist)
-  ; Chemotherapy may help you live longer
+  ; Chemotherapy may help you live longer.
   1 (0 .NEG 1 .MAKE-CHANGE-WORDS 2 CANCER-LIVE 0)
     2 (0 .BUT 8 .SIDE-EFFECTS-ALL 0)
       3 ((Chemotherapy may help me live longer but may cause 4 \.) (Chemotherapy)) (0 :gist)
@@ -613,12 +614,12 @@
       3 ((Chemotherapy may help me live longer but may have bad side effects \.) (Chemotherapy)) (0 :gist)
     2 ((Chemotherapy may help me live longer \.) (Chemotherapy)) (0 :gist)
 
-  ; Chemotherapy (might) be an option
+  ; Chemotherapy (might) be an option.
   1 (0 .CHEMOTHERAPY 4 .MIGHT .BE 3 .TREATMENT-OPTION 0)
     2 ((You think I might need chemotherapy \.) (Chemotherapy)) (0 :gist)
   1 (0 .CHEMOTHERAPY 4 .BE 3 .TREATMENT-OPTION 0)
     2 ((You think I need chemotherapy \.) (Chemotherapy)) (0 :gist)
-  ; We should talk to an oncologist
+  ; We should talk to an oncologist.
   1 (0 .CHEMOTHERAPY-CONSULT 4 oncologist 0)
     2 ((You think we should talk to my oncologist about chemotherapy \.) (Chemotherapy)) (0 :gist)
   1 (0 information 2 from 2 oncologist 0)
@@ -678,7 +679,7 @@
 ; (Should I get comfort care ?)
 ; (How does comfort care work ?)
 '(
-  ; Comfort care should help alleviate your pain
+  ; Comfort care should help alleviate your pain.
   1 (0 .NEG 1 .PAINFUL 0)
     2 ((Comfort care should alleviate my pain \.) (Comfort-care)) (0 :gist)
   1 (0 .PAIN-ALLEVIATE 1 .PAIN 0)
@@ -689,12 +690,12 @@
     2 ((Comfort care should alleviate my pain \.) (Comfort-care)) (0 :gist)
   1 (0 .COMFORT-CARE-WORD 0 .REFERRAL 0)
     2 ((I would need a referral to start comfort care \.) (Comfort-care)) (0 :gist)
-  ; Comfort care allows me to spend time with my family
+  ; Comfort care allows me to spend time with my family.
   1 (0 .FAMILY-PRON 2 .VISIT 2 you 0)
     2 ((Comfort care allows me to spend time with my family \.) (Comfort-care)) (0 :gist)
   1 (0 .FAMILY-PRON 2 .SPEND 1 .TIME-WORDS 2 you 0)
     2 ((Comfort care allows me to spend time with my family \.) (Comfort-care)) (0 :gist)
-  1 (0 you 2 .SPEND 4 .TIME-WORDS 4 .FAMILY-PRON 0)
+  1 (0 you 2 .SPEND 4 .TIME-WORDS 5 .FAMILY-PRON 0)
     2 ((Comfort care allows me to spend time with my family \.) (Comfort-care)) (0 :gist)
   ; Ways to receive comfort care
   1 (0 place 1 .PROVIDE 2 .COMFORT-CARE-WORD 0)
@@ -708,7 +709,7 @@
   1 (0 .NURSE 0)
     2 ((Receiving comfort care from a nurse is an option \.) (Comfort-care)) (0 :gist)
 
-  ; Comfort care is an option
+  ; Comfort care is an option.
   1 (0 comfort .CARE 5 .BE 3 .TREATMENT-OPTION 0)
     2 ((You think I might need comfort care \.) (Comfort-care)) (0 :gist)
   1 (0 .PALLIATIVE .CARE 5 .BE 3 .TREATMENT-OPTION 0)
@@ -718,7 +719,7 @@
   1 (0 hospice 5 .BE 3 .TREATMENT-OPTION 0)
     2 ((You think I might need comfort care \.) (Comfort-care)) (0 :gist)
 
-  ; Asking if system has any questions
+  ; Do you have any questions?
   1 (0 you 2 .HAVE 2 .QUESTION-WORD 0)
     2 ((Do I have a question about comfort care ?) (Comfort-care)) (0 :gist)
   1 (0 .QUESTION-WORD 2 you 2 .HAVE 0)
@@ -798,17 +799,17 @@
 (READRULES '*medicine-refill-request-input*
 ; (I would like a refill of medicine \.)
 '(
-  ; You should take morphine
+  ; You should take morphine.
   1 (0 .MED-NARCOTIC 0)
     2 ((I should take a narcotic \.) (Medicine-request)) (0 :gist)
 
-  ; Do you want something better / stronger pain medication
+  ; Do you want something better / stronger pain medication.
   1 (0 .DO 1 you 3 .WANT-GEN 3 .MED-BETTER .MEDICINE-TAKING 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
   1 (0 .DO 1 .WANT-GEN 3 .MED-BETTER 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
 
-  ; You should take something stronger / better pain medication
+  ; You should take something stronger / better pain medication.
   1 (0 .MED-TAKE 3 .MED-BETTER 3 .MEDICINE-GEN 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 .MED-TAKE 1 something 1 .MED-BETTER 0)
@@ -821,18 +822,18 @@
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 .TRY 2 .MED-BETTER 1 .MEDICINE-GEN 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
-  ; Maximizing your pain medication
+  ; Maximizing your pain medication.
   1 (0 .MED-INCREASE 3 .MEDICINE-GEN 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 make 1 .MEDICINE-GEN 2 .MED-BETTER 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
-  ; You should take something different
+  ; You should take something different.
   1 (0 something 2 different 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
   1 (0 different 2 .MEDICINE-GEN 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
 
-  ; Yes / No
+  ; Yes/No
   1 (0 no 1 problem 0)
     2 ((You can give me a refill of pain medication \.) (Medicine-request)) (0 :gist)
   1 (:subtree *match-affirm*)
@@ -847,10 +848,10 @@
 (READRULES '*medicine-stronger-request-input*
 ; (Can I have a stronger pain medication ?)
 '(
-  ; You should take morphine
+  ; You should take morphine.
   1 (0 .MED-NARCOTIC 0)
     2 ((I should take a narcotic \.) (Medicine-request)) (0 :gist)
-  ; Maximizing your pain medication
+  ; Maximizing your pain medication.
   1 (0 .MED-INCREASE 3 .MEDICINE-GEN 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 make 1 .MEDICINE-GEN 2 .MED-BETTER 0)
@@ -861,13 +862,13 @@
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 something 3 .MED-BETTER 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
-  ; You should take something different
+  ; You should take something different.
   1 (0 something 2 different 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
   1 (0 different 2 .MEDICINE-GEN 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
 
-  ; Yes / No
+  ; Yes/No
   1 (0 no 1 problem 0)
     2 ((You can give me stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (:subtree *match-affirm*)
@@ -902,17 +903,17 @@
   1 (0 how 4 .MEDICINE-GEN 2 .MED-HELP 0)
     2 ((Is the pain medication working at all ?) (Medicine-working)) (0 :gist)
 
-  ; You should take morphine
+  ; You should take morphine.
   1 (0 .MED-NARCOTIC 0)
     2 ((I should take a narcotic \.) (Medicine-request)) (0 :gist)
 
-  ; Do you want something better / stronger pain medication
+  ; Do you want something better / stronger pain medication.
   1 (0 .DO 1 you 3 .WANT-GEN 3 .MED-BETTER .MEDICINE-TAKING 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
   1 (0 .DO 1 .WANT-GEN 3 .MED-BETTER 0)
     2 ((Do I want stronger pain medication ?) (Medicine-request)) (0 :gist)
 
-  ; You should take something stronger / better pain medication
+  ; You should take something stronger / better pain medication.
   1 (0 .MED-TAKE 3 .MED-BETTER 3 .MEDICINE-GEN 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 .MED-TAKE 1 something 1 .MED-BETTER 0)
@@ -925,17 +926,17 @@
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 .TRY 2 .MED-BETTER 2 .MEDICINE-GEN 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
-  ; Maximizing your pain medication
+  ; Maximizing your pain medication.
   1 (0 .MED-INCREASE 3 .MEDICINE-GEN 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
   1 (0 make 1 .MEDICINE-GEN 2 .MED-BETTER 0)
     2 ((I should take stronger pain medication \.) (Medicine-request)) (0 :gist)
-  ; You should take something different
+  ; You should take something different.
   1 (0 something 2 different 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
   1 (0 different 2 .MEDICINE-GEN 0)
     2 ((I should take something different \.) (Medicine-request)) (0 :gist)
-  ; It might take a couple days to tell
+  ; It might take a couple days to tell.
   1 (0 .TAKE 5 .MED-TIME-GEN 4 .MED-HELP 0)
     2 ((I should wait to see if the pain medication works \.) (Medicine-request)) (0 :gist)
   1 (0 .TAKE 5 .MED-TIME-GEN 4 .MED-NOTICE 0)
@@ -989,7 +990,7 @@
     2 ((The prognosis is that I may live for several 4 \.) (Prognosis)) (0 :gist)
   1 (0 .ANTICIPATE 8 .ELAPSED-TIME 0)
     2 ((The prognosis is that I may live for a 4 \.) (Prognosis)) (0 :gist)
-  ; You don't have much long left to live
+  ; You don't have much long left to live.
   1 (0 you 1 .NEG 2 .HAVE 3 .LONG 2 .CANCER-LIVE 0)
     2 ((The prognosis is that I do not have long left to live \.)) (0 :gist)
   1 (0 .NEG 8 .LONG 1 .TIME-WORDS 0)
@@ -1014,7 +1015,7 @@
     2 ((The prognosis is that I do not have long left to live \.)) (0 :gist)
   1 (0 .AUX-BASE 2 .LESS 2 .TIME-WORDS 4 .WANT-GEN 0)
     2 ((The prognosis is that I do not have long left to live \.)) (0 :gist)
-  ; There is no cure
+  ; There is no cure.
   1 (0 .NEG 2 .CURE 0)
     2 ((The prognosis is that I cannot be cured \.)) (0 :gist)
   1 (0 .NEG 8 curable 0)
@@ -1047,7 +1048,7 @@
     2 ((The prognosis is that I cannot be cured \.)) (0 :gist)
   1 (0 .FEW 1 .TREATMENT-OPTION 0)
     2 ((The prognosis is that I cannot be cured \.)) (0 :gist)
-  ; The test results show that the radiation is not working 
+  ; The test results show that the radiation is not working.
   1 (0 .RADIATION-TREATMENT 2 .NEG 2 .RADIATION-HELP 0)
     2 ((The test results show that the radiation is not working \.)) (0 :gist)
   1 (0 .RADIATION-TREATMENT 2 .NEG 2 .STOP 4 .CANCER-ILLNESS 0)
@@ -1061,14 +1062,14 @@
   1 (0 you 3 .PROG-FUTURE 4 .RECOVER 0)
     2 ((The prognosis is that I will survive \.) (Prognosis)) (0 :gist)
 
-  ; Mention of comfort care
+  ; Mention of comfort care.
   1 (0 .COMFORT-CARE-WORD 0)
     2 ((Comfort care is a treatment option \.) (Options)) (0 :gist)
-  ; Mention of chemotherapy
+  ; Mention of chemotherapy.
   1 (0 .CHEMOTHERAPY 0)
     2 ((Chemotherapy is a treatment option \.) (Options)) (0 :gist)
 
-  ; It's hard to predict
+  ; It's hard to predict.
   1 (0 hard 2 to 2 .PREDICT 0)
     2 ((The prognosis is hard to predict \.)) (0 :gist)
   1 (0 hard 2 to 2 make 2 .PREDICTION 0)
@@ -1126,7 +1127,7 @@
     2 ((Do I understand my prognosis ?)) (0 :gist)
   1 (0 .AUX-BASE 3 you 2 .TELL 6 .UNDERSTAND-GEN 0)
     2 ((Do I understand my prognosis ?)) (0 :gist)
-  ; Do you have any questions ?
+  ; Do you have any questions?
   1 (0 you 2 .HAVE 2 .QUESTION-WORD 0)
     2 (0 .MEDICINE 0)
       3 ((Do I have a question about my medicine ?) (Medicine)) (0 :gist)
@@ -1139,7 +1140,7 @@
     2 (0 .MEDICINE 0)
       3 ((Do I have a question about my medicine ?) (Medicine)) (0 :gist)
     2 ((Do I have a question about my prognosis ?)) (0 :gist)
-  ; How much do I want to know about my prognosis ?
+  ; How much do I want to know about my prognosis?
   1 (0 how .MUCH 3 information 3 .AUX 1 you 0)
     2 ((How much information do I want about my prognosis ?)) (0 :gist)
   1 (0 how .MUCH 3 information 3 would 1 you 0)
@@ -1162,7 +1163,7 @@
     2 ((How much information do I want about my prognosis ?)) (0 :gist)
   1 (0 would 4 .WANT-GEN 4 find 1 out 0)
     2 ((How much information do I want about my prognosis ?)) (0 :gist)
-  ; How specific do you want me to be about your prognosis ?
+  ; How specific do you want me to be about your prognosis?
   1 (0 would 2 you 3 .WANT-GEN 6 .SPECIFIC 0)
     2 ((How specific do I want you to be about my prognosis ?)) (0 :gist)
   1 (0 how 2 .SPECIFIC 6 .WANT-GEN 0)
@@ -1173,16 +1174,16 @@
     2 ((How specific do I want you to be about my prognosis ?)) (0 :gist)
   1 (0 would 2 you 3 .WANT-GEN 6 .SPECIFIC 0)
     2 ((How specific do I want you to be about my prognosis ?)) (0 :gist)
-  ; How is it worse ?
+  ; How is it worse?
   1 (0 how .BE 2 worse 0)
     2 ((How has my condition gotten worse ?) (Diagnosis-details)) (0 :gist)
 
-  ; Are you ready to discuss your treatment goals ?
+  ; Are you ready to discuss your treatment goals?
   1 (0 .BE 2 .READY 4 .DISCUSS 6 .CANCER-GOALS 0)
     2 ((Am I ready to discuss my treatment goals ?)) (0 :gist)
   1 (0 .WANT-GEN 4 .DISCUSS 6 .CANCER-GOALS 0)
     2 ((Am I ready to discuss my treatment goals ?)) (0 :gist)
-  ; What are your goals ?
+  ; What are your goals?
   1 (0 .WH_ 2 your 5 .CANCER-GOALS 0)
     2 ((How do my goals depend on my prognosis ?)) (0 :gist)
   1 (0 .WH_ 3 .CANCER-GOALS 2 you 2 .HAVE 0)
@@ -1228,20 +1229,20 @@
   1 (0 .TELL 3 .WH_ 3 .BE 3 .IMPORTANT 0)
     2 ((How do my goals depend on my prognosis ?)) (0 :gist)
 
-  ; There are many possibilities
+  ; There are many possibilities.
   1 (0 .MUCH 1 .TREATMENT-OPTION 0)
     2 ((There are many treatment options that may impact my prognosis \.) (Options)) (0 :gist)
   1 (0 quality 1 .LIFE 0)
     2 ((There are many treatment options that may impact my prognosis \.) (Options)) (0 :gist)
-  ; We should focus on your pain/symptoms
+  ; We should focus on your pain/symptoms.
   1 (0 focus 2 on 4 .PAIN 0)
     2 ((We should focus on my symptoms before talking about my prognosis \.)) (0 :gist)
   1 (0 focus 2 on 4 .SYMPTOM 0)
     2 ((We should focus on my symptoms before talking about my prognosis \.)) (0 :gist)
-  ; We will increase your medication over time
+  ; We will increase your medication over time.
   1 (0 .MED-INCREASE 3 .TIME-WORDS 0)
     2 ((My prognosis is that we will increase my medication over time \.)) (0 :gist)
-  ; You will be able to spend time with your family
+  ; You will be able to spend time with your family.
   1 (0 .SPEND 2 .TIME-WORDS 6 .LOVE 0)
     2 ((My prognosis is that I may have some time left to spend with family \.)) (0 :gist)
   1 (0 .SPEND 2 .TIME-WORDS 6 .FAMILY 0)
@@ -1333,28 +1334,28 @@
 (READRULES '*prognosis-second-opinion-input*
 ; (Should I get a second opinion about my prognosis ?)
 '(
-  ; You should (not)
+  ; You should (not).
   1 (0 you 2 .SHOULD 1 .NEG 0)
     2 ((I should not obtain a second opinion about the prognosis \.)) (0 :gist)
   1 (0 you 2 .SHOULD 0)
     2 ((I should obtain a second opinion about the prognosis \.)) (0 :gist)
-  ; (not) a good idea
+  ; (not) a good idea.
   1 (0 .NEG 2 .BENEFICIAL 0)
     2 ((I should not obtain a second opinion about the prognosis \.)) (0 :gist)
   1 (0 .BENEFICIAL 0)
     2 ((I should obtain a second opinion about the prognosis \.)) (0 :gist)
-  ; (not) a bad idea
+  ; (not) a bad idea.
   1 (0 .NEG 2 .BAD 0)
     2 ((I should obtain a second opinion about the prognosis \.)) (0 :gist)
   1 (0 .BAD 0)
     2 ((I should not obtain a second opinion about the prognosis \.)) (0 :gist)
-  ; It would not change anything
+  ; It would not change anything.
   1 (0 .NEG 2 .DIFFERENT 0)
     2 ((A second opinion would not change anything about the prognosis \.)) (0 :gist)
-  ; You may hear something different
+  ; You may hear something different.
   1 (0 .MORE-INFO 6 .DIFFERENT 0)
     2 ((A second opinion may give me different information on my prognosis \.)) (0 :gist)
-  ; It's up to you
+  ; It's up to you.
   1 (0 up to you 0)
     2 ((It is up to me whether I obtain a second opinion \.)) (0 :gist)
   1 (0 .WHATEVER 2 you 1 .THINK-GEN 0)
@@ -1375,13 +1376,13 @@
 (READRULES '*prognosis-trust-input*
 ; (Can I trust your prognosis ?)
 '(
-  ; Other doctors will tell you the same thing
+  ; Other doctors will tell you the same thing.
   1 (0 .TELL 4 .LIKE 0)
     2 ((I can trust your prognosis \.)) (0 :gist)
-  ; I've seen many cases
+  ; I've seen many cases.
   1 (0 .MUCH 2 .PERSON-PL 0)
     2 ((I can trust your prognosis \.)) (0 :gist)
-  ; I'm an expert
+  ; I'm an expert.
   1 (0 .EXPERTISE 0)
     2 ((I can trust your prognosis \.)) (0 :gist)
 
@@ -1398,13 +1399,13 @@
 (READRULES '*prognosis-bargaining-uncle-input*
 ; (Can I outlive your prognosis like my uncle Fred did ?)
 '(
-  ; There are not many people like your uncle
+  ; There are not many people like your uncle.
   1 (0 .NEG 1 .MUCH 2 .PERSON-PL 4 uncle 0)
     2 ((It is unlikely that I outlive my prognosis \.)) (0 :gist)
-  ; Your uncle is lucky
+  ; Your uncle is lucky.
   1 (0 uncle 2 .BE 3 .LUCKY 0)
     2 ((It is unlikely that I outlive my prognosis \.)) (0 :gist)
-  ; Not everyone will be as lucky as your uncle
+  ; Not everyone will be as lucky as your uncle.
   1 (0 .NEG 1 .MOST 3 .BE 2 .LUCKY 0)
     2 ((It is unlikely that I outlive my prognosis \.)) (0 :gist)
   ; Your uncle Fred is (not) an unusual case.
@@ -1421,7 +1422,7 @@
 (READRULES '*prognosis-bargaining-habits-input*
 ; (Can I outlive your prognosis if I have healthy habits ?)
 '(
-  ; Will not change the prognosis
+  ; Will not change the prognosis.
   1 (0 .NEG 1 .MAKE-BETTER 0)
     2 ((Healthy habits will not help me outlive my prognosis \.)) (0 :gist)
   1 (0 .NEG 2 .MAKE-CHANGE-WORDS 4 .DIFFERENCE 0)
@@ -1433,7 +1434,7 @@
   1 (0 .NEG 4 .OUTLIVE 0)
     2 ((Healthy habits will not help me outlive my prognosis \.)) (0 :gist)
 
-  ; It's worth a shot
+  ; It's worth a shot.
   1 (0 worth 2 shot 0)
     2 (0 worth 2 shot 2 .BUT 0)
       3 ((Healthy habits may help me outlive my prognosis but it is unlikely \.)) (0 :gist)
@@ -1459,13 +1460,13 @@
 (READRULES '*prognosis-bargaining-quit-smoke-input*
 ; (Can I outlive your prognosis if I quit smoking ?)
 '(
-  ; It's too late
+  ; It's too late.
   1 (0 .BE 2 too 1 late 0)
     2 ((It is too late for quitting smoking to affect your prognosis \.)) (0 :gist)
   1 (0 .DAMAGE 2 .BE 2 done 0)
     2 ((It is too late for quitting smoking to affect your prognosis \.)) (0 :gist)
   
-  ; Smoking probably caused your cancer
+  ; Smoking probably caused your cancer.
   1 (0 .SMOKE 2 .MAKE-CHANGE-WORDS 2 .CANCER-ILLNESS 0)
     2 ((My cancer is the result of my smoking \.) (Reason-for-cancer)) (0 :gist)
 
@@ -1477,18 +1478,18 @@
 (READRULES '*prognosis-bargaining-now-input*
 ; (Can I outlive your prognosis if I am healthy now ?)
 '(
-  ; How you feel right now is (not) a good predictor
+  ; How you feel right now is (not) a good predictor.
   1 (0 .NEG 1 .GOOD 2 .PREDICTOR 0)
     2 ((My health right now is not a good predictor of my prognosis \.)) (0 :gist)
   1 (0 .GOOD 2 .PREDICTOR 0)
     2 ((My health right now improves my prognosis \.)) (0 :gist)
   1 (0 .NEG 2 .PREDICT 0)
     2 ((My health right now is not a good predictor of my prognosis \.)) (0 :gist)
-  ; Your health could change quickly
-  1 (0 .HEALTHY 3 .MIGHT 2 .CHANGE 0)
+  ; Your health could change quickly.
+  1 (0 .GOOD-HEALTH 3 .MIGHT 2 .CHANGE 0)
     2 ((My health right now is not a good predictor of my prognosis \.)) (0 :gist)
     
-  ; I am glad to hear that you are feeling well
+  ; I am glad to hear that you are feeling well.
   1 (0 .HAPPY-WORDS 4 you 3 .FEELING 3 .OKAY 0)
     2 (0 .BUT 0)
       3 ((My health right now does not change my prognosis \.)) (0 :gist)
@@ -1497,7 +1498,7 @@
     2 (0 .BUT 0)
       3 ((My health right now does not change my prognosis \.)) (0 :gist)
     2 ((You are glad to hear that I am still feeling healthy after my prognosis \.)) (0 :gist)
-  1 (0 .HAPPY-WORDS 4 you 3 .HAVE 2 .HEALTHY 0)
+  1 (0 .HAPPY-WORDS 4 you 3 .HAVE 2 .GOOD-HEALTH 0)
     2 (0 .BUT 0)
       3 ((My health right now does not change my prognosis \.)) (0 :gist)
     2 ((You are glad to hear that I am still feeling healthy after my prognosis \.)) (0 :gist)
@@ -1544,13 +1545,13 @@
   1 (0 .WH_ school 0)
     2 ((What school does my grandson go to ?)) (0 :gist)
 
-  ; You (do not) have enough time left
+  ; You (do not) have enough time left.
   1 (0 .NEG 1 .TIME-ENOUGH .TIME-WORDS 0)
     2 ((My prognosis will not allow me to attend the graduation of my grandson \.)) (0 :gist)
   1 (0 .TIME-ENOUGH .TIME-WORDS 0)
     2 ((My prognosis might allow me to attend the graduation of my grandson \.)) (0 :gist)
 
-  ; You should focus on spending time on your family
+  ; You should focus on spending time on your family.
     2 (0 time 6 .NOW 0)
       3 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-understanding)) (0 :gist)
     2 (0 .NOW 1 time 0)
@@ -1558,12 +1559,12 @@
     2 (0 time 6 .CHILD 0)
       3 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-understanding)) (0 :gist)
  
-  ; It's worth a shot
+  ; It's worth a shot.
   1 (0 worth 2 shot 0)
     2 ((My prognosis might allow me to attend the graduation of my grandson \.)) (0 :gist)
   1 (0 .TRY 0)
     2 ((My prognosis might allow me to attend the graduation of my grandson \.)) (0 :gist)
-  ; It's a long shot
+  ; It's a long shot.
   1 (0 .LONG 2 shot 0)
     2 (0 shot 8 .BUT 0)
       3 ((My prognosis might allow me to attend the graduation of my grandson \.)) (0 :gist)
@@ -1579,7 +1580,7 @@
 '(
   ; ... But
   1 (0 .BUT 0)
-    ; people frequently/sometimes outlive their prognosis
+    ; People frequently/sometimes outlive their prognosis.
     2 (0 .BUT 5 .FREQUENTLY 2 .OUTLIVE 0)
       3 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
     2 (0 .BUT 5 .SOMETIMES 2 .OUTLIVE 0)
@@ -1588,7 +1589,7 @@
       3 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
     2 (0 .BUT 5 .SOMETIMES 2 .LUCKY 0)
       3 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
-    ; unusual for people to outlive their prognosis
+    ; Unusual for people to outlive their prognosis.
     2 (0 .BUT 5 .UNUSUAL 0)
       3 ((It is unlikely that I outlive my prognosis \.)) (0 :gist)
     2 (0 .BUT 5 .SELDOM 0)
@@ -1617,7 +1618,7 @@
       3 ((It is unlikely that I outlive my prognosis \.)) (0 :gist)
     2 ((My prognosis is hard to predict but likely accurate \.)) (0 :gist)
 
-  ; People frequently/sometimes outlive their prognosis
+  ; People frequently/sometimes outlive their prognosis.
   1 (0 .FREQUENTLY 2 .OUTLIVE 0)
     2 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
   1 (0 .SOMETIMES 2 .OUTLIVE 0)
@@ -1628,10 +1629,10 @@
     2 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
   1 (0 .NEG 1 .EXCEPTION 0)
     2 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
-  ; Not unusual for people to outlive their prognosis
+  ; Not unusual for people to outlive their prognosis.
   1 (0 .NEG 1 .UNUSUAL 0)
     2 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
-  ; Unusual for people to outlive their prognosis
+  ; Unusual for people to outlive their prognosis.
   1 (0 .UNUSUAL 0)
     2 ((It is unlikely that I outlive my prognosis \.)) (0 :gist)
   1 (0 .SELDOM 0)
@@ -1659,13 +1660,13 @@
   1 (0 .EXCEPTION 0)
     2 ((It is unlikely that I outlive my prognosis \.)) (0 :gist)
 
-  ; No two patients are the same
+  ; No two patients are the same.
   1 (0 no 1 .PERSON-PL 3 .LIKE 0)
     2 ((My prognosis is hard to predict because everyone is different \.)) (0 :gist)
   1 (0 .MOST 4 .BE 2 different 0)
     2 ((My prognosis is hard to predict because everyone is different \.)) (0 :gist)
 
-  ; It's hard to predict
+  ; It's hard to predict.
   1 (0 hard 2 to 2 .PREDICT 0)
     2 ((My prognosis is hard to predict \.)) (0 :gist)
   1 (0 hard 4 us 2 to 4 predictions 0)
@@ -1685,11 +1686,11 @@
   1 (0 nothing 2 be 2 .CERTAIN 0)
     2 ((My prognosis is hard to predict \.)) (0 :gist)
 
-  ; You should assume the prognosis is correct
+  ; You should assume the prognosis is correct.
   1 (0 .ASSUME 4 prognosis 6 .ACCURATE 0)
     2 ((I should assume that my prognosis is accurate \.)) (0 :gist)
 
-  ; You might be correct
+  ; You might be correct.
   1 (0 .MIGHT 3 .ACCURATE 0)
     2 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
   1 (0 .MAYBE 3 .ACCURATE 0)
@@ -1697,11 +1698,11 @@
   1 (0 .MIGHT 3 .SURPRISE 0)
     2 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
 
-  ; Focus on spending time with family
+  ; Focus on spending time with family.
   1 (0 .SPEND 4 .TIME-WORDS 6 .FAMILY 0)
     2 ((I should spend the time predicted by my prognosis with my family \.)) (0 :gist)
 
-  ; You should be hopeful
+  ; You should be hopeful.
   1 (0 .BE 2 .HOPEFUL-WORDS 0)
     2 ((I should be hopeful that I outlive my prognosis \.)) (0 :gist)
   1 (0 hope 4 .PROGNOSIS-MORE 2 .TIME-WORDS 0)
@@ -1717,13 +1718,13 @@
   1 (0 .CANCER-LIVE 2 .PROGNOSIS-MORE 0)
     2 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
    
-  ; Things may/may not get better
+  ; Things may/may not get better.
   1 (0 .NEG 2 .MAKE-BETTER 0)
     2 ((It is unlikely that I outlive my prognosis \.)) (0 :gist)
   1 (0 .MAKE-BETTER 0)
     2 ((There is some chance I could outlive my prognosis \.)) (0 :gist)
 
-  ; You don't have much long left to live
+  ; You don't have much long left to live.
   1 (0 you 1 .NEG 2 .HAVE 3 .LONG 2 .CANCER-LIVE 0)
     2 ((It is unlikely that I outlive my prognosis \.)) (0 :gist)
   1 (0 .NEG 8 .LONG 1 .TIME-WORDS 0)
@@ -1762,7 +1763,7 @@
 (READRULES 'experimental-therapy-input*
 ; (Do you think experimental therapies will help ?)
 '(
-  ; Experimental treatments will/will not/might make my prognosis better .
+  ; Experimental treatments will/will not/might make my prognosis better.
   1 (0 .MIGHT .MAKE-BETTER 0)
     2 ((Experimental treatments might make my prognosis better \.) (Experimental-treatment)) (0 :gist)
   1 (0 .MAYBE .MAKE-BETTER 0)
@@ -1770,15 +1771,15 @@
   1 (0 .MAKE-BETTER 2 .ODDS 0)
     2 ((Experimental treatments might make my prognosis better \.) (Experimental-treatment)) (0 :gist)
 
-  ; I would (not) try
+  ; I would (not) try.
   1 (0 .NEG .TRY 0)
     2 ((Experimental treatments will not make my prognosis better \.) (Experimental-treatment)) (0 :gist)
   1 (0 .TRY 0)
     2 ((Experimental treatments might make my prognosis better \.) (Experimental-treatment)) (0 :gist)
-  ; It's worth a shot
+  ; It's worth a shot.
   1 (0 worth 2 shot 0)
     2 ((Experimental treatments might make my prognosis better \.) (Experimental-treatment)) (0 :gist)
-  ; It's a long shot
+  ; It's a long shot.
   1 (0 .LONG 2 shot 0)
     2 (0 shot 8 .BUT 0)
       3 ((Experimental treatments might make my prognosis better \.) (Experimental-treatment)) (0 :gist)
@@ -1888,10 +1889,10 @@
   ; How frequently are you waking?
   1 (0 how 1 .FREQUENTLY 4 .WAKE 0)
     2 ((How often am I waking up at night ?) (Waking-frequency)) (0 :gist)
-  ; What's going through your head/what are you thinking
+  ; What's going through your head/what are you thinking?
   1 (0 .WH_ 3 .SLEEP-THOUGHT 0)
     2 ((What is on my mind when I try to sleep ?) (Sleep)) (0 :gist)
-  ; Can you tell me more
+  ; Can you tell me more?
   1 (0 .AUX 1 you 1 .TELL 5 .MORE-INFO 0)
     2 ((What happens when I try to sleep ?) (Sleep)) (0 :gist)
   1 (0 .AUX 1 you .BE able 1 .TELL 5 .MORE-INFO 0)
@@ -2116,12 +2117,12 @@
     2 ((I should reassure my family about my cancer \.) (Tell-family)) (0 :gist)
   1 (0 .THOUGHT 3 from 3 their 3 .PERSPECTIVE 0)
     2 ((I should reassure my family about my cancer \.) (Tell-family)) (0 :gist)
-  ; (Don't) soften the blow
+  ; (Don't) soften the blow.
   1 (0 .NEG 2 soften 1 blow 0)
     2 ((I should tell my family the full truth about my cancer \.) (Tell-family)) (0 :gist)
   1 (0 soften 1 blow 0)
     2 ((I should reassure my family about my cancer \.) (Tell-family)) (0 :gist)
-  ; Tell your family to be thankful for the time you have left
+  ; Tell your family to be thankful for the time you have left.
   1 (0 .TELL 4 .FAMILY-PRON 4 .THANKFUL 0)
     2 ((I should reassure my family about my cancer \.) (Tell-family)) (0 :gist)
   1 (0 let 2 .FAMILY-PRON 4 .KNOW-GEN 4 .THANKFUL 0)
@@ -2135,7 +2136,7 @@
     2 ((I should tell someone close to me about the cancer \.) (Tell-family)) (0 :gist)
   1 (0 .SHARE 2 .CLOSE 2 .FAMILY 0)
     2 ((I should tell someone close to me about the cancer \.) (Tell-family)) (0 :gist)
-  ; I know the best way to tell my family about my prognosis .
+  ; I know the best way to tell my family about my prognosis.
   1 (0 .KNOW-GEN 2 .FAMILY-PRON 2 better 0)
     2 ((I know the best way to tell my family about my cancer \.) (Tell-family)) (0 :gist)
   1 (0 .KNOW-GEN 2 .FAMILY-PRON 2 best 0)
@@ -2168,9 +2169,9 @@
     2 ((You will be available to help me and my family during my cancer treatment \.) (Treatment-option)) (0 :gist)
   1 (0 .DOCTOR-PRON 8 .TAKE 2 .CARE 2 of 2 you 0)
     2 ((You will be available to help me and my family during my cancer treatment \.) (Treatment-option)) (0 :gist)
-  1 (0 .DOCTOR-PRON 4 .BE 2 here 4 you 0)
+  1 (0 .DOCTOR-PRON 4 .BE 2 .AVAILABLE 4 you 0)
     2 ((You will be available to help me and my family during my cancer treatment \.) (Treatment-option)) (0 :gist)
-  1 (0 .DOCTOR-PRON 4 .BE 2 here 4 .FAMILY-PRON 0)
+  1 (0 .DOCTOR-PRON 4 .BE 2 .AVAILABLE 4 .FAMILY-PRON 0)
     2 ((You will be available to help me and my family during my cancer treatment \.) (Treatment-option)) (0 :gist)
   1 (0 .DOCTOR-PRON 4 .AUX-BASE 3 .DOCTOR-PRON 4 .CAN 0)
     2 ((You will be available to help me and my family during my cancer treatment \.) (Treatment-option)) (0 :gist)
@@ -2285,7 +2286,7 @@
 (READRULES '*test-results-input*
 ; (What do my test results mean ?)
 '(
-  ; We performed the CT scan to see how much further my cancer has progressed \.
+  ; We performed the CT scan to see how much further my cancer has progressed.
   1 (0 .DIAGNOSIS-TESTS 4 to 2 .LEARN-GEN 2 how 0)
     2 (0 how 4 .CANCER-ILLNESS 0)
       3 ((We performed the ct scan to see how much further my cancer has progressed \.) (Test-results)) (0 :gist)
@@ -2338,18 +2339,18 @@
       3 ((You recognize how hard receiving the test results is for me \.) (Test-results)) (0 :gist)
     2 (0 .BE 2 .DIFFICULT 1 to 1 .UNDERSTAND 0)
       3 ((You recognize how hard receiving the test results is for me \.) (Test-results)) (0 :gist)
-  ; You don't have much long left to live
+  ; You don't have much long left to live.
   1 (0 you 1 .NEG 2 .HAVE 3 .LONG 2 .CANCER-LIVE 0)
     2 ((The prognosis is that I do not have long left to live \.)) (0 :gist)
-  ; The cancer hasn't yet spread
+  ; The cancer hasn't yet spread.
   1 (0 .NEG 2 .CANCER-INCREASE 0)
     2 ((The test results show that the cancer hasn\'t spread \.) (Test-results)) (0 :gist)
-  ; The test results do not appear conclusive
+  ; The test results do not appear conclusive.
   1 (0 .DIFFICULT 2 to 2 .PREDICT 0)
     2 ((The test results do not appear conclusive \.)) (0 :gist)
   1 (0 .MAYBE 3 .CANCER-INCREASE 0)
     2 ((The test results do not appear conclusive \.)) (0 :gist)
-  ; There is no cure
+  ; There is no cure.
   1 (0 .NEG 2 .CURE 0)
     2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
   1 (0 .NEG 4 .DIAGNOSIS-MORE 2 .TREATMENT-OPTION 0)
@@ -2369,7 +2370,7 @@
       3 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
   1 (0 running 2 out 4 .TREATMENT-OPTION 0)
     2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
-  ; The radiation doesn't seem to be helping
+  ; The radiation doesn't seem to be helping.
   1 (0 .RADIATION-TREATMENT 4 .NEG 2 .HAVE 2 .EFFECT 0)
     2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
   1 (0 .NEG 4 .RADIATION-TREATMENT 4 .WORK 0)
@@ -2413,7 +2414,7 @@
     2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
   1 (0 .NEG 4 .RESPONSE 4 to 8 .RADIATION-TREATMENT 0)
     2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
-  ; The cancer has spread
+  ; The cancer has spread.
   1 (0 .CANCER-INCREASE 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 .CANCER-ILLNESS 10 .BODY-PART 0)
@@ -2437,24 +2438,24 @@
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 .MOVE 4 .IN 2 .SECOND 2 .PART 2 .BODY 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
-  ; You have stage 4 cancer
+  ; You have stage 4 cancer.
   1 (0 .STAGE .FOUR 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 advanced 1 .BODY-PART 1 cancer 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 .MOVE 2 .IN 4 .STAGE-FOUR .STAGE 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
-  ; You have cancer
+  ; You have cancer.
   1 (0 you 1 .HAVE 1 cancer 0)
     2 ((The test results show that I have cancer \.) (Test-results)) (0 :gist)
   1 (0 you 1 diagnosed 2 cancer 0)
     2 ((The test results show that I have cancer \.) (Test-results)) (0 :gist)
-  ; I don't know which test results you mean
+  ; I don't know which test results you mean.
   1 (0 .NEG 1 .KNOW 2 .WH_ 1 test 0)
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
   1 (0 .BE 1 you 2 .ASK-GEN 2 about 2 .DIAGNOSIS-TESTS 0)
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
-  ; I don't know
+  ; I don't know.
   1 (0 .NEG 1 sure 0)
     2 ((You are not sure what my test results mean \.)) (0 :gist)
   1 (0 .NEG 1 .KNOW 0)
@@ -2484,7 +2485,7 @@
       3 ((Do I want anyone to be present when you tell me about the test results ?) (Test-results)) (0 :gist)
     2 (0 .WANT-GEN 4 .SHARE 0)
       3 ((Do I want anyone to be present when you tell me about the test results ?) (Test-results)) (0 :gist)
-  ; Do you understand your test results ?
+  ; Do you understand your test results?
   1 (8 .AUX-BASE 2 you .UNDERSTAND-GEN 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
   1 (0 .WH_ 6 .AUX-BASE 2 you 2 .NEG 2 .UNDERSTAND-GEN 0)
@@ -2505,7 +2506,7 @@
     2 ((Can I summarize my test results ?) (Test-results)) (0 :gist)
   1 (0 .TELL 1 me 3 more 0)
     2 ((Can I summarize my test results ?) (Test-results)) (0 :gist)
-  ; Asking if system has any questions
+  ; Do you have any questions?
   1 (0 you 2 .HAVE 2 .QUESTION-WORD 0)
     2 (0 .MEDICINE 0)
       3 ((Do I have a question about my medicine ?) (Medicine)) (0 :gist)
@@ -2764,7 +2765,7 @@
 
 (READRULES '*reason-for-cancer-input*
 '(
-  ; You wish that I do not have cancer \.
+  ; You wish that I do not have cancer.
   1 (0 .DOCTOR-PRON 4 wish 4 .BE 1 different 0)
     2 ((You wish that I do not have cancer \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .DOCTOR-PRON 4 wish 4 you 2 not 4 .CANCER-ILLNESS 0)
@@ -2777,7 +2778,7 @@
     2 ((You wish that I do not have cancer \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .DOCTOR-PRON 4 wish 2 you 4 not 2 .SICK 0)
     2 ((You wish that I do not have cancer \.) (Reason-for-cancer)) (0 :gist)
-  ; My cancer is caused by my smoking \.
+  ; My cancer is caused by my smoking.
   1 (0 .SMOKE 4 .GIVE 4 .CANCER-ILLNESS 0)
     2 ((My cancer is the result of my smoking \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .SMOKE 4 .CAUSE 4 .CANCER-ILLNESS 0)
@@ -2794,7 +2795,7 @@
     2 ((My cancer is the result of my smoking \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .SMOKE 4 .HURT-WORDS 4 lungs 0)
     2 ((My cancer is the result of my smoking \.) (Reason-for-cancer)) (0 :gist)
-  ; You are sorry that I have cancer \.
+  ; You are sorry that I have cancer.
   1 (0 sorry 0)
     2 ((You are sorry that I have cancer \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .NEG 2 news 4 .WANT-GEN 2 .SHARE 0)
@@ -2810,7 +2811,7 @@
     2 ((Cancer is a bad illness \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .CANCER-ILLNESS 4 .NEG 3 easy 0)
     2 ((Cancer is a bad illness \.) (Reason-for-cancer)) (0 :gist)
-  ; My cancer is caused by a mutation that spread through my cells \.
+  ; My cancer is caused by a mutation that spread through my cells.
   1 (0 mutation 2 .IN 2 .BODY 0)
     2 ((My cancer is caused by a mutation that spread through my cells \.) (Reason-for-cancer)) (0 :gist)
   1 (0 mutation 6 .SPREAD 0)
@@ -2843,7 +2844,7 @@
     2 ((Cancer can affect anyone \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .PERSON-PL 6 .CANCER-ILLNESS 4 .NEG 2 similar 0)
     2 ((Cancer can affect anyone \.) (Reason-for-cancer)) (0 :gist)
-  ; There's nothing you could have done to change your cancer diagnosis \.
+  ; There's nothing you could have done to change your cancer diagnosis.
   1 (0 .NEG 4 you 2 .AUX-BASE 0)
     2 (0 .AUX-BASE 3 .STOP 0)
       3 ((There\'s nothing I could have done to change my cancer diagnosis \.) (Reason-for-cancer)) (0 :gist)
@@ -2938,7 +2939,7 @@
       3 ((You empathize with how hard it is to learn my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
     2 (0 .BE 2 .STARTLE-WORDS 0)
       3 ((You empathize with how hard it is to learn my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
-  ; You are going to help me cope with learning my cancer is terminal \.
+  ; You are going to help me cope with learning my cancer is terminal.
   1 (0 .NEG 2 .GIVE 2 up 0)
     2 ((You are going to help me cope with learning my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .BE 2 here 2 with 2 you 0)
@@ -2953,7 +2954,7 @@
     2 ((How have I been feeling since the cancer metastasized ?) (Reason-for-cancer)) (0 :gist)
   1 (0 .WH_ 4 you 4 .BE 0)
     2 ((How have I been feeling since the cancer metastasized ?) (Reason-for-cancer)) (0 :gist)
-  ; You want to talk about my future instead of the reason for my cancer \.
+  ; You want to talk about my future instead of the reason for my cancer.
   1 (0 .WH_ 2 your 5 .CANCER-GOALS 0)
     2 ((You want to talk about my future instead of the reason for my cancer \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .WH_ 3 .CANCER-GOALS 2 you 2 .HAVE 0)

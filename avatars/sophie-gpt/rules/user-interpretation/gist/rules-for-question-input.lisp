@@ -18,12 +18,15 @@
 ; - comfort-care
 ; - medicine-request
 ; - medicine-working
+; - prognosis-bargaining
 ; - prognosis
 ; - sleep-poorly
 ; - tell-family
 ; - test-results
 ; - treatment-option
 ; - treatment-goals
+; - experimental-therapy
+; - reason-for-cancer
 ; - open-ended-question
 ;
 
@@ -956,6 +959,21 @@
     2 ((What are my treatment goals ?) (Options)) (0 :gist)
   1 (0 .WH_ 3 .AUX-BASE 2 you 3 .CANCER-GOALS 0)
     2 ((What are my treatment goals ?) (Options)) (0 :gist)
+
+; ```````````````````` experimental-therapy  ```````````````````````
+; ``````````````````````````````````````````````````````````````````
+
+
+
+; ````````````````````   reason-for-cancer   ```````````````````````
+; ``````````````````````````````````````````````````````````````````
+
+
+
+; ```````````````````` prognosis-bargaining  ```````````````````````
+; ``````````````````````````````````````````````````````````````````
+
+
 
 ; ````````````````````  open-ended-question  ```````````````````````
 ; ``````````````````````````````````````````````````````````````````

@@ -208,7 +208,7 @@
        *general-input*) (0 :subtrees)
 
   1 (:or
-    (.CAN I outlive your prognosis if I .HAVE .HEALTHY habits ?))
+    (.CAN I outlive your prognosis if I .HAVE .GOOD-HEALTH habits ?))
     2 (*prognosis-bargaining-habits-input*
        *general-input*) (0 :subtrees)
 
@@ -218,7 +218,7 @@
        *general-input*) (0 :subtrees)
 
   1 (:or
-    (.CAN I outlive your prognosis if I am .HEALTHY .NOW ?))
+    (.CAN I outlive your prognosis if I am .GOOD-HEALTH .NOW ?))
     2 (*prognosis-bargaining-now-input*
        *general-input*) (0 :subtrees)
 
