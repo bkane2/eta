@@ -2716,7 +2716,7 @@
                            :prompt-examples))
         (setq result (fill-template pattern parts))
         ; If result is disjunctive, randomly choose one element
-        (when (equal (car result) :or)
+        (when (and (listp result) (equal (car result) :or))
           (setq result (choose-random-element (cdr result))))
         (setq result (cons directive result))
         (setf (get rule-node 'time-last-used) (ds-count *ds*))
