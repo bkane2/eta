@@ -630,7 +630,7 @@
       ; Plan: Conditional
       ;`````````````````````````````
       ; Simple "if cond, do this, else do this" conditional.
-      ; binding yields ((_+ (cond1 name1 wff1 name2 wff2 ... :else name3 wff3 ...)))
+      ; binding yields ((_+ (cond1 name1 wff1 name2 wff2 ... :else (name3 wff3 ...))))
       ((setq bindings (bindings-from-ttt-match '(:if _+) wff))
         (setq expr (get-multiple-bindings bindings))
         ; Generate and subplan (possibly nil)
@@ -1465,7 +1465,7 @@
 
 (defun plan-if-else (expr)
 ;``````````````````````````````````````````
-; expr = (cond name1 wff1 name2 wff2 ... :else name3 wff3 name4 wff4 ...)
+; expr = (cond name1 wff1 name2 wff2 ... :else (name3 wff3 name4 wff4 ...))
 ; Expr is a condition followed by consecutive name & wff pairs. Optionally,
 ; this is followed by an :else keyword and additional name & wff pairs.
 ;
