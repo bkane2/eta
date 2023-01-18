@@ -25,6 +25,9 @@
 
   ?e1 (^me paraphrase-to.v ^you '(What does my cancer mean for my future ?))
   
+  ; TODO: in order to prevent this from being skipped if user already was explicit, need
+  ; to add additional ULF (^me understand.v ((^me 's) prognosis.n)) or something similar.
+  ; Need to check if :and is supported in conditions, as well as template nodes for ULF transduction.
   ?e2 (:repeat-until (^you be.v explicit.a)
   
     ?e3 (^you reply-to.v ?e1)

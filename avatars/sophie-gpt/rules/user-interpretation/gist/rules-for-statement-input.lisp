@@ -781,17 +781,19 @@
     2 ((You are glad that I came to this appointment \.)) (0 :gist)
   1 (0 .HAPPY-WORDS 3 you 2 here 0)
     2 ((You are glad that I came to this appointment \.)) (0 :gist)
+  1 (0 sorry 0)
+    2 ((You are sorry that I have cancer \.)) (0 :gist)
 
   ; Goodbye
   1 (3 .BYE 3)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)
-  1 (3 talk 2 again 2 soon 3)
+  1 (1 talk 2 again 2 soon 2)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)
-  1 (3 talk to you 1 soon 3)
+  1 (1 talk to you 1 soon 2)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)
-  1 (3 talk 2 again 2 next 2 .APPOINTMENT 3)
+  1 (1 talk 2 again 2 next 2 .APPOINTMENT 2)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)
-  1 (3 until next time 3)
+  1 (1 until next time 2)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)
 
 )) ; END *statement-input*

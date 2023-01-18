@@ -14,8 +14,8 @@
 )
 
 :preconds (
-  ; Sophie has a history of smoking
-  ?p1 (^me ((pres have.v) (a.d (n+preds history.n (of.p (ka smoke.v))))))
+  ; Sophie has a history of heavy smoking
+  ?p1 (^me ((pres have.v) (a.d (n+preds history.n (of.p (ka (heavy.adv-a smoke.v)))))))
   ; Sophie quit smoking six months ago
   ?p2 (^me ((past quit.v) (ka smoke.v) (adv-e (sub (six.d (plur month.n)) (ago.p *h)))))
 )
