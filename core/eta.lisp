@@ -859,7 +859,7 @@
             (setq user-gist-clauses (second prev-step))
 
             (format t "~% ========== Eta Action ==========") ; DEBUGGING
-            (format t "~%  * Found user gist clauses (from previous episode ~a): ~a " prev-step-ep-name user-gist-clauses) ; DEBUGGING
+            (format t "~%  * Found user gist clauses (from previous episode ~a):~%   ~a " prev-step-ep-name user-gist-clauses) ; DEBUGGING
             (format t "~%  * Paraphrasing utterance: ~a " expr) ; DEBUGGING
 
             (cond
@@ -1370,8 +1370,8 @@
           (form-gist-clauses-from-input words (car (last prev-step-gist-clauses))))
 
         ; Remove contradicting user gist-clauses (if any)
-        (setq user-gist-clauses (remove-contradiction user-gist-clauses))
-        (format t "~%  * Obtained user gist clauses (for episode ~a): ~a ~%" ep-name user-gist-clauses) ; DEBUGGING
+        (setq user-gist-clauses (remove-duplicates (remove-contradiction user-gist-clauses) :test #'equal))
+        (format t "~%  * Obtained user gist clauses (for episode ~a):~%   ~a" ep-name user-gist-clauses) ; DEBUGGING
 
         ; Store user gist-clauses in memory
         (dolist (user-gist-clause user-gist-clauses)
@@ -1399,12 +1399,10 @@
         ; gist-clauses or LF interpretations. Ultimately, it seems like this sort of inference should
         ; be done directly using the LF interpretations, rather than the gist-clause, but using 
         ; gist-clauses is more straightforward for now.
-        ; TODO: currently this only supports one inferred wff per gist-clause, but it should allow multiple.
-        ; NOTE: for now, we assume that each user utterance is described by only one action type,
-        ; so the gist clauses are concatenated together first.
-        (setq inferred-wffs (remove nil (mapcar #'form-inferences-from-gist-clause user-gist-clauses)))
+        (setq inferred-wffs (remove-duplicates (remove nil
+          (apply #'append (mapcar #'form-inferences-from-gist-clause user-gist-clauses))) :test #'equal))
 
-        ;; (format t "~%Inferred wffs ~a for episode ~a~%" inferred-wffs ep-name) ; DEBUGGING
+        (format t "~%  * Inferred wffs ~a for episode ~a~%" inferred-wffs ep-name) ; DEBUGGING
 
         ; Add each inferred wff to context (characterizing ep-name)
         (dolist (inferred-wff inferred-wffs)
@@ -2248,7 +2246,7 @@
     ; 'facts' should be a concatenation of the above results in the order in
     ; which they occur in the user's input; in reacting, Eta will
     ; pay particular attention to the first clause, and any final question.
-    (setq gist-clauses (remove-duplicates (remove nil (reverse facts))))
+    (setq gist-clauses (remove-duplicates (remove nil (reverse facts)) :test #'equal))
 
     ; If using GPT3 gist interpretation mode, use GPT3 to extract additional gist clause(s).
     (when (equal *gist-interpreter* 'GPT3)
@@ -2296,12 +2294,14 @@
 (defun form-inferences-from-gist-clause (clause)
 ;``````````````````````````````````````````````````
 ; Infer an additional wff from a user gist-clause using pattern transduction.
-; TODO: currently, this only supports one inferred wff per gist-clause, but should
-; be able to support multiple.
 ;
-  (let (inferred-wff)
+  (let (inferred-wff inferred-wffs)
     (setq inferred-wff (choose-result-for clause '*clause-inference-tree*))
-  inferred-wff)
+    ; If sentential-level conjunction, split into multiple WFFs
+    (if (and (listp inferred-wff) (or (member 'and inferred-wff) (member 'and.cc inferred-wff)))
+      (setq inferred-wffs (remove 'and (remove 'and.cc inferred-wff)))
+      (setq inferred-wffs (list inferred-wff)))
+  inferred-wffs)
 ) ; END form-inferences-from-gist-clause
 
 
