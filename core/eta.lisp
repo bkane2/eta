@@ -1609,7 +1609,7 @@
     (cond
       ; Single gist clause
       ((null (cdr user-gist-clauses_p))
-        (format t "~%  * Reacting to single user clause: ~a " user-gist-words) ; DEBUGGING
+        (format t "~%  * Reacting to single user clause: ~a " (car user-gist-clauses_p)) ; DEBUGGING
         (setq choice (choose-result-for (car user-gist-clauses_p) '*reaction-to-input*))
         (format t "~%  * Chose reaction: ~a " choice) ; DEBUGGING
       )
@@ -1814,9 +1814,10 @@
 
 
 
-(defun plan-saying-bye () ; TBC
+(defun plan-saying-bye ()
 ;```````````````````````````````
-  ; TBC
+; At the moment, this just causes Eta to immediately exit.
+  (exit)
 ) ; END plan-saying-bye
 
 

@@ -24,15 +24,22 @@
 :episodes (
 
   ;; ?e1 (^me paraphrase-to.v ^you '(Goodbye \.))
-  ?e1 (^me say-to.v ^you ?words)
+  ;; ?e1 (^me say-to.v ^you ?words)
   
   ?e2 (:repeat-until ((the.d conversation.n) be.v over.a)
   
-    ?e3 (^you reply-to.v ?e1)
+    ;; ?e3 (^you reply-to.v ?e1)
 
-    ?e4 (^me react-to.v ?e3)
+    ;; ?e4 (^me react-to.v ?e3)
+
+    ?e3 (^me say-to.v ^you ?words)
+
+    ?e4 (^you reply-to.v ?e3)
 
   )
+
+  ?e3 (^me paraphrase-to.v ^you '(Thank you for meeting with me today \. Bye \.))
+  ?e4 (^me say-bye-to.v ^you)
 
 )
 

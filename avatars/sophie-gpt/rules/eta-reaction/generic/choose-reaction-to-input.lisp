@@ -6,6 +6,10 @@
 ; need to expand this with various possible non-query
 ; questions, such as "can you answer wh-questions?".
 '(
+  ; Goodbye responses
+  1 (0 goodbye \. 0)
+    2 *say-bye* (0 :schema)
+  ; Question responses
   1 (0 ?) ; anything ending with ?
     2 *reaction-to-question* (0 :subtree)
   1 (0 .WH_ 1 .SELF name 0)
@@ -22,6 +26,7 @@
     2 *reaction-to-question* (0 :subtree)
   1 (0 .AUX .NP_ 1) ; tag question
     2 *reaction-to-question* (0 :subtree)
-  1 (0) ; by default, it's a statement
+  ; By default, it's a statement response
+  1 (0)
     2 *reaction-to-statement* (0 :subtree)
 ))
