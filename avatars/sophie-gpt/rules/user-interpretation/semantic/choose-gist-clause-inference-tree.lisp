@@ -60,20 +60,16 @@
 
   ; Explicit
   1 (:or
-    ;;; Treatment options
-    (0 Chemotherapy is a treatment option 0)
-    (0 Radiation is a treatment option 0)
-    (0 Comfort Care is a treatment option 0)
     ;;; Test results
     (0 The test results show that I cannot be cured 0)
     (0 The test results show that my cancer has spread 0)
-    ;;; Tell family
-    (0 I should reassure my family about the cancer 0)
-    (0 I should tell my family the full truth about my cancer 0)
-    ;;; Experimental therapy
-    (0 Experimental treatments might make my prognosis better 0)
-    (0 Experimental treatments will make my prognosis better 0)
-    (0 Experimental treatments will not make my prognosis better 0)
+    ;;; Cancer worse
+    (0 My cancer has not gotten worse 0)
+    (0 My cancer has gotten worse 0)
+  )
+    2 ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) condition.n)))) (0 :ulf)
+
+  1 (:or
     ;;; Prognosis bargaining (graduation)
     (0 My prognosis is that I will not live to attend the graduation of my grandson 0)
     (0 My prognosis is that I might live to attend the graduation of my grandson 0)
@@ -103,6 +99,18 @@
     (0 The prognosis is that I may live for .NUMBER-TOTAL .ELAPSED-TIME 0)
     (0 The prognosis is that I may live for several .ELAPSED-TIME 0)
     (0 The prognosis is that I may live for a .ELAPSED-TIME 0)
+  )
+    2 ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))) (0 :ulf)
+  
+  1 (:or
+    ;;; Treatment options
+    (0 Chemotherapy is a treatment option 0)
+    (0 Radiation is a treatment option 0)
+    (0 Comfort Care is a treatment option 0)
+    ;;; Experimental therapy
+    (0 Experimental treatments might make my prognosis better 0)
+    (0 Experimental treatments will make my prognosis better 0)
+    (0 Experimental treatments will not make my prognosis better 0)
     ;;; Comfort care
     (0 You do not think I need comfort care 0)
     (0 You think I need comfort care 0)
@@ -119,15 +127,19 @@
     (0 You do not think I need chemotherapy because I should get comfort care instead 0)
     (0 A side effect of chemotherapy is 0)
     (0 One way to get chemotherapy is 0)
+  )
+    2 ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) (plur option.n))))) (0 :ulf)
+
+  1 (:or
+    ;;; Tell family
+    (0 I should reassure my family about the cancer 0)
+    (0 I should tell my family the full truth about my cancer 0)
     ;;; Radiation
     (0 You think I need radiation 0)
     (0 You do not think I need radiation 0)
     ;;; Energy
     (0 I should take an antidepressant 0)
     (0 I should see a therapist 0)
-    ;;; Cancer worse
-    (0 My cancer has not gotten worse 0)
-    (0 My cancer has gotten worse 0)
   )
     2 (^you be.v explicit.a) (0 :ulf)
 
