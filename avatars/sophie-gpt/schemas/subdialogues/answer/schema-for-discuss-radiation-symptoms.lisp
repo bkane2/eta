@@ -25,8 +25,6 @@
  
 ?e2 (^you reply-to.v ?e1)
 
-?e3 (^me react-to.v ?e2)
-
 )
 
 )) ; END defparameter *discuss-radiation-symptoms*
