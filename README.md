@@ -32,7 +32,7 @@ are unscoped logical form (ULF) formulas that can be interpreted by Eta. Likewis
 files as `(setq *output* '(<query1> <query2> ...))`, where the queries are ULF formulas that can be interpreted by the subsystem.
 
 Full logs of the conversation are also maintained in `io/<agent_id>/conversation-log/`, displaying the text of all user and
-system utterances, as well as any extracted gist-clauses or ULF formulas corresponding to each turn.
+system utterances, as well as any extracted gist-clauses, semantics and pragmatics corresponding to each turn.
 
 The dialogue manager also supports the ability to rewind the dialogue state to a particular turn in the conversation log (including
 the context/memory/etc. at that time). To rewind the dialogue state, write `(setq *rewind-state* <n>)` to `io/<agent_id>/rewindState.lisp`,
@@ -94,6 +94,7 @@ This is an experimental avatar intended to incorporate GPT-3 based response gene
 * [ASDF version 3 or above](https://asdf.common-lisp.dev/archives/asdf.lisp)
 * [TTT](https://github.com/genelkim/ttt)
 * [ulf-lib](https://github.com/genelkim/ulf-lib)
+* [ulf2english](https://github.com/genelkim/ulf2english)
 * [gpt3-shell](https://github.com/bkane2/gpt3-shell)
 
 Additionally, a valid OpenAI API key needs to be included in `config/keys/openai.txt`.

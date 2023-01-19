@@ -57,12 +57,15 @@
 ; curr-plan        : points to the currently active dialogue plan
 ; task-queue       : a list of tasks (currently 'perform-next-step', 'perceive-world', 'interpret-perceptions',
 ;                    'infer-facts-top-down', and 'infer-facts-bottom-up') to repeatedly execute in cycles
-; perception-queue : a queue of perceptions pending context-driven interpretation
+; input-queue      : a queue of the most recent inputs that the system maintains as it processes them through the
+;                    perception and interpretation pipeline (i.e., gist-clause, inference, event handling, etc.)
+;                    is a tuple (perceptions, gists, semantics, pragmatics, inferences)
 ; reference-list   : contains a list of discourse entities to be used in ULF coref
 ; equality-sets    : hash table containing a list of aliases, keyed by canonical name
 ; gist-kb-user     : hash table of all gist clauses + associated topic keys from user
 ; gist-kb-eta      : hash table of all gist clauses + associated topic keys from Eta
-; conversation-log : three-tuple containing chronological records of all text, gist, and ulf in conversation
+; conversation-log : contains chronological records of each turn in the conversation
+;                    is a tuple (text, gists, semantics, pragmatics, episodes)
 ; context          : hash table of facts that are true at Now*, e.g., <wff3>
 ; memory           : hash table of atemporal/"long-term" facts, e.g., (<wff3> ** E3) and (Now* during E3)
 ; kb               : hash table of Eta's knowledge base, containing general facts
@@ -79,7 +82,7 @@
 ;
   curr-plan
   task-queue
-  perception-queue
+  input-queue
   reference-list
   equality-sets
   gist-kb-user
@@ -122,7 +125,8 @@
   (defvar *use-latency* t)
 
   ; Queue of tasks that Eta must perform
-  (defvar *tasks-list* '(perform-next-step perceive-world interpret-perceptions infer-facts-top-down infer-facts-bottom-up))
+  (defvar *tasks-list*
+    '(perform-next-step perceive-world interpret-perceptions infer-facts-top-down infer-facts-bottom-up react-to-input))
 
   ; Global variable for dialogue record structure
   (defvar *ds* (make-ds))
@@ -274,7 +278,10 @@
   (setf (ds-gist-kb-user *ds*) (make-hash-table :test #'equal))
   (setf (ds-gist-kb-eta *ds*) (make-hash-table :test #'equal))
 
-  ; Initialize conversation log ((text gists ulfs inferences episodes) tuple)
+  ; Initialize input queue ((perceptions gists semantics pragmatics inferences) tuple)
+  (setf (ds-input-queue *ds*) (list nil nil nil nil nil))
+
+  ; Initialize conversation log ((text gists semantics pragmatics episodes) tuple)
   (setf (ds-conversation-log *ds*) (list nil nil nil nil nil))
 
   ; Initialize fact hash tables
@@ -429,7 +436,8 @@
     (perceive-world (perceive-world))
     (interpret-perceptions (interpret-perceptions))
     (infer-facts-top-down (infer-facts-top-down))
-    (infer-facts-bottom-up (infer-facts-bottom-up)))
+    (infer-facts-bottom-up (infer-facts-bottom-up))
+    (react-to-input (react-to-input)))
 ) ; END do-task
 
 
@@ -559,7 +567,7 @@
 
       ; Add facts to context, and push them into a queue of new perceptions for further interpretation.
       (when inputs (setq ep-name-new (store-new-contextual-facts inputs)))
-      (mapcar (lambda (input) (push (list ep-name-new input) (ds-perception-queue *ds*))) inputs))
+      (mapcar (lambda (input) (push (list ep-name-new input) (first (ds-input-queue *ds*)))) inputs))
 )) ; END perceive-world
 
 
@@ -577,9 +585,9 @@
 
     ; Go through queued perceptions and try to interpret each one in
     ; context of the current plan
-    (dolist (fact (ds-perception-queue *ds*))
+    (dolist (fact (first (ds-input-queue *ds*)))
       (interpret-perception-in-context fact subplan))
-    (setf (ds-perception-queue *ds*) nil)
+    (setf (first (ds-input-queue *ds*)) nil)
 
 )) ; END interpret-perceptions
 
@@ -604,6 +612,17 @@
 ; 
   nil
 ) ; END infer-facts-bottom-up
+
+
+
+
+
+(defun react-to-input ()
+;````````````````````````````````````
+; TBC
+; 
+  nil
+) ; END react-to-input
 
 
 
@@ -728,9 +747,9 @@
 ;   CALCULATIONS).
 ;
   (let* ((curr-step (plan-curr-step subplan)) bindings expr expr-new new-subplan var-bindings
-         (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
-         superstep ep-name1 user-ep-name user-ulf n user-gist-clauses user-gist-passage
-         prev-step prev-step-ep-name prev-step-wff utterance query eta-ulf eta-gist-clauses
+         (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step)) n
+         superstep ep-name1 user-ep-name user-gist-clauses user-semantics user-gist-passage
+         prev-step prev-step-ep-name prev-step-wff utterance query eta-gist-clauses eta-semantics
          proposal-gist main-clause info topic suggestion ans perceptions
          perceived-actions sk-var sk-name concept-name concept-schema goal-name goal-schema)
 
@@ -892,16 +911,16 @@
           ((and (listp expr) (eq (car expr) 'quote))
             (setq expr (flatten (second expr)))
             (setq user-gist-clauses (list expr))
-            (setq user-ulf nil))
+            (setq user-semantics nil))
           ; Otherwise, find gist-clauses associated with episode Eta is reacting to
           (t
             (setq user-ep-name (get-single-binding bindings))
             (setq user-gist-clauses (get-gist-clauses-characterizing-episode user-ep-name))
-            (setq user-ulf (resolve-references (get-semantic-interpretations-characterizing-episode user-ep-name)))))
+            (setq user-semantics (resolve-references (get-semantic-interpretations-characterizing-episode user-ep-name)))))
 
         ;; (format t "~% user gist clause (for ~a) is ~a" user-ep-name user-gist-clauses) ; DEBUGGING
-        ;; (format t "~% user ulf (for ~a) is ~a ~%" user-ep-name user-ulf) ; DEBUGGING
-        (setq new-subplan (plan-reaction-to user-gist-clauses user-ulf ep-name)))
+        ;; (format t "~% user semantics (for ~a) is ~a ~%" user-ep-name user-semantics) ; DEBUGGING
+        (setq new-subplan (plan-reaction-to user-gist-clauses user-semantics ep-name)))
 
       ; NOTE: Apart from saying and reacting, assume that Eta actions
       ; also allow telling, describing, suggesting, asking, saying 
@@ -985,7 +1004,7 @@
       ; Eta: Recalling answer from history
       ;`````````````````````````````````````
       ((setq bindings (bindings-from-ttt-match '(^me recall-answer.v _!1 _!2) wff))
-        (setq user-ulf (get-single-binding bindings))
+        (setq user-semantics (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
 
@@ -1003,7 +1022,7 @@
 
         ; Determine answers by recalling from history
         (if (subsetp '("ulf-lib" "ulf2english" "ulf-pragmatics" "timegraph") *dependencies* :test #'equal)
-          (setq ans `(quote ,(recall-answer object-locations (eval user-ulf))))
+          (setq ans `(quote ,(recall-answer object-locations (eval user-semantics))))
           (setq ans '()))
         (format t "recalled answer: ~a~%" ans) ; DEBUGGING
 
@@ -1047,17 +1066,17 @@
       ; Eta: Conditionally saying
       ;````````````````````````````
       ((setq bindings (bindings-from-ttt-match '(^me conditionally-say-to.v ^you _! _!1) wff))
-        (setq user-ulf (get-single-binding bindings))
+        (setq user-semantics (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
         ; Generate response based on list of relations
         (cond
           ((not (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
             (setq ans '(Could not form final answer \: |Spatial-Reasoning-System| not registered \.)))
-          (t (let ((tuple (generate-response (eval user-ulf) (eval expr))))
+          (t (let ((tuple (generate-response (eval user-semantics) (eval expr))))
             (setq ans (first tuple))
-            (setq eta-ulf (second tuple))
-            (store-semantic-interpretation-characterizing-episode eta-ulf ep-name '^me '^you))))
+            (setq eta-semantics (second tuple))
+            (store-semantic-interpretation-characterizing-episode eta-semantics ep-name '^me '^you))))
         (format t "answer to output: ~a~%" ans) ; DEBUGGING
         ; If in read-log mode, append answer to list of new log answers
         (when *read-log*
@@ -1074,17 +1093,17 @@
       ; getting an answer binding from an external system, and communicating that answer,
       ; should be two separate steps in the schema.
       ((setq bindings (bindings-from-ttt-match '(^me conditionally-paraphrase-to.v ^you _! _!1) wff))
-        (setq user-ulf (get-single-binding bindings))
+        (setq user-semantics (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
         ; Generate response gist based on list of relations
         (cond
           ((not (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
             (setq ans '(Could not form final answer \: |Spatial-Reasoning-System| not registered \.)))
-          (t (let ((tuple (generate-response (eval user-ulf) (eval expr))))
+          (t (let ((tuple (generate-response (eval user-semantics) (eval expr))))
             (setq ans (first tuple))
-            (setq eta-ulf (second tuple))
-            (store-semantic-interpretation-characterizing-episode eta-ulf ep-name '^me '^you))))
+            (setq eta-semantics (second tuple))
+            (store-semantic-interpretation-characterizing-episode eta-semantics ep-name '^me '^you))))
         (format t "gist answer to output: ~a~%" ans) ; DEBUGGING
         ; If in read-log mode, append answer gist to list of new log answers
         (when *read-log*
@@ -1309,12 +1328,12 @@
 ;
 ; We want to try to interpret the utterance in E2 using the context of E1 (particularly, the gist-clause
 ; corresponding to Eta's utterance), extracting a gist-clause and semantic interpretation (when relevant)
-; for the user, and possibly additional inferences. After doing so (and storing them in memory), we store
-; the fact:
+; for the user, and possibly additional pragmatic interpretations. After doing so (and storing them in memory),
+; we store the fact:
 ; ((^you reply-to.v E1) ** E2)
 ;
   (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
-         user-gist-clauses user-ulfs inferred-wffs goal-step ka try-success relative-ep-name
+         user-gist-clauses user-semantics user-pragmatics goal-step ka try-success relative-ep-name
          (curr-step (plan-curr-step plan)) (curr-step-wff (plan-step-wff curr-step)))
 
     (setq ep-name (first fact))
@@ -1371,19 +1390,21 @@
 
         ; Remove contradicting user gist-clauses (if any)
         (setq user-gist-clauses (remove-duplicates (remove-contradiction user-gist-clauses) :test #'equal))
-        (format t "~%  * Obtained user gist clauses (for episode ~a):~%   ~a" ep-name user-gist-clauses) ; DEBUGGING
+        (format t "~%  * Gist clauses for episode ~a:~%   ~a" ep-name user-gist-clauses) ; DEBUGGING
 
         ; Store user gist-clauses in memory
         (dolist (user-gist-clause user-gist-clauses)
           (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me))
 
         ; Obtain semantic interpretation(s) of the user gist-clauses
-        (setq user-ulfs (mapcar #'form-ulf-from-clause user-gist-clauses))
-        ;; (format t "~%Obtained ulfs ~a for episode ~a" user-ulfs ep-name) ; DEBUGGING
+        (setq user-semantics (remove-duplicates (remove nil
+          (mapcar #'form-semantics-from-gist-clause user-gist-clauses)) :test #'equal))
+
+        (format t "~%  * Semantics for episode ~a:~%   ~a" ep-name user-semantics) ; DEBUGGING
 
         ; Store the semantic interpretations in memory
-        (dolist (user-ulf user-ulfs)
-          (store-semantic-interpretation-characterizing-episode user-ulf ep-name '^you '^me))
+        (dolist (ulf user-semantics)
+          (store-semantic-interpretation-characterizing-episode ulf ep-name '^you '^me))
 
         ; Add the fact (^you reply-to.v <prev-step-ep-name>) to context (characterizing ep-name)
         (when prev-step-ep-name
@@ -1393,20 +1414,16 @@
         (when (and (relative-speech-act? curr-step-wff) (not (equal (third curr-step-wff) prev-step-ep-name)))
           (store-contextual-fact-characterizing-episode `(^you reply-to.v ,(third curr-step-wff)) ep-name))
 
-        ; Infer any additional facts from user gist-clauses
-        ; TODO: since this is now input-driven inference rather than (gist-clause/LF) interpretation,
-        ; it should probably be moved to a different function, perhaps using another queue of 'new'
-        ; gist-clauses or LF interpretations. Ultimately, it seems like this sort of inference should
-        ; be done directly using the LF interpretations, rather than the gist-clause, but using 
-        ; gist-clauses is more straightforward for now.
-        (setq inferred-wffs (remove-duplicates (remove nil
-          (apply #'append (mapcar #'form-inferences-from-gist-clause user-gist-clauses))) :test #'equal))
+        ; Interpret any additional pragmatic facts from the gist-clause. For instance, the speech act
+        ; (^you say-bye-to.v ^me) may be derived from the gist-clause (Goodbye \.).
+        (setq user-pragmatics (remove-duplicates (remove nil
+          (apply #'append (mapcar #'form-pragmatics-from-gist-clause user-gist-clauses))) :test #'equal))
 
-        (format t "~%  * Inferred wffs ~a for episode ~a~%" inferred-wffs ep-name) ; DEBUGGING
+        (format t "~%  * Pragmatics for episode ~a:~%   ~a ~%" ep-name user-pragmatics) ; DEBUGGING
 
-        ; Add each inferred wff to context (characterizing ep-name)
-        (dolist (inferred-wff inferred-wffs)
-          (store-contextual-fact-characterizing-episode inferred-wff ep-name))
+        ; Add each pragmatic wff to context (characterizing ep-name)
+        (dolist (ulf user-pragmatics)
+          (store-contextual-fact-characterizing-episode ulf ep-name))
 
         ; Add discourse state to stack
         (push (deepcopy-ds *ds*) *ds-stack*)
@@ -1414,8 +1431,8 @@
         ; Log the user's turn
         (log-turn (list words
             user-gist-clauses
-            (resolve-references user-ulfs)
-            inferred-wffs
+            (resolve-references user-semantics)
+            user-pragmatics
             ep-name)
           :agent 'user)
 
@@ -1550,7 +1567,7 @@
 
 
 
-(defun plan-reaction-to (user-gist-clauses user-ulf ep-name)
+(defun plan-reaction-to (user-gist-clauses user-semantics ep-name)
 ;````````````````````````````````````````````````````````````````
 ; Starting at a top-level choice tree root, choose an action or
 ; subschema suitable for reacting to 'user-gist-clauses' (which
@@ -1584,17 +1601,17 @@
     (if (null user-gist-clauses)
       (return-from plan-reaction-to nil))
 
-    ; Currently we're only using a single ulf
-    (if user-ulf (setq user-ulf (car user-ulf)))
+    ; Currently we're only using a single ULF
+    (if user-semantics (setq user-semantics (car user-semantics)))
 
-    ; If the extracted ulf specifies an :out directive, we want to create a
+    ; If the extracted ULF specifies an :out directive, we want to create a
     ; say-to.v subplan directly
     ; TODO: this is not very elegant - not sure it makes sense for the value
     ; of the user's ULF to be an out directive by Eta...
-    (when (and user-ulf (eq (car user-ulf) :out))
+    (when (and user-semantics (eq (car user-semantics) :out))
       (return-from plan-reaction-to
         (init-plan-from-episode-list
-          (list :episodes (episode-var) (create-say-to-wff (cdr user-ulf))))))
+          (list :episodes (episode-var) (create-say-to-wff (cdr user-semantics))))))
 
     ; Remove 'nil' gist clauses (unless the only gist clause is the 'nil' gist clause)
     (setq user-gist-clauses_p (purify-func user-gist-clauses))
@@ -1679,7 +1696,7 @@
       ; :schema+ulf directive
       ((eq (car choice) :schema+ulf)
         ; TODO: Just a temporary directive to test spatial-question schema. Needs changing.
-        (setq schema-name (cdr choice) args (list `(quote ,(resolve-references user-ulf)) nil))
+        (setq schema-name (cdr choice) args (list `(quote ,(resolve-references user-semantics)) nil))
         (init-plan-from-schema schema-name args))
     )
 )) ; END plan-reaction-to
@@ -2266,88 +2283,50 @@
 
 
 
-(defun form-ulf-from-clause (clause)
-;`````````````````````````````````````
+(defun form-semantics-from-gist-clause (clause)
+;``````````````````````````````````````````````````
 ; Find the ULF corresponding to the user's 'clause' (a gist clause).
 ;
 ; Use hierarchical choice trees for extracting the ULF, starting from
-; the root *clause-ulf-tree*.
+; the root *clause-semantics-tree*.
 ;
 ; If no ULF is obtained from hierarchical pattern transduction, and the
 ; BLLIP-based symbolic ULF parser is enabled as a dependency, then use
 ; the parser to obtain a ULF.
 ;
   (let (ulf)
-    (setq ulf (choose-result-for clause '*clause-ulf-tree*))
+    (setq ulf (choose-result-for clause '*clause-semantics-tree*))
 
     ; If using BLLIP parser mode and no ULF, use parser to obtain ULF.
     (when (equal *parser* 'BLLIP)
       (setq ulf (parse-str-to-ulf-bllip (words-to-str clause))))
 
   ulf)
-) ; END form-ulf-from-clause
+) ; END form-semantics-from-gist-clause
 
 
 
 
 
-(defun form-inferences-from-gist-clause (clause)
+(defun form-pragmatics-from-gist-clause (clause)
 ;``````````````````````````````````````````````````
-; Infer an additional wff from a user gist-clause using pattern transduction.
+; Interpret additional (secondary) pragmatic ULFs from the
+; user's 'clause' (a gist clause). E.g., the direct semantic
+; interpretation of the utterance "Goodbye" might simply be
+; the ULF (goodbye.gr), but the pragmatic interpretation might
+; be (^you say-bye-to.v ^me).
 ;
-  (let (inferred-wff inferred-wffs)
-    (setq inferred-wff (choose-result-for clause '*clause-inference-tree*))
+; Use hierarchical choice trees for extracting the ULFs, starting
+; from the root *clause-pragmatics-tree*.
+;
+  (let (wff pragmatics)
+    (setq wff (choose-result-for clause '*clause-pragmatics-tree*))
     ; If sentential-level conjunction, split into multiple WFFs
-    (if (and (listp inferred-wff) (or (member 'and inferred-wff) (member 'and.cc inferred-wff)))
-      (setq inferred-wffs (remove 'and (remove 'and.cc inferred-wff)))
-      (setq inferred-wffs (list inferred-wff)))
-  inferred-wffs)
-) ; END form-inferences-from-gist-clause
-
-
-
-
-
-;; (defun commit-perceptions-to-memory (perceptions user-ulf)
-;; ;``````````````````````````````````````````````````````````
-;; ; TODO: deprecated, remove
-;; ; Given perceptions by the system (e.g., block moves) and/or a
-;; ; query ULF, store these facts in short-term memory (context).
-;; ; The facts are deindexed and stored in context as, e.g.,
-;; ; ((you.pro ((past move.v) |B1|)) @ NOW1), though the indexical
-;; ; formula is also stored hashed on the time NOW1.
-;; ; TODO: as indicated, many aspects of this will need changing.
-;; ; I'm also not sure that such historical temporal facts should
-;; ; be stored in short-term memory/context at all, versus some
-;; ; form of long-term memory.
-;; ;
-;;   ; Store move.v facts in context, deindexed at the current time
-;;   ; TODO: COME BACK TO THIS
-;;   ; It seems like this should be somehow an explicit store-in-context step in schema, but which facts are
-;;   ; indexical? Should e.g. past moves in fact be stored in memory rather than context?
-;;   (let ((action-perceptions (remove-if-not #'verb-phrase? perceptions)))
-;;     (when action-perceptions
-;;       (setq *time-prev* *time*)
-;;       (mapcar (lambda (perception)
-;;           (let ((perception1 (list perception '@ *time*)))
-;;             (update-time)
-;;             (store-in-context perception1)
-;;           ))
-;;         action-perceptions)))
-
-;;   ; Store ULF of user utterance in context, deindexed at the current time
-;;   ; TODO: COME BACK TO THIS
-;;   ; This should probably be done elsewhere (e.g. at the time of Eta processing the say-to.v episode),
-;;   ; but then the utterance would come temporally before any block moves, whereas it should be the other
-;;   ; way around. The perceive-world.v action in general needs to be rethought (since really observing a
-;;   ; user say-to.v action, much like a move.v action or any other action, IS a perceive world action).
-;;   ; Update Eta's current time
-;;   (when user-ulf
-;;     (let ((utterance-prop `((^you ((past ask.v) ,user-ulf)) @ ,*time*)))
-;;       (update-time)
-;;       (store-in-context utterance-prop)
-;;     ))
-;; ) ; END commit-perceptions-to-memory
+    (if (and (listp wff) (or (member 'and wff) (member 'and.cc wff)))
+      (setq pragmatics (remove 'and (remove 'and.cc wff)))
+      (setq pragmatics (list wff)))
+  pragmatics)
+) ; END form-pragmatics-from-gist-clause
 
 
 

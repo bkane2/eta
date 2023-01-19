@@ -36,9 +36,9 @@
       :direction :output :if-exists :supersede :if-does-not-exist :create))
     (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "gist.txt")
       :direction :output :if-exists :supersede :if-does-not-exist :create))
-    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "ulf.txt")
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "semantic.txt")
       :direction :output :if-exists :supersede :if-does-not-exist :create))
-    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "inference.txt")
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "pragmatic.txt")
       :direction :output :if-exists :supersede :if-does-not-exist :create))
 )) ; END ensure-log-files-exist
 
@@ -61,8 +61,8 @@
     (ensure-directories-exist "./logs/logs_out/")
     (ensure-directories-exist "./logs/logs_out/text/")
     (ensure-directories-exist "./logs/logs_out/gist/")
-    (ensure-directories-exist "./logs/logs_out/ulf/")
-    (ensure-directories-exist "./logs/logs_out/inference/"))
+    (ensure-directories-exist "./logs/logs_out/semantic/")
+    (ensure-directories-exist "./logs/logs_out/pragmatic/"))
 
   ; Ensure all standard input & output files for registered subsystems exist and are empty
   ; Note: input files only created for non-terminal systems,

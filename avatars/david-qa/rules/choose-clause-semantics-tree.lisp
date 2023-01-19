@@ -4,7 +4,7 @@
 ))
 
 
-(READRULES '*clause-ulf-tree*
+(READRULES '*clause-semantics-tree*
 '(
   1 (spatial-question 0)
     2 (*spatial-question-ulf-tree* (2)) (0 :ulf-coref)

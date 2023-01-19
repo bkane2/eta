@@ -627,7 +627,7 @@
   (let ((new (make-ds)))
     (setf (ds-curr-plan new) (deepcopy-plan (ds-curr-plan old)))
     (setf (ds-task-queue new) (copy-tree (ds-task-queue old)))
-    (setf (ds-perception-queue new) (copy-tree (ds-perception-queue old)))
+    (setf (ds-input-queue new) (copy-tree (ds-input-queue old)))
     (setf (ds-reference-list new) (copy-tree (ds-reference-list old)))
     (setf (ds-equality-sets new) (deepcopy-hash (ds-equality-sets old)))
     (setf (ds-gist-kb-user new) (deepcopy-hash (ds-gist-kb-user old)))
@@ -1085,13 +1085,13 @@
 ;````````````````````````````````````````````````
 ; Records a turn in the conversation log, as well as writing to external files.
 ;
-  (let ((text (first turn)) (gists (second turn)) (ulfs (third turn))
-        (inferences (fourth turn)) (episodes (fifth turn))
+  (let ((text (first turn)) (gists (second turn)) (semantics (third turn))
+        (pragmatics (fourth turn)) (episodes (fifth turn))
         (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
     (push (list agent-name text) (first (ds-conversation-log *ds*)))
     (push gists (second (ds-conversation-log *ds*)))
-    (push ulfs (third (ds-conversation-log *ds*)))
-    (push inferences (fourth (ds-conversation-log *ds*)))
+    (push semantics (third (ds-conversation-log *ds*)))
+    (push pragmatics (fourth (ds-conversation-log *ds*)))
     (push episodes (fifth (ds-conversation-log *ds*)))
     (log-turn-write turn :agent agent)
 )) ; END log-turn
@@ -1104,7 +1104,7 @@
 ;
   (let ((clog (ds-conversation-log *ds*)) turns)
     (setq turns (mapcar
-        (lambda (text gists ulfs inferences episodes) (list text gists ulfs inferences episodes))
+        (lambda (text gists semantics pragmatics episodes) (list text gists semantics pragmatics episodes))
       (first clog) (second clog) (third clog) (fourth clog) (fifth clog)))
     (car (remove-if (lambda (turn) (not (equal (first (first turn)) (string agent)))) turns))
 )) ; END find-prev-turn-of-agent

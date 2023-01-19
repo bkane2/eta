@@ -926,7 +926,7 @@
 (defun subst-duplicate-variables (plan episodes) 
 ;``````````````````````````````````````````````````
 ; Substitutes all variables in an episode list with duplicate variables,
-; inheriting the gist-clauses, ulf, etc. attached to them in the schema
+; inheriting the gist-clauses, semantics, etc. attached to them in the schema
 ; used (directly or indirectly) to create the current plan.
 ;
   (let* ((episode-vars (get-episode-vars episodes))
@@ -944,7 +944,7 @@
 (defun duplicate-variable (plan var) 
 ;`````````````````````````````````````````````
 ; Duplicates an episode variable, inheriting the gist-clauses,
-; ulf, etc. attached to it in the schema used (directly or
+; semantics, etc. attached to it in the schema used (directly or
 ; indirectly) to create the current plan.
 ;
   (let (new-var schema-name)
