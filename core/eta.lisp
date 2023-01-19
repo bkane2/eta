@@ -2193,11 +2193,14 @@
 ; model will be prompted to generate the next response.
 ;
   (let ((curr-subplan (find-curr-subplan (ds-curr-plan *ds*))) utterance
-        preconds goals relevant-knowledge facts history facts-str history-str
+        rigid-conds static-conds preconds goals relevant-knowledge facts history
+        facts-str history-str
         choice examples examples-str emotion prev-utterance)
 
-    ; Get preconditions and goals of schema
+    ; Get conditions and goals of schema
     ; TODO: add other relevant schema categories here in the future
+    (setq rigid-conds (mapcar #'second (reverse (plan-rigid-conds curr-subplan))))
+    (setq static-conds (mapcar #'second (reverse (plan-static-conds curr-subplan))))
     (setq preconds (mapcar #'second (reverse (plan-preconds curr-subplan))))
     (setq goals (mapcar #'second (reverse (plan-goals curr-subplan))))
 
@@ -2206,7 +2209,7 @@
     (setq relevant-knowledge (reverse (get-all-from-kb)))
 
     ; Combine facts and convert to strings
-    (setq facts (append relevant-knowledge preconds goals))
+    (setq facts (append relevant-knowledge rigid-conds static-conds preconds goals))
     (setq facts-str (remove nil (mapcar (lambda (fact)
       (if (sentence? fact)
         (words-to-str fact)
