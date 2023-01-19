@@ -19,6 +19,23 @@
 ; 4. The patient tries to close the conversation (ends once the doctor says some variant of "goodbye")
 ;
 
+:types (
+  !t1 (^me person.n)
+  !t2 (^you person.n)
+)
+
+:rigid-conds (
+  ; Sophie is a woman
+  !r1 (^me ((pres be.v) (= (a.d woman.n))))
+  ; Sophie is 65 years old
+  !r2 (^me ((pres be.v) ((mod-a (65.a (plur year.n))) old.a)))
+)
+
+:static-conds (
+  ; Sophie has lung cancer
+  ?s1 (^me ((pres have.v) (k (lung.n cancer.n))))
+)
+
 :episodes (
 
 ?e1 (^me say-to.v ^you '(Hi\, doctor\. I\'m meeting with you today to help get some questions answered about my condition\.))

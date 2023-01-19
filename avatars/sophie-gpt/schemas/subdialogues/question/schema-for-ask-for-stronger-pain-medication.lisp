@@ -10,14 +10,31 @@
 '(event-schema :header (((set-of ^me ^you) ask-for-stronger-pain-medication.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
-:goals (
-  ; Sophie wants a stronger pain medication
-  ?g1 (^me ((pres want.v) (a.d (stronger.a (pain.n medication.n)))))
+:types (
+  !t1 (^me person.n)
+  !t2 (^you person.n)
+)
+
+:rigid-conds (
+  ; Sophie is a woman
+  !r1 (^me ((pres be.v) (= (a.d woman.n))))
+  ; Sophie is 65 years old
+  !r2 (^me ((pres be.v) ((mod-a (65.a (plur year.n))) old.a)))
+)
+
+:static-conds (
+  ; Sophie has lung cancer
+  ?s1 (^me ((pres have.v) (k (lung.n cancer.n))))
 )
 
 :preconds (
   ; Sophie's current pain medication isn't working well
   ?p1 (((^me 's) (current.a (pain.n medication.n))) ((pres prog) not (work.v well.a)))
+)
+
+:goals (
+  ; Sophie wants a stronger pain medication
+  ?g1 (^me ((pres want.v) (a.d (stronger.a (pain.n medication.n)))))
 )
 
 :episodes (

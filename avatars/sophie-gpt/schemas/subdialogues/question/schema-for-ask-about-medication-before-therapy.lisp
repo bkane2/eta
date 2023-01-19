@@ -10,15 +10,32 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-medication-before-therapy.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
-:goals (
-  ; Sophie wants to know whether she should try medication before she tries chemotherapy
-  ?g1 (^me ((pres want.v) (to (know.v (whether (^me ((pres should.aux-s) (try.v (k medication.n)
-        (before.ps (^me ((pres try.v) (k chemotherapy.n))))))))))))
+:types (
+  !t1 (^me person.n)
+  !t2 (^you person.n)
+)
+
+:rigid-conds (
+  ; Sophie is a woman
+  !r1 (^me ((pres be.v) (= (a.d woman.n))))
+  ; Sophie is 65 years old
+  !r2 (^me ((pres be.v) ((mod-a (65.a (plur year.n))) old.a)))
+)
+
+:static-conds (
+  ; Sophie has lung cancer
+  ?s1 (^me ((pres have.v) (k (lung.n cancer.n))))
 )
 
 :preconds (
   ; Sophie is not currently getting chemotherapy
   ?p1 (^me ((pres prog) not currently.adv-e (get.v (k chemotherapy.n))))
+)
+
+:goals (
+  ; Sophie wants to know whether she should try medication before she tries chemotherapy
+  ?g1 (^me ((pres want.v) (to (know.v (whether (^me ((pres should.aux-s) (try.v (k medication.n)
+        (before.ps (^me ((pres try.v) (k chemotherapy.n))))))))))))
 )
 
 :episodes (

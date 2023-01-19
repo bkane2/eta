@@ -10,12 +10,21 @@
 '(event-schema :header (((set-of ^me ^you) ask-about-pain.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
-:goals (
-  ; Sophie wants to know more about her condition
-  ?g1 (^me ((pres want.v) (to (know.v (more.d (n+preds {information}.n
-        (about.p ((^me 's) condition.n))))))))
-  ; Sophie wants stronger pain medication
-  ?g2 (^me ((pres want.v) (k (stronger.a (pain.n medication.n)))))
+:types (
+  !t1 (^me person.n)
+  !t2 (^you person.n)
+)
+
+:rigid-conds (
+  ; Sophie is a woman
+  !r1 (^me ((pres be.v) (= (a.d woman.n))))
+  ; Sophie is 65 years old
+  !r2 (^me ((pres be.v) ((mod-a (65.a (plur year.n))) old.a)))
+)
+
+:static-conds (
+  ; Sophie has lung cancer
+  ?s1 (^me ((pres have.v) (k (lung.n cancer.n))))
 )
 
 :preconds (
@@ -23,6 +32,14 @@
   ?p1 (((^me 's) pain.n) ((pres perf) got.v worse.a recently.adv-e))
   ; Sophie doesn't fully understand her condition
   ?p2 (^me ((pres do.aux-s) not (fully.adv-a understand.v ((^me 's) condition.n))))
+)
+
+:goals (
+  ; Sophie wants to know more about her condition
+  ?g1 (^me ((pres want.v) (to (know.v (more.d (n+preds {information}.n
+        (about.p ((^me 's) condition.n))))))))
+  ; Sophie wants stronger pain medication
+  ?g2 (^me ((pres want.v) (k (stronger.a (pain.n medication.n)))))
 )
 
 :episodes (

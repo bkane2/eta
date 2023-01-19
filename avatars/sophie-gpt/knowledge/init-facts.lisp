@@ -5,12 +5,13 @@
 ;; is needed for picking out relevant facts in generation.
 
 (defparameter *init-knowledge* '(
-  ;; (Sophie is a woman \.)
-  (^me ((pres be.v) (= (a.d woman.n))))
-  ;; (Sophie is 65 years old \.)
-  (^me ((pres be.v) ((mod-a (65.a (plur year.n))) old.a)))
-  ;; (Sophie has lung cancer \.)
-  (^me ((pres have.v) (k (lung.n cancer.n))))
+  ;; ;; (Sophie is a woman \.)
+  ;; (^me ((pres be.v) (= (a.d woman.n))))
+  ;; ;; (Sophie is 65 years old \.)
+  ;; (^me ((pres be.v) ((mod-a (65.a (plur year.n))) old.a)))
+  ;; ;; (Sophie has lung cancer \.)
+  ;; (^me ((pres have.v) (k (lung.n cancer.n))))
+
   ;; (Sophie has pain in her chest \.)
   (^me ((pres have.v) (k (n+preds pain.n (in.p ((^me 's) chest.n))))))
   ;; (Sophie is taking Lortab for her pain \.)
