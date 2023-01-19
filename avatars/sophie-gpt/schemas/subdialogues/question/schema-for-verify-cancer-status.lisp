@@ -25,6 +25,8 @@
 :static-conds (
   ; Sophie has lung cancer
   ?s1 (^me ((pres have.v) (k (lung.n cancer.n))))
+  ; Sophie has pain in her chest
+  ?s2 (^me ((pres have.v) (k (n+preds pain.n (in.p ((^me 's) chest.n))))))
 )
 
 :preconds (

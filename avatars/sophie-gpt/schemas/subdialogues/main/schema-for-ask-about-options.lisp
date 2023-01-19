@@ -25,6 +25,8 @@
 :static-conds (
   ; Sophie has lung cancer
   ?s1 (^me ((pres have.v) (k (lung.n cancer.n))))
+  ; Sophie wants to be able to watch her grandson graduate
+  ?s2 (^me ((pres want.v) (to (be.v able.a (to (watch.v ((^me 's) grandson.n) (ke graduate.v)))))))
 )
 
 :preconds (

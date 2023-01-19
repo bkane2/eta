@@ -25,6 +25,8 @@
 :static-conds (
   ; Sophie has lung cancer
   ?s1 (^me ((pres have.v) (k (lung.n cancer.n))))
+  ; Sophie has an uncle Fred who outlived his prognosis
+  ?s2 (^me ((pres have.v) (an.d (n+preds uncle.n (= |Fred|) (who.rel ((past outlive.v) (his.d prognosis.n)))))))
 )
 
 :preconds (
