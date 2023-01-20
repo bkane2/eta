@@ -784,6 +784,12 @@
   1 (0 sorry 0)
     2 ((You are sorry that I have cancer \.)) (0 :gist)
 
+  ; Continue (for when conversation is paused)
+  1 (Continue \.)
+    2 ((Continue \.)) (0 :gist)
+  1 (Continue)
+    2 ((Continue \.)) (0 :gist)
+
   ; Goodbye
   1 (3 .BYE 3)
     2 ((Goodbye \.) (Say-bye)) (0 :gist)

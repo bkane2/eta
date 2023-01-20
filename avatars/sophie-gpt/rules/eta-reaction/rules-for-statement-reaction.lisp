@@ -296,13 +296,13 @@
   ;;   2 (You\'re right \. No matter how much time I have left \, being with my children and grandchild is the most important thing for me right now \.) (100 :out)
   ;;   2 (I agree \. There\'s nothing i\'d like more than to spend every second I have left with my children and grandchildren \.) (0 :out)
 
-  ; Example explicit response
-  1 (0 the prognosis is that I may live for 0)
-    2 (:or
-        ([SAD] That\'s really difficult to hear \. I thought for sure I would have longer than that \.)
-        ([SAD] I knew the prognosis would be bad \, but I wasn\'t expecting to hear that \. I don\'t know how to handle this \.)
-        ([SAD] I thought I would have more time than that left \. That\'s extremely depressing to hear \.))
-      (0 :out)
+  ;; ; Example explicit response
+  ;; 1 (0 the prognosis is that I may live for 0)
+  ;;   2 (:or
+  ;;       ([SAD] That\'s really difficult to hear \. I thought for sure I would have longer than that \.)
+  ;;       ([SAD] I knew the prognosis would be bad \, but I wasn\'t expecting to hear that \. I don\'t know how to handle this \.)
+  ;;       ([SAD] I thought I would have more time than that left \. That\'s extremely depressing to hear \.))
+  ;;     (0 :out)
 
 ; ````````````````````     sleep-poorly      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````

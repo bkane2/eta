@@ -44,14 +44,49 @@
 :episodes (
 
   ?e1 (^me paraphrase-to.v ^you '(What are my options for treatment ?))
+  ?e2 (^you reply-to.v ?e1)
   
-  ?e2 (:repeat-until (^you be.v empowering.a)
+  ; If not empowering, express doubts
+  ?e3 (:if (not (^you be.v empowering.a))
   
-    ?e3 (^you reply-to.v ?e1)
+    ?e4 (^me paraphrase-to.v ^you '(I\'m finding it stressful to decide which treatment option to take \.))
+    ?e5 (^you reply-to.v ?e4)
 
-    ?e4 (^me reply-to.v ?e3)
+    ; If not empowering again, escalate emotions
+    ?e6 (:if (not (^you be.v empowering.a))
+    
+      ?e7 (^me paraphrase-to.v ^you '(I really need to know how these treatments help with my own goals \.
+                                      I don\'t want to let my family down \.))
+      ?e8 (^you reply-to.v ?e7)
 
-  )
+      ; If not empowering a third time, escalate emotions further
+      ; (presumably, the conversation would be paused here and rewound)
+      ?e9 (:if (not (^you be.v empowering.a))
+      
+        ?e10 (^me paraphrase-to.v ^you '(You\'re giving me too much information at once and not listening to my goals \.
+                                         I need to take a break to process this information \.))
+        ?e11 ((set-of ^me ^you) pause-conversation.v))))
+
+  ; Once the user is empowering, proceed (but make sure that the user has actually answered Sophie's question adequately)
+  ?e12 (:try-in-sequence
+
+    (:if (not (^you tell.v ^me (about.p-arg ((^me 's) (plur option.n)))))
+    
+      ?e13 (^me paraphrase-to.v ^you '(Given the goals that we discussed \, what option do you think is the best ?))
+      ?e14 (^you reply-to.v ?e10))
+
+    (:if (not (^you tell.v ^me (about.p-arg (k chemotherapy.n))))
+    
+      ?e13 (^me paraphrase-to.v ^you '(Do you think I need chemotherapy ?))
+      ?e14 (^you reply-to.v ?e10))
+
+    (:if (not (^you tell.v ^me (about.p-arg (k (comfort.n care.n)))))
+    
+      ?e13 (^me paraphrase-to.v ^you '(I\'ve heard about something called comfort care \. Do you think that\'s an option ?))
+      ?e14 (^you reply-to.v ?e10)))
+
+  ?e15 (^me paraphrase-to.v ^you '(Thank you for telling me about my options \.
+                                   I need to think about them more and discuss them with my family \.))
 
 )
 

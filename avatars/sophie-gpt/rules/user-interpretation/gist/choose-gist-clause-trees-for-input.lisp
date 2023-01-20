@@ -31,13 +31,19 @@
     (what 2 my prognosis ?)
     (what 3 mean for 1 future ?)
     (I .KNOW that my cancer has gotten worse \, but i\'m not sure how .BAD it is \.)
-    (I .WANT to .TALK about my prognosis today \.))
+    (I .WANT to .TALK about my prognosis today \.)
+    (0 How long do you think I have ?)
+    (0 I need to know about my future \.))
     2 (*prognosis-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
     (what 2 my options for .TREATMENT ?)
-    (what are my .TREATMENT options if I .DO not .DO .CHEMOTHERAPY ?))
+    (what are my .TREATMENT options if I .DO not .DO .CHEMOTHERAPY ?)
+    (I\'m finding it stressful to decide which treatment option to take \.)
+    (I really need to know how these treatments help with my own goals 0)
+    (You\'re giving me too much information at once and not listening to my goals 0)
+    (Given the goals that we discussed \, what option do you think is the best ?))
     2 (*treatment-option-input*
        *general-input*) (0 :subtrees)
 
@@ -59,7 +65,12 @@
        *general-input*) (0 :subtrees)
 
   1 (:or
-    (what .DO my test results mean ?))
+    (what .DO my test results mean ?)
+    (1 really scared about my worsening condition \.)
+    (I don\'t think you understand how hard this is for me !)
+    (I don\'t think I can handle this right now \. I need a break \.)
+    (I appreciate your empathy \, but can you tell me about my condition ?)
+    (0 can you tell me about my condition ?))
     2 (*test-results-input*
        *general-input*) (0 :subtrees)
 
@@ -79,13 +90,16 @@
        *general-input*) (0 :subtrees)
 
   1 (:or
-    (.DO you think .CHEMOTHERAPY will .HELP ?))
+    (.DO you think .CHEMOTHERAPY will .HELP ?)
+    (Do you think I need chemotherapy ?))
     2 (*chemotherapy-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
     (how does comfort .CARE .WORK ?)
-    (.SHOULD I get comfort .CARE ?))
+    (.SHOULD I get comfort .CARE ?)
+    (Do you think I need comfort care ?)
+    (I\'ve heard about something called comfort care \. Do you think that\'s an option ?))
     2 (*comfort-care-input*
        *general-input*) (0 :subtrees)
 
@@ -198,7 +212,8 @@
        *general-input*) (0 :subtrees)
 
   1 (:or
-    (.CAN I trust your prognosis ?))
+    (.CAN I trust your prognosis ?)
+    (I\'m not sure I can trust your prognosis 0))
     2 (*prognosis-trust-input*
        *general-input*) (0 :subtrees)
 

@@ -101,16 +101,10 @@
     (0 The prognosis is that I may live for a .ELAPSED-TIME 0)
   )
     2 ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))) (0 :ulf)
-  
+
   1 (:or
     ;;; Treatment options
-    (0 Chemotherapy is a treatment option 0)
-    (0 Radiation is a treatment option 0)
     (0 Comfort Care is a treatment option 0)
-    ;;; Experimental therapy
-    (0 Experimental treatments might make my prognosis better 0)
-    (0 Experimental treatments will make my prognosis better 0)
-    (0 Experimental treatments will not make my prognosis better 0)
     ;;; Comfort care
     (0 You do not think I need comfort care 0)
     (0 You think I need comfort care 0)
@@ -120,6 +114,13 @@
     (0 Receiving comfort care in a dedicated facility is an option 0)
     (0 Comfort care allows me to spend time with my family 0)
     (0 Comfort care should alleviate my pain 0)
+  )
+    2 ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) (plur option.n)))) and
+       (^you tell.v ^me (about.p-arg (k (comfort.n care.n))))) (0 :ulf)
+
+  1 (:or
+    ;;; Treatment options
+    (0 Chemotherapy is a treatment option 0)
     ;;; Chemotherapy
     (0 You do not think I need chemotherapy 0)
     (0 You think I need chemotherapy 0)
@@ -127,6 +128,17 @@
     (0 You do not think I need chemotherapy because I should get comfort care instead 0)
     (0 A side effect of chemotherapy is 0)
     (0 One way to get chemotherapy is 0)
+  )
+    2 ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) (plur option.n)))) and
+       (^you tell.v ^me (about.p-arg (k chemotherapy.n)))) (0 :ulf)
+  
+  1 (:or
+    ;;; Treatment options
+    (0 Radiation is a treatment option 0)
+    ;;; Experimental therapy
+    (0 Experimental treatments might make my prognosis better 0)
+    (0 Experimental treatments will make my prognosis better 0)
+    (0 Experimental treatments will not make my prognosis better 0)
   )
     2 ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) (plur option.n))))) (0 :ulf)
 

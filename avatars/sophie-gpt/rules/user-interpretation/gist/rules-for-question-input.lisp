@@ -1058,7 +1058,7 @@
   1 (0 .AUX 3 .APPOINTMENT 1 .ANXIETY-WORD 1 you 0)
     2 ((Was I nervous for this appointment ?)) (0 :gist)
   ; What is the most important thing for your future?
-  1 (0 .WH_ .BE 3 .IMPORTANT 3 your future 0)
+  1 (0 .WH_ .BE 3 .IMPORTANT 3 .YOUR-REF future 0)
     2 ((What is the most important thing for my future ?)) (0 :gist)
   1 (0 .WH_ .BE 3 .IMPORTANT 2 for you 0)
     2 ((What is the most important thing for my future ?)) (0 :gist)
@@ -1066,8 +1066,9 @@
     2 ((What is the most important thing for my future ?)) (0 :gist)
   1 (0 .WH_ 1 .DO 1 you 3 .CANCER-GOALS 0)
     2 ((What is the most important thing for my future ?)) (0 :gist)
-  1 (0 .WH_ .BE 1 your 3 .CANCER-GOALS 0)
+  1 (0 .WH_ .BE 1 .YOUR-REF 3 .CANCER-GOALS 0)
     2 ((What is the most important thing for my future ?)) (0 :gist)
+  1 (0 .WH_ .BE )
   ; Can you hear me?
   1 (0 .AUX 3 you 3 .HEAR 2 .DOCTOR-PRON 0)
     2 ((Can I hear you ?)) (0 :gist)

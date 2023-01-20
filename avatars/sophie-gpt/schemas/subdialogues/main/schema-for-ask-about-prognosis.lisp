@@ -43,17 +43,32 @@
 :episodes (
 
   ?e1 (^me paraphrase-to.v ^you '(What does my cancer mean for my future ?))
+  ?e2 (^you reply-to.v ?e1)
   
-  ; TODO: in order to prevent this from being skipped if user already was explicit, need
-  ; to add additional ULF (^me understand.v ((^me 's) prognosis.n)) or something similar.
-  ; Need to check if :and is supported in conditions, as well as template nodes for ULF transduction.
-  ?e2 (:repeat-until (^you be.v explicit.a)
+  ; If not explicit about Sophie's prognosis, ask for more detail
+  ?e3 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
   
-    ?e3 (^you reply-to.v ?e1)
+    ?e4 (^me paraphrase-to.v ^you '(I know that my condition is bad\, but I want you to be honest with me \.
+                                    How long do you think I have ?))
+    ?e5 (^you reply-to.v ?e4)
 
-    ?e4 (^me reply-to.v ?e3)
+    ; If not explicit again, start to distrust doctor
+    ?e6 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
+    
+      ?e7 (^me paraphrase-to.v ^you '(I feel like you\'re avoiding my question \. As much as it will hurt\,
+                                      I need to know about my future \.))
+      ?e8 (^you reply-to.v ?e7)
 
-  )
+      ; If not explicit a third time, escalate again (presumably, the conversation would be paused here and rewound)
+      ?e9 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
+      
+        ?e10 (^me paraphrase-to.v ^you '(I\'m not sure I can trust your prognosis \. I need to find another
+                                         doctor who can be honest with me \.))
+        ?e11 ((set-of ^me ^you) pause-conversation.v))))
+
+  ; Once the user is explicit, proceed
+  ?e12 (^me paraphrase-to.v ^you '(It\'s really hard to hear my prognosis \. I thought for sure I would have longer than
+                                   that \. Thank you for being honest\, though \.))
 
 )
 

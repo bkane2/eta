@@ -49,15 +49,35 @@
 :episodes (
 
   ?e1 (^me paraphrase-to.v ^you '(Why has my pain been getting worse recently ?))
-  ;; ?e1 (^me say-to.v ^you ?words)
+  ?e2 (^you reply-to.v ?e1)
 
-  ?e2 (:repeat-until (^you be.v empathetic.a)
+  ; If not empathetic, express fear about condition
+  ?e3 (:if (not (^you be.v empathetic.a))
   
-    ?e3 (^you reply-to.v ?e1)
+    ?e4 (^me paraphrase-to.v ^you '(I\'m really scared about my worsening condition \.))
+    ?e5 (^you reply-to.v ?e4)
 
-    ?e4 (^me reply-to.v ?e3)
+    ; If not empathetic again, escalate emotions
+    ?e6 (:if (not (^you be.v empathetic.a))
+    
+      ?e7 (^me paraphrase-to.v ^you '(I don\'t think you understand how hard this is for me !))
+      ?e8 (^you reply-to.v ?e7)
 
-  )
+      ; If not empathetic a third time, escalate emotions further
+      ; (presumably, the conversation would be paused here and rewound)
+      ?e9 (:if (not (^you be.v empathetic.a))
+      
+        ?e10 (^me paraphrase-to.v ^you '(I don\'t think I can handle this right now \. I need a break \.))
+        ?e11 ((set-of ^me ^you) pause-conversation.v))))
+
+  ; Once the user is empathetic, proceed (but make sure that the user has actually answered Sophie's question)
+  ?e12 (:if (not (^you tell.v ^me (about.p-arg ((^me 's) condition.n))))
+  
+    ?e13 (^me paraphrase-to.v ^you '(I appreciate your empathy \, but can you tell me about my condition ?))
+    ?e14 (^you reply-to.v ?e10)
+
+    :else (
+      ?e13 (^me paraphrase-to.v ^you '(It\'s difficult to hear that my cancer has spread\, but I appreciate your empathy \.))))
 
 )
 
