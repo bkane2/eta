@@ -54,9 +54,10 @@
 
     ; If not explicit again, start to distrust doctor
     ?e6 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
-    
-      ?e7 (^me paraphrase-to.v ^you '(I feel like you\'re avoiding my question \. As much as it will hurt\,
-                                      I need to know about my future \.))
+
+      ?e7 (^me paraphrase-to.v ^you '(I don\'t really understand \. Could you be more clear ?))
+      ;; ?e7 (^me paraphrase-to.v ^you '(I feel like you\'re avoiding my question \. As much as it will hurt\,
+      ;;                                 I need to know about my future \.))
       ?e8 (^you reply-to.v ?e7)
 
       ; If not explicit a third time, escalate again (presumably, the conversation would be paused here and rewound)
