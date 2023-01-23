@@ -917,7 +917,7 @@
 
             (format t "~% ========== Eta Generation ==========") ; DEBUGGING
             (format t "~%  * Found user gist clauses (from previous episode ~a):~%   ~a " prev-step-ep-name user-gist-clauses) ; DEBUGGING
-            (format t "~%  * Paraphrasing utterance: ~a " expr) ; DEBUGGING
+            (format t "~%  * Paraphrasing utterance:~%    ~a " expr) ; DEBUGGING
 
             (cond
               ; Use GPT3-based paraphrase model if available
@@ -1445,7 +1445,7 @@
         (format t "~% ========== User Interpretation ==========")
         (format t "~%  * ETA gist clauses that the user is responding to (from episodes ~a and ~a)~%   = ~a "
           prev-step-ep-name relative-ep-name prev-step-gist-clauses)
-        (format t "~%  * Using gist clause for context: ~a " (car (last prev-step-gist-clauses))) ; DEBUGGING
+        (format t "~%  * Using gist clause for context:~%    ~a " (car (last prev-step-gist-clauses))) ; DEBUGGING
 
         ; Compute the "interpretation" (gist clauses) of the user input,
         ; which will be done with a gist-clause packet selected using the
