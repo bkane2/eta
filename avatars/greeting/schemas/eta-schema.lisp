@@ -18,7 +18,7 @@
 
 :episodes (
 
-
+?e1 (^me exchange-greetings.v ^you)
 
 ?e10 ((set-of ^me ^you) say-bye.v)
 
