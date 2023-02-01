@@ -22,6 +22,7 @@
     (0 It is expected to feel badly after learning your cancer is terminal 0)
     (0 You empathize with how hard it is to learn my cancer is terminal 0)
     (0 How have I been feeling since the cancer metastasized 0)
+    (0 You are going to help me cope with learning my cancer is terminal 0)
     ;;; Test results
     (0 You recognize how hard receiving the test results is for me 0)
     (0 How do I feel about my test results 0)
@@ -159,8 +160,6 @@
 
   ; Empowering
   1 (:or
-    ;;; Reason for cancer
-    (0 You are going to help me cope with learning my cancer is terminal 0)
     ;;; Treatment options
     (0 What are my treatment goals 0)
     (0 Do I have 1 .QUESTION about my treatment options 0)
