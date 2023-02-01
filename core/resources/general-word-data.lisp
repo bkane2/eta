@@ -102,6 +102,7 @@
 
 (DUALS 'I 'YOU)
 (SETF (GET 'ME 'SUBST) 'YOU)
+(SETF (GET 'YOU1 'SUBST) 'I)
 (SETF (GET 'YOU2 'SUBST) 'ME) ; objective case!
 (DUALS 'MY 'YOUR)
 (DUALS 'MINE 'YOURS)
@@ -118,6 +119,7 @@
   (FINISH finished done quit stop terminate)
   (FOREIGN francais deutsch italiano espanol francais \? deutsch \? italiano \? espanol \?)
   (END-PUNC - ? ! \. \: \;)
+  (CLAUSE-PUNC END-PUNC \,)
   (THEME-KEY pet-key chat1-opening chat1-rochester chat1-movies
     ; we could add other keys, as a flag for
     ; adhering to a particular theme (i.e., capture
@@ -164,13 +166,18 @@
   (PRON INDEX-PRON QUANT-PRON REFL-PRON ANA-PRON WH-PRON REL-PRON)
   (WH-DET which what whose how_many)
   (WH-PRON who whom what which)
+  (CLEFT-PRON it that there)
 
+  (CLEFT it\'s that\'s there\'s)
   (INDEX-DET that those these this)
   (DET the a an my your his her its our their all every each any INDEX-DET
 			some many ONE TWO THREE another other WH-DET TWO THREE FOUR FIVE SIX
 			SEVEN EIGHT NINE TEN ELEVEN TWELVE)
   (NP_ PRON DET) ; the beginning of a noun phrase
   (MODAL can will shall could would should might may ought)
+  (CAN could)
+  (CAN\'T couldn\'t)
+  (INTEROG that whether if)
   (NECESSITY need HAVE)
   (HAVE has had)
   (BE am are is was were)
@@ -199,6 +206,9 @@
   (TENTATIVE PERHAPS SUPPOSE)
   (DOUBT unlikely hardly not) ; aimed at things like "I doubt it",
   												    ; "I don't think so", "That's unlikely"
+  (RECOMMEND suggest endorse advocate approve)
+  (COMMUNICATIVE say tell answer)
+  (GENERAL-PREP for with)
 
   (SELF I my myself me)
   (FATHER dad)
@@ -219,8 +229,21 @@
   (TROUBLE troubles DIFFICULT difficulty difficulties tough hard hardship challenging
 			problem problems struggle struggling)
   (NOMORE rid lost gone left away out)
-  (NEG no not nope nah hardly little scarcely)
-  (POS yes yeah yup sure definitely certainly absolutely indeed agreed)
+
+  (DENY no nah nope)
+  (UNTRUTH-ADV incorrect inaccurate untrue)
+  (DENY-ADV not never zero hardly little barely scarcely incorrect inaccurate untrue)
+  (DISAGREE disagreed doubt)
+  (NEG DENY DENY-ADV DISAGREE)
+  (NEG-MOD really quite very exactly entirely all completely)
+  (UNCERTAINTY-ADV unsure uncertain unsure unknown undetermined unforeseeable unpredictable debatable)
+  (AFFIRM yes yeah yup indeed)
+  (CERTAINTY-ADV certainly certain sure)
+  (TRUTH-ADV correct accurate true)
+  (AFFIRM-ADV certainly certain absolutely really quite completely exactly entirely sure definitely correct accurate true)
+  (AGREE agreed)
+  (POS AFFIRM AFFIRM-ADV AGREE)
+  (AFFIRM-BELIEF know think believe feel understand understanding belief beliefs thought feeling)
 
   (MARRIAGETHEME marriage SPOUSE DIVORCE)
   (DIVORCE divorced separation separated)
@@ -245,10 +268,10 @@
 			goldfish gerbil hamster guinea-pig guineapig guinea pig iguana turtle horse pony)
   (PETTHEME pet-key PET-TYPE pets pet)
 
-  (BELIEVE think know SUPPOSE suspect presume guess)
+  (BELIEVE think SUPPOSE suspect presume guess)
   (REMEMBER recall)
   (PERCEIVE notice note see infer conclude realize)
-  (CONC BELIEVE REMEMBER PERCEIVE)
+  (CONC BELIEVE REMEMBER PERCEIVE know)
   (BADSTATE unhappy sad worried TIRED depressed appalled terrible awful
 			lonely disgusted upset bored dismayed distressed shambles wrecked
 			rocks dead falling apart disintegrating pieces lousy)
@@ -280,6 +303,9 @@
   (STAB stabbed)
   (BATTER battered batters)
 
+  (CHANCE chances)
+  (ODDS CHANCE prospects likelihood probability possibility possibilities potential)
+
   (BADOCCUR died disappeared burned crashed broke collapsed)
   (BADEVENT death disappearance accident)
 
@@ -300,8 +326,10 @@
 			burglary steal stole rape raped extortion pimp extorting
 			extorted extorts rip-off mafia mob mobster)
   (LIQUOR booze beer drink drinks drinking drank drunk alcohol alcoholic)
-  (DRUGS drug LIQUOR addict junkie hooked addicted heroin
-			cocain cocaine mainline dope ecstasy crack)
+  (DRUGS drug)
+  (DRUGS-ADDICTIVE LIQUOR addict junkie hooked addicted heroin meth
+			cocain cocaine mainline dope ecstasy crack opiates opioids)
+  (DRUGS-RECREATIONAL DRUGS-ADDICTIVE marijuana weed lsd shrooms)
   (BADPROP BADSTATE BADQUALITY STUPIDTHING)
   (BADPRED BADPROP BADREL BADEVENT VIOLENCE DECEIVE BADTHING)
   (GOODSTATE happy well fine pleased delighted cheerful glad satisfied contented joy joyful)

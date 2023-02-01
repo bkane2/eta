@@ -26,6 +26,23 @@
 ) ; END get-io-path
 
 
+(defun ensure-log-files-exist (&key (instance 0))
+;``````````````````````````````````````````````````
+; Ensure that empty conversation log files exist for the given avatar configuration and current dialogue instance.
+;
+  (let ((instance-dir (format nil "~a/" instance)))
+    (ensure-directories-exist (concatenate 'string (get-io-path "conversation-log/") instance-dir))
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "text.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create))
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "gist.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create))
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "semantic.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create))
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "pragmatic.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create))
+)) ; END ensure-log-files-exist
+
+
 (defun clean-io-files ()
 ;``````````````````````````
 ; Overwrites all io files used by Eta with blank files.
@@ -34,6 +51,9 @@
   (ensure-directories-exist *io-path*)
   (ensure-directories-exist (get-io-path "in/"))
   (ensure-directories-exist (get-io-path "out/"))
+  ; Delete and recreate the directory to remove all dialogue instance subdirectories
+  (ensure-directories-exist (get-io-path "conversation-log/"))
+  (delete-directory (get-io-path "conversation-log/") :recursive t)
   (ensure-directories-exist (get-io-path "conversation-log/"))
   (when *read-log-mode*
     (ensure-directories-exist "./logs/")
@@ -41,7 +61,8 @@
     (ensure-directories-exist "./logs/logs_out/")
     (ensure-directories-exist "./logs/logs_out/text/")
     (ensure-directories-exist "./logs/logs_out/gist/")
-    (ensure-directories-exist "./logs/logs_out/ulf/"))
+    (ensure-directories-exist "./logs/logs_out/semantic/")
+    (ensure-directories-exist "./logs/logs_out/pragmatic/"))
 
   ; Ensure all standard input & output files for registered subsystems exist and are empty
   ; Note: input files only created for non-terminal systems,
@@ -59,20 +80,23 @@
                                       :supersede :if-does-not-exist :create)))))
   (append *subsystems-perception* *subsystems-specialist*))
 
-  ; Delete the contents of conversation-log files
-  (with-open-file (outfile (get-io-path "conversation-log/text.txt")
-    :direction :output :if-exists :supersede :if-does-not-exist :create))
-  (with-open-file (outfile (get-io-path "conversation-log/gist.txt")
-    :direction :output :if-exists :supersede :if-does-not-exist :create))
-  (with-open-file (outfile (get-io-path "conversation-log/ulf.txt")
-    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  ; Ensure that empty conversation log files exist
+  (ensure-log-files-exist)
 
   ; Delete the content of the sessionInfo.lisp file after reading
   (with-open-file (outfile (get-io-path "sessionInfo.lisp")
     :direction :output :if-exists :supersede :if-does-not-exist :create))
   ; Delete the content of output.txt, if it exists, otherwise create
   (with-open-file (outfile (get-io-path "output.txt")
-    :direction :output :if-exists :supersede :if-does-not-exist :create))                                                                      
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  ; Delete the content of turn-output.txt and turn-emotion.txt, otherwise create
+  (with-open-file (outfile (get-io-path "turn-output.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  (with-open-file (outfile (get-io-path "turn-emotion.txt")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))
+  ; Delete the content of rewindState.lisp, if it exists, otherwise create
+  (with-open-file (outfile (get-io-path "rewindState.lisp")
+    :direction :output :if-exists :supersede :if-does-not-exist :create))                                             
 ) ; END clean-io-files
 
 
@@ -95,9 +119,10 @@
               (if (probe-directory p) p)
               (if (not (pathname-name p)) p)))
           (directory directory))))))
-    ; Load all shared rules and schemas files
+    ; Load all shared rules, schemas, and knowledge files
     (load-files-recur (concatenate 'string "./avatars/" avatar-name "/schemas"))
     (load-files-recur (concatenate 'string "./avatars/" avatar-name "/rules"))
+    (load-files-recur (concatenate 'string "./avatars/" avatar-name "/knowledge"))
     ; If a multi-session avatar, load all files specific to that day
     (when (and (boundp '*session-number*) (integerp *session-number*))
       (load-files-recur (concatenate 'string "./avatars/" avatar-name "/" (format nil "day~a" *session-number*)))))
@@ -117,10 +142,11 @@
 
 
 
-; If live mode, load *user-id* from sessionInfo file (if it exists).
-; Otherwise, manually set *user-id* (or prompt user for input).
-;````````````````````````````````````````````````````````````````
+; If live mode, load *user-id* and *user-name* from sessionInfo file (if it exists).
+; Otherwise, manually set (or prompt user for input).
+;```````````````````````````````````````````````````````````````````````
 (defparameter *user-id* nil)
+(defparameter *user-name* nil)
 (if (probe-file (get-io-path "sessionInfo.lisp"))
   (load (get-io-path "sessionInfo.lisp")))
 (when (not *user-id*)
@@ -129,6 +155,10 @@
   ;; (princ "user id: ") (finish-output)
   ;; (setq *user-id* (write-to-string (read))))
 )
+(when (not *user-name*)
+  (format t "~%~%Enter user name ~%")
+  (princ "user name: ") (finish-output)
+  (setq *user-name* (read-line)))
 
 
 ; Clean IO files, load Eta, and load avatar-specific files
@@ -144,7 +174,8 @@
   ;`````````````````````````
   (*safe-mode*
     (handler-case (eta :subsystems-perception *subsystems-perception* :subsystems-specialist *subsystems-specialist*
-                       :emotions *emotion-tags* :dependencies *dependencies*)
+                       :emotions *emotion-tags* :dependencies *dependencies* :response-generator *generation-mode*
+                       :gist-interpreter *interpretation-mode* :parser *parser-mode*)
       (error (c)
         (error-message "Execution of Eta failed due to an internal error.")
         (values 0 c))))
@@ -165,12 +196,14 @@
         (load "load-eta.lisp")
         (load-avatar-files *avatar*)
         (eta :read-log log :subsystems-perception *subsystems-perception* :subsystems-specialist *subsystems-specialist*
-             :emotions *emotion-tags* :dependencies *dependencies*)) logs)))
+             :emotions *emotion-tags* :dependencies *dependencies* :response-generator *generation-mode*
+             :gist-interpreter *interpretation-mode* :parser *parser-mode*)) logs)))
 
   ; Run Eta
   ;`````````````````````````
   (t (eta :subsystems-perception *subsystems-perception* :subsystems-specialist *subsystems-specialist*
-          :emotions *emotion-tags* :dependencies *dependencies*)))
+          :emotions *emotion-tags* :dependencies *dependencies* :response-generator *generation-mode*
+          :gist-interpreter *interpretation-mode* :parser *parser-mode*)))
 
 
 ; Write user gist clauses to file

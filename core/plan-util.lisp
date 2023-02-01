@@ -18,16 +18,28 @@
 ; schema-contents : the contents of the schema used to generate the plan (if any)
 ; curr-step       : the current (to be processed) step of the plan
 ; vars            : contains any local variables in plan (potentially inherited)
-; goals           : contains any goals of a plan
 ; subplan-of      : points to a plan-step that the plan is a subplan of
+; (the following fields are inherited from the schema (if any))
+; types           : contains formulas for types in plan
+; var-roles       : contains formulas for var-roles in plan
+; rigid-conds     : contains formulas for rigid conditions of plan
+; static-conds    : contains formulas for static conditions of plan
+; preconds        : contains formulas for preconditions of plan
+; goals           : contains formulas for goals of plan
 ;
   plan-name
   schema-name
   schema-contents
   curr-step
   vars
-  goals
   subplan-of
+  ; == facts inherited from schema ==
+  types
+  var-roles
+  rigid-conds
+  static-conds
+  preconds
+  goals
 ) ; END defstruct plan
 
 
@@ -166,7 +178,7 @@
         (setq type-wff (subst sk-name var type-wff)))
       ; Store type as fact in context.
       (store-in-context type-wff))
-  )
+      (push (list type-name type-wff) (plan-types plan)))
 ) ; END process-schema-types
 
 
@@ -180,8 +192,7 @@
     (dolist (var-role-pair var-role-pairs)
       (setq var-role-name (first var-role-pair))
       (setq var-role-wff (second var-role-pair))
-    )
-  )
+      (push (list var-role-name var-role-wff) (plan-var-roles plan))))
 ) ; END process-schema-var-roles
 
 
@@ -199,8 +210,7 @@
       (setq rigid-cond-name (first rigid-cond-pair))
       (setq rigid-cond-wff (second rigid-cond-pair))
       (store-in-context rigid-cond-wff)
-    )
-  )
+      (push (list rigid-cond-name rigid-cond-wff) (plan-rigid-conds plan))))
 ) ; END process-schema-rigid-conds
 
 
@@ -216,8 +226,7 @@
     (dolist (static-cond-pair static-cond-pairs)
       (setq static-cond-name (first static-cond-pair))
       (setq static-cond-wff (second static-cond-pair))
-    )
-  )
+      (push (list static-cond-name static-cond-wff) (plan-static-conds plan))))
 ) ; END process-schema-static-conds
 
 
@@ -233,8 +242,7 @@
     (dolist (precond-pair precond-pairs)
       (setq precond-name (first precond-pair))
       (setq precond-wff (second precond-pair))
-    )
-  )
+      (push (list precond-name precond-wff) (plan-preconds plan))))
 ) ; END process-schema-preconds
 
 
@@ -394,9 +402,14 @@
 ; 
   (add-subplan (plan-curr-step plan) subplan)
   (unless (plan-schema-name subplan)
-    (setf (plan-schema-name subplan) (plan-schema-name plan)))
-  (unless (plan-schema-contents subplan)
-    (setf (plan-schema-contents subplan) (plan-schema-contents plan)))
+    (setf (plan-schema-name subplan) (plan-schema-name plan))
+    (setf (plan-schema-contents subplan) (plan-schema-contents plan))
+    (setf (plan-types subplan) (plan-types plan))
+    (setf (plan-var-roles subplan) (plan-var-roles plan))
+    (setf (plan-rigid-conds subplan) (plan-rigid-conds plan))
+    (setf (plan-static-conds subplan) (plan-static-conds plan))
+    (setf (plan-preconds subplan) (plan-preconds plan))
+    (setf (plan-goals subplan) (plan-goals plan)))
 ) ; END add-subplan-curr-step
 
 
@@ -459,6 +472,7 @@
           (when (plan-goals subplan)
             (setq unsatisfied-goals (remove-if #'check-goal-satisfied (plan-goals subplan)))
             (when unsatisfied-goals
+              ;; (dolist (ug unsatisfied-goals) (format t "~%  unsatisfied goal: ~a" ug)) ; DEBUGGING
               (setq replanned? (replan-for-goal plan (car unsatisfied-goals)))
               (if replanned? (return-from update-plan-state nil))))
 
@@ -502,9 +516,11 @@
     ;       as well as instantiating the non-fluent variable, e.g. '!e1'?
     (setf (get ep-name 'wff) (plan-step-wff curr-step))
     
-    ; In the case of an Eta action, transfer properties from ep-var hash tables
+    ; In the case of an Eta or joint action, transfer properties from ep-var hash tables
     (setq schema-name (plan-schema-name plan))
-    (when (eq '^me (car (plan-step-wff curr-step)))
+    (when (or (eq '^me (car (plan-step-wff curr-step))) 
+              (and (listp (car (plan-step-wff curr-step)))
+                   (member '^me (car (plan-step-wff curr-step)))))
       ; Gist clauses
       (when (get schema-name 'gist-clauses)
         (setq gist-clauses (gethash ep-var (get schema-name 'gist-clauses)))
@@ -528,8 +544,8 @@
         (setq topic-keys (gethash ep-var (get schema-name 'topic-keys)))
         (setf (get ep-name 'topic-keys) topic-keys))
 
-      ;; (format t "Topic keys attached to ~a =~% ~a~%"
-      ;;   ep-name (get ep-name 'topic-keys)) ; DEBUGGING
+      ;; (format t "Topic keys attached to ~a =~% ~a (from ~a ~a)~%"
+      ;;   ep-name (get ep-name 'topic-keys) ep-var (plan-step-wff curr-step)) ; DEBUGGING
   ))
 ) ; END instantiate-curr-step
 
@@ -688,8 +704,15 @@
         (setq goal-clause (get-single-binding bindings))
         ; Check if goal clause is true in context
         (if (get-from-context goal-clause) t nil))
+      ; Support for tensed version as well
+      ((setq bindings (bindings-from-ttt-match '(^me ((pres want.v) (that _!))) goal-wff))
+        (setq goal-clause (get-single-binding bindings))
+        ; Check if goal clause is true in context
+        (if (get-from-context goal-clause) t nil))
 
-      (t (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff)))
+      (t
+        ;; (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff) ; DEBUGGING
+        nil))
 )) ; END check-goal-satisfied
 
 
@@ -903,7 +926,7 @@
 (defun subst-duplicate-variables (plan episodes) 
 ;``````````````````````````````````````````````````
 ; Substitutes all variables in an episode list with duplicate variables,
-; inheriting the gist-clauses, ulf, etc. attached to them in the schema
+; inheriting the gist-clauses, semantics, etc. attached to them in the schema
 ; used (directly or indirectly) to create the current plan.
 ;
   (let* ((episode-vars (get-episode-vars episodes))
@@ -921,7 +944,7 @@
 (defun duplicate-variable (plan var) 
 ;`````````````````````````````````````````````
 ; Duplicates an episode variable, inheriting the gist-clauses,
-; ulf, etc. attached to it in the schema used (directly or
+; semantics, etc. attached to it in the schema used (directly or
 ; indirectly) to create the current plan.
 ;
   (let (new-var schema-name)
@@ -1014,3 +1037,38 @@
         (t (setq cont nil)))))
 ) ; END print-current-plan-status
 
+
+
+(defun print-plan-as-tree (plan)
+;`````````````````````````````````````````````````
+; Prints the given plan as a tree, showing the sequence of steps for each (sub)plan.
+;
+  (let ((indent-str "       "))
+    (labels (
+      (print-plan-steps-recur (plan-step direction i)
+        (when (null plan-step) (return-from print-plan-steps-recur nil))
+        (format t
+          (if (equal direction 'curr)
+            "~a>>>[~a] ~a~%"
+            "~a-  [~a] ~a~%")
+          (str-repeat indent-str i)
+          (plan-step-ep-name plan-step)
+          (plan-step-wff plan-step))
+        (when (plan-step-subplan plan-step)
+          (print-plan-as-tree-recur (plan-step-subplan plan-step) (+ i 1)))
+        (cond
+          ((equal direction 'before)
+            (print-plan-steps-recur (plan-step-prev-step plan-step) 'before i))
+          ((equal direction 'after)
+            (print-plan-steps-recur (plan-step-next-step plan-step) 'after i))))
+
+      (print-plan-as-tree-recur (plan i)
+        (when (null plan) (return-from print-plan-steps-recur nil))
+        (when (plan-curr-step plan)
+          (format t "~a|- ~a~%" (str-repeat indent-str i) (plan-plan-name plan))
+          (print-plan-steps-recur (plan-step-prev-step (plan-curr-step plan)) 'before i)
+          (print-plan-steps-recur (plan-curr-step plan) 'curr i)
+          (print-plan-steps-recur (plan-step-next-step (plan-curr-step plan)) 'after i))))
+          
+    (print-plan-as-tree-recur plan 0)
+))) ; END print-plan-as-tree

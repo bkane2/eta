@@ -35,7 +35,7 @@
 
 ;; Load ulf2english Choose between the following two lines depending on
 ;; whether you want the files compiled into FASLs or not:
-(asdf:operate 'asdf:load-op 'ulf2english) ;; Compile and load as necessary
-;(asdf:operate 'asdf:load-source-op 'ulf2english) ;; Doesn't compile
+;; (asdf:operate 'asdf:load-op 'ulf2english) ;; Compile and load as necessary
+(asdf:operate 'asdf:load-source-op 'ulf2english) ;; Doesn't compile
 
 

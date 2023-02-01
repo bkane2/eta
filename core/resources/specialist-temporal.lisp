@@ -94,10 +94,10 @@
 ; Updates time to a "new period", i.e. creates a new constant denoting
 ; a new time period (and stores before/after relationships in context)
 ;
-  (let ((time-old *time*) time-new pred-before pred-after)
+  (let ((time-old (ds-time *ds*)) time-new pred-before pred-after)
     (setq time-new (intern (format nil "NOW~a"
-      (1+ (chars-to-int (cdddr (explode *time*)))))))
-    (setq *time* time-new)
+      (1+ (chars-to-int (cdddr (explode (ds-time *ds*))))))))
+    (setf (ds-time *ds*) time-new)
     (store-time)
     (setq pred-before (list time-old 'before.p time-new))
     (setq pred-after  (list time-new 'after.p time-old))
@@ -129,7 +129,7 @@
 ; ````````````````````
 ; Gets and stores the date-time of the current time proposition.
 ;
-  (let ((pred-time (list *time* 'at-about.p (get-time))))
+  (let ((pred-time (list (ds-time *ds*) 'at-about.p (get-time))))
     (store-in-context pred-time))
 ) ; END store-time
 
@@ -210,7 +210,7 @@
             (cons time (all-times-recur (get-prev-time time))))
           ; Otherwise, skip this time and continue recursively
           (t (all-times-recur (get-prev-time time))))))
-      (all-times-recur (get-prev-time *time*))))
+      (all-times-recur (get-prev-time (ds-time *ds*)))))
 ) ; END all-times
 
 
@@ -456,7 +456,7 @@
 ;
   (cond
     ((temporal-now-noun? noun)
-      (list (get-prev-time *time*)))
+      (list (get-prev-time (ds-time *ds*))))
     ((temporal-start-noun? noun)
       (list 'NOW0))
     ((temporal-move-noun? noun)
@@ -693,16 +693,16 @@
 (defun current.a (times mod-a)
 ; ```````````````````````````````
 ; Select the time corresponding to the current time, applying any mod-a as appropriate.
-; NOTE: at the time of utterance being evaluated, the time of "now" is one step earlier than *time*
+; NOTE: at the time of utterance being evaluated, the time of "now" is one step earlier than (ds-time *ds*)
 ; NOTE: the only mod-a that matters here is 'not', e.g. "not now"
 ; Synonyms: now.a
 ;
   (cond
     ; not current
     ((ttt:match-expr 'temporal-not-mod-a? mod-a)
-      (set-difference times (list (get-prev-time *time*))))
+      (set-difference times (list (get-prev-time (ds-time *ds*)))))
     ; no/unknown mod-a
-    (t (list (get-prev-time *time*))))
+    (t (list (get-prev-time (ds-time *ds*)))))
 ) ; END current.a
 
 
@@ -767,15 +767,15 @@
     ; two turns previous
     ((ttt:match-expr '(mod-a (by.p (^* temporal-turn-noun?))) mod-a)
       (remove-if-not (lambda (time)
-        (is-apart-type time *time* 'turn (time-np-to-num (cadadr mod-a)))) times))
+        (is-apart-type time (ds-time *ds*) 'turn (time-np-to-num (cadadr mod-a)))) times))
     ; two questions previous
     ((ttt:match-expr '(mod-a (by.p (^* temporal-question-noun?))) mod-a)
       (remove-if-not (lambda (time)
-        (is-apart-type time *time* 'question (time-np-to-num (cadadr mod-a)))) times))
+        (is-apart-type time (ds-time *ds*) 'question (time-np-to-num (cadadr mod-a)))) times))
     ; two moves previous
     ((ttt:match-expr '(mod-a (by.p (^* temporal-move-noun?))) mod-a)
       (remove-if-not (lambda (time)
-        (is-apart-type time *time* 'move (time-np-to-num (cadadr mod-a)))) times))
+        (is-apart-type time (ds-time *ds*) 'move (time-np-to-num (cadadr mod-a)))) times))
     ; previous + plural noun
     ((ttt:match-expr 'plur.mod-a mod-a)
       (latest-time times *temporal-plur-value*))
@@ -813,15 +813,15 @@
     ;; ; two turns next
     ;; ((ttt:match-expr '(mod-a (by.p (^* temporal-turn-noun?))) mod-a)
     ;;   (remove-if-not (lambda (time)
-    ;;     (is-apart-type time *time* 'turn (time-np-to-num (cadadr mod-a)))) times))
+    ;;     (is-apart-type time (ds-time *ds*) 'turn (time-np-to-num (cadadr mod-a)))) times))
     ;; ; two questions next
     ;; ((ttt:match-expr '(mod-a (by.p (^* temporal-question-noun?))) mod-a)
     ;;   (remove-if-not (lambda (time)
-    ;;     (is-apart-now time *time* 'question (time-np-to-num (cadadr mod-a)))) times))
+    ;;     (is-apart-now time (ds-time *ds*) 'question (time-np-to-num (cadadr mod-a)))) times))
     ;; ; two moves next
     ;; ((ttt:match-expr '(mod-a (by.p (^* temporal-move-noun?))) mod-a)
     ;;   (remove-if-not (lambda (time)
-    ;;     (is-apart-now time *time* 'move (time-np-to-num (cadadr mod-a)))) times))
+    ;;     (is-apart-now time (ds-time *ds*) 'move (time-np-to-num (cadadr mod-a)))) times))
     ; next + plural noun
     ((ttt:match-expr 'plur.mod-a mod-a)
       (earliest-time times *temporal-plur-value*))
@@ -850,7 +850,7 @@
 ;
   (cond
     ; no/unknown mod-a
-    (t (remove-if-not (lambda (time) (is-prev time (get-prev-time *time*))) times)))
+    (t (remove-if-not (lambda (time) (is-prev time (get-prev-time (ds-time *ds*)))) times)))
 ) ; END just.a
 
 

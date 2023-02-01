@@ -16,7 +16,7 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; GENERAL UTILITY FUNCTIONS
+; [*] GENERAL UTILITY FUNCTIONS
 ;
 ;``````````````````````````````````````````````````````
 
@@ -86,13 +86,23 @@
 
 
 
+(defun choose-random-element (l)
+;``````````````````````````````````
+; Chooses a random element from a list
+;
+  (if (and (listp l) (>= (length l) 1))
+    (nth (random (length l)) l))
+) ; END choose-random-element
+
+
+
 (defun flatten (lst)
 ;````````````````````````
 ; Flattens an arbitrary list using mapcar. Note that we can do this fairly easily
 ; using recursion: use mapcar to flatten each sublist (or if an atom is reached, create a
 ; list consisting of that atom). Then just append all of the flattened sublists together.
 ;
-  (if (not (listp lst))
+  (if (or (null lst) (not (listp lst)))
     (return-from flatten nil))
 
   ; Recursively flatten list
@@ -345,6 +355,58 @@
 
 
 
+(defun str-split (str chr)
+;```````````````````````````
+; Given a string, split into multiple strings based on a delimiter character.
+;
+  (mapcar (lambda (l) (coerce l 'string))
+    (list-split (explode str) chr))
+) ; END str-split
+
+
+
+(defun str-join (lst str-or-chr)
+;`````````````````````````````````
+; Given a list of strings, join into one string around delimiter string/character.
+;
+  (let ((ret ""))
+    (dolist (str lst)
+      (setq ret (concatenate 'string ret str (string str-or-chr))))
+    (coerce (butlast (explode ret) (length (explode (string str-or-chr)))) 'string)
+)) ; END str-join
+
+
+
+(defun str-replace (str substr1 substr2)
+;`````````````````````````````````````````
+; Given a string, and two substrings, replace all occurrences of the first substring
+; with the second substring.
+;
+  (let ((chr (explode str)) (rep (explode substr1)) (new (explode substr2)))
+    (labels ((replace-recur (l1 l2 buff)
+      (cond
+        ((and (null l1) (null l2)) new)
+        ((and (null l1) l2) nil)
+        ((and l1 (null l2))
+          (append new (replace-recur l1 rep nil)))
+        ((char-equal (car l1) (car l2))
+          (replace-recur (cdr l1) (cdr l2) (cons (car l1) buff)))
+        (t (append (reverse buff) (list (car l1))
+          (replace-recur (cdr l1) rep nil))))))
+      (coerce (replace-recur chr rep nil) 'string)
+))) ; END str-replace
+
+
+
+(defun str-repeat (str n)
+; ``````````````````````````
+; Repeats a string n times
+;
+  (format nil "~v@{~A~:*~}" n str)
+) ; END str-repeat
+
+
+
 (defun sym-contains (sym char)
 ;```````````````````````````````
 ; Returns true if a symbol contains the character given by char.
@@ -479,7 +541,114 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; TYPE-CHECKING PREDICATES
+; [*] STRUCT DEEPCOPY FUNCTIONS
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun deepcopy-hash (old)
+;```````````````````````````````
+; Deep copy a hash table.
+;
+  (when (not (hash-table-p old)) (return-from deepcopy-hash (copy-tree old)))
+  (let ((new (make-hash-table
+              :test (hash-table-test old)
+              :size (hash-table-size old))))
+    (maphash (lambda (k v)
+        (setf (gethash (copy-tree k) new) (copy-tree v)))
+      old)
+    new
+)) ; END copy-hash
+
+
+
+(defun deepcopy-plan-step (old &key step-of prev-step next-step)
+;````````````````````````````````````````````````````````````````
+; Deep copy a plan-step structure
+;
+  (let ((new (make-plan-step)))
+    (setf (plan-step-ep-name new) (copy-tree (plan-step-ep-name old)))
+    (setf (plan-step-wff new) (copy-tree (plan-step-wff old)))
+    (setf (plan-step-certainty new) (copy-tree (plan-step-certainty old)))
+
+    (setf (plan-step-step-of new) step-of)
+
+    (when (plan-step-prev-step old)
+      (setf (plan-step-prev-step new)
+        (if prev-step
+          prev-step
+          (deepcopy-plan-step (plan-step-prev-step old) :step-of step-of :next-step new))))
+
+    (when (plan-step-next-step old)
+      (setf (plan-step-next-step new)
+        (if next-step
+          next-step
+          (deepcopy-plan-step (plan-step-next-step old) :step-of step-of :prev-step new))))
+
+    (when (plan-step-subplan old)
+      (setf (plan-step-subplan new) (deepcopy-plan (plan-step-subplan old) :subplan-of new)))
+
+    new
+)) ; END deepcopy-plan-step
+
+
+
+(defun deepcopy-plan (old &key subplan-of)
+;```````````````````````````````````````````
+; Deep copy a plan structure
+;
+  (let ((new (make-plan)))
+    (setf (plan-plan-name new) (copy-tree (plan-plan-name old)))
+    (setf (plan-schema-name new) (copy-tree (plan-schema-name old)))
+    (setf (plan-schema-contents new) (copy-tree (plan-schema-contents old)))
+    (setf (plan-vars new) (copy-tree (plan-vars old)))
+    (setf (plan-types new) (copy-tree (plan-types old)))
+    (setf (plan-var-roles new) (copy-tree (plan-var-roles old)))
+    (setf (plan-rigid-conds new) (copy-tree (plan-rigid-conds old)))
+    (setf (plan-static-conds new) (copy-tree (plan-static-conds old)))
+    (setf (plan-preconds new) (copy-tree (plan-preconds old)))
+    (setf (plan-goals new) (copy-tree (plan-goals old)))
+
+    (setf (plan-subplan-of new) subplan-of)
+
+    (when (plan-curr-step old)
+      (setf (plan-curr-step new) (deepcopy-plan-step (plan-curr-step old) :step-of new)))
+
+    new
+)) ; END deepcopy-plan
+
+
+
+(defun deepcopy-ds (old)
+;```````````````````````````````````````````
+; Deep copy a dialogue state
+;
+  (let ((new (make-ds)))
+    (setf (ds-curr-plan new) (deepcopy-plan (ds-curr-plan old)))
+    (setf (ds-task-queue new) (copy-tree (ds-task-queue old)))
+    (setf (ds-input-queue new) (copy-tree (ds-input-queue old)))
+    (setf (ds-reference-list new) (copy-tree (ds-reference-list old)))
+    (setf (ds-equality-sets new) (deepcopy-hash (ds-equality-sets old)))
+    (setf (ds-gist-kb-user new) (deepcopy-hash (ds-gist-kb-user old)))
+    (setf (ds-gist-kb-eta new) (deepcopy-hash (ds-gist-kb-eta old)))
+    (setf (ds-conversation-log new) (copy-tree (ds-conversation-log old)))
+    (setf (ds-context new) (deepcopy-hash (ds-context old)))
+    (setf (ds-memory new) (deepcopy-hash (ds-memory old)))
+    (setf (ds-kb new) (deepcopy-hash (ds-kb old)))
+    ; TODO: need to modify below line to use deepcopy function from tg package
+    ;; (setf (ds-tg new) (deepcopy-hash (ds-tg old)))
+    (setf (ds-time new) (copy-tree (ds-time old)))
+    (setf (ds-count new) (copy-tree (ds-count old)))
+
+    new
+)) ; END deepcopy-ds
+
+
+
+;``````````````````````````````````````````````````````
+;
+; [*] TYPE-CHECKING PREDICATES
 ;
 ;``````````````````````````````````````````````````````
 
@@ -509,6 +678,19 @@
 ;
   (not (fbound? x))
 ) ; END not-fbound?
+
+
+
+(defun ulf-symbol? (atm)
+;```````````````````````
+; Check whether a symbol is a ULF symbol.
+; (A bit hacky; a proper way would be to enumerate
+; all the type extensions supported by ULF.)
+;
+  (let ((parts (list-split (explode atm) #\.)))
+    (and (= 2 (length parts)) (first parts) (second parts)
+         (not (equal (car (second parts)) #\ )))
+)) ; END ulf-symbol?
 
 
 
@@ -630,13 +812,26 @@
 
 
 
+(defun sentence? (list)
+;```````````````````````````
+; A list is a sentence if it is a flat list of symbols
+; without any ULF type extensions.
+;
+  (if (and
+        (listp list)
+        (every #'symbolp list)
+        (every (lambda (atm) (not (ulf-symbol? atm))) list)) t nil)
+) ; END sentence?
+
+
+
 (defun quoted-sentence? (list)
 ;````````````````````````````````````````````````
 ; Is list of form (quote (word1 word2 ... wordn)) ?
 ;
   (if (and
         (quoted-list? list)
-        (every #'symbolp (second list))) t nil)
+        (sentence? (second list))) t nil)
 ) ; END quoted-sentence?
 
 
@@ -647,8 +842,7 @@
 ;
   (if (and
         (quoted-list? list)
-        (every #'listp (second list))
-        (every (lambda (s) (every #'symbolp s)) (second list))) t nil)
+        (every #'sentence? (second list))) t nil)
 ) ; END quoted-sentence-list?
 
 
@@ -697,19 +891,63 @@
 
 
 
+(defun punct? (atm)
+;```````````````````````
+; Checks whether an atom is a punctuation symbol.
+;
+  (and (symbolp atm) (member atm '(? ! \, \. \: \;)))
+) ; END punct?
+
+
+
+(defun nonpunct? (atm)
+;```````````````````````
+; Checks whether an atom is not a punctuation symbol.
+;
+  (and (symbolp atm) (not (punct? atm)))
+) ; END nonpunct?
+
+
+
+(defun presubst-nonblocker? (atm)
+;`````````````````````````````````
+; Checks whether an atom is not a particular conjunction or subordinating
+; verb that blocks 'you from being substituted with 'you2 (for use by
+; the presubst function).
+;
+  (and (symbolp atm) (not (or (punct? atm) (member atm
+    '(and or but that because if so when then why think see guess
+      believe hope do can would should than know i you - --)))))
+) ; END presubst-nonblocker?
+
+
+
+(defun relative-speech-act? (list)
+;`````````````````````````````````````
+; Checks whether a given list is a relative speech act WFF;
+; that is, contains an episode constant as an argument.
+; e.g., (^you reply-to.v E1)
+;
+  (and (= (length list) 3)
+       (member (second list) *speech-acts*)
+       (symbolp (third list)))
+) ; END relative-speech-act?
+
+
+
 (defun emotion-tag? (atm)
 ;````````````````````````````````````````````````
-; If symbol is equal to [SAD], [HAPPY], or [NEUTRAL],
+; If symbol is included in *emotions-list*,
 ; it qualifies as an emotion tag when inside an output list.
 ;
-  (if (and (symbolp atm) (member atm '([SAD] [HAPPY] [NEUTRAL]))) t nil)
+  (if (and (symbolp atm) (member atm *emotions-list*)) t nil)
 ) ; END emotion-tag?
 
 
 
 ;``````````````````````````````````````````````````````
 ;
-; DISCOURSE UTIL
+; [*] DISCOURSE UTIL
 ;
 ;``````````````````````````````````````````````````````
 
@@ -847,13 +1085,29 @@
 ;````````````````````````````````````````````````
 ; Records a turn in the conversation log, as well as writing to external files.
 ;
-  (let ((text (first turn)) (gists (second turn)) (ulfs (third turn))
-        (agent-name (string-upcase (string agent))))
-    (push text (first (ds-conversation-log *ds*)))
+  (let ((text (first turn)) (gists (second turn)) (semantics (third turn))
+        (pragmatics (fourth turn)) (episodes (fifth turn))
+        (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
+    (push (list agent-name text) (first (ds-conversation-log *ds*)))
     (push gists (second (ds-conversation-log *ds*)))
-    (push ulfs (third (ds-conversation-log *ds*)))
+    (push semantics (third (ds-conversation-log *ds*)))
+    (push pragmatics (fourth (ds-conversation-log *ds*)))
+    (push episodes (fifth (ds-conversation-log *ds*)))
     (log-turn-write turn :agent agent)
 )) ; END log-turn
+
+
+
+(defun find-prev-turn-of-agent (agent)
+;``````````````````````````````````````````````
+; Finds the most recent turn in the conversation log from the given agent.
+;
+  (let ((clog (ds-conversation-log *ds*)) turns)
+    (setq turns (mapcar
+        (lambda (text gists semantics pragmatics episodes) (list text gists semantics pragmatics episodes))
+      (first clog) (second clog) (third clog) (fourth clog) (fifth clog)))
+    (car (remove-if (lambda (turn) (not (equal (first (first turn)) (string agent)))) turns))
+)) ; END find-prev-turn-of-agent
 
 
 
@@ -1010,19 +1264,13 @@
 
 
 
-(defun modify-response (resp)
+(defun swap-duals (wordlist)
 ;``````````````````````````````
-; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
-; (\bme\b|\bmy\b|\bI\b|\bmine\b|\byou\b|\byour\b|\byours\b|\byou\\'re\b)
-; A set of word-level operations, formerly part of the main (doolittle)
-; program, to prepare choice-packet-derived responses for proper output.
-; Changes YOU ARE to YOU ARE2 in preparation for replacement of YOU ARE2
-; by I AM (whereas ARE remains ARE), and similarly for some other words.
+; Swaps dual words in a word list; e.g., changes YOU ARE to I AM, and
+; I AM to YOU ARE, and similarly for other words.
 ;
-  (compress
-    (dual
-      (presubst resp)))
-) ; END modify-response
+  (dual (presubst wordlist))
+) ; END swap-duals
 
 
 
@@ -1038,9 +1286,28 @@
 
 
 
+(defun untag-emotions (resp)
+;```````````````````````````````
+; Removes emotion tags from an utterance.
+;
+  (remove-if #'emotion-tag? resp)
+) ; END untag-emotions
+
+
+
+(defun get-emotion (resp)
+;````````````````````````````
+; Gets the emotion of a response from the tag, as a string.
+;
+  (if *emotions*
+    (string-downcase (implode (cdr (butlast (explode (car resp))))))
+    "neutral")
+) ; END get-emotion
+
+
+
 (defun dual (sentence)
 ;``````````````````````
-; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
 ; Replaces 'I' by 'you', 'you' by 'I', 'my' by 'your', etc.
 ;
   (cond
@@ -1066,8 +1333,7 @@
 
 
 (defun presubst (response)
-;`````````````````````````````
-; NOTE: deprecated (as of 2/4/21) now that Eta takes system-centric view.
+;`````````````````````````````````````
 ; This function is applied to eta's responses before 
 ; their "dual" is formed and printed out. It helps avoid 
 ; outputs like
@@ -1077,65 +1343,40 @@
 ;      WHY DO YOU SAY YOUR BROTHERS ARE STUPID
 ; (as the dual of WHY DO I SAY YOUR BROTHERS ARE STUPID).
 ;
-; It replaces ARE by ARE2 when preceded by YOU (In turn, DUAL
-; will replace YOU by I and ARE2 by AM, so that YOU ARE
-; becomes I AM (whereas WE ARE, THEY ARE, etc., remain
-; unchanged). Similarly it replaces YOU by YOU2 when it is
-; the last word, or when it is not one of the first two
-; words and is not preceded by certain conjunctions (AND,
-; OR, BUT, THAT, BECAUSE, IF, WHEN, THEN, WHY, ...) or
-; by certain subordinating verbs (THINK, BELIEVE, KNOW,...)
-; This is in preparation for replacement of YOU2 by ME
-; (rather than I) when DUAL is applied. This could be
-; done in a more sophisticated way by using MATCH! 
-; WAS -> WAS2 (after I) and WERE -> WERE2 (after YOU)
-; have not been implemented.
+; It replaces ARE by ARE2 when preceded or followed by YOU
+; (In turn, DUAL will replace YOU by I and ARE2 by AM, so
+; that YOU ARE becomes I AM (whereas WE ARE, THEY ARE, etc.,
+; remain unchanged). Similarly, it replaces WERE by WERE2,
+; and WAS by WAS2.
 ;
-  (cond
-    ((null response) nil)
-    ; After the initial call, if the input is more than one word,
-    ; a number = max(1, no. of words processed) is maintained as
-    ; cdr of 'response', while the actual remainder of the response
-    ; is in 'car response'
-    ((null (cdr response))
-      (cond
-        ((member (car response) '(you you\. you! you?))
-          '(you2))
-        (t response)))
-    ((numberp (cdr response))
-      (cond
-        ((null (car response)) nil)
-        ((null (cdar response)) (presubst (car response)))
-        ; Response has a 0 or 1 flag as cdr, and the car contains
-        ; at least two words
-        (t (cond
-          ((and
-              (eq (caar response) 'you)
-              (eq (cadar response) 'are))
-            (cons 'you (cons 'are2 (presubst (cons (cddar response) 1)))))
-          ((= 0 (cdr response))
-            (cons (caar response) (presubst (cons (cdar response) 1))))
-          ; At least 1 word has been processed, i.e. cdr is 1, and there
-          ; are 2 or more words left
-          (t (cond
-            ((or
-                (not (eq (cadar response) 'you))
-                (and (cddar response) (eq (caddar response) 'are))
-                (member (caar response)
-                  '(and or but that because if so when then why think
-                  see guess believe hope than know i you - --))
-                (member (car (last (coerce (string (caar response)) 'list)))
-                  '(#\, #\. #\; #\! #\? #\:) :test #'char-equal))
-              (cons (caar response) (presubst (cons (cdar response) 1))))
-            ; You (second element of (car response)) to be replaced by you2
-            (t (cons (caar response)
-              (cons 'you2 (presubst (cons (cddar response) 1)))))))))))
-
-    ; (cdr response) is non-numeric, so that this is the first call, with
-    ; 'response' containing 2 or more words
-    (t (presubst (cons response 0)))
-    
-)) ; END presubst
+; It also replaces YOU by YOU2 when it is the last word, or
+; when it is not one of the first two words and is not preceded
+; by certain conjunctions (AND, OR, BUT, THAT, BECAUSE, IF, WHEN,
+; THEN, WHY, ...) or by certain subordinating verbs (THINK, BELIEVE,
+; KNOW,...), or when it follows 'to'.
+;
+; This is in preparation for replacement of YOU2 by ME
+; (rather than I) when DUAL is applied.
+;
+  (ttt:apply-rules '(
+    ; are -> are2
+    (/ (_*1 you are _*2) (_*1 you1 are2 _*2))
+    (/ (_*1 are you _*2) (_*1 are2 you1 _*2))
+    ; was -> was2
+    (/ (_*1 I was _*2) (_*1 I was2 _*2))
+    (/ (_*1 was I _*2) (_*1 was2 I _*2))
+    ; were -> were2
+    (/ (_*1 you were _*2) (_*1 you1 were2 _*2))
+    (/ (_*1 were you _*2) (_*1 were2 you1 _*2))
+    ; you -> you2
+    (/ (_*1 you punct? _*2) (_*1 you2 punct? _*2))
+    (/ (_*1 to you _*2) (_*1 to you2 _*2))
+    (/ (_!1 (! presubst-nonblocker?) you _*) (_!1 ! you2 _*))
+    (/ (_!1 _!2 (* nonpunct?) (! presubst-nonblocker?) you _*) (_!1 _!2 * ! you2 _*))
+    (/ (_*1 punct? _!1 (! presubst-nonblocker?) you _*2) (_*1 punct? _!1 ! you2 _*2))
+    (/ (_*1 punct? _!1 _!2 (* nonpunct?) (! presubst-nonblocker?) you _*2) (_*1 punct? _!1 _!2 * ! you2 _*2)))
+  response)
+) ; END presubst
 
 
 
@@ -1187,7 +1428,7 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; MEMORY UTIL
+; [*] MEMORY UTIL
 ;
 ;``````````````````````````````````````````````````````
 
@@ -1384,7 +1625,7 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; CONTEXT UTIL
+; [*] CONTEXT UTIL
 ;
 ;``````````````````````````````````````````````````````
 
@@ -1392,7 +1633,7 @@
 
 (defun print-context (&key verbose key)
 ;```````````````````````````````````````
-; Prints facts in the memory. When verbose is given as true,
+; Prints facts in the context. When verbose is given as true,
 ; print all keys and associated facts as well. If key is given,
 ; print only the list of facts stored under that key.
 ;
@@ -1548,7 +1789,80 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; NAME/CONCEPT/ALIAS/RECORD STRUCTURE UTIL
+; [*] KNOWLEDGE BASE UTIL
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun print-kb (&key verbose key)
+;```````````````````````````````````````
+; Prints facts in the knowledge base. When verbose is given as true,
+; print all keys and associated facts as well. If key is given,
+; print only the list of facts stored under that key.
+;
+  (let (l1 l2)
+    (maphash (lambda (k v)
+      (if (equal v t) (setq l1 (cons k l1))
+        (setq l2 (cons (list k v) l2)))) (ds-kb *ds*))
+    (mapcar (lambda (f)
+      (format t "~a~%" f)) l1)
+    (when (or verbose key)
+      (format t "------------------------------------ ~%")
+      (mapcar (lambda (f)
+        (if (or (null key) (equal (first f) key))
+          (format t "~a: ~a~%~%" (first f) (second f)))) l2)))
+) ; END print-kb
+
+
+
+(defun store-in-kb (wff)
+;```````````````````````````````
+; Stores a wff in knowledge base.
+; 
+  (let ((wff1 (if (equal (car wff) 'quote) (eval wff) wff)))
+    (store-fact wff (ds-kb *ds*)))
+) ; END store-in-kb
+
+
+
+(defun get-from-kb (pred-patt)
+;````````````````````````````````````
+; Retrieves a fact from knowledge base, by checking whether something matching
+; pred-patt is in the kb hash table.
+;
+  (get-matching-facts pred-patt (ds-kb *ds*))
+) ; END get-from-kb
+
+
+
+(defun get-all-from-kb ()
+;```````````````````````````
+; Retrieves all facts from knowledge base.
+;
+  (let (ret)
+    (maphash (lambda (k v)
+      (if (equal v t) (setq ret (cons k ret)))) (ds-kb *ds*))
+    ret
+)) ; END get-all-from-kb
+
+
+
+(defun remove-from-kb (pred-patt)
+;```````````````````````````````````````
+; Removes a fact from knowledge base.
+;
+  (let ((facts (get-from-kb pred-patt)))
+    (if (and facts (not (listp facts)))
+      (remove-fact pred-patt (ds-kb *ds*))
+      (remove-facts facts (ds-kb *ds*))))
+) ; END remove-from-kb
+
+
+
+;``````````````````````````````````````````````````````
+;
+; [*] NAME/CONCEPT/ALIAS/RECORD STRUCTURE UTIL
 ;
 ;``````````````````````````````````````````````````````
 
@@ -1735,7 +2049,7 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; FACT HASH TABLE STORAGE UTIL
+; [*] FACT HASH TABLE STORAGE UTIL
 ;
 ;``````````````````````````````````````````````````````
 
@@ -2199,7 +2513,7 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; SCHEMA UTIL
+; [*] SCHEMA UTIL
 ;
 ;``````````````````````````````````````````````````````
 
@@ -2212,6 +2526,20 @@
 ;
   (setf (gethash header *schemas*) schema-name)
 ) ; END store-schema-name
+
+
+
+(defun print-schema-names (&key surface-english)
+;````````````````````````````````````````````````````
+; Prints all of the dialogue schema names (if :surface-english t
+; is given, convert from ULF to words)).
+;
+  (maphash (lambda (k v) (format t "~a~%"
+      (if surface-english
+        (string-downcase (str-replace (string (car (sym-split k 2))) "-" " "))
+        (string-downcase (string k)))))
+    *schemas*)
+) ; END print-schema-names
 
 
 
@@ -2376,7 +2704,7 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; PATTERN UTIL
+; [*] PATTERN UTIL
 ;
 ;``````````````````````````````````````````````````````
 
@@ -2575,7 +2903,521 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; ERROR UTIL
+; [*] GPT-3 GENERATION UTIL
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun shortname (name &key firstname)
+;``````````````````````````````````````
+; Gets the short version of a name string (if name includes a title,
+; shortname is title + last name, otherwise shortname is first name).
+; If :firstname t is given, return only first name.
+;
+  (let ((parts (str-split name #\ )))
+    (cond
+      ; Includes title, first name, and last name
+      ((and (>= (length parts) 3)
+            (member #\. (explode (first parts))))
+        (if firstname
+          (second parts)
+          (concatenate 'string (first parts) " " (str-join (cddr parts) #\ ))))
+      ; Includes title and last name
+      ((and (= (length parts) 2)
+            (member #\. (explode (first parts))))
+        (if firstname
+          ""
+          (concatenate 'string (first parts) " " (second parts))))
+      (t (first parts)))
+)) ; END shortname
+
+
+
+(defun generate-prompt-turn-start (name &key (short t) (newline t))
+;````````````````````````````````````````````````````````````````````
+; Generates a turn start prefix for the prompt.
+;
+  (if newline
+    (format nil "[N]~a:" (if short (shortname name) name))
+    (format nil "~a:" (if short (shortname name) name)))
+) ; END generate-prompt-turn-start
+
+
+
+(defun standardize-case+punctuation (str)
+;```````````````````````````````````````````````
+; Given a string, standardize the case and punctuation.
+; 
+  ; capitalize beginning of each sentence and fix periods
+  (setq str (str-join (mapcar (lambda (substr)
+        (format nil "~@(~a~)" (string-trim " " substr)))
+      (str-split str #\.)) ". "))
+  ; fix question marks and exclamation points
+  (setq str (str-join (mapcar (lambda (substr)
+      (string-trim " " substr))
+    (str-split str #\?)) "? "))
+  (setq str (str-join (mapcar (lambda (substr)
+      (string-trim " " substr))
+    (str-split str #\!)) "! "))
+  ; fix commas
+  (setq str (str-join (mapcar (lambda (substr)
+      (string-trim " " substr))
+    (str-split str #\,)) ", "))
+  ; capitalize "I"
+  (setq str (str-replace str " i " " I "))
+  ; fix final punctuation
+  (if (equal (last (explode str) 3) '(#\  #\. #\ ))
+    (setq str (coerce (append (butlast (explode str) 3) '(#\.)) 'string)))
+  (if (equal (last (explode str) 2) '(#\. #\ ))
+    (setq str (coerce (append (butlast (explode str) 2) '(#\.)) 'string)))
+  (if (equal (last (explode str)) '(#\ ))
+    (setq str (coerce (append (butlast (explode str)) '(#\.)) 'string)))
+  (if (not (member (car (last (explode str))) '(#\. #\? #\!)))
+    (setq str (coerce (append (explode str) '(#\.)) 'string)))
+  str
+) ; END standardize-case+punctuation
+
+
+
+(defun words-to-str (wordlist)
+;````````````````````````````````
+; Converts a list of word symbols to a string.
+;
+  (let (ret)
+    (setq ret (format nil "~{~a ~}" wordlist))
+    (standardize-case+punctuation ret)
+)) ; END words-to-str
+
+
+
+(defun get-pron-case (name case)
+;```````````````````````````````````
+; Gets the appropriate third person pronoun case based on
+; the lists of female and male first names in resources.
+;
+; TODO: in the future we will likely want to have the
+; user enter their pronouns, to avoid potential misgendering.
+;
+  (let ((firstname (intern (shortname name :firstname t))))
+    (cond
+      ; Subjective -> he/she/they
+      ((member case '(subjective subj)) (cond
+        ((equal (get firstname 'entity-type) 'male.n)
+          'he.pro)
+        ((equal (get firstname 'entity-type) 'female.n)
+          'she.pro)
+        (t 'they.pro)))
+      ; Objective -> him/her/them
+      ((member case '(objective obj)) (cond
+        ((equal (get firstname 'entity-type) 'male.n)
+          'him.pro)
+        ((equal (get firstname 'entity-type) 'female.n)
+          'her.pro)
+        (t 'them.pro)))
+      ; Possessive -> his/her/their
+      ((member case '(possessive poss)) (cond
+        ((equal (get firstname 'entity-type) 'male.n)
+          'his.d)
+        ((equal (get firstname 'entity-type) 'female.n)
+          'her.d)
+        (t 'their.d))))
+)) ; END get-pron-case
+
+
+
+(defun preprocess-ulf-pronouns-for-prompt1 (ulf)
+;``````````````````````````````````````````````````
+; Wrapper function for preprocess-ulf-pronouns-for-prompt
+;
+  (first (preprocess-ulf-pronouns-for-prompt ulf))
+) ; END preprocess-ulf-pronouns-for-prompt1
+
+
+
+(defun preprocess-ulf-pronouns-for-prompt (ulf &key me-pron you-pron)
+;``````````````````````````````````````````````````````````````````````
+; Preprocess a ULF for prompt generation by replacing indexical variables
+; ^me and ^you with either the shortname of the corresponding agent, or
+; the appropriate anaphoric pronoun if the name has previously been used.
+;
+; TODO: this function is a bit messy; it should be optimized in the future.
+;
+  (cond
+    ; If ^me is encountered as an object (non-car of a list),
+    ; replace with them/her/him (if anaphoric) or the value of ^me.
+    ((equal ulf '^me)
+      (list (if me-pron
+        (get-pron-case *^me* 'obj)
+        (intern (shortname *^me*)))
+      t you-pron))
+    ; If ^you is encountered as an object (non-car of a list),
+    ; replace with them/her/him (if anaphoric) or the value of ^you.
+    ((equal ulf '^you)
+      (list (if you-pron
+        (get-pron-case *^you* 'obj)
+        (intern (shortname *^you*)))
+      me-pron t))
+    ; Non-indexical atom.
+    ((atom ulf)
+      (list ulf me-pron you-pron))
+    ; If ^me is encountered as a subject (car of a list),
+    ; replace with they/she/he (if anaphoric) or the value of ^me.
+    ((equal (car ulf) '^me)
+      (list (cons (if me-pron
+              (get-pron-case *^me* 'subj)
+              (intern (shortname *^me*)))
+        (first (preprocess-ulf-pronouns-for-prompt (cdr ulf) :me-pron t :you-pron you-pron)))
+      t you-pron))
+    ; If ^you is encountered as a subject (car of a list),
+    ; replace with they/she/he (if anaphoric) or the value of ^you.
+    ((equal (car ulf) '^you)
+      (list (cons (if you-pron
+              (get-pron-case *^you* 'subj)
+              (intern (shortname *^you*)))
+        (first (preprocess-ulf-pronouns-for-prompt (cdr ulf) :me-pron me-pron :you-pron t)))
+      me-pron t))
+    ; If possessive subject with ^me and anaphoric, replace with their/her/his.
+    ((and (equal (car ulf) '(^me 's)) me-pron)
+      (list (cons (get-pron-case *^me* 'poss)
+        (first (preprocess-ulf-pronouns-for-prompt (cdr ulf) :me-pron t :you-pron you-pron)))
+      t you-pron))
+    ; If possessive subject with ^you and anaphoric, replace with their/her/his.
+    ((and (equal (car ulf) '(^you 's)) you-pron)
+      (list (cons (get-pron-case *^you* 'poss)
+        (first (preprocess-ulf-pronouns-for-prompt (cdr ulf) :me-pron me-pron :you-pron t)))
+      me-pron t))
+    ; Otherwise, recur on each element in list
+    (t (list (mapcar (lambda (part)
+        (let ((result (preprocess-ulf-pronouns-for-prompt part :me-pron me-pron :you-pron you-pron)))
+          (setq me-pron (second result))
+          (setq you-pron (third result))
+          (first result)))
+        ulf)
+      me-pron you-pron)))
+) ; END preprocess-ulf-pronouns-for-prompt
+
+
+
+(defun ulf-to-str (ulf)
+;```````````````````````````
+; Converts a ULF to a string, replacing indexical
+; pronouns and possessives.
+;
+  (if (member "ulf2english" *dependencies* :test #'equal)
+    (ulf2english:ulf2english (preprocess-ulf-pronouns-for-prompt1 ulf)))
+) ; END ulf-to-str
+
+
+
+(defun generate-prompt-preprocess-history (history)
+;```````````````````````````````````````````````````
+; Preprocesses dialogue history into a single string.
+; History is a list of lists (agent turn), where agent
+; and turn are both strings.
+;
+  (let (turn-strs)
+    (setq turn-strs (mapcar (lambda (turn)
+      (concatenate 'string (shortname (first turn)) ": " (second turn))) history))
+    (str-join turn-strs "[N]")
+)) ; END generate-prompt-preprocess-history
+
+
+
+(defun generate-prompt-preprocess-paraphrase-examples (examples)
+;``````````````````````````````````````````````````````````````````
+; Preprocesses a list of examples into a single string.
+; Examples is a list of 3-tuples of strings.
+; 
+  (let (example-strs)
+    (setq example-strs (mapcar (lambda (example)
+      (concatenate 'string
+        (format nil "\"~a " (generate-prompt-turn-start "Person A" :short nil :newline nil))
+        (first example)
+        (format nil "~a " (generate-prompt-turn-start "Person B" :short nil))
+        (second example)
+        "\"[N]"
+        (format nil "~a " (generate-prompt-turn-start (string *^you*)))
+        (first example)
+        (format nil "~a " (generate-prompt-turn-start (string *^me*)))
+        (third example)))
+      examples))
+    (str-join example-strs "[N][N]")
+)) ; END generate-prompt-preprocess-paraphrase-examples
+
+
+
+(defun generate-prompt-preprocess-gist-examples (examples)
+;````````````````````````````````````````````````````````````
+; Preprocesses a list of examples into a single string.
+; Examples is a list of 3-tuples of strings.
+; 
+  (let (example-strs)
+    (setq example-strs (mapcar (lambda (example)
+      (concatenate 'string
+        "Context: \"" (first example) "\"[N]"
+        "Utterance: \"" (second example) "\"[N]"
+        (if (equal (third example) ".")
+          "Rewritten: None"
+          (format nil "Rewritten: \"~a\"" (third example)))))
+      examples))
+    (str-join example-strs "[N][N]")
+)) ; END generate-prompt-preprocess-gist-examples
+
+
+
+(defun generate-prompt-emotion (utterance history emotions)
+;``````````````````````````````````````````````````````````````````````````````````
+; Generates a GPT-3 prompt for classifying an utterance string as one of the emotions in
+; emotions (a list of strings), given a dialogue history (a list of strings).
+;
+  (let (prompt)
+    (setq prompt
+      (format nil "From the following list, which emotional state most closely describes ~a's feelings?[N]"
+        (shortname (string *^me*))))
+    (setq prompt (concatenate 'string prompt
+      (str-join emotions ", ")
+      "[N][N]"
+      (generate-prompt-preprocess-history history)
+      (generate-prompt-turn-start (string *^me*))
+      " "
+      utterance
+      "[N][N]Emotional state:"))
+)) ; END generate-prompt-emotion
+
+
+
+(defun generate-prompt-paraphrase (facts examples prev-utterance gist-clause)
+;``````````````````````````````````````````````````````````````````````````````````
+; Generates a GPT-3 prompt for paraphrasing from facts, which is a list of strings,
+; a list of examples (3-tuples of strings), a previous utterance string, and a
+; gist-clause string.
+;
+  (let (prompt)
+    (setq prompt (format nil "~:(~a~) is having a conversation with ~:(~a~). " *^you* *^me*))
+    (setq prompt (concatenate 'string prompt (str-join facts " ")))
+    (setq prompt (concatenate 'string prompt
+      (format nil "[N][N]Rewrite the following conversations as conversations between ~a and ~a:[N][N]"
+        (shortname (string *^you*)) (shortname (string *^me*)))))
+    (setq prompt (concatenate 'string prompt
+      ; Add examples to prompt
+      (generate-prompt-preprocess-paraphrase-examples examples)
+      "[N][N]"
+      ; Add prev-utterance and gist-clause to prompt
+      (format nil "\"~a " (generate-prompt-turn-start "Person A" :short nil :newline nil))
+      prev-utterance
+      (format nil "~a " (generate-prompt-turn-start "Person B" :short nil))
+      gist-clause
+      "\"[N]"
+      (format nil "~a " (generate-prompt-turn-start (string *^you*)))
+      prev-utterance
+      (generate-prompt-turn-start (string *^me*))))
+    prompt
+)) ; END generate-prompt-paraphrase
+
+
+
+(defun generate-prompt-unconstrained (facts history)
+;````````````````````````````````````````````````````````
+; Generates a GPT-3 prompt for unconstrained generation from facts,
+; which is a list of strings, and history, which is a list of
+; lists (agent turn) where agent and turn are both strings.
+;
+  (let (prompt)
+    (setq prompt (format nil "Write a conversation between ~:(~a~) and ~:(~a~). " *^you* *^me*))
+    (setq prompt (concatenate 'string prompt (str-join facts " ")))
+    (setq prompt (concatenate 'string prompt "[N]"
+      ; Add initial greeting from user to prompt to calibrate GPT-3
+      (format nil "~a Hi, ~a." (generate-prompt-turn-start (string *^you*)) (shortname (string *^me*)))
+      ; If the initial dialogue turn is not Eta's, add initial greeting from Eta to calibrate GPT-3
+      (if (not (equal (first (car history)) (string *^me*)))
+        (format nil "~a Hi, ~a." (generate-prompt-turn-start (string *^me*)) (shortname (string *^you*)))
+        "")
+      (if history "[N]" "")
+      ; TODO: only add the second line by Sophie if not detected in conversation log
+      (generate-prompt-preprocess-history history)
+      (generate-prompt-turn-start (string *^me*))))
+    prompt
+)) ; END generate-prompt-unconstrained
+
+
+
+(defun generate-prompt-gist (examples utterance prior-gist-clause)
+;``````````````````````````````````````````````````````````````````````
+; Generates a GPT-3 prompt for rewriting an utterance (a string) as a gist
+; clause, given a prior gist clause (a string) and a set of examples (a
+; list of 3-tuples of strings).
+;
+  (let (prompt)
+    (setq prompt "I want you to rewrite the utterance sentences I give you in a maximally context-independent and explicit way, given a context sentence. ")
+    (setq prompt (concatenate 'string prompt "Only generate a single sentence, and try to keep it as short as possible, without redundant information."))
+    (setq prompt (concatenate 'string prompt
+      "[N][N]"
+      ; Add examples to prompt
+      (generate-prompt-preprocess-gist-examples examples)
+      "[N][N]"
+      ; Add prior-gist-clause and utterance to prompt
+      "Context: \"" prior-gist-clause "\"[N]"
+      "Utterance: \"" utterance "\"[N]"
+      "Rewritten:"))
+    prompt
+)) ; END generate-prompt-gist
+
+
+
+(defun trim-all-newlines (str)
+;````````````````````````````````
+; Trims all newline characters from the beginning of a string.
+;
+  (string-left-trim (string #\newline)
+    (string-left-trim (string #\return)
+      (string-left-trim (coerce '(#\return #\newline) 'string) str)))
+) ; END trim-all-newlines
+
+
+
+(defun get-gpt3-emotion (utterance history &key (emotions *emotions-list*))
+;`````````````````````````````````````````````````````````````````````````````````````````````````````````
+; Uses GPT-3 to classify the emotion of an utterance as one of the given emotions.
+;
+  (let (prompt stop-seq generated emotion)
+    (setq emotions (mapcar (lambda (e)
+        (format nil "~:(~a~)" (coerce (cdr (butlast (explode e))) 'string)))
+      emotions))
+    (setq prompt (generate-prompt-emotion utterance history emotions))
+    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    (setq stop-seq (vector
+      (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
+      (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
+    ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
+    ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    (setq emotion (format nil "~:(~a~)" (string-trim " " (trim-all-newlines generated))))
+    (if (member emotion emotions :test #'equal)
+      (read-from-string (format nil "[~a]" emotion))
+      '[NEUTRAL])
+)) ; END get-gpt3-emotion
+
+
+
+(defun get-gpt3-paraphrase (facts examples prev-utterance gist-clause)
+;```````````````````````````````````````````````````````````````````````````
+; Generates a GPT-3 paraphrase given a prompt containing facts, which is a list of
+; strings; examples, which is a list of 3-tuples of strings representing example
+; paraphrases; prev-utterance, which is a string, and gist-clause, which is a string.
+; Returns a list of words.
+;
+  (let (prompt stop-seq generated)
+    (setq prompt (generate-prompt-paraphrase facts examples prev-utterance gist-clause))
+    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    (setq stop-seq (vector
+      (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
+      (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))
+      "Person A"
+      "Person B"))
+    ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
+    ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    (parse-chars (coerce (trim-all-newlines generated) 'list))
+)) ; END get-gpt3-paraphrase
+
+
+
+(defun get-gpt3-response (facts history)
+;``````````````````````````````````````````
+; Generates a GPT-3 response from facts, which is a list
+; of strings, and history, which is a list of lists (agent turn)
+; where agent and turn are both strings.
+; Returns a list of words.
+;
+  (let (prompt stop-seq generated)
+    (setq prompt (generate-prompt-unconstrained facts history))
+    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    (setq stop-seq (vector
+      (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
+      (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
+    ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
+    ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    (parse-chars (coerce (trim-all-newlines generated) 'list))
+)) ; END get-gpt3-response
+
+
+
+(defun get-gpt3-gist (examples utterance prior-gist-clause)
+;``````````````````````````````````````````````````````````````
+; Uses GPT-3 to rewrite an utterance as a gist clause using the context
+; of the prior gist clause in the conversation, given a list of examples,
+; which are 3-tuples of strings representing example gist clause interpretations.
+; Returns a list of words, or nil if no gist clause was found.
+;
+; TODO: currently, the full generation is treated as a single gist clause, even
+; if multiple sentences are generated. In the future, we may want to split these
+; up based on punctuation (but we'd need to be certain that GPT-3 is reliable in
+; having each generated sentence be fully explicit and context-independent).
+;
+  (let (prompt stop-seq generated)
+    (setq prompt (generate-prompt-gist examples utterance prior-gist-clause))
+    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    (setq stop-seq (vector
+      "Context:"
+      "Utterance:"
+      "Rewritten:"))
+    ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
+    (setq generated (string-trim '(#\" #\ ) (trim-all-newlines generated)))
+    ;; (format t "~%  gpt-3 gist:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    (if (member (string-downcase generated) '("none" "nil") :test #'equal)
+      nil
+      (list (parse-chars (coerce generated 'list))))
+)) ; END get-gpt3-gist
+
+
+
+(defun gpt3-generate (api-key prompt &key stop-seq)
+;``````````````````````````````````````````````````````````
+; A wrapper function for calling the gpt3-shell package.
+; 
+  (gpt3-shell:generate-safe 'gpt3-shell:generate-with-key
+    (list (get-api-key "openai") prompt :stop-seq stop-seq))
+) ; END gpt3-generate
+
+
+
+;``````````````````````````````````````````````````````
+;
+; [*] ULF PARSER UTIL
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun parse-str-to-ulf-bllip (str)
+;``````````````````````````````````````````
+; Parses a string into a ULF using the BLLIP-based ULF parser
+; (i.e., the :lenulf package).
+; 
+; NOTE: due to the way that symbols are interned in the :lenulf package,
+; this requires temporarily entering the :lenulf package to run the parser,
+; and then re-entering :cl-user, which is the default package that Eta is assumed
+; to be running within. Furthermore, the :cl-user package must be passed as an
+; argument to standardize-ulf in order to intern the final symbols in the correct package.
+; This may need to be changed in the future if it ends up becoming a problem.
+;
+  (let (ulf)
+    (in-package :lenulf)
+    (setq ulf (standardize-ulf:standardize-ulf
+        (lenulf:remove-token-indices (lenulf:english-to-ulf str))
+      :pkg :cl-user))
+    (in-package :cl-user)
+    ulf
+)) ; END parse-str-to-ulf-bllip
+
+
+
+;``````````````````````````````````````````````````````
+;
+; [*] ERROR UTIL
 ;
 ;``````````````````````````````````````````````````````
 

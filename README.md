@@ -32,7 +32,12 @@ are unscoped logical form (ULF) formulas that can be interpreted by Eta. Likewis
 files as `(setq *output* '(<query1> <query2> ...))`, where the queries are ULF formulas that can be interpreted by the subsystem.
 
 Full logs of the conversation are also maintained in `io/<agent_id>/conversation-log/`, displaying the text of all user and
-system utterances, as well as any extracted gist-clauses or ULF formulas corresponding to each turn.
+system utterances, as well as any extracted gist-clauses, semantics and pragmatics corresponding to each turn.
+
+The dialogue manager also supports the ability to rewind the dialogue state to a particular turn in the conversation log (including
+the context/memory/etc. at that time). To rewind the dialogue state, write `(setq *rewind-state* <n>)` to `io/<agent_id>/rewindState.lisp`,
+where `<n>` is a positive integer specifying the relative offset from the current turn (e.g., a value of 4 would return to four turns ago).
+A new copy of the conversation log will be created in the `io/<agent_id>/conversation-log/` directory for this new continuation of the dialogue.
 
 ## Supported avatars
 
@@ -74,5 +79,22 @@ signal to the avatar to select appropriate behavior.
 The sophie-feedback avatar is intended to be used in conjunction with the sophie avatar, on a separate process. At each turn of a sophie dialogue, the gist-clause extracted from the user's utterance is concatenated to the gist-clause of sophie's preceeding utterance, with a `[SEP]` token between the two gist-clauses. This string is given to the sophie-feedback avatar as input, and the
 avatar then outputs some piece of feedback on that turn (for instance, suggestions for open-ended questions the user might have asked).
 
+### sophie-gpt
 
+This is an experimental avatar intended to incorporate GPT-3 based response generation into the sophie avatar. Currently the conversation is rather short/limited, and goes through the following phases:
 
+1. The avatar asks about her pain; she moves onto the next topic once the doctor expresses empathy.
+2. The avatar asks about her prognosis; she moves onto the next topic once the doctor gives an explicit answer.
+3. The avatar asks about her options for the future; she moves onto the next topic once the doctor empowers her (i.e., asks her about her goals/values).
+4. The avatar attempts to finish the conversation; the dialogue ends when the doctor says goodbye.
+
+#### Dependencies
+
+* [Quicklisp](https://www.quicklisp.org/beta/)
+* [ASDF version 3 or above](https://asdf.common-lisp.dev/archives/asdf.lisp)
+* [TTT](https://github.com/genelkim/ttt)
+* [ulf-lib](https://github.com/genelkim/ulf-lib)
+* [ulf2english](https://github.com/genelkim/ulf2english)
+* [gpt3-shell](https://github.com/bkane2/gpt3-shell)
+
+Additionally, a valid OpenAI API key needs to be included in `config/keys/openai.txt`.

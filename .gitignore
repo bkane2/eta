@@ -21,6 +21,10 @@ avatars/test_*
 logs/**/logs_*
 logs/logs
 logs/**/*.csv
+logs/sophie-test
 
 # API keys
-config/keys/
+config/keys
+
+# Pyenv
+env

@@ -165,7 +165,7 @@
 ; Finds all times, constrained by the given adverbials, at which func holds. Return all
 ; satisfying times conjoined with the relevant propositions given by func.
 ; 
-  (let ((f (car func)) (args (cdr func)) (time *time*) (scene coords) moves scene1 props times)
+  (let ((f (car func)) (args (cdr func)) (time (ds-time *ds*)) (scene coords) moves scene1 props times)
     ; Backtrack through times until the initial time is reached
     (loop while time do
 

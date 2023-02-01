@@ -90,6 +90,31 @@
 
 
 
+(defun valid-rewind-state-p (offset)
+;`````````````````````````````````````
+; Check whether a signal to rewind the dialogue state (relative offset) is valid.
+;
+  (and (integerp offset) (> offset 0) (< offset (length *ds-stack*)))
+) ; END valid-rewind-state-p
+
+
+
+(defun check-for-rewind-signal ()
+;````````````````````````````````````
+; Return t if a valid signal to rewind the dialogue state (i.e., a relative offset within
+; the range of previous dialogue states) is detected; nil otherwise.
+;
+  (load (get-io-path "rewindState.lisp"))
+  (cond
+    ((and *rewind-state* (valid-rewind-state-p *rewind-state*))
+      (with-open-file (outfile (get-io-path "rewindState.lisp")
+        :direction :output :if-exists :supersede :if-does-not-exist :create))
+      t)
+    (t nil))
+) ; END check-for-rewind-signal
+
+
+
 (defun write-subsystem (output system)
 ;`````````````````````````````````````````
 ; Writes output/"query" ULF propositions to io/out/<system>.lisp.
@@ -105,7 +130,7 @@
 
 (defun user-log (logfile content)
 ;`````````````````````````````````````
-; Logs some user data in the corresponding log file (i.e., text, gist, or ulf).
+; Logs some user data in the corresponding log file (i.e., text, gist, semantic, or pragmatic).
 ; Temporarily disable pretty-printing so each line in the log file corresponds to a single turn.
 ;
   (let ((fname (concatenate 'string (get-io-path "user-log/") (string-downcase (string logfile)) ".txt")))
@@ -117,38 +142,61 @@
 
 
 
+(defun log-turn-write-all ()
+;`````````````````````````````
+; Logs all of the turns in the current conversation log.
+;
+  (mapcar (lambda (agent+text gist semantic pragmatic)
+      (log-turn-write (list (second agent+text) gist semantic pragmatic)
+        :agent (if (equal (first agent+text) (string *^me*)) 'eta 'user)))
+    (reverse (first (ds-conversation-log *ds*)))
+    (reverse (second (ds-conversation-log *ds*)))
+    (reverse (third (ds-conversation-log *ds*)))
+    (reverse (fourth (ds-conversation-log *ds*))))
+) ; END log-turn-write-all
+
+
+
 (defun log-turn-write (turn &key (agent 'user))
 ;```````````````````````````````````````````````
-; Logs some a turn (a tuple (text gists ulfs)) in the conversation-log directory.
+; Logs some a turn (a tuple (text gists semantics pragmatics)) in the conversation-log directory.
 ; Temporarily disable pretty-printing so each line in the log file corresponds to a single turn.
 ;
-  (let ((fname-text (concatenate 'string (get-io-path "conversation-log/") "text.txt"))
-        (fname-gist (concatenate 'string (get-io-path "conversation-log/") "gist.txt"))
-        (fname-ulf  (concatenate 'string (get-io-path "conversation-log/") "ulf.txt"))
-        (text (first turn)) (gists (second turn)) (ulfs (third turn))
-        (agent-name (string-upcase (string agent))))
+  (let* ((instance-dir (format nil "~a/" *dialogue-instance*))
+         (log-dir (get-io-path "conversation-log/"))
+         (fname-text (concatenate 'string log-dir instance-dir "text.txt"))
+         (fname-gist (concatenate 'string log-dir instance-dir "gist.txt"))
+         (fname-sem  (concatenate 'string log-dir instance-dir "semantic.txt"))
+         (fname-prag (concatenate 'string log-dir instance-dir "pragmatic.txt"))
+         (text (first turn)) (gists (second turn)) (semantics (third turn)) (pragmatics (fourth turn))
+         (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
     (setq *print-pretty* nil)
     (with-open-file (outfile fname-text :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~a : ~s~%" agent-name text))
     (with-open-file (outfile fname-gist :direction :output :if-exists :append :if-does-not-exist :create)
-      (format outfile "~a : ~s~%" agent-name (remove nil gists)))
-    (with-open-file (outfile fname-ulf  :direction :output :if-exists :append :if-does-not-exist :create)
-      (format outfile "~a : ~s~%" agent-name (remove nil ulfs)))
+      (format outfile "~a : ~s~%" agent-name (remove nil (remove-if #'nil-gist-clause? gists))))
+    (with-open-file (outfile fname-sem  :direction :output :if-exists :append :if-does-not-exist :create)
+      (format outfile "~a : ~s~%" agent-name (remove nil semantics)))
+    (with-open-file (outfile fname-prag  :direction :output :if-exists :append :if-does-not-exist :create)
+      (format outfile "~s~%" (remove nil pragmatics)))
     (setq *print-pretty* t))
   ; Additionally write conversation log to appropriate log directories when in read-log mode.
   (when *read-log*
     (let ((fname-text (concatenate 'string "logs/logs_out/text/" (pathname-name *read-log*) ".txt"))
           (fname-gist (concatenate 'string "logs/logs_out/gist/" (pathname-name *read-log*) ".txt"))
-          (fname-ulf  (concatenate 'string "logs/logs_out/ulf/" (pathname-name *read-log*) ".txt"))
-          (text (first turn)) (gists (second turn)) (ulfs (third turn))
+          (fname-sem  (concatenate 'string "logs/logs_out/semantic/" (pathname-name *read-log*) ".txt"))
+          (fname-prag (concatenate 'string "logs/logs_out/pragmatic/" (pathname-name *read-log*) ".txt"))
+          (text (first turn)) (gists (second turn)) (semantics (third turn)) (pragmatics (fourth turn))
           (agent-name (string-upcase (string agent))))
       (setq *print-pretty* nil)
       (with-open-file (outfile fname-text :direction :output :if-exists :append :if-does-not-exist :create)
         (format outfile "~a : ~s~%" agent-name text))
       (with-open-file (outfile fname-gist :direction :output :if-exists :append :if-does-not-exist :create)
-        (format outfile "~a : ~s~%" agent-name (remove nil gists)))
-      (with-open-file (outfile fname-ulf  :direction :output :if-exists :append :if-does-not-exist :create)
-        (format outfile "~a : ~s~%" agent-name (remove nil ulfs)))
+        (format outfile "~a : ~s~%" agent-name (remove nil (remove-if #'nil-gist-clause? gists))))
+      (with-open-file (outfile fname-sem  :direction :output :if-exists :append :if-does-not-exist :create)
+        (format outfile "~a : ~s~%" agent-name (remove nil semantics)))
+      (with-open-file (outfile fname-prag  :direction :output :if-exists :append :if-does-not-exist :create)
+        (format outfile "~s~%" (remove nil pragmatics)))
       (setq *print-pretty* t)))
 ) ; END log-turn-write
 
@@ -195,6 +243,9 @@
       :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~%#~D: ~a" *output-count* wordstring))
 
+    ; Add words to output buffer
+    (push wordlist *output-buffer*)
+
     ; Also write ETA's words to standard output:
     (format t "~% ... ")
     (dolist (word wordlist)
@@ -204,6 +255,49 @@
         (format t "~%")))
     (format t "~%")
 )) ; END say-words
+
+
+
+(defun write-output-buffer ()
+;````````````````````````````````
+; Writes buffered output to turn-output.txt, as well as any emotion
+; tags to turn-emotion.txt.
+;
+  (let ((buffer (reverse *output-buffer*)) (output "") (emotion "neutral"))
+    (setq output (str-join (mapcar (lambda (wordlist)
+        (words-to-str (untag-emotions wordlist)))
+      buffer) " "))
+    (dolist (wordlist buffer)
+      (if (equal emotion "neutral")
+        (setq emotion (get-emotion wordlist))))
+    (with-open-file (outfile (get-io-path "turn-output.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create)
+      (format outfile "~a" output))
+    (with-open-file (outfile (get-io-path "turn-emotion.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create)
+      (format outfile "~a" emotion))
+    (setq *output-buffer* nil)
+)) ; END write-output-buffer
+
+
+
+(defun get-api-key (api)
+;``````````````````````````
+; Reads an API key from a corresponding text file in config/keys.
+; Returns nil and prints a warning if the API key does not exist.
+  (let ((fname (concatenate 'string "config/keys/" api ".txt")) in key)
+    (ensure-directories-exist "config/keys")
+    (cond
+      ((probe-file fname)
+        (setq in (open fname))
+        (setq key (read-line in))
+        (close in)
+        key)
+      (t
+        (format t "~% --- Warning: API key for ~a not found in ~a.~%" api fname)
+        nil))
+)) ; END get-api-key
+
 
 
 
@@ -300,7 +394,7 @@
     (setq log-input `(^you say-to.v ^me ',log-input))
     (when log-input
       (setq ep-name-new (store-new-contextual-facts (list log-input)))
-      (push (list ep-name-new log-input) (ds-perception-queue *ds*))))
+      (push (list ep-name-new log-input) (first (ds-input-queue *ds*)))))
 ) ; END process-and-increment-log
 
 
