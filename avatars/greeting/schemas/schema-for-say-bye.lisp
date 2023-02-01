@@ -16,26 +16,17 @@
 )
 
 :rigid-conds (
-  ; Sophie is a woman
-  !r1 (^me ((pres be.v) (= (a.d woman.n))))
-  ; Sophie is 65 years old
-  !r2 (^me ((pres be.v) ((mod-a (65.a (plur year.n))) old.a)))
 )
 
 :static-conds (
-  ; Sophie has lung cancer
-  ?s1 (^me ((pres have.v) (k (lung.n cancer.n))))
-)
-
-:goals (
-  ; Sophie wants to finish the conversation
-  ?g1 (^me ((pres want.v) (to (finish.v (the.d conversation.n)))))
 )
 
 :preconds (
-  ; Sophie is done talking about her condition for now
-  ?p1 (^me ((pres be.v) done.a ({with}.p-arg (ka (talk.v (about.p ((^me 's) condition.n)))))
-        (adv-e (for.p (k now.n)))))
+)
+
+:goals (
+  ; Eta wants to finish the conversation
+  ?g1 (^me ((pres want.v) (to (finish.v (the.d conversation.n)))))
 )
 
 :episodes (
@@ -55,7 +46,7 @@
 
   )
 
-  ?e3 (^me paraphrase-to.v ^you '(Thank you for meeting with me today \. Bye \.))
+  ?e3 (^me paraphrase-to.v ^you '(Thank you for talking with me today \. Bye \.))
   ?e4 (^me say-bye-to.v ^you)
 
 )
