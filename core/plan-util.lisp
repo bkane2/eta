@@ -989,6 +989,12 @@
     (if (atom predication) ; unexpected
       (return-from nsubst-schema-args schema))
     (dolist (x predication)
+      ; account for (set-of ...) arguments
+      ; (TODO: ultimately, might just want to do a deep search for variables)
+      (if (and (listp x) (equal (car x) 'set-of))
+        (dolist (x1 (cdr x))
+          (if (variable? x1) (push x1 vars))))
+      ; otherwise, add variable to list
       (if (variable? x) (push x vars)))
     (when (null vars) ; unexpected
       (format t "@@@ Warning: Attempt to substitute values~%    ~a~%    in header ~a, which has no variables~%"

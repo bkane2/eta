@@ -860,8 +860,9 @@
       ; instantiation of any subschema involving both participants.
       ((setq bindings (bindings-from-ttt-match '((! (set-of ^me ^you) (set-of ^you ^me))
                                                   schema-header? (? _*)) wff))
+        (setq args-list (cdr (get-single-binding bindings)))
         (setq bindings (cdr bindings))
-        (setq args-list (get-multiple-bindings bindings))
+        (setq args-list (append args-list (get-multiple-bindings bindings)))
         ; If episode is an obviated action, skip, otherwise generate subplan from schema name
         (cond
           ((obviated-action ep-name)
@@ -929,6 +930,7 @@
          perceived-actions sk-var sk-name concept-name concept-schema goal-name goal-schema)
 
     ;; (format t "~%WFF = ~a,~% in the ETA action ~a being processed~%" wff ep-name) ; DEBUGGING
+    ;; (print-plan-as-tree (ds-curr-plan *ds*)) ; DEBUGGING
 
     ; Big conditional statement to determine the type of the current
     ; action, and to form the subsequent action accordingly.
@@ -1511,7 +1513,7 @@
       ; Eta: Initiating Subschema
       ;````````````````````````````
       ((setq bindings (bindings-from-ttt-match '(^me schema-header? ^you (? _*)) wff))
-        (setq args-list (get-multiple-bindings bindings))
+        (setq args-list (cons '^me (cons '^you (get-multiple-bindings bindings))))
         ; If episode is an obviated action, skip, otherwise generate subplan from schema name
         (cond
           ((obviated-action ep-name)
