@@ -28,3 +28,6 @@ config/keys
 
 # Pyenv
 env
+
+# Batch files
+*.bat
