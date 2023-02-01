@@ -7,12 +7,12 @@
 
 (defparameter *exchange-greetings*
 
-'(event-schema :header ((^me exchange-greetings.v ^you) ** ?e)
+'(event-schema :header ((?s exchange-greetings.v ?h) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (
-  !t1 (^me person.n)
-  !t2 (^you person.n)
+  !t1 (?s person.n)
+  !t2 (?h person.n)
 )
 
 :rigid-conds (
@@ -25,22 +25,21 @@
 )
 
 :goals (
+  ?g1 (?s ((pres want.v) (to (greet.v ?h))))
 )
 
 :episodes (
 
-  ;; ?e1 (^me say-hello-to.v ^you)
-  ?e1 (^me say-to.v ^you '(Hello \.))
+  ;; ?e1 (?s say-hello-to.v ?h)
+  ?e1 (?s say-to.v ?h '(Hello \.))
 
-  ;; ?e2 (^me inquire.v (about.p-arg (th x (x (well-being-of.p ^you)))))
-  ?e2 (^me paraphrase-to.v ^you '(How are you doing ?))
+  ;; ?e2 (?s inquire.v (about.p-arg (th x (x (well-being-of.p ?h)))))
+  ?e2 (?s paraphrase-to.v ?h '(How are you doing ?))
 
-  ?e3 (^you reply-to.v ?e2)
+  ?e3 (?h reply-to.v ?e2)
 
-  ?e4 (^me say-to.v ^you '(Test \.))
-
-  ?e5 (:if ((^you do.v (no.d thing.n)) ** ?e3)
-    ?e6 (^me say-to.v ^you '(I see you\'re not interested in talking with me right now\. That\'s fine\.)))
+  ?e4 (:if ((?h do.v (no.d thing.n)) ** ?e3)
+    ?e5 (?s say-to.v ?h '(I see you\'re not interested in talking with me right now\. That\'s fine\.)))
 
 )
 

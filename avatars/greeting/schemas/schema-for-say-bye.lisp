@@ -7,12 +7,12 @@
 
 (defparameter *say-bye*
 
-'(event-schema :header (((set-of ^me ^you) say-bye.v) ** ?e)
+'(event-schema :header (((set-of ?s ?h) say-bye.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (
-  !t1 (^me person.n)
-  !t2 (^you person.n)
+  !t1 (?s person.n)
+  !t2 (?h person.n)
 )
 
 :rigid-conds (
@@ -26,28 +26,28 @@
 
 :goals (
   ; Eta wants to finish the conversation
-  ?g1 (^me ((pres want.v) (to (finish.v (the.d conversation.n)))))
+  ?g1 (?s ((pres want.v) (to (finish.v (the.d conversation.n)))))
 )
 
 :episodes (
 
-  ;; ?e1 (^me paraphrase-to.v ^you '(Goodbye \.))
-  ;; ?e1 (^me say-to.v ^you ?words)
+  ;; ?e1 (?s paraphrase-to.v ?h '(Goodbye \.))
+  ;; ?e1 (?s say-to.v ?h ?words)
   
   ?e2 (:repeat-until ((the.d conversation.n) be.v over.a)
   
-    ;; ?e3 (^you reply-to.v ?e1)
+    ;; ?e3 (?h reply-to.v ?e1)
 
-    ;; ?e4 (^me react-to.v ?e3)
+    ;; ?e4 (?s react-to.v ?e3)
 
-    ?e3 (^me say-to.v ^you ?words)
+    ?e3 (?s say-to.v ?h ?words)
 
-    ?e4 (^you reply-to.v ?e3)
+    ?e4 (?h reply-to.v ?e3)
 
   )
 
-  ?e3 (^me paraphrase-to.v ^you '(Thank you for talking with me today \. Bye \.))
-  ?e4 (^me say-bye-to.v ^you)
+  ?e3 (?s paraphrase-to.v ?h '(Thank you for talking with me today \. Bye \.))
+  ?e4 (?s say-bye-to.v ?h)
 
 )
 
