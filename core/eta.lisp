@@ -1067,6 +1067,9 @@
       ; exits the conversation, whereas say-bye-to.v might be used during the exchange of
       ; pleasantries and farewells at the end of a standard conversation.
       ((equal wff '(^me say-bye.v))
+        ; Write any final buffered output
+        (when *output-buffer*
+          (write-output-buffer))
         (exit))
 
       ;`````````````````````````````````````
@@ -2001,6 +2004,9 @@
 (defun plan-saying-bye ()
 ;```````````````````````````````
 ; At the moment, this just causes Eta to immediately exit.
+  ; Write any final buffered output
+  (when *output-buffer*
+    (write-output-buffer))
   (exit)
 ) ; END plan-saying-bye
 
