@@ -148,7 +148,7 @@
 ; ``````````````````````````````````````````````````````````````````
 
   1 (:or
-    (0 .CAN I .TELL you about my .PAIN 0)
+    (0 .CAN I .TELL you about my .PAIN 1)
     (0 .WH_ 2 .PAIN feel like 0)
     (0 describe 2 .YOUR-REF 2 .PAIN 0))
     2 *say-pain-worse* (100 :schema)
@@ -164,8 +164,8 @@
     2 *say-pain-worse* (100 :schema)
   1 (0 .DO you .HAVE the .PAIN .FREQUENTLY 0)
     2 *say-pain-worse* (100 :schema)
-  1 (0 .CAN I .TELL you about my .PAIN instead of test results 0)
-    2 *say-pain-worse* (100 :schema)
+  ;; 1 (0 .CAN I .TELL you about my .PAIN instead of test results 0)
+  ;;   2 *say-pain-worse* (100 :schema)
 
 ; ````````````````````       radiation       ```````````````````````
 ; ``````````````````````````````````````````````````````````````````

@@ -331,8 +331,8 @@
   ;;   2 (Of course \. I\'ll do my best to soften the blow \.) (0 :out)
   1 (0 I .SHOULD .TELL .SOMEONE .CLOSE to me about the cancer 0)
     2 *ask-what-to-tell-family* (100 :schema)
-  1 (0 you will .BE .AVAILABLE to .HELP me and my .FAMILY during my cancer .TREATMENT 0)
-    2 *ask-what-to-tell-family* (100 :schema)
+  ;; 1 (0 you will .BE .AVAILABLE to .HELP me and my .FAMILY during my cancer .TREATMENT 0)
+  ;;   2 *ask-what-to-tell-family* (100 :schema)
   ;; 1 (you will .HELP me and my .FAMILY through the .TREATMENT .PROCESS \.)
   ;;   2 (Thank you \. Knowing that you\'ll be by our side throughout all this is a huge weight off my shoulders \.) (100 :out)
   ;;   2 (Thank you \. I appreciate having someone else in my corner so to speak \.) (0 :out)
@@ -372,14 +372,14 @@
   ;; 1 (0 the test results show that the radiation is not working 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
 
-  ; Example empathetic response
-  1 (0 you recognize how hard receiving the test results is for me 0)
-    2 (:or
-        (It was difficult for me to accept the test results \. I\'m still having a hard time coping with the news \,
-        but I appreciate your help \.)
-        (It\'s just a lot for me to take in at once \.)
-        (It\'s never easy to hear things like this \. I think I just need time \.))
-      (0 :out)
+  ;; ; Example empathetic response
+  ;; 1 (0 you recognize how hard receiving the test results is for me 0)
+  ;;   2 (:or
+  ;;       (It was difficult for me to accept the test results \. I\'m still having a hard time coping with the news \,
+  ;;       but I appreciate your help \.)
+  ;;       (It\'s just a lot for me to take in at once \.)
+  ;;       (It\'s never easy to hear things like this \. I think I just need time \.))
+  ;;     (0 :out)
 
 ; ````````````````````   treatment-option    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
