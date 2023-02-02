@@ -167,9 +167,9 @@
     ;; (format t "schema used to initialize plan ~a is ~% ~a~%"
     ;;   (plan-plan-name plan) (plan-schema-contents plan)) ; DEBUGGING
 
-    ; Destructively ubstitute the arguments 'args' (if non-nil) for the variables
+    ; Destructively substitute the arguments 'args' for the variables
     ; in the plan/schema header (other than the episode variable)
-    (if args (nsubst-schema-args args schema))
+    (nsubst-schema-args args schema)
 
     ;; (format t "schema used for plan ~a, with arguments instantiated ~% ~a~%"
     ;;   (plan-plan-name plan) (plan-schema-contents plan)) ; DEBUGGING
@@ -1002,14 +1002,26 @@
       (return-from nsubst-schema-args schema))
     (setq vars (reverse vars))
     (cond
+      ; If more args given than variables, print warning. If the first variables are ^me and/or ^you, remove these
+      ; from the args list. Otherwise, remove superfluous arguments from the end of the list.
       ((> (length args) (length vars))
         (format t "@@@ Warning: More values supplied, viz.,~%    ~a,~%    than header ~a has variables~%"
                   args predication)
-        (setq args (butlast args (- (length args) (length vars)))))
+        (if (member '^me (flatten predication)) (setq args (remove '^me args)))
+        (if (member '^you (flatten predication)) (setq args (remove '^you args)))
+        (setq args (butlast args (- (length args) (length vars))))
+        (format t "@@@ Now using args: ~a~%" args))
+      ; If fewer args given than variables, print warning and assume that the first two missing args are ^me and ^you
+      ; if they don't appear in the header.
       ((< (length args) (length vars))
         (format t "@@@ Warning: Fewer values supplied, viz.,~%    ~a,~%    than header ~a has variables~%"
                   args predication)
-        (setq vars (butlast vars (- (length vars) (length args))))))
+        (if (and (>= (- (length vars) (length args)) 2) (not (member '^you (flatten predication))))
+          (setq args (cons '^you args)))
+        (if (not (member '^me (flatten predication)))
+          (setq args (cons '^me args)))
+        (setq vars (butlast vars (- (length vars) (length args))))
+        (format t "@@@ Now using args: ~a, for vars: ~a~%" args vars)))
             
       ; Length of 'args' and 'vars' are equal (or have just been equalized)
     (dotimes (i (length args))

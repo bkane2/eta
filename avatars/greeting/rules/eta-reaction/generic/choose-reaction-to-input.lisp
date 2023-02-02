@@ -8,7 +8,7 @@
 '(
   ; Goodbye responses
   1 (0 goodbye \. 0)
-    2 *say-bye* (0 :schema)
+    2 (*say-bye* (^me ^you)) (0 :schema+args)
   ; Question responses
   1 (0 ?) ; anything ending with ?
     2 *reaction-to-question* (0 :subtree)
