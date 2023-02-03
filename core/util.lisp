@@ -935,6 +935,18 @@
 
 
 
+(defun tag? (atm)
+;````````````````````````````````````````````````
+; If symbol is surrounded by [...], classify it as a tag.
+;
+  (if (and (symbolp atm)
+        (equal #\[ (car (explode atm)))
+        (equal #\] (car (last (explode atm)))))
+    t nil)
+) ; END tag?
+
+
+
 (defun emotion-tag? (atm)
 ;````````````````````````````````````````````````
 ; If symbol is included in *emotions-list*,
@@ -1279,10 +1291,21 @@
 ; Prepends each response utterance with a default [NEUTRAL] tag unless it
 ; already has an explicit emotion tag. If *emotions* is NIL, strip
 ; all emotion tags from response, otherwise return tagged response.
+; Also remove non-emotion tags (at the moment)
 ;
   (let ((tagged-resp (if (some #'emotion-tag? resp) resp (cons '[NEUTRAL] resp))))
-    (if *emotions* tagged-resp (remove-if #'emotion-tag? tagged-resp))
+    (remove-unsupported-tags
+      (if *emotions* tagged-resp (remove-if #'emotion-tag? tagged-resp)))
 )) ; END tag-emotions
+
+
+
+(defun remove-unsupported-tags (resp)
+;```````````````````````````````````````
+; Removes tags from an utterance that aren't currently supported.
+;
+  (remove-if (lambda (word) (and (tag? word) (not (emotion-tag? word)))) resp)
+) ; END remove-unsupported-tags
 
 
 
