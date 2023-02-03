@@ -1303,9 +1303,18 @@
 (defun remove-unsupported-tags (resp)
 ;```````````````````````````````````````
 ; Removes tags from an utterance that aren't currently supported.
+; Note that we also need to remove cases where the tag might be split up
+; across multiple symbols (this is sometimes the case with GPT3-generated responses),
+; although perhaps this should be dealt with in the parse-chars function instead.
 ;
-  (remove-if (lambda (word) (and (tag? word) (not (emotion-tag? word)))) resp)
-) ; END remove-unsupported-tags
+  (let (ret (include t))
+    (setq resp (remove-if (lambda (word) (and (tag? word) (not (emotion-tag? word)))) resp))
+    (dolist (word resp)
+      (if (equal #\[ (car (explode word))) (setq include nil))
+      (if include (push word ret))
+      (if (equal #\] (car (last (explode word)))) (setq include t)))
+    (reverse ret)
+)) ; END remove-unsupported-tags
 
 
 
