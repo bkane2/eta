@@ -3339,6 +3339,8 @@
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
     (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
+    ; Hack to remove parentheticals that GPT-3 sometimes generates
+    (setq generated (str-replace (str-replace generated "(" "[") ")" "]"))
     (parse-chars (coerce (trim-all-newlines generated) 'list))
 )) ; END get-gpt3-response
 
