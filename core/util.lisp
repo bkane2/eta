@@ -2826,6 +2826,9 @@
 ; user sentence -- a "gist clause").
 ;
   (let (stack rest n name)
+    ; Overwrite previous rule tree if this is called more than once for a given rootname
+    (setf (symbol-plist rootname) nil)
+    
     (setf (get rootname 'pattern) (cadr packet))
     ; The root is at depth 1, its 'next' or 'children' properties
     ; will be set if/when a rule at the same or lower depth is encountered
