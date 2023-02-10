@@ -59,8 +59,8 @@
 ;; ?e4 ((set-of ^me ^you) ask-about-options.v)
 
 
-;; (say-bye)
-?e5 ((set-of ^me ^you) say-bye.v)
+;; ;; (say-bye)
+;; ?e5 ((set-of ^me ^you) say-bye.v)
 
 )
 

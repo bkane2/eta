@@ -121,6 +121,8 @@
     2 *mention-taking-lortab* (100 :schema)
   1 (0 am I taking .PAIN-MED 0)
     2 *mention-taking-lortab* (100 :schema)
+  1 (0 am I taking .MEDICINE for my .PAIN 0)
+    2 *mention-taking-lortab* (100 :schema)
   1 (0 how often am I taking medication 0)
     2 *mention-lortab-frequency* (100 :schema)
   1 (0 does taking medication more .FREQUENTLY .HELP 0)
@@ -367,4 +369,7 @@
   ;; 1 (how am I doing today ?)
   ;;   2 ([SAD] the pain isn\'t too bad today \. I\'m mostly just anxious \.) (0 :out)
 
+  1 (0 NIL Question ? 0)
+    2 *respond-to-question* (0 :schema)
+    
 )) ; END *reaction-to-question*

@@ -65,11 +65,14 @@
       
         ?e10 (^me paraphrase-to.v ^you '(I\'m not sure I can trust your prognosis \. I need to find another
                                          doctor who can be honest with me \.))
-        ?e11 ((set-of ^me ^you) pause-conversation.v))))
+        ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
+        ?e12 (^me say-bye-to.v ^you))))
 
   ; Once the user is explicit, proceed
-  ?e12 (^me paraphrase-to.v ^you '(It\'s really hard to hear my prognosis \. I thought for sure I would have longer than
+  ?e13 (^me paraphrase-to.v ^you '(It\'s really hard to hear my prognosis \. I thought for sure I would have longer than
                                    that \. Thank you for being honest\, though \.))
+  
+  ?e14 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
 
 )
 
