@@ -12,11 +12,7 @@
 ; An Eta dialogue focused around a simple doctor-patient discussion, intended to test the integration
 ; of GPT-3 with response generation.
 ;
-; The dialogue follows a simple sequence of phases:
-; 1. The patient asks about her pain (proceeds once doctor is sufficiently empathetic)
-; 2. The patient asks about her prognosis (proceeds once doctor is sufficiently explicit)
-; 3. The patient asks about her treatment options (proceeds once the doctor is sufficiently empowering)
-; 4. The patient tries to close the conversation (ends once the doctor says some variant of "goodbye")
+; Empowering module
 ;
 
 :types (
@@ -39,28 +35,9 @@
 :episodes (
 
 ?e1 (^me say-to.v ^you '(Hi\, doctor\. I\'m meeting with you today to help get some questions answered about my condition\.))
-;; ?e1 (^me say-to.v ^you '(Hi\, doctor\. I\'m Sophie\. I\'m meeting with you today to help get some questions answered about my condition\.))
-;; ?e1 (^me say-to.v ^you '(Hi\, my name is Sophie\. I\'m meeting with you today to help get some questions answered about my options and my future\.))
 
-; For testing schemas
-;; ?e2 (:repeat-until ((the.d conversation.n) be.v over.a)
-;;   ?e3 ((set-of ^me ^you) ask-about-narcotic-addiction.v)
-;; )
-
-;; (pain)
-?e2 ((set-of ^me ^you) ask-about-pain.v)
-
-
-;; (prognosis)
-;; ?e3 ((set-of ^me ^you) ask-about-prognosis.v)
-
-
-;; ;; (options)
-;; ?e4 ((set-of ^me ^you) ask-about-options.v)
-
-
-;; ;; (say-bye)
-;; ?e5 ((set-of ^me ^you) say-bye.v)
+;; (options)
+?e2 ((set-of ^me ^you) ask-about-options.v)
 
 )
 
@@ -111,9 +88,6 @@
 (mapcar #'(lambda (x) 
       (store-topic-keys (first x) (second x) '*eta-schema*))
   '(
-    (?e2 (Pain))
-    (?e3 (Prognosis))
-    (?e4 (Options))
-    (?e5 (Say-bye))
+    (?e2 (Options))
   )
 ) ; END mapcar #'store-topic-keys

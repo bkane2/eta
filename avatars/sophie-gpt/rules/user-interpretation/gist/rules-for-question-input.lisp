@@ -1100,4 +1100,7 @@
   1 (0 .BE 2 .ALRIGHT 2 .CALL 1 you 1 sophie 0)
     2 ((Can you call me sophie ?)) (0 :gist)
 
+  1 (0)
+    2 ((NIL Question ?)) (0 :gist)
+
 )) ; END *question-input*

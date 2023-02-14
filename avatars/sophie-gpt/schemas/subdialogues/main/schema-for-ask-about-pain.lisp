@@ -68,16 +68,18 @@
       ?e9 (:if (not (^you be.v empathetic.a))
       
         ?e10 (^me paraphrase-to.v ^you '(I don\'t think I can handle this right now \. I need a break \.))
-        ?e11 ((set-of ^me ^you) pause-conversation.v))))
+        ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
+        ?e12 (^me say-bye-to.v ^you))))
 
   ; Once the user is empathetic, proceed (but make sure that the user has actually answered Sophie's question)
-  ?e12 (:if (not (^you tell.v ^me (about.p-arg ((^me 's) condition.n))))
+  ?e13 (:if (not (^you tell.v ^me (about.p-arg ((^me 's) condition.n))))
   
-    ?e13 (^me paraphrase-to.v ^you '(I appreciate your empathy \, but can you tell me about my condition ?))
-    ?e14 (^you reply-to.v ?e10)
+    ?e14 (^me paraphrase-to.v ^you '(I appreciate your empathy \, but can you tell me about my condition ?))
+    ?e15 (^you reply-to.v ?e14))
 
-    :else (
-      ?e13 (^me paraphrase-to.v ^you '(It\'s difficult to hear that my cancer has spread\, but I appreciate your empathy \.))))
+  ?e16 ((set-of ^me ^you) acknowledge-empathy.v)
+
+  ?e17 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
 
 )
 

@@ -65,28 +65,31 @@
       
         ?e10 (^me paraphrase-to.v ^you '(You\'re giving me too much information at once and not listening to my goals \.
                                          I need to take a break to process this information \.))
-        ?e11 ((set-of ^me ^you) pause-conversation.v))))
+        ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
+        ?e12 (^me say-bye-to.v ^you))))
 
   ; Once the user is empowering, proceed (but make sure that the user has actually answered Sophie's question adequately)
-  ?e12 (:try-in-sequence
+  ?e13 (:try-in-sequence
 
     (:if (not (^you tell.v ^me (about.p-arg ((^me 's) (plur option.n)))))
     
-      ?e13 (^me paraphrase-to.v ^you '(Given the goals that we discussed \, what option do you think is the best ?))
-      ?e14 (^you reply-to.v ?e10))
+      ?e14 (^me paraphrase-to.v ^you '(Given the goals that we discussed \, what option do you think is the best ?))
+      ?e15 (^you reply-to.v ?e14))
 
     (:if (not (^you tell.v ^me (about.p-arg (k chemotherapy.n))))
     
-      ?e13 (^me paraphrase-to.v ^you '(Do you think I need chemotherapy ?))
-      ?e14 (^you reply-to.v ?e10))
+      ?e14 (^me paraphrase-to.v ^you '(Do you think I need chemotherapy ?))
+      ?e15 (^you reply-to.v ?e14))
 
     (:if (not (^you tell.v ^me (about.p-arg (k (comfort.n care.n)))))
     
-      ?e13 (^me paraphrase-to.v ^you '(I\'ve heard about something called comfort care \. Do you think that\'s an option ?))
-      ?e14 (^you reply-to.v ?e10)))
+      ?e14 (^me paraphrase-to.v ^you '(I\'ve heard about something called comfort care \. Do you think that\'s an option ?))
+      ?e15 (^you reply-to.v ?e14)))
 
-  ?e15 (^me paraphrase-to.v ^you '(Thank you for telling me about my options \.
+  ?e16 (^me paraphrase-to.v ^you '(Thank you for telling me about my options \.
                                    I need to think about them more and discuss them with my family \.))
+
+  ?e17 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
 
 )
 
