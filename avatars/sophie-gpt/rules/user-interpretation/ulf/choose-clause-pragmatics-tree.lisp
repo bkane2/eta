@@ -162,6 +162,7 @@
   1 (:or
     ;;; Treatment options
     (0 What are my treatment goals 0)
+    (0 What are my priorities 0)
     (0 Do I have 1 .QUESTION about my treatment options 0)
     (0 What do I understand about my treatment options 0)
     ;;; Treatment goals

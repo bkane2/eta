@@ -16,9 +16,13 @@
     2 *question-input* (0 :subtree)
   1 (0 .AUX .NP_ 1) ; tag question
     2 *question-input* (0 :subtree)
-  1 (0 .COMMUNICATIVE 1 .WH_ 0) ; question imperative
+  1 (.COMMUNICATIVE 1 .WH_ 0) ; question imperative
     2 *question-input* (0 :subtree)
-  1 (0 .COMMUNICATIVE 1 .INTEROG 0) ; question imperative
+  1 (.COMMUNICATIVE 1 .INTEROG 0) ; question imperative
+    2 *question-input* (0 :subtree)
+  1 (.MIGHT you .COMMUNICATIVE 1 .WH_ 0) ; question imperative
+    2 *question-input* (0 :subtree)
+  1 (.MIGHT you .COMMUNICATIVE 1 .INTEROG 0) ; question imperative
     2 *question-input* (0 :subtree)
   ; Otherwise, look for statement
   1 (0)

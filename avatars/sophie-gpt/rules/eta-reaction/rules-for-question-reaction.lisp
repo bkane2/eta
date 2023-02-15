@@ -216,11 +216,11 @@
 ; ````````````````````     comfort-care      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (0 .HAVE I considered comfort .CARE 0)
-    2 *ask-how-comfort-care-works* (100 :schema)
-  1 (0 .DO I .UNDERSTAND how comfort .CARE works 0)
-    2 *ask-how-comfort-care-works* (100 :schema)
-  1 (0 .DO I .HAVE a .QUESTION about comfort .CARE 0)
+  1 (:or
+    (0 .HAVE I considered comfort .CARE 0)
+    (0 .DO I .UNDERSTAND how comfort .CARE works 0)
+    (0 .DO I .HAVE a .QUESTION about comfort .CARE 0)
+  )
     2 *ask-how-comfort-care-works* (100 :schema)
 
 ; ````````````````````   medicine-request    ```````````````````````

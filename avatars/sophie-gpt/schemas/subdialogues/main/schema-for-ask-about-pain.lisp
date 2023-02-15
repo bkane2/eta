@@ -54,7 +54,7 @@
   ; If not empathetic, express fear about condition
   ?e3 (:if (not (^you be.v empathetic.a))
   
-    ?e4 (^me paraphrase-to.v ^you '(I\'m really scared about my worsening condition \.))
+    ?e4 (^me paraphrase-to.v ^you '(What are you talking about ? I feel fine other than the pain \.))
     ?e5 (^you reply-to.v ?e4)
 
     ; If not empathetic again, escalate emotions
@@ -74,7 +74,7 @@
   ; Once the user is empathetic, proceed (but make sure that the user has actually answered Sophie's question)
   ?e13 (:if (not (^you tell.v ^me (about.p-arg ((^me 's) condition.n))))
   
-    ?e14 (^me paraphrase-to.v ^you '(I appreciate your empathy \, but can you tell me about my condition ?))
+    ?e14 (^me paraphrase-to.v ^you '(I appreciate your support \, but can you tell me about my condition ?))
     ?e15 (^you reply-to.v ?e14))
 
   ?e16 ((set-of ^me ^you) acknowledge-empathy.v)

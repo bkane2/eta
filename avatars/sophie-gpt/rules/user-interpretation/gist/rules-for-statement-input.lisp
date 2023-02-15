@@ -551,6 +551,8 @@
     2 ((Chemotherapy is a treatment option \.) (Chemotherapy)) (0 :gist)
   1 (0 .TREATMENT-OPTION 4 .BE 4 .CHEMOTHERAPY 0)
     2 ((Chemotherapy is a treatment option \.) (Chemotherapy)) (0 :gist)
+  1 (0 .MIGHT 2 .TRY 5 .CHEMOTHERAPY 0)
+    2 ((Chemotherapy is a treatment option \.) (Chemotherapy)) (0 :gist)
   ; Radiation/surgery is an option
   1 (0 radiation 4 .BE 4 .TREATMENT-OPTION 0)
     2 ((Radiation is a treatment option \.) (Radiation)) (0 :gist)
@@ -560,11 +562,17 @@
     2 ((Radiation is a treatment option \.) (Radiation)) (0 :gist)
   1 (0 .TREATMENT-OPTION 4 .BE 4 surgery 0)
     2 ((Surgery is a treatment option \.) (Surgery)) (0 :gist)
+  1 (0 .MIGHT 2 .TRY 5 radiation 0)
+    2 ((Radiation is a treatment option \.) (Radiation)) (0 :gist)
+  1 (0 .MIGHT 2 .TRY 5 surgery 0)
+    2 ((Surgery is a treatment option \.) (Surgery)) (0 :gist)
   ; Comfort care is an option
   1 (0 .COMFORT-CARE-WORD 4 .BE 4 .TREATMENT-OPTION 0)
-    2 ((Chemotherapy is a treatment option \.) (Chemotherapy)) (0 :gist)
+    2 ((Comfort care is a treatment option \.) (Comfort-care)) (0 :gist)
   1 (0 .TREATMENT-OPTION 4 .BE 4 .COMFORT-CARE-WORD 0)
-    2 ((Chemotherapy is a treatment option \.) (Chemotherapy)) (0 :gist)
+    2 ((Comfort care is a treatment option \.) (Comfort-care)) (0 :gist)
+  1 (0 .MIGHT 2 .TRY 5 .COMFORT-CARE-WORD 0)
+    2 ((Comfort care is a treatment option \.) (Comfort-care)) (0 :gist)
 
 ; ````````````````````    treatment-goals    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
