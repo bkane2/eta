@@ -41,8 +41,8 @@
 )
 
 :goals (
-  ; Sophie wants to acknowledge the doctor's empathy with a short statement
-  ?g1 (^me ((pres want.v) (to (acknowledge.v ((^you 's) empathy.n) (with.p-arg (a.d (short.a statement.n)))))))
+  ; Sophie wants to acknowledge the doctor's help with a short statement
+  ?g1 (^me ((pres want.v) (to (acknowledge.v ((^you 's) help.n) (with.p-arg (a.d (short.a statement.n)))))))
 )
 
 :episodes (

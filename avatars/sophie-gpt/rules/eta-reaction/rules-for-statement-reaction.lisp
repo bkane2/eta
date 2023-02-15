@@ -141,7 +141,10 @@
 
   1 (0 you .DO not think I need comfort .CARE 0)
     2 *confirm-no-comfort-care* (100 :schema)
-  1 (0 comfort .CARE .SHOULD alleviate my .PAIN 0)
+  1 (:or
+    (0 comfort .CARE .SHOULD alleviate my .PAIN 0)
+    (0 comfort .CARE is a .TREATMENT .OPTION 0)
+  )
     2 *ask-how-comfort-care-works* (100 :schema)
   ;; 1 (0 you think I need comfort .CARE 0)
   ;;   2 ([HAPPY] that sounds good to me \. I also think comfort care is the way to go \.) (100 :out)
@@ -391,8 +394,6 @@
   1 (0 .CHEMOTHERAPY is a .TREATMENT .OPTION 0)
     2 *ask-about-what-happens-without-chemotherapy* (100 :schema)
     2 *ask-about-will-chemotherapy-help* (100 :schema)
-  1 (0 comfort .CARE is a .TREATMENT .OPTION 0)
-    2 *ask-how-comfort-care-works* (100 :schema)
   1 (0 you need more tests .BEFORE .TALKING about .TREATMENT options 0)
     2 *ask-about-treatment-options* (100 :schema)
 

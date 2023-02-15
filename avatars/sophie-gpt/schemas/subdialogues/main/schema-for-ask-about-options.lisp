@@ -49,7 +49,7 @@
   ; If not empowering, express doubts
   ?e3 (:if (not (^you be.v empowering.a))
   
-    ?e4 (^me paraphrase-to.v ^you '(I\'m finding it stressful to decide which treatment option to take \.))
+    ?e4 (^me paraphrase-to.v ^you '(There\'s too much information \. I don\'t know what to do \.))
     ?e5 (^you reply-to.v ?e4)
 
     ; If not empowering again, escalate emotions
