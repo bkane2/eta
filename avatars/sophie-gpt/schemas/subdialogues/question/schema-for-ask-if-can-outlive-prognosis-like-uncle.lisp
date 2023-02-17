@@ -53,6 +53,10 @@
 
 )
 
+:obligations (
+  !o1 (?e1 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
+)
+
 )) ; END defparameter *ask-if-can-outlive-prognosis-like-uncle*
 
 

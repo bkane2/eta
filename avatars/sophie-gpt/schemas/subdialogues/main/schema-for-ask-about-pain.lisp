@@ -83,6 +83,13 @@
 
 )
 
+:obligations (
+  !o1 (?e1 obligates (^you be.v empathetic.a))
+  !o2 (?e4 obligates (^you be.v empathetic.a))
+  !o3 (?e7 obligates (^you be.v empathetic.a))
+  !o4 (?e10 obligates (^you be.v empathetic.a))
+)
+
 )) ; END defparameter *ask-about-pain*
 
 

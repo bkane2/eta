@@ -49,6 +49,10 @@
 
 )
 
+:obligations (
+  !o1 (?e1 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) condition.n)))))
+)
+
 )) ; END defparameter *ask-if-cancer-worse*
 
 

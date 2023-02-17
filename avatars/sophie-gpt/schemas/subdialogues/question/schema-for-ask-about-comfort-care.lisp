@@ -47,6 +47,10 @@
 
 )
 
+:obligations (
+  !o1 (?e1 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg (k (comfort.n care.n))))))
+)
+
 )) ; END defparameter *ask-about-comfort-care*
 
 

@@ -50,6 +50,10 @@
 
 )
 
+:obligations (
+  !o1 (?e1 obligates (^you be.v explicit.a))
+)
+
 )) ; END defparameter *ask-about-second-opinion*
 
 

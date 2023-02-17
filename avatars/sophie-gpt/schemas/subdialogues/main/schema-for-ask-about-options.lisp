@@ -93,6 +93,13 @@
 
 )
 
+:obligations (
+  !o1 (?e1 obligates (^you be.v empowering.a))
+  !o2 (?e4 obligates (^you be.v empowering.a))
+  !o3 (?e7 obligates (^you be.v empowering.a))
+  !o4 (?e10 obligates (^you be.v empowering.a))
+)
+
 )) ; END defparameter *ask-about-options*
 
 

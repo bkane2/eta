@@ -47,6 +47,10 @@
 
 )
 
+:obligations (
+  !o1 (?e1 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg (k chemotherapy.n)))))
+)
+
 )) ; END defparameter *ask-about-chemotherapy-side-effects*
 
 
