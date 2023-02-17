@@ -40,6 +40,8 @@
       :direction :output :if-exists :supersede :if-does-not-exist :create))
     (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "pragmatic.txt")
       :direction :output :if-exists :supersede :if-does-not-exist :create))
+    (with-open-file (outfile (concatenate 'string (get-io-path "conversation-log/") instance-dir "obligations.txt")
+      :direction :output :if-exists :supersede :if-does-not-exist :create))
 )) ; END ensure-log-files-exist
 
 

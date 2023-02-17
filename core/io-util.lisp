@@ -159,7 +159,7 @@
 
 (defun log-turn-write (turn &key (agent 'user))
 ;```````````````````````````````````````````````
-; Logs some a turn (a tuple (text gists semantics pragmatics)) in the conversation-log directory.
+; Logs some a turn (a tuple (text gists semantics pragmatics obligations)) in the conversation-log directory.
 ; Temporarily disable pretty-printing so each line in the log file corresponds to a single turn.
 ;
   (let* ((instance-dir (format nil "~a/" *dialogue-instance*))
@@ -168,7 +168,8 @@
          (fname-gist (concatenate 'string log-dir instance-dir "gist.txt"))
          (fname-sem  (concatenate 'string log-dir instance-dir "semantic.txt"))
          (fname-prag (concatenate 'string log-dir instance-dir "pragmatic.txt"))
-         (text (first turn)) (gists (second turn)) (semantics (third turn)) (pragmatics (fourth turn))
+         (fname-oblg (concatenate 'string log-dir instance-dir "obligations.txt"))
+         (text (first turn)) (gists (second turn)) (semantics (third turn)) (pragmatics (fourth turn)) (obligations (fifth turn))
          (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
     (setq *print-pretty* nil)
     (with-open-file (outfile fname-text :direction :output :if-exists :append :if-does-not-exist :create)
@@ -177,8 +178,10 @@
       (format outfile "~a : ~s~%" agent-name (remove nil (remove-if #'nil-gist-clause? gists))))
     (with-open-file (outfile fname-sem  :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~a : ~s~%" agent-name (remove nil semantics)))
-    (with-open-file (outfile fname-prag  :direction :output :if-exists :append :if-does-not-exist :create)
+    (with-open-file (outfile fname-prag :direction :output :if-exists :append :if-does-not-exist :create)
       (format outfile "~s~%" (remove nil pragmatics)))
+    (with-open-file (outfile fname-oblg :direction :output :if-exists :append :if-does-not-exist :create)
+      (format outfile "~s~%" (remove nil obligations)))
     (setq *print-pretty* t))
   ; Additionally write conversation log to appropriate log directories when in read-log mode.
   (when *read-log*
@@ -186,7 +189,8 @@
           (fname-gist (concatenate 'string "logs/logs_out/gist/" (pathname-name *read-log*) ".txt"))
           (fname-sem  (concatenate 'string "logs/logs_out/semantic/" (pathname-name *read-log*) ".txt"))
           (fname-prag (concatenate 'string "logs/logs_out/pragmatic/" (pathname-name *read-log*) ".txt"))
-          (text (first turn)) (gists (second turn)) (semantics (third turn)) (pragmatics (fourth turn))
+          (fname-oblg (concatenate 'string "logs/logs_out/obligations/" (pathname-name *read-log*) ".txt"))
+          (text (first turn)) (gists (second turn)) (semantics (third turn)) (pragmatics (fourth turn)) (obligations (fifth turn))
           (agent-name (string-upcase (string agent))))
       (setq *print-pretty* nil)
       (with-open-file (outfile fname-text :direction :output :if-exists :append :if-does-not-exist :create)
@@ -197,6 +201,8 @@
         (format outfile "~a : ~s~%" agent-name (remove nil semantics)))
       (with-open-file (outfile fname-prag  :direction :output :if-exists :append :if-does-not-exist :create)
         (format outfile "~s~%" (remove nil pragmatics)))
+      (with-open-file (outfile fname-oblg  :direction :output :if-exists :append :if-does-not-exist :create)
+        (format outfile "~s~%" (remove nil obligations)))
       (setq *print-pretty* t)))
 ) ; END log-turn-write
 

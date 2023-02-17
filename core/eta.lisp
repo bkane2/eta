@@ -65,7 +65,7 @@
 ; gist-kb-user     : hash table of all gist clauses + associated topic keys from user
 ; gist-kb-eta      : hash table of all gist clauses + associated topic keys from Eta
 ; conversation-log : contains chronological records of each turn in the conversation
-;                    is a tuple (text, gists, semantics, pragmatics, episodes)
+;                    is a tuple (text, gists, semantics, pragmatics, obligations, episodes)
 ; context          : hash table of facts that are true at Now*, e.g., <wff3>
 ; memory           : hash table of atemporal/"long-term" facts, e.g., (<wff3> ** E3) and (Now* during E3)
 ; kb               : hash table of Eta's knowledge base, containing general facts
@@ -281,8 +281,8 @@
   ; Initialize input queue ((perceptions gists semantics pragmatics inferences) tuple)
   (setf (ds-input-queue *ds*) (list nil nil nil nil nil))
 
-  ; Initialize conversation log ((text gists semantics pragmatics episodes) tuple)
-  (setf (ds-conversation-log *ds*) (list nil nil nil nil nil))
+  ; Initialize conversation log ((text gists semantics pragmatics obligations episodes) tuple)
+  (setf (ds-conversation-log *ds*) (list nil nil nil nil nil nil))
 
   ; Initialize fact hash tables
   (setf (ds-context *ds*) (make-hash-table :test #'equal))
@@ -786,7 +786,7 @@
 ;
   (let* ((curr-step (plan-curr-step subplan)) bindings expr expr-new new-subplan var-bindings
          (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step)) n
-         superstep ep-name1 user-ep-name user-gist-clauses user-semantics user-gist-passage
+         superstep ep-name1 user-ep-name user-gist-clauses user-semantics user-gist-passage user-obligations
          prev-step prev-step-ep-name prev-step-wff utterance query eta-gist-clauses eta-semantics
          proposal-gist main-clause info topic suggestion ans perceptions
          perceived-actions sk-var sk-name concept-name concept-schema goal-name goal-schema)
@@ -855,6 +855,9 @@
                     (store-gist-clause-characterizing-episode gist ep-name1 '^me '^you)))
                 eta-gist-clauses))
 
+            ; Get any obligations placed on the user from the schema that this episode is part of
+            (setq user-obligations (get-step-obligations curr-step))
+
             ; Add discourse state to stack
             (push (deepcopy-ds *ds*) *ds-stack*)
 
@@ -863,6 +866,7 @@
                 (get-gist-clauses-characterizing-episode ep-name)
                 (get-semantic-interpretations-characterizing-episode ep-name)
                 nil
+                user-obligations
                 ep-name)
               :agent (if (boundp '*agent-id*) *agent-id* 'eta))
 
@@ -1405,7 +1409,7 @@
 ; ((^you reply-to.v E1) ** E2)
 ;
   (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
-         user-gist-clauses user-semantics user-pragmatics goal-step ka try-success relative-ep-name
+         user-gist-clauses user-semantics user-pragmatics eta-obligations goal-step ka try-success relative-ep-name
          (curr-step (plan-curr-step plan)) (curr-step-wff (plan-step-wff curr-step)))
 
     (setq ep-name (first fact))
@@ -1500,6 +1504,9 @@
           (store-contextual-fact-characterizing-episode ulf ep-name))
         (mapcar (lambda (ulf) (push (list ep-name ulf) (fourth (ds-input-queue *ds*)))) user-pragmatics)
 
+        ; Determine any obligations placed on Eta by utterance (TODO)
+        (setq eta-obligations nil)
+
         ; Add discourse state to stack
         (push (deepcopy-ds *ds*) *ds-stack*)
 
@@ -1508,6 +1515,7 @@
             user-gist-clauses
             (resolve-references user-semantics)
             user-pragmatics
+            eta-obligations
             ep-name)
           :agent 'user)
 

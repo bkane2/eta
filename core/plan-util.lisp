@@ -55,6 +55,7 @@
 ; subplan   : subplan of step (if any)
 ; certainty : how certain the step is (if the step is an expected step). The patience of the
 ;             system in waiting to observe the step is proportional to this
+; obligation : the obligation(s) associated with the step
 ;
   step-of
   prev-step
@@ -62,6 +63,7 @@
   ep-name
   wff
   (certainty 1.0) ; defaults to 1, i.e. a certain step
+  obligation
   subplan
 ) ; END defstruct plan-step
 
@@ -120,6 +122,7 @@
     (process-schema-episode-relations plan (gethash :episode-relations sections))
     (process-schema-necessities       plan (gethash :necessities sections))
     (process-schema-certainties       plan (gethash :certainties sections))
+    (process-schema-obligations       plan (gethash :obligations sections))
     ; Process episodes last so things like certainties can be used
     (process-schema-episodes          plan (gethash :episodes sections))
 
@@ -291,6 +294,9 @@
       ; When episode name has certainty associated, add to step
       (when (get (first step) 'certainty)
         (setf (plan-step-certainty curr-step) (get (first step) 'certainty)))
+      ; When episode name has obligation associated, add to step
+      (when (get (first step) 'obligation)
+        (setf (plan-step-obligation curr-step) (get (first step) 'obligation)))
       ; When previous step exists, set bidirectional pointers
       (when prev-step
         (setf (plan-step-prev-step curr-step) prev-step)
@@ -356,6 +362,26 @@
     )
   )
 ) ; END process-schema-certainties
+
+
+
+(defun process-schema-obligations (plan obligations)
+;``````````````````````````````````````````````````````
+; Processes obligation formulas in the schema, adding the obligation to a
+; property list of the episode var/name.
+; e.g., !o1 (?e1 obligates (...))
+;
+  (let ((obligation-pairs (form-name-wff-pairs obligations)) obligation-name obligation-wff
+        episode-name obligation)
+    (dolist (obligation-pair obligation-pairs)
+      (setq obligation-name (first obligation-pair))
+      (setq obligation-wff (second obligation-pair))
+      (setq episode-name (first obligation-wff))
+      (setq obligation (third obligation-wff))
+      (setf (get episode-name 'obligation) obligation)
+    )
+  )
+) ; END process-schema-obligations
 
 
 
@@ -959,11 +985,30 @@
       (gethash var (get schema-name 'semantics)))
     (setf (gethash new-var (get schema-name 'topic-keys))
       (gethash var (get schema-name 'topic-keys)))
-    ; New var has same certainty as old var
+    ; New var has same certainty and obligation as old var
     (setf (get new-var 'certainty) (get var 'certainty))
+    (setf (get new-var 'obligation) (get var 'obligation))
   ; Return new var
   new-var)
 ) ; END duplicate-variable
+
+
+
+(defun get-step-obligations (plan-step)
+;````````````````````````````````````````
+; Gets any obligations associated with a particular step in a plan in the
+; schema that the step is part of (look at the parent step as well in case of
+; no obligations).
+; TODO: this will likely need to be changed in the future once a more general
+; mechanism is figured out.
+;
+  (let ((obligations (plan-step-obligation plan-step)))
+    (when (and (null obligations) (plan-step-step-of plan-step) (plan-subplan-of (plan-step-step-of plan-step)))
+      (setq obligations (plan-step-obligation (plan-subplan-of (plan-step-step-of plan-step)))))
+    (if (member 'and obligations)
+      (remove 'and obligations)
+      (list obligations))
+)) ; END get-step-obligations
 
 
 
