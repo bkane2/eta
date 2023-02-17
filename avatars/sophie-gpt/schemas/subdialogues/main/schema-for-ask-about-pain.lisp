@@ -54,7 +54,7 @@
   ; If not empathetic, express fear about condition
   ?e3 (:if (not (^you be.v empathetic.a))
   
-    ?e4 (^me paraphrase-to.v ^you '(What are you talking about ? I feel fine other than the pain \.))
+    ?e4 (^me paraphrase-to.v ^you '(What is going on ? I feel fine other than the pain \.))
     ?e5 (^you reply-to.v ?e4)
 
     ; If not empathetic again, escalate emotions
