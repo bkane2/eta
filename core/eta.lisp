@@ -582,10 +582,10 @@
     (setq subplan (find-curr-subplan plan))
 
     ; Current step becomes whatever the current step of subplan is
-    (setq curr-step (plan-curr-step subplan))
+    (setq curr-step (get-curr-pending-step subplan))
 
     ; Get wff of current step and the subject of the episode
-    (setq wff (plan-step-wff curr-step))
+    (setq wff (get-step-wff curr-step))
     (setq subj (car wff))
 
     (cond
@@ -609,7 +609,7 @@
           (write-output-buffer))
 
         ; Check certainty of expected plan step
-        (setq certainty (plan-step-certainty curr-step))
+        (setq certainty (get-step-certainty curr-step))
 
         (cond
           ; If timer exceeds period (a function of certainty of step), instantiate a 'failed' episode and continue plan.
@@ -762,8 +762,8 @@
 ;   possibilities may be pursued in the future, such as replacing the current plan with the
 ;   chosen schema entirely.
 ; 
-  (let* ((subplan (find-curr-subplan (ds-curr-plan *ds*))) (curr-step (plan-curr-step subplan)) new-subplan
-         (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step)) poss-subplans)
+  (let* ((subplan (find-curr-subplan (ds-curr-plan *ds*))) (curr-step (get-curr-pending-step subplan)) new-subplan
+         (ep-name (get-step-ep-name curr-step)) (wff (get-step-wff curr-step)) poss-subplans)
 
     ; Form a reaction to each gist clause in the buffer (removing nil gists, unless they are
     ; the only gist present, in which case it may be possible to form a reaction to that)
@@ -810,8 +810,8 @@
 ; implemented here. Execution of such episodes by Eta involves modifying the plan structure
 ; in a way that corresponds to the episode in question.
 ;
-  (let* ((curr-step (plan-curr-step subplan)) bindings expr new-subplan var-bindings
-         (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
+  (let* ((curr-step (get-curr-pending-step subplan)) bindings expr new-subplan var-bindings
+         (ep-name (get-step-ep-name curr-step)) (wff (get-step-wff curr-step))
          args-list)
   
     ;; (format t "~%WFF = ~a,~% in the ETA action ~a being processed~%" wff ep-name) ; DEBUGGING
@@ -922,8 +922,8 @@
 ;   FREQUENT OVERALL CONSISTENCY, PROBABILITY, AND UTILITY 
 ;   CALCULATIONS).
 ;
-  (let* ((curr-step (plan-curr-step subplan)) bindings expr expr-new new-subplan var-bindings
-         (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step)) n
+  (let* ((curr-step (get-curr-pending-step subplan)) bindings expr expr-new new-subplan var-bindings
+         (ep-name (get-step-ep-name curr-step)) (wff (get-step-wff curr-step)) n
          superstep ep-name1 user-ep-name user-gist-clauses user-semantics user-gist-passage user-obligations
          prev-step prev-step-ep-name prev-step-wff utterance query eta-gist-clauses eta-semantics
          proposal-gist main-clause info topic suggestion ans perceptions
@@ -1430,7 +1430,7 @@
         ; the episode was successful in context
         ; TODO: needs to be changed; see comment on 'Eta: Trying' action.
         ;; (setq superstep (plan-subplan-of subplan))
-        ;; (setq ep-name1 (plan-step-ep-name superstep))
+        ;; (setq ep-name1 (get-step-ep-name superstep))
         (setq ep-name1 ep-name)
         (if (and sk-name ep-name1)
           (store-in-context `((pair ^me ,ep-name1) successful.a)))
@@ -1554,7 +1554,7 @@
 ;
   (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
          user-gist-clauses user-semantics user-pragmatics eta-obligations goal-step ka try-success relative-ep-name
-         (curr-step (plan-curr-step plan)) (curr-step-wff (plan-step-wff curr-step)))
+         (curr-step (get-curr-pending-step plan)) (curr-step-wff (get-step-wff curr-step)))
 
     (setq ep-name (first fact))
     (setq wff (second fact))
@@ -2327,7 +2327,7 @@
         history-agents history-utterances))
 
     (format t "~%  * Generating response using schema: ~a "
-      (plan-schema-name (find-curr-subplan (ds-curr-plan *ds*)))) ; DEBUGGING
+      (get-curr-schema (ds-curr-plan *ds*))) ; DEBUGGING
 
     ; Generate response
     (cond

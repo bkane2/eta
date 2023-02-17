@@ -1120,6 +1120,51 @@
 
 
 
+(defun get-curr-schema (plan)
+;```````````````````````````````````
+; Gets the schema corresponding to the current (sub)plan.
+;
+  (plan-schema-name (find-curr-subplan plan))
+) ; END get-curr-schema
+
+
+
+(defun get-curr-pending-step (plan)
+;`````````````````````````````````````
+; Gets the currently pending step of a given (sub)plan.
+;
+  (plan-curr-step plan)
+) ; END get-curr-pending-step
+
+
+
+(defun get-step-ep-name (plan-step)
+;`````````````````````````````````````
+; Gets the episode name associated with a plan step.
+;
+  (plan-step-ep-name plan-step)
+) ; END get-step-ep-name
+
+
+
+(defun get-step-wff (plan-step)
+;`````````````````````````````````````
+; Gets the wff associated with a plan step.
+;
+  (plan-step-wff plan-step)
+) ; END get-step-wff
+
+
+
+(defun get-step-certainty (plan-step)
+;``````````````````````````````````````
+; Gets the wff associated with a plan step.
+;
+  (plan-step-certainty plan-step)
+) ; END get-step-certainty
+
+
+
 (defun print-current-plan-steps (plan) 
 ;``````````````````````````````````````
 ; Prints each subsequent step in a plan, starting from the current
