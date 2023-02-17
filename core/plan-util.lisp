@@ -79,7 +79,7 @@
 ; TODO: should ?e be instantiated and (<schema-header> ** E1) be
 ; stored in context at this point?
 ;
-  (let (plan schema sections)
+  (let (plan schema sections ep-vars)
     ; Make plan structure plan-name corresponding to schema-name
     (setq plan (make-plan))
     (setf (plan-plan-name plan) (gensym "PLAN"))
@@ -91,6 +91,13 @@
     ; Retrieve schema contents from schema-name
     ; (copying so destructive edits can be made)
     (setq schema (copy-tree (eval schema-name)))
+
+    ; Substitute all episode vars in schema with globally unique vars,
+    ; to avoid conflicts when using property lists
+    (setq ep-vars (remove-duplicates (remove-if-not #'ep-var? (flatten schema))))
+    (dolist (ep-var ep-vars)
+      (setq schema (subst (gensym (string ep-var)) ep-var schema)))
+
     (setf (plan-schema-contents plan) schema)
 
     ; Return error if schema has no :episodes keyword
@@ -1002,9 +1009,15 @@
 ; TODO: this will likely need to be changed in the future once a more general
 ; mechanism is figured out.
 ;
-  (let ((obligations (plan-step-obligation plan-step)))
-    (when (and (null obligations) (plan-step-step-of plan-step) (plan-subplan-of (plan-step-step-of plan-step)))
-      (setq obligations (plan-step-obligation (plan-subplan-of (plan-step-step-of plan-step)))))
+  (let ((obligations (plan-step-obligation plan-step)) superstep)
+    (when (and (plan-step-step-of plan-step) (plan-subplan-of (plan-step-step-of plan-step)))
+      (setq superstep (plan-subplan-of (plan-step-step-of plan-step))))
+    ; TODO: this is a bit hacky currently because say-to.v actions may need to access
+    ; the parent paraphrase-to.v actions in order to access obligations. Rather, it seems
+    ; that the say-to.v actions should inherit the obligations upon creation.
+    (when (and superstep (null obligations))
+      (setq obligations (plan-step-obligation superstep)))
+
     (if (member 'and obligations)
       (remove 'and obligations)
       (list obligations))
