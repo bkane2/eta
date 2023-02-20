@@ -55,6 +55,7 @@
 ; subplan   : subplan of step (if any)
 ; certainty : how certain the step is (if the step is an expected step). The patience of the
 ;             system in waiting to observe the step is proportional to this
+; obligation : the obligation(s) associated with the step
 ;
   step-of
   prev-step
@@ -62,6 +63,7 @@
   ep-name
   wff
   (certainty 1.0) ; defaults to 1, i.e. a certain step
+  obligation
   subplan
 ) ; END defstruct plan-step
 
@@ -77,7 +79,7 @@
 ; TODO: should ?e be instantiated and (<schema-header> ** E1) be
 ; stored in context at this point?
 ;
-  (let (plan schema sections)
+  (let (plan schema sections ep-vars)
     ; Make plan structure plan-name corresponding to schema-name
     (setq plan (make-plan))
     (setf (plan-plan-name plan) (gensym "PLAN"))
@@ -89,6 +91,13 @@
     ; Retrieve schema contents from schema-name
     ; (copying so destructive edits can be made)
     (setq schema (copy-tree (eval schema-name)))
+
+    ; Substitute all episode vars in schema with globally unique vars,
+    ; to avoid conflicts when using property lists
+    (setq ep-vars (remove-duplicates (remove-if-not #'ep-var? (flatten schema))))
+    (dolist (ep-var ep-vars)
+      (setq schema (subst (gensym (string ep-var)) ep-var schema)))
+
     (setf (plan-schema-contents plan) schema)
 
     ; Return error if schema has no :episodes keyword
@@ -120,6 +129,7 @@
     (process-schema-episode-relations plan (gethash :episode-relations sections))
     (process-schema-necessities       plan (gethash :necessities sections))
     (process-schema-certainties       plan (gethash :certainties sections))
+    (process-schema-obligations       plan (gethash :obligations sections))
     ; Process episodes last so things like certainties can be used
     (process-schema-episodes          plan (gethash :episodes sections))
 
@@ -291,6 +301,9 @@
       ; When episode name has certainty associated, add to step
       (when (get (first step) 'certainty)
         (setf (plan-step-certainty curr-step) (get (first step) 'certainty)))
+      ; When episode name has obligation associated, add to step
+      (when (get (first step) 'obligation)
+        (setf (plan-step-obligation curr-step) (get (first step) 'obligation)))
       ; When previous step exists, set bidirectional pointers
       (when prev-step
         (setf (plan-step-prev-step curr-step) prev-step)
@@ -356,6 +369,26 @@
     )
   )
 ) ; END process-schema-certainties
+
+
+
+(defun process-schema-obligations (plan obligations)
+;``````````````````````````````````````````````````````
+; Processes obligation formulas in the schema, adding the obligation to a
+; property list of the episode var/name.
+; e.g., !o1 (?e1 obligates (...))
+;
+  (let ((obligation-pairs (form-name-wff-pairs obligations)) obligation-name obligation-wff
+        episode-name obligation)
+    (dolist (obligation-pair obligation-pairs)
+      (setq obligation-name (first obligation-pair))
+      (setq obligation-wff (second obligation-pair))
+      (setq episode-name (first obligation-wff))
+      (setq obligation (third obligation-wff))
+      (setf (get episode-name 'obligation) obligation)
+    )
+  )
+) ; END process-schema-obligations
 
 
 
@@ -959,11 +992,36 @@
       (gethash var (get schema-name 'semantics)))
     (setf (gethash new-var (get schema-name 'topic-keys))
       (gethash var (get schema-name 'topic-keys)))
-    ; New var has same certainty as old var
+    ; New var has same certainty and obligation as old var
     (setf (get new-var 'certainty) (get var 'certainty))
+    (setf (get new-var 'obligation) (get var 'obligation))
   ; Return new var
   new-var)
 ) ; END duplicate-variable
+
+
+
+(defun get-step-obligations (plan-step)
+;````````````````````````````````````````
+; Gets any obligations associated with a particular step in a plan in the
+; schema that the step is part of (look at the parent step as well in case of
+; no obligations).
+; TODO: this will likely need to be changed in the future once a more general
+; mechanism is figured out.
+;
+  (let ((obligations (plan-step-obligation plan-step)) superstep)
+    (when (and (plan-step-step-of plan-step) (plan-subplan-of (plan-step-step-of plan-step)))
+      (setq superstep (plan-subplan-of (plan-step-step-of plan-step))))
+    ; TODO: this is a bit hacky currently because say-to.v actions may need to access
+    ; the parent paraphrase-to.v actions in order to access obligations. Rather, it seems
+    ; that the say-to.v actions should inherit the obligations upon creation.
+    (when (and superstep (null obligations))
+      (setq obligations (plan-step-obligation superstep)))
+
+    (if (member 'and obligations)
+      (remove 'and obligations)
+      (list obligations))
+)) ; END get-step-obligations
 
 
 

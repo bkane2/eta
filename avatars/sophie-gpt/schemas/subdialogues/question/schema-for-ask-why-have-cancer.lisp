@@ -45,6 +45,10 @@
 
 )
 
+:obligations (
+  !o1 (?e1 obligates (^you be.v empathetic.a))
+)
+
 )) ; END defparameter *ask-why-have-cancer*
 
 

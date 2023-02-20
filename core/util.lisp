@@ -571,6 +571,7 @@
     (setf (plan-step-ep-name new) (copy-tree (plan-step-ep-name old)))
     (setf (plan-step-wff new) (copy-tree (plan-step-wff old)))
     (setf (plan-step-certainty new) (copy-tree (plan-step-certainty old)))
+    (setf (plan-step-obligation new) (copy-tree (plan-step-obligation old)))
 
     (setf (plan-step-step-of new) step-of)
 
@@ -1098,13 +1099,14 @@
 ; Records a turn in the conversation log, as well as writing to external files.
 ;
   (let ((text (first turn)) (gists (second turn)) (semantics (third turn))
-        (pragmatics (fourth turn)) (episodes (fifth turn))
+        (pragmatics (fourth turn)) (obligations (fifth turn)) (episodes (sixth turn))
         (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
     (push (list agent-name text) (first (ds-conversation-log *ds*)))
     (push gists (second (ds-conversation-log *ds*)))
     (push semantics (third (ds-conversation-log *ds*)))
     (push pragmatics (fourth (ds-conversation-log *ds*)))
-    (push episodes (fifth (ds-conversation-log *ds*)))
+    (push obligations (fifth (ds-conversation-log *ds*)))
+    (push episodes (sixth (ds-conversation-log *ds*)))
     (log-turn-write turn :agent agent)
 )) ; END log-turn
 
@@ -1116,8 +1118,9 @@
 ;
   (let ((clog (ds-conversation-log *ds*)) turns)
     (setq turns (mapcar
-        (lambda (text gists semantics pragmatics episodes) (list text gists semantics pragmatics episodes))
-      (first clog) (second clog) (third clog) (fourth clog) (fifth clog)))
+        (lambda (text gists semantics pragmatics obligations episodes)
+          (list text gists semantics pragmatics obligations episodes))
+      (first clog) (second clog) (third clog) (fourth clog) (fifth clog) (sixth clog)))
     (car (remove-if (lambda (turn) (not (equal (first (first turn)) (string agent)))) turns))
 )) ; END find-prev-turn-of-agent
 
@@ -2703,7 +2706,7 @@
 ;
   (let ((schema-ht (make-hash-table :test #'equal)))
     (dolist (section '(:header :types :var-roles :rigid-conds :static-conds :preconds
-                       :goals :episodes :episode-relations :necessities :certainties))
+                       :goals :episodes :episode-relations :necessities :certainties :obligations))
       (let ((contents (car (get-keyword-contents schema (list section)))))
         (when contents
           (setf (gethash section schema-ht) contents))))

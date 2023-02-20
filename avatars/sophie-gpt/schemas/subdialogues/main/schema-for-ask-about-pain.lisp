@@ -54,7 +54,7 @@
   ; If not empathetic, express fear about condition
   ?e3 (:if (not (^you be.v empathetic.a))
   
-    ?e4 (^me paraphrase-to.v ^you '(What are you talking about ? I feel fine other than the pain \.))
+    ?e4 (^me paraphrase-to.v ^you '(What is going on ? I feel fine other than the pain \.))
     ?e5 (^you reply-to.v ?e4)
 
     ; If not empathetic again, escalate emotions
@@ -81,6 +81,13 @@
 
   ?e17 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
 
+)
+
+:obligations (
+  !o1 (?e1 obligates (^you be.v empathetic.a))
+  !o2 (?e4 obligates (^you be.v empathetic.a))
+  !o3 (?e7 obligates (^you be.v empathetic.a))
+  !o4 (?e10 obligates (^you be.v empathetic.a))
 )
 
 )) ; END defparameter *ask-about-pain*
