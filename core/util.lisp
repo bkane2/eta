@@ -709,7 +709,8 @@
 ; Check whether a symbol is a variable, i.e. starts with '?', '!'.
 ; NOTE: this excludes indexical variables, such as '^you'.
 ;
-  (and (symbolp atm) (member (car (explode atm)) '(#\? #\!) :test #'char-equal))
+  (and (symbolp atm) (member (car (explode atm)) '(#\? #\!) :test #'char-equal)
+    (not (or (equal atm '?) (equal atm '!))))
 ) ; END variable?
 
 
