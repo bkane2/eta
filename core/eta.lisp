@@ -55,11 +55,9 @@
 ;```````````````````````````````
 ; contains the following fields:
 ; curr-plan        : points to the currently active dialogue plan
-; task-queue       : a list of tasks (currently 'perform-next-step', 'perceive-world', 'interpret-perceptions',
-;                    'infer-facts-top-down', and 'infer-facts-bottom-up') to repeatedly execute in cycles
-; input-queue      : a queue of the most recent inputs that the system maintains as it processes them through the
-;                    perception and interpretation pipeline (i.e., gist-clause, inference, event handling, etc.)
-;                    is a tuple (perceptions, gists, semantics, pragmatics, inferences)
+; task-queue       : a list of time-sharing tasks to repeatedly execute in cycles
+; buffers          : a structure containing buffers (importance-ranked priority queues) for items that the dialogue
+;                    system must process during a corresponding task (perceptions, inferences, intentions, etc.)
 ; reference-list   : contains a list of discourse entities to be used in ULF coref
 ; equality-sets    : hash table containing a list of aliases, keyed by canonical name
 ; gist-kb-user     : hash table of all gist clauses + associated topic keys from user
@@ -82,7 +80,7 @@
 ;
   curr-plan
   task-queue
-  input-queue
+  buffers
   reference-list
   equality-sets
   gist-kb-user
@@ -95,6 +93,29 @@
   time
   count
 ) ; END defstruct ds
+
+
+
+
+
+(defstruct buffers
+;```````````````````````````````
+; contains the following fields:
+; perceptions: an importance-ranked priority queue of perceptions for the system to interpret
+; gists: an importance-ranked priority queue of gist clauses for the system to semantically interpret
+; semantics: an importance-ranked priority queue of semantic interpretations for the system to pragmatically interpret
+; pragmatics: an importance-ranked priority queue of pragmatic interpretations for the system to generate inferences from
+; inferences: an importance-ranked priority queue of inferences for the system to generate further inferences from (until
+;             some depth/importance threshold is reached)
+; intentions: an importance-ranked priority queue of intentions for the system to add to the current plan
+; 
+  (perceptions (priority-queue:make-pqueue #'>))
+  (gists (priority-queue:make-pqueue #'>))
+  (semantics (priority-queue:make-pqueue #'>))
+  (pragmatics (priority-queue:make-pqueue #'>))
+  (inferences (priority-queue:make-pqueue #'>))
+  (intentions (priority-queue:make-pqueue #'>))
+) ; END defstruct buffers
 
 
 
@@ -125,8 +146,19 @@
   (defvar *use-latency* t)
 
   ; Queue of tasks that Eta must perform
-  (defvar *tasks-list*
-    '(perform-next-step perceive-world interpret-perceptions infer-facts-top-down infer-facts-bottom-up react-to-input))
+  (defvar *tasks-list* '(
+    perform-next-step
+    perceive-world
+    interpret-perceptions
+    ;; form-intentions-from-input
+    infer-facts-top-down
+    infer-facts-bottom-up
+    ;; add-intentions-to-plan
+    react-to-input
+    ;; merge-equivalent-plan-steps
+    ;; reorder-conflicting-plan-step
+    evict-buffers
+  ))
 
   ; Global variable for dialogue record structure
   (defvar *ds* (make-ds))
@@ -278,8 +310,8 @@
   (setf (ds-gist-kb-user *ds*) (make-hash-table :test #'equal))
   (setf (ds-gist-kb-eta *ds*) (make-hash-table :test #'equal))
 
-  ; Initialize input queue ((perceptions gists semantics pragmatics inferences) tuple)
-  (setf (ds-input-queue *ds*) (list nil nil nil nil nil))
+  ; Initialize buffers
+  (setf (ds-buffers *ds*) (make-buffers))
 
   ; Initialize conversation log ((text gists semantics pragmatics obligations episodes) tuple)
   (setf (ds-conversation-log *ds*) (list nil nil nil nil nil nil))
@@ -396,10 +428,7 @@
 (defun refill-task-queue ()
 ;```````````````````````````````````
 ; Refills the task queue after it becomes empty.
-; Also clears the input queue (since the first task
-; in each cycle is to perceive the world).
 ;
-  (setf (ds-input-queue *ds*) (list nil nil nil nil nil))
   (setf (ds-task-queue *ds*) *tasks-list*)
 ) ; END refill-task-queue
 
@@ -439,9 +468,16 @@
     (perform-next-step (perform-next-step))
     (perceive-world (perceive-world))
     (interpret-perceptions (interpret-perceptions))
+    ;; (form-intentions-from-input (form-intentions-from-input))
     (infer-facts-top-down (infer-facts-top-down))
     (infer-facts-bottom-up (infer-facts-bottom-up))
-    (react-to-input (react-to-input)))
+    ;; (add-intentions-to-plan (add-intentions-to-plan))
+    (react-to-input (react-to-input))
+    (evict-buffers (evict-buffers))
+    ;; (merge-equivalent-plan-steps (merge-equivalent-plan-steps))
+    ;; (reorder-conflicting-plan-step (reorder-conflicting-plan-step))
+  )
+
 ) ; END do-task
 
 
@@ -569,9 +605,15 @@
         (when (equal 'not (car input)) (remove-old-contextual-fact (second input)))) inputs)
       (remove-if (lambda (input) (equal 'not (car input))) inputs)
 
-      ; Add facts to context, and push them into a queue of new perceptions for further interpretation.
+      ; Add facts to context
       (when inputs (setq ep-name-new (store-new-contextual-facts inputs)))
-      (mapcar (lambda (input) (push (list ep-name-new input) (first (ds-input-queue *ds*)))) inputs))
+
+      ; Add facts to perceptions buffer for further interpretation
+      (mapcar (lambda (input)
+        (enqueue-in-buffer (list ep-name-new input)
+          (buffers-perceptions (ds-buffers *ds*))))
+        inputs)
+    )
 )) ; END perceive-world
 
 
@@ -587,9 +629,9 @@
     ; Find the next action from the deepest active subplan
     (setq subplan (find-curr-subplan (ds-curr-plan *ds*)))
 
-    ; Go through queued perceptions and try to interpret each one in
-    ; context of the current plan
-    (dolist (fact (first (ds-input-queue *ds*)))
+    ; Pop each buffered perception and try to interpret each one in
+    ; context of the current plan.
+    (dolist (fact (pop-all-from-buffer (buffers-perceptions (ds-buffers *ds*))))
       (interpret-perception-in-context fact subplan))
 
 )) ; END interpret-perceptions
@@ -631,28 +673,19 @@
 ; * Reactions are selected according to only the gist clause(s) for a particular
 ;   episode. While this suffices for current applications, this may need to take
 ;   into account ULF interpretations in the future.
-; * In cases where multiple episodes are perceived, the system may choose multiple
-;   different subschemas to react with. For now, we simply choose the first subschemas.
+; * In cases where multiple gists are extracted, the system may choose multiple
+;   different subschemas to react with. For now, we simply choose the first subschema.
 ; * The chosen subschema will be added as a subplan to the current action. However, other
 ;   possibilities may be pursued in the future, such as replacing the current plan with the
 ;   chosen schema entirely.
 ; 
   (let* ((subplan (find-curr-subplan (ds-curr-plan *ds*))) (curr-step (plan-curr-step subplan)) new-subplan
-         (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step))
-         input-ep-names input-gist-clauses input-semantics poss-subplans)
+         (ep-name (plan-step-ep-name curr-step)) (wff (plan-step-wff curr-step)) poss-subplans)
 
-    (setq input-ep-names (remove-duplicates (mapcar #'car (first (ds-input-queue *ds*)))))
-
-    ; Find a possible subplan for each perceived episode
-    (dolist (ep-name input-ep-names)
-      (setq input-gist-clauses (mapcar #'second
-        (remove-if (lambda (x) (not (equal (car x) ep-name)))
-          (second (ds-input-queue *ds*)))))
-      (setq input-semantics (resolve-references (mapcar #'second
-        (remove-if (lambda (x) (not (equal (car x) ep-name)))
-          (third (ds-input-queue *ds*))))))
-
-      (push (plan-reaction-to input-gist-clauses input-semantics ep-name) poss-subplans))
+    ; Form a reaction to each gist clause in the buffer (removing nil gists, unless they are
+    ; the only gist present, in which case it may be possible to form a reaction to that)
+    (dolist (gist (mapcar #'second (purify-func (iterate-buffer (buffers-gists (ds-buffers *ds*))))))
+      (push (plan-reaction-to gist ep-name) poss-subplans))
 
     ; Choose the first possible subplan and add to current step
     (setq poss-subplans (remove nil poss-subplans))
@@ -661,6 +694,27 @@
     (if new-subplan
       (add-subplan-curr-step subplan new-subplan))
 )) ; END react-to-input
+
+
+
+
+
+(defun evict-buffers ()
+;```````````````````````````
+; Clears buffers of pending facts upon each full cycle through
+; task list. This assumes that facts are handled "in batch"
+; during each cycle, but in the future we may wish for them
+; to be handled incrementally. In this case, this function should
+; be modified to filter old/irrelevant facts from the buffers
+; (perhaps based on importance or some other metric).
+;
+  (clear-buffer (buffers-perceptions (ds-buffers *ds*)))
+  (clear-buffer (buffers-gists (ds-buffers *ds*)))
+  (clear-buffer (buffers-semantics (ds-buffers *ds*)))
+  (clear-buffer (buffers-pragmatics (ds-buffers *ds*)))
+  (clear-buffer (buffers-inferences (ds-buffers *ds*)))
+  (clear-buffer (buffers-intentions (ds-buffers *ds*)))
+) ; END evict-buffers
 
 
 
@@ -966,7 +1020,7 @@
         (format t "~% ========== Eta Generation ==========") ; DEBUGGING
         ;; (format t "~% user gist clause (for ~a) is ~a" user-ep-name user-gist-clauses) ; DEBUGGING
         ;; (format t "~% user semantics (for ~a) is ~a ~%" user-ep-name user-semantics) ; DEBUGGING
-        (setq new-subplan (plan-reply-to user-gist-clauses user-semantics ep-name)))
+        (setq new-subplan (plan-reply-to (apply 'append (purify-func user-gist-clauses)) ep-name)))
 
       ;`````````````````````
       ; Eta: Reacting
@@ -993,7 +1047,7 @@
 
         ;; (format t "~% user gist clause (for ~a) is ~a" user-ep-name user-gist-clauses) ; DEBUGGING
         ;; (format t "~% user semantics (for ~a) is ~a ~%" user-ep-name user-semantics) ; DEBUGGING
-        (setq new-subplan (plan-reaction-to user-gist-clauses user-semantics ep-name)))
+        (setq new-subplan (plan-reaction-to (apply 'append (purify-func user-gist-clauses)) ep-name)))
 
       ; NOTE: Apart from saying and reacting, assume that Eta actions
       ; also allow telling, describing, suggesting, asking, saying 
@@ -1471,7 +1525,9 @@
         ; Store user gist-clauses in memory and input queue
         (dolist (user-gist-clause user-gist-clauses)
           (store-gist-clause-characterizing-episode user-gist-clause ep-name '^you '^me))
-        (mapcar (lambda (gist) (push (list ep-name gist) (second (ds-input-queue *ds*)))) user-gist-clauses)
+        (mapcar (lambda (gist)
+            (enqueue-in-buffer (list ep-name-new gist) (buffers-gists (ds-buffers *ds*))))
+          user-gist-clauses)
 
         ; Obtain semantic interpretation(s) of the user gist-clauses
         (setq user-semantics (remove-duplicates (remove nil
@@ -1482,7 +1538,9 @@
         ; Store the semantic interpretations in memory and input queue
         (dolist (ulf user-semantics)
           (store-semantic-interpretation-characterizing-episode ulf ep-name '^you '^me))
-        (mapcar (lambda (ulf) (push (list ep-name ulf) (third (ds-input-queue *ds*)))) user-semantics)
+        (mapcar (lambda (ulf)
+            (enqueue-in-buffer (list ep-name-new ulf) (buffers-semantics (ds-buffers *ds*))))
+          user-semantics)
 
         ; Add the fact (^you reply-to.v <prev-step-ep-name>) to context (characterizing ep-name)
         (when prev-step-ep-name
@@ -1502,7 +1560,9 @@
         ; Add each pragmatic wff to context (characterizing ep-name) and input queue
         (dolist (ulf user-pragmatics)
           (store-contextual-fact-characterizing-episode ulf ep-name))
-        (mapcar (lambda (ulf) (push (list ep-name ulf) (fourth (ds-input-queue *ds*)))) user-pragmatics)
+        (mapcar (lambda (ulf)
+            (enqueue-in-buffer (list ep-name-new ulf) (buffers-pragmatics (ds-buffers *ds*))))
+          user-pragmatics)
 
         ; Determine any obligations placed on Eta by utterance (TODO)
         (setq eta-obligations nil)
@@ -1650,7 +1710,7 @@
 
 
 
-(defun plan-reply-to (user-gist-clauses user-semantics ep-name)
+(defun plan-reply-to (user-gist-clause ep-name)
 ;````````````````````````````````````````````````````````````````
 ; Starting at a top-level choice tree root, choose a reply utterance 
 ; based on 'user-gist-clauses' (which is one or more sentences, without tags
@@ -1668,45 +1728,15 @@
 ; directive :subtree), this will be automatically pursued recursively
 ; in the search for a choice, ultimately delivering a verbal output.
 ;
-  (let (user-gist-words choice wff schema-name args eta-gist-clause keys)
+  (let (choice wff schema-name args eta-gist-clause keys)
     
-    (if (null user-gist-clauses)
+    (if (null user-gist-clause)
       (return-from plan-reply-to nil))
 
-    ; Currently we're only using a single ULF
-    (if user-semantics (setq user-semantics (car user-semantics)))
-
-    ; If the extracted ULF specifies an :out directive, we want to create a
-    ; say-to.v subplan directly
-    ; TODO: this is not very elegant - not sure it makes sense for the value
-    ; of the user's ULF to be an out directive by Eta...
-    (when (and user-semantics (eq (car user-semantics) :out))
-      (return-from plan-reply-to
-        (init-plan-from-episode-list
-          (list :episodes (episode-var) (create-say-to-wff (cdr user-semantics))))))
-
-    ; Remove 'nil' gist clauses (unless the only gist clause is the 'nil' gist clause)
-    (setq user-gist-clauses_p (purify-func user-gist-clauses))
-
-    ; We use either choice tree '*reply-to-input*' or
-    ; '*replies-to-input*' (note plural) depending on whether
-    ; we have one or more gist clauses.
-    (cond
-      ; Single gist clause
-      ((null (cdr user-gist-clauses_p))
-        (format t "~%  * Replying to single user clause: ~a " (car user-gist-clauses_p)) ; DEBUGGING
-        (setq choice (choose-result-for (car user-gist-clauses_p) '*reply-to-input*))
-        (format t "~%  * Chose reply: ~a " choice) ; DEBUGGING
-      )
-
-      ; Multiple gist clauses
-      (t
-        (format t "~%  * Replying to concatenation of multiple user clauses:~%   ~a " user-gist-clauses_p) ; DEBUGGING
-        (setq user-gist-words (apply 'append user-gist-clauses_p))
-        ;; (format t "~% user-gist-words are ~a ~% " user-gist-words) ; DEBUGGING
-        (setq choice (choose-result-for user-gist-words '*replies-to-input*))
-        (format t "~%  * Chose reply: ~a " choice) ; DEBUGGING
-    ))
+    ; Use choice tree '*reply-to-input* to form reply to user gist clause
+    (format t "~%  * Replying to user clause: ~a " user-gist-clause) ; DEBUGGING
+    (setq choice (choose-result-for user-gist-clause '*reply-to-input*))
+    (format t "~%  * Chose reply: ~a " choice) ; DEBUGGING
 
     ; 'choice' may be an instantiated reassembly pattern corresponding to a
     ; gist-clause (directive :gist), to be contextually paraphrased by Eta
@@ -1753,12 +1783,12 @@
 
 
 
-(defun plan-reaction-to (user-gist-clauses user-semantics ep-name)
-;````````````````````````````````````````````````````````````````
+(defun plan-reaction-to (user-gist-clause ep-name)
+;``````````````````````````````````````````````````````
 ; Starting at a top-level choice tree root, choose an action or
-; subschema suitable for reacting to 'user-gist-clauses' (which
-; is one or more sentences, without tags (and with a final detached
-; "\." or "?"), that try to capture the main content (gist) of
+; subschema suitable for reacting to 'user-gist-clause' (which
+; is a single sentence, without tags (and with a final detached
+; "\." or "?"), that captures the main content (gist) of
 ; a user input). Return the (new) name of a plan for realizing 
 ; that action or subschema.
 ;
@@ -1776,53 +1806,18 @@
 ; If the action arrived at is a :schema+args "action" (a schema name
 ; along with an argument list), use this schema to form a subplan.
 ;
-; ** Should the new subplan name also receive a 'semantics'
-; property? ... We don't really expect a further user response to these
-; reactive comments from Eta, which would then need to be understood
-; in light of the meaning of these reactive comments...More thought
-; required.
 ;
-  (let (user-gist-words choice wff schema-name args eta-gist-clause keys)
+  (let (choice wff schema-name args eta-gist-clause keys)
     
-    (if (null user-gist-clauses)
+    (if (null user-gist-clause)
       (return-from plan-reaction-to nil))
-
-    ; Currently we're only using a single ULF
-    (if user-semantics (setq user-semantics (car user-semantics)))
-
-    ; If the extracted ULF specifies an :out directive, we want to create a
-    ; say-to.v subplan directly
-    ; TODO: this is not very elegant - not sure it makes sense for the value
-    ; of the user's ULF to be an out directive by Eta...
-    (when (and user-semantics (eq (car user-semantics) :out))
-      (return-from plan-reaction-to
-        (init-plan-from-episode-list
-          (list :episodes (episode-var) (create-say-to-wff (cdr user-semantics))))))
-
-    ; Remove 'nil' gist clauses (unless the only gist clause is the 'nil' gist clause)
-    (setq user-gist-clauses_p (purify-func user-gist-clauses))
 
     (format t "~% ========== Eta Reaction ==========") ; DEBUGGING
 
-    ; We use either choice tree '*reaction-to-input*' or
-    ; '*reactions-to-input*' (note plural) depending on whether
-    ; we have one or more gist clauses.
-    (cond
-      ; Single gist clause
-      ((null (cdr user-gist-clauses_p))
-        (format t "~%  * Reacting to single user clause: ~a " (car user-gist-clauses_p)) ; DEBUGGING
-        (setq choice (choose-result-for (car user-gist-clauses_p) '*reaction-to-input*))
-        (format t "~%  * Chose reaction: ~a ~%" choice) ; DEBUGGING
-      )
-
-      ; Multiple gist clauses
-      (t
-        (format t "~%  * Reacting to concatenation of multiple user clauses:~%   ~a " user-gist-clauses_p) ; DEBUGGING
-        (setq user-gist-words (apply 'append user-gist-clauses_p))
-        ;; (format t "~% user-gist-words are ~a ~% " user-gist-words) ; DEBUGGING
-        (setq choice (choose-result-for user-gist-words '*reactions-to-input*))
-        (format t "~%  * Chose reaction: ~a ~%" choice) ; DEBUGGING
-    ))
+    ; Use choice tree '*reaction-to-input* to select reaction to gist clause
+    (format t "~%  * Reacting to user clause: ~a " user-gist-clause) ; DEBUGGING
+    (setq choice (choose-result-for user-gist-clause '*reaction-to-input*))
+    (format t "~%  * Chose reaction: ~a ~%" choice) ; DEBUGGING
 
     ; 'choice' may be an instantiated reassembly pattern corresponding to a
     ; gist-clause (directive :gist), to be contextually paraphrased by Eta
@@ -1871,12 +1866,6 @@
         ; steps of the schema. These are provided as sublists in 
         ; <argument list>.
         (setq schema-name (first (cdr choice)) args (second (cdr choice)))
-        (init-plan-from-schema schema-name args))
-
-      ; :schema+ulf directive
-      ((eq (car choice) :schema+ulf)
-        ; TODO: Just a temporary directive to test spatial-question schema. Needs changing.
-        (setq schema-name (cdr choice) args (list `(quote ,(resolve-references user-semantics)) nil))
         (init-plan-from-schema schema-name args))
     )
 )) ; END plan-reaction-to
@@ -2878,8 +2867,7 @@
       ; Misc non-recursive directives
       ;```````````````````````````````
       ((member directive '(:out :subtrees :schema :schemas
-                           :schema+args :gist :schema+ulf
-                           :prompt-examples))
+                           :schema+args :gist :prompt-examples))
         (setq result (fill-template pattern parts))
         ; If result is disjunctive, randomly choose one element
         (when (and (listp result) (equal (car result) :or))

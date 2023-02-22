@@ -21,6 +21,8 @@
                 (load (truename "packages/local/ttt/src/load.lisp"))
                 (load (truename (concatenate 'string "packages/local/" dependency "/load.lisp"))))))
     (defvar *dependencies-loaded* t))
+; Load priority queue package (should come pre-bundled with quicklisp)
+(ql:quickload :priority-queue)
 
 ; If GPT3 generation/interpretation mode and GPT3-shell not provided as a dependency, print warning and change mode to RULE.
 (when (and (or (equal *generation-mode* 'GPT3) (equal *interpretation-mode* 'GPT3))

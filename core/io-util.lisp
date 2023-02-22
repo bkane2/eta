@@ -400,7 +400,7 @@
     (setq log-input `(^you say-to.v ^me ',log-input))
     (when log-input
       (setq ep-name-new (store-new-contextual-facts (list log-input)))
-      (push (list ep-name-new log-input) (first (ds-input-queue *ds*)))))
+      (enqueue-in-buffer (list ep-name-new log-input) (buffers-perceptions (ds-buffers *ds*)))))
 ) ; END process-and-increment-log
 
 

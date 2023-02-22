@@ -628,7 +628,7 @@
   (let ((new (make-ds)))
     (setf (ds-curr-plan new) (deepcopy-plan (ds-curr-plan old)))
     (setf (ds-task-queue new) (copy-tree (ds-task-queue old)))
-    (setf (ds-input-queue new) (copy-tree (ds-input-queue old)))
+    (setf (ds-buffers new) (copy-tree (ds-buffers old)))
     (setf (ds-reference-list new) (copy-tree (ds-reference-list old)))
     (setf (ds-equality-sets new) (deepcopy-hash (ds-equality-sets old)))
     (setf (ds-gist-kb-user new) (deepcopy-hash (ds-gist-kb-user old)))
@@ -1600,7 +1600,7 @@
 ; Store the wff in context as well.
 ;
   (when (null wff) (return-from store-semantic-interpretation-characterizing-episode nil))
-  (let ((wff `(,subj articulate2-to.v ,obj (that ,wff))))
+  (let ((wff `(,subj articulate2-to.v ,obj ',wff)))
     (store-in-memory `(,wff * ,ep-name))
     (store-in-context wff)
 )) ; END store-semantic-interpretation-characterizing-episode
@@ -1795,18 +1795,29 @@
 ;
 ; TODO: should we add (<timestamp> during E1), or (<timestamp> ends E1)?
 ;
-  (let ((facts (get-from-context pred-patt)) ep-wffs ep-names time-record)
+  (let ((facts (get-from-context pred-patt))
+        ep-wffs-* ep-wffs-** ep-names-* ep-names-**
+        all-wffs-* time-record)
     (if (and facts (not (listp facts)))
       (setq facts (list pred-patt)))
     ; Remove each matching fact from context
     (dolist (fact facts)
       (setq time-record (get-time))
       ; Get all formulas with fact and ** operator, and extract ep-names
-      (setq ep-wffs (append (get-from-memory `(,fact ** ?e)) (get-from-memory `(,fact * ?e))))
-      (setq ep-names (apply #'append (mapcar #'last ep-wffs)))
-      ; For each ep-name, remove NOW* fact from memory and add ending timestamp
-      (dolist (ep-name ep-names)
+      (setq ep-wffs-** (get-from-memory `(,fact ** ?e)))
+      (setq ep-wffs-* (get-from-memory `(,fact * ?e)))
+      (setq ep-names-** (apply #'append (mapcar #'last ep-wffs-**)))
+      (setq ep-names-* (apply #'append (mapcar #'last ep-wffs-*)))
+      ; For each ep-name characterized by fact, remove (NOW* during ep-name) fact
+      ; from memory and add ending timestamp
+      (dolist (ep-name ep-names-**)
         (store-end-time-of-episode ep-name :time-record time-record))
+      ; For each ep-name partially characterized by fact, if there are no other facts
+      ; partially characterizing ep-name, remove (NOW* during ep-name) from memory
+      (dolist (ep-name ep-names-*)
+        (setq all-wffs-* (get-from-memory `(?fact * ,ep-name)))
+        (if (and (= 1 (length all-wffs-*)) (equal fact (first (car all-wffs-*))))
+          (store-end-time-of-episode ep-name :time-record time-record)))
       ; Remove fact from context
       (remove-from-context fact)))
 ) ; END remove-old-contextual-fact
@@ -1895,6 +1906,123 @@
       (remove-fact pred-patt (ds-kb *ds*))
       (remove-facts facts (ds-kb *ds*))))
 ) ; END remove-from-kb
+
+
+
+;``````````````````````````````````````````````````````
+;
+; [*] BUFFER UTIL
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun enqueue-in-buffer (item buffer &optional (importance 1))
+;````````````````````````````````````````````````````````````````
+; Adds an item to the priority queue for a given buffer, given an
+; importance value (1 by default if not given).
+;
+  (if (numberp importance) (priority-queue:pqueue-push item importance buffer))
+) ; END enqueue-in-buffer
+
+
+
+(defun buffer-empty-p (buffer)
+;````````````````````````````````
+; Checks if a buffer is empty.
+;
+  (priority-queue:pqueue-empty-p buffer)
+) ; END buffer-empty-p
+
+
+
+(defun pop-item-from-buffer (buffer)
+;``````````````````````````````````````
+; Pops the most important item from the given buffer.
+;
+  (if (not (buffer-empty-p buffer))
+    (priority-queue:pqueue-pop buffer))
+) ; END pop-item-from-buffer
+
+
+
+(defun pop-item-from-buffer (buffer)
+;``````````````````````````````````````
+; Pops the most important item from the given buffer.
+;
+  (if (not (buffer-empty-p buffer))
+    (priority-queue:pqueue-pop buffer))
+) ; END pop-item-from-buffer
+
+
+
+(defun pop-item-from-buffer-with-importance (buffer)
+;``````````````````````````````````````````````````````
+; Pops the most important item from the given buffer as
+; an (item, importance) tuple.
+;
+  (let (item importance)
+    (when (not (buffer-empty-p buffer))
+      (setq item (priority-queue:pqueue-front-value buffer))
+      (setq importance (priority-queue:pqueue-front-key buffer))
+      (priority-queue:pqueue-pop buffer)
+      (list item importance))
+)) ; END pop-item-from-buffer-with-importance
+
+
+
+(defun pop-all-from-buffer (buffer)
+;``````````````````````````````````````
+; Pops all elements from a buffer and returns them as a list.
+;
+  (loop while (not (buffer-empty-p buffer))
+    collect (pop-item-from-buffer buffer))
+) ; END pop-all-from-buffer
+
+
+
+(defun pop-all-from-buffer-with-importance (buffer)
+;``````````````````````````````````````````````````````
+; Pops all elements from a buffer and returns them as a list
+; of (item, importance) tuples.
+;
+  (loop while (not (buffer-empty-p buffer))
+    collect (pop-item-from-buffer-with-importance buffer))
+) ; END pop-all-from-buffer-with-importance
+
+
+
+(defun get-item-from-buffer (buffer)
+;``````````````````````````````````````
+; Gets the most important item from the given buffer without removing.
+;
+  (if (not (buffer-empty-p buffer))
+    (priority-queue:pqueue-front-value buffer))
+) ; END get-item-from-buffer
+
+
+
+(defun clear-buffer (buffer)
+;`````````````````````````````
+; Clears the given buffer.
+;
+  (priority-queue:pqueue-clear buffer)
+) ; END clear-buffer
+
+
+
+(defun iterate-buffer (buffer &optional f)
+;````````````````````````````````````````````
+; "Iterates" a buffer by popping all elements from the
+; buffer, adding them to a list, and re-inserting into the buffer.
+; If a function is given, invoke that function on each buffer element.
+;
+  (let ((dequeued-elems (pop-all-from-buffer-with-importance buffer)))
+    (mapcar (lambda (e) (enqueue-in-buffer (first e) buffer (second e))) dequeued-elems)
+    (if (and f (functionp f))
+      (mapcar (lambda (e) (funcall f (first e))) dequeued-elems)
+      (mapcar (lambda (e) (first e)) dequeued-elems))
+)) ; END iterate-buffer
 
 
 
@@ -2537,7 +2665,7 @@
 
 (defun unwrap-semantic-interpretation (semantic-fact)
 ;``````````````````````````````````````````````````````
-; Given a fact of the form (?x articulate2-to.v ?y (that (<wff>))),
+; Given a fact of the form (?x articulate2-to.v ?y '(<wff>)),
 ; return the wff.
 ;
   (second (fourth semantic-fact))
