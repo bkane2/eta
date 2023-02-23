@@ -44,6 +44,32 @@
 
 
 
+(defun deepcopy-plan (old &key subplan-of)
+;```````````````````````````````````````````
+; Deep copy a plan structure
+;
+  (let ((new (make-plan)))
+    (setf (plan-plan-name new) (copy-tree (plan-plan-name old)))
+    (setf (plan-schema-name new) (copy-tree (plan-schema-name old)))
+    (setf (plan-schema-contents new) (copy-tree (plan-schema-contents old)))
+    (setf (plan-vars new) (copy-tree (plan-vars old)))
+    (setf (plan-types new) (copy-tree (plan-types old)))
+    (setf (plan-var-roles new) (copy-tree (plan-var-roles old)))
+    (setf (plan-rigid-conds new) (copy-tree (plan-rigid-conds old)))
+    (setf (plan-static-conds new) (copy-tree (plan-static-conds old)))
+    (setf (plan-preconds new) (copy-tree (plan-preconds old)))
+    (setf (plan-goals new) (copy-tree (plan-goals old)))
+
+    (setf (plan-subplan-of new) subplan-of)
+
+    (when (plan-curr-step old)
+      (setf (plan-curr-step new) (deepcopy-plan-step (plan-curr-step old) :step-of new)))
+
+    new
+)) ; END deepcopy-plan
+
+
+
 (defstruct plan-step
 ;```````````````````````````````
 ; contains the following fields:
@@ -66,6 +92,38 @@
   obligation
   subplan
 ) ; END defstruct plan-step
+
+
+
+(defun deepcopy-plan-step (old &key step-of prev-step next-step)
+;````````````````````````````````````````````````````````````````
+; Deep copy a plan-step structure
+;
+  (let ((new (make-plan-step)))
+    (setf (plan-step-ep-name new) (copy-tree (plan-step-ep-name old)))
+    (setf (plan-step-wff new) (copy-tree (plan-step-wff old)))
+    (setf (plan-step-certainty new) (copy-tree (plan-step-certainty old)))
+    (setf (plan-step-obligation new) (copy-tree (plan-step-obligation old)))
+
+    (setf (plan-step-step-of new) step-of)
+
+    (when (plan-step-prev-step old)
+      (setf (plan-step-prev-step new)
+        (if prev-step
+          prev-step
+          (deepcopy-plan-step (plan-step-prev-step old) :step-of step-of :next-step new))))
+
+    (when (plan-step-next-step old)
+      (setf (plan-step-next-step new)
+        (if next-step
+          next-step
+          (deepcopy-plan-step (plan-step-next-step old) :step-of step-of :prev-step new))))
+
+    (when (plan-step-subplan old)
+      (setf (plan-step-subplan new) (deepcopy-plan (plan-step-subplan old) :subplan-of new)))
+
+    new
+)) ; END deepcopy-plan-step
 
 
 

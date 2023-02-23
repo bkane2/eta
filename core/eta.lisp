@@ -97,6 +97,34 @@
 
 
 
+(defun deepcopy-ds (old)
+;```````````````````````````````````````````
+; Deep copy a dialogue state
+;
+  (let ((new (make-ds)))
+    (setf (ds-curr-plan new) (deepcopy-plan (ds-curr-plan old)))
+    (setf (ds-task-queue new) (copy-tree (ds-task-queue old)))
+    (setf (ds-buffers new) (deepcopy-buffers (ds-buffers old)))
+    (setf (ds-reference-list new) (copy-tree (ds-reference-list old)))
+    (setf (ds-equality-sets new) (deepcopy-hash (ds-equality-sets old)))
+    (setf (ds-gist-kb-user new) (deepcopy-hash (ds-gist-kb-user old)))
+    (setf (ds-gist-kb-eta new) (deepcopy-hash (ds-gist-kb-eta old)))
+    (setf (ds-conversation-log new) (mapcar #'deepcopy-dialogue-turn (ds-conversation-log old)))
+    (setf (ds-context new) (deepcopy-hash (ds-context old)))
+    (setf (ds-memory new) (deepcopy-hash (ds-memory old)))
+    (setf (ds-kb new) (deepcopy-hash (ds-kb old)))
+    ; TODO: need to modify below line to use deepcopy function from tg package
+    ;; (setf (ds-tg new) (deepcopy-hash (ds-tg old)))
+    (setf (ds-time new) (copy-tree (ds-time old)))
+    (setf (ds-count new) (copy-tree (ds-count old)))
+
+    new
+)) ; END deepcopy-ds
+
+
+
+
+
 (defstruct buffers
 ;```````````````````````````````
 ; contains the following fields:
