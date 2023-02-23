@@ -1198,6 +1198,15 @@
 
 
 
+(defun split-emotion-tag (resp)
+;`````````````````````````````````
+; Splits an emotion tag (if any) from a response.
+;
+  (list (car (remove-if-not #'emotion-tag? resp)) (remove-if #'emotion-tag? resp))
+) ; END split-emotion-tag
+
+
+
 (defun remove-unsupported-tags (resp)
 ;```````````````````````````````````````
 ; Removes tags from an utterance that aren't currently supported.

@@ -2292,6 +2292,11 @@
         history history-agents history-utterances facts-str history-str
         choice examples examples-str emotion prev-utterance)
 
+    ; Split off emotion in given gist-clause (if any)
+    (when gist-clause
+      (setq emotion (first (split-emotion-tag gist-clause)))
+      (if emotion (setq gist-clause (second (split-emotion-tag gist-clause)))))
+
     ; Get conditions and goals of schema
     ; TODO: add other relevant schema categories here in the future
     (setq rigid-conds (mapcar #'second (reverse (plan-rigid-conds curr-subplan))))
@@ -2355,8 +2360,10 @@
         (setq utterance (get-gpt3-response facts-str history-str))))
 
     ; Generate emotion tag for utterance (if enabled)
+    ; If the gist-clause already had an emotion specified, use that instead of generating tag
     (when *emotions*
-      (setq emotion (get-gpt3-emotion (words-to-str utterance) (last history-str 3)))
+      (if (null emotion)
+        (setq emotion (get-gpt3-emotion (words-to-str utterance) (last history-str 3))))
       (setq utterance (cons emotion utterance)))
 
     ;; (format t "~%  * Generated utterance = ~a" utterance) ; DEBUGGING   
