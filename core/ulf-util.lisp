@@ -1162,6 +1162,15 @@
 ) ; END not-prop?
 
 
+(defun characterizes-prop? (prop)
+;`````````````````````````````````````
+; Checks whether a proposition characterizes an episode, i.e.,
+; ((^you move.v (the.d (|Twitter| block.n))) ** E3)
+;
+  (and (listp prop) (= 3 (length prop)) (equal '** (second prop)))
+) ; END characterizes-prop?
+
+
 (defun relation-prop? (prop)
 ;`````````````````````````````
 ; Checks whether a proposition is a relation, i.e. ((the.d (|Twitter| block.n)) on.p (the.d (|Texaco| block.n))),

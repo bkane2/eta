@@ -82,7 +82,7 @@
   (let (plan schema sections ep-vars)
     ; Make plan structure plan-name corresponding to schema-name
     (setq plan (make-plan))
-    (setf (plan-plan-name plan) (gensym "PLAN"))
+    (setf (plan-plan-name plan) (gentemp "PLAN"))
     (setf (plan-schema-name plan) schema-name)
 
     ;; (format t "'schema-name' of ~a has been set to ~a~%"
@@ -96,7 +96,7 @@
     ; to avoid conflicts when using property lists
     (setq ep-vars (remove-duplicates (remove-if-not #'ep-var? (flatten schema))))
     (dolist (ep-var ep-vars)
-      (setq schema (subst (gensym (string ep-var)) ep-var schema)))
+      (setq schema (subst (gentemp (string ep-var)) ep-var schema)))
 
     (setf (plan-schema-contents plan) schema)
 
@@ -151,7 +151,7 @@
   (let (plan)
     ; Make plan structure plan-name
     (setq plan (make-plan))
-    (setf (plan-plan-name plan) (gensym "PLAN"))
+    (setf (plan-plan-name plan) (gentemp "PLAN"))
 
     ; Remove :episodes keyword (if given)
     (if (equal :episodes (car episodes)) (setq episodes (cdr episodes)))
@@ -982,8 +982,7 @@
 ;
   (let (new-var schema-name)
     ; Create new episode variable
-    (setq new-var
-      (intern (format nil "~a" (gentemp (string var)))))
+    (setq new-var (gentemp (string var)))
     (setq schema-name (plan-schema-name plan))
     ; Inherit gist-clauses, semantics, and topic keys
     (setf (gethash new-var (get schema-name 'gist-clauses))

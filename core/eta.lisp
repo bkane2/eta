@@ -194,11 +194,6 @@
   ; Certainty cutoff used to generate responses given a list of relations+certainties from the blocks world
   (defparameter *certainty-threshold* 0.7)
 
-  ; Maximum delays used in processing speech acts
-  (defparameter *delay-acknowledge.v* 10) ; certainty ~0.3
-  (defparameter *delay-respond-to.v* 15) ; certainty ~0.4
-  (defparameter *delay-say-to.v* 15) ; certainty ~0.4
-
   ; A list of supported speech acts
   (defparameter *speech-acts* '(say-to.v paraphrase-to.v reply-to.v react-to.v))
 
@@ -1134,7 +1129,7 @@
       ; Eta: Recalling answer from history
       ;`````````````````````````````````````
       ((setq bindings (bindings-from-ttt-match '(^me recall-answer.v _!1 _!2) wff))
-        (setq user-semantics (get-single-binding bindings))
+        (setq user-semantics (resolve-references (get-single-binding bindings)))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
 
@@ -1165,7 +1160,7 @@
       ((setq bindings (bindings-from-ttt-match '(^me seek-answer-from.v _! _!1) wff))
         (setq system (get-single-binding bindings))
         (setq bindings (cdr bindings))
-        (setq query (eval (get-single-binding bindings)))
+        (setq query (eval (resolve-references (get-single-binding bindings))))
 
         ; If in *read-log* debug mode, update stored block coordinates according to current log entry and store in context.
         (when *read-log*
@@ -1196,7 +1191,7 @@
       ; Eta: Conditionally saying
       ;````````````````````````````
       ((setq bindings (bindings-from-ttt-match '(^me conditionally-say-to.v ^you _! _!1) wff))
-        (setq user-semantics (get-single-binding bindings))
+        (setq user-semantics (resolve-references (get-single-binding bindings)))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
         ; Generate response based on list of relations
@@ -1223,7 +1218,7 @@
       ; getting an answer binding from an external system, and communicating that answer,
       ; should be two separate steps in the schema.
       ((setq bindings (bindings-from-ttt-match '(^me conditionally-paraphrase-to.v ^you _! _!1) wff))
-        (setq user-semantics (get-single-binding bindings))
+        (setq user-semantics (resolve-references (get-single-binding bindings)))
         (setq bindings (cdr bindings))
         (setq expr (get-single-binding bindings))
         ; Generate response gist based on list of relations
@@ -1404,7 +1399,7 @@
         ; This is a list of relations ((($ ...) goal-schema1.n) (($ ...) instance-of.p ($ ...)))
         (setq ans (read-subsystem '|Spatial-Reasoning-System| :block t))
         ; Create name for goal representation and add alias
-        (setq sk-name (gensym "BW-goal-rep"))
+        (setq sk-name (gentemp "BW-goal-rep"))
         (setq goal-schema (get-single-binding
           (bindings-from-ttt-match-deep '(_! goal-schema1.n) ans)))
         (add-alias goal-schema sk-name)
@@ -1488,7 +1483,7 @@
 
         ; Use previous Eta speech act as context for interpretation
         (setq prev-step (find-prev-turn-of-agent *^me*))
-        (setq prev-step-ep-name (fifth prev-step))
+        (setq prev-step-ep-name (sixth prev-step)) ; TODO: conversation-log reference
         (setq prev-step-gist-clauses (second prev-step))
 
         ; Get gist-clauses corresponding to previous speech act
@@ -2294,6 +2289,10 @@
     ; Get the surface utterance using context (if applicable)
     ;````````````````````````````````````````````````````````````````````````````````````````````````
     (cond
+      ; null choice; simply return the gist clause as the surface utterance
+      ((null choice)
+        (setq utterance gist-clause))
+
       ; :out directive; output utterance directly without using context
       ((eq (car choice) :out)
         (setq utterance (cdr choice)))
@@ -2529,6 +2528,9 @@
     ((or-prop? wff)
       (or  (eval-truth-value (first wff))
            (eval-truth-value (third wff))))
+    ; (wff1 ** e) - check memory
+    ((characterizes-prop? wff)
+      (get-from-memory wff))
     ; Otherwise, check to see if wff is true in context
     (t (get-from-context wff))
 )) ; END eval-truth-value

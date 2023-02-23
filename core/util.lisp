@@ -2749,7 +2749,7 @@
 ;````````````````````
 ; Creates a unique skolem constant given a name.
 ;
-  (intern (format nil "~a.SK" (gensym (string-upcase (string name)))))
+  (intern (format nil "~a.SK" (gen (string-upcase (string name)))))
 ) ; END skolem
 
 
@@ -2776,7 +2776,7 @@
 ;`````````````````````````````
 ; Return a unique episode name, e.g., E38
 ;
-  (gensym "E")
+  (gentemp "E")
 ) ; END episode-name
 
 
