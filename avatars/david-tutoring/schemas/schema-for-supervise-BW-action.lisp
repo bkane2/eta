@@ -26,68 +26,41 @@
     ; The user may say something to David before attempting to make a move -
     ; namely, a spatial question, or a termination/pause request.
     ?e2 (^you say-to.v ^me ?words1)
-
-    ; Either (3a) the user asks a question, (3b) the user says goodbye, (3c) the
-    ; user asks to pause, or (3d) the user is assumed to acknowledge the proposal.
-    ?e3 (:try-in-sequence
-    
-      ; (3a)
-      (:if ((^you ask-question.v) * ?e2)
-
-        ; David reacts to the user's question.
-        ?e4 (^me react-to.v ?e2))
-
-      ; (3b)
-      (:if ((^you say-bye.v) * ?e2)
       
-        ; David says goodbye and exits.
-        ?e5 (^me react-to.v ?e2)
-        ?e6 (^me say-bye.v))
+    ; The user attempts to make the proposed move.
+    ?e9 (^you try1.v ?ka1)
 
-      ; (3c)
-      (:if ((^you ask-to-pause.v) * ?e2)
+    ; The user might follow up with a verification question,
+    ; like "how's that"?
+    ?e10 (^you say-to.v ^me ?words2)
+
+    ; If the user made the correct move...
+    ?e11 (:if ((pair ^you ?e9) instance-of.p ?ka1)
+
+      ; If the user explicitly asked about correctness...
+      ?e12 (:if ((^you verify-correctness.v) * ?e10)
       
-        ; David reacts to the pause request and pauses the conversation.
-        ?e7 (^me react-to.v ?e2)
-        ?e8 ((set-of ^me ^you) pause-conversation.v))
+        ; Inform them that their move was correct.
+        ?e13 (^me say-to.v ^you '(Good\, that\'s correct\.)))
 
-      ; (3d)
-      (:else
-      
-        ; The user attempts to make the proposed move.
-        ?e9 (^you try1.v ?ka1)
+      ; Exit loop and move on to next step in the plan.
+      ?e14 (^me commit-to-STM.v (that (?e1 finished2.a)))
 
-        ; The user might follow up with a verification question,
-        ; like "how's that"?
-        ?e10 (^you say-to.v ^me ?words2)
+      ; Otherwise, if the user made an incorrect move...
+      :else (
 
-        ; If the user made the correct move...
-        ?e11 (:if ((pair ^you ?e9) instance-of.p ?ka1)
+        ; Issue a correction by explicitly informing
+        ; the user what the correct move should have been.
+        ?e20 (^me issue-correction-to.v ^you ?ka1)
 
-          ; If the user explicitly asked about correctness...
-          ?e12 (:if ((^you verify-correctness.v) * ?e10)
-          
-            ; Inform them that their move was correct.
-            ?e13 (^me say-to.v ^you '(Good\, that\'s correct\.)))
-
-          ; Exit loop and move on to next step in the plan.
-          ?e14 (^me commit-to-STM.v (that (?e1 finished2.a)))
-
-          ; Otherwise, if the user made an incorrect move...
-          :else (
-
-            ; Issue a correction by explicitly informing
-            ; the user what the correct move should have been.
-            ?e20 (^me issue-correction-to.v ^you ?ka1)
-
-            ; Exit loop and move on to next step in the plan
-            ; (which, in the case of an incorrect move by the user,
-            ; will be the correction/adjustment to that move).
-            ; TODO: see note in 'schema-for-guide-BW-action.lisp' - I'm unsure
-            ; of whether clarifications should be dealt with in this way (i.e.,
-            ; modifications to the subsequent planner inputs), but this is the way
-            ; it's done currently with the existing planner capabilities.
-            ?e21 (^me commit-to-STM.v (that (?e1 finished2.a))))))))
+        ; Exit loop and move on to next step in the plan
+        ; (which, in the case of an incorrect move by the user,
+        ; will be the correction/adjustment to that move).
+        ; TODO: see note in 'schema-for-guide-BW-action.lisp' - I'm unsure
+        ; of whether clarifications should be dealt with in this way (i.e.,
+        ; modifications to the subsequent planner inputs), but this is the way
+        ; it's done currently with the existing planner capabilities.
+        ?e21 (^me commit-to-STM.v (that (?e1 finished2.a))))))
 
 )
 

@@ -34,4 +34,9 @@
     2 ((Resume \.)) (0 :gist)
   1 (0 resume 0)
     2 ((Resume \.)) (0 :gist)
+
+  1 (0 that is .FINISHED-WORD 0)
+    2 ((Goodbye \.)) (0 :gist)
+  1 (0)
+    2 ((NIL Gist \: request)) (0 :gist)
 ))

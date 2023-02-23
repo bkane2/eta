@@ -115,7 +115,7 @@
   ; and they should be parsed directly from user input (or from David's selection) and
   ; used in the form-spatial-representation.v episode.
   ; ````````````````````````````````````````````````````````````````````````````````````
-  ?e8 (^you respond-to.v ?e7)
+  ?e8 (^you reply-to.v ?e7)
 
   ; Either (9a) user says that they understand the concept, (9b) the user asks to
   ; make a bigger example, (9c) the user asks to make a smaller example, or (9d)
@@ -146,7 +146,7 @@
     
       ; David acknowledges user's request, prompts the user to try.
       ?e15 (^me say-to.v ^you '(We certainly can make a bigger one\. Why don\'t you try it?))
-      ?e16 (^you acknowledge.v ?e15)
+      ?e16 (^you reply-to.v ?e15)
       ; David finds a bigger goal structure as an extension.
       ; TODO: bigger.a to be replaced once comparatives figured out.
       ?e17 (^me form-spatial-representation.v (a.d ?goal-rep1 (bigger.a
@@ -162,7 +162,7 @@
     
       ; David acknowledges user's request, prompts the user to try.
       ?e20 (^me say-to.v ^you '(We certainly can make a smaller one\. Why don\'t you try it?))
-      ?e21 (^you acknowledge.v ?e20)
+      ?e21 (^you reply-to.v ?e20)
       ; David finds a bigger goal structure as an extension.
       ; TODO: smaller.a to be replaced once comparatives figured out.
       ?e22 (^me form-spatial-representation.v (a.d ?goal-rep1 (smaller.a
@@ -175,7 +175,7 @@
       ?e25 (^me say-to.v ^you '(Do you want to try to make a bigger one?))
 
       ; The user responds to the request (possibly just silent acknowledgement).
-      ?e26 (^you respond-to.v ?e25)
+      ?e26 (^you reply-to.v ?e25)
 
       ; If the user replies 'no'...
       ?e27 (:if ((^you say-no.v) * ?e26)
@@ -205,7 +205,7 @@
   ; TODO: what if user replies that they still don't understand the concept?
   ; Would require "looping" as the user builds more extensions of the concept,
   ; but I'm currently avoiding this now for the purposes of the demo.
-  ?e51 (^you acknowledge.v ?e50)
+  ?e51 (^you reply-to.v ?e50)
 
   ; David commits to memory that the user understands the concept.
   ; TODO: this needs to be stored in persistent long-term memory eventually,

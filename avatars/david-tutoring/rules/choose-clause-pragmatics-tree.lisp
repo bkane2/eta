@@ -27,4 +27,6 @@
     2 (^you ask-to-make-structure-bigger.v) (0 :ulf)
   1 (0 I 2 .MAKE 1 .SMALLER .EXAMPLE of 1 .STRUCTURE 0)
     2 (^you ask-to-make-structure-smaller.v) (0 :ulf)
+  1 (NIL Gist \: 0)
+    2 (^you (make.v (a.d (unknown.a request.n)))) (0 :ulf)
 ))

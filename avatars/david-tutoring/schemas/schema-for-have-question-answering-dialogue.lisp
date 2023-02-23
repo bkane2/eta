@@ -55,36 +55,16 @@
   ?e2 (:repeat-until (?e2 finished2.a)
 
     ; Prompt the user for a spatial question.
-    ?e3 (^me say-to.v ^you
-          '(Do you have a spatial question for me?))
+    ?e3 (^me paraphrase-to.v ^you
+          '(Do you have a spatial question for me ?))
 
     ; User replies with either spatial question, special request, or smalltalk.
     ?e4 (^you reply-to.v ?e3)
 
-    ; Either (5a) user requests goodbye, (5b) user requests to pause, or
-    ; (5c) user makes some other reply.
-    ?e5 (:try-in-sequence
-
-      ; (5a)
-      (:if (^you say-bye.v)
-
-        ; Store the fact that ?e2 is finished and react.
-        ?e6 (^me commit-to-STM.v (that (?e2 finished2.a)))
-        ?e7 (^me react-to.v ?e4))
-
-      ; (5b)
-      (:if (^you paraphrase-to.v ^me '(Pause for a moment \.))
-
-        ; React and instantiate pause-conversation schema.
-        ?e8 (^me react-to.v ?e4)
-        ?e9 ((set-of ^me ^you) pause-conversation.v))
-
-      ; (5c)
-      (:else
-
-        ; React to user's reply (i.e., respond to smalltalk or
-        ; give an answer to the user's spatial query).
-        ?e10 (^me react-to.v ?e4))))
+    ; If user makes an unknown request, inform them of lack of understanding.
+    ; Note that spatial questions and requests are otherwise handled as reactions.
+    ?e5 (:if ((^you (make.v (a.d (unknown.a request.n)))) ** ?e4)
+        ?e6 (^me say-to.v ^you '(I apologize \, I could not understand what you said \.))))
 )
 
 )) ; END defparameter *have-question-answering-dialogue*
@@ -124,9 +104,7 @@
 ;
 (mapcar #'(lambda (x) 
       (store-output-gist-clauses (first x) (second x) '*have-question-answering-dialogue*))
-  '(
-    (?e3  ((do you have a spatial question ?)))
-  )
+  '()
 ) ; END mapcar #'store-output-gist-clauses
 
 
