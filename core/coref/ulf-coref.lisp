@@ -286,7 +286,7 @@
           ; in conversation log), excluding the question mark
           (let ((prev-question (first (car (remove nil
                     (mapcar (lambda (ulfs) (if (question-ulf? (car ulfs)) (car ulfs)))
-                      (third (ds-conversation-log *ds*))))))))
+                      (mapcar #'dialogue-turn-semantics (ds-conversation-log *ds*))))))))
             (if prev-question
               (cons (car pair) (create-discourse-entity prev-question))
               pair)))

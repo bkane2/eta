@@ -146,20 +146,15 @@
 ;`````````````````````````````
 ; Logs all of the turns in the current conversation log.
 ;
-  (mapcar (lambda (agent+text gist semantic pragmatic)
-      (log-turn-write (list (second agent+text) gist semantic pragmatic)
-        :agent (if (equal (first agent+text) (string *^me*)) 'eta 'user)))
-    (reverse (first (ds-conversation-log *ds*)))
-    (reverse (second (ds-conversation-log *ds*)))
-    (reverse (third (ds-conversation-log *ds*)))
-    (reverse (fourth (ds-conversation-log *ds*))))
+  (mapcar #'log-turn-write (reverse (ds-conversation-log *ds*)))
 ) ; END log-turn-write-all
 
 
 
-(defun log-turn-write (turn &key (agent 'user))
-;```````````````````````````````````````````````
-; Logs some a turn (a tuple (text gists semantics pragmatics obligations)) in the conversation-log directory.
+(defun log-turn-write (turn)
+;````````````````````````````
+; Logs some a turn in the conversation-log directory, as well as the appropriate log directories
+; when in read-log mode.
 ; Temporarily disable pretty-printing so each line in the log file corresponds to a single turn.
 ;
   (let* ((instance-dir (format nil "~a/" *dialogue-instance*))
@@ -169,19 +164,18 @@
          (fname-sem  (concatenate 'string log-dir instance-dir "semantic.txt"))
          (fname-prag (concatenate 'string log-dir instance-dir "pragmatic.txt"))
          (fname-oblg (concatenate 'string log-dir instance-dir "obligations.txt"))
-         (text (first turn)) (gists (second turn)) (semantics (third turn)) (pragmatics (fourth turn)) (obligations (fifth turn))
-         (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
+         (agent (dialogue-turn-agent turn)))
     (setq *print-pretty* nil)
     (with-open-file (outfile fname-text :direction :output :if-exists :append :if-does-not-exist :create)
-      (format outfile "~a : ~s~%" agent-name text))
+      (format outfile "~a : ~s~%" agent (dialogue-turn-utterance turn)))
     (with-open-file (outfile fname-gist :direction :output :if-exists :append :if-does-not-exist :create)
-      (format outfile "~a : ~s~%" agent-name (remove nil (remove-if #'nil-gist-clause? gists))))
+      (format outfile "~a : ~s~%" agent (remove nil (remove-if #'nil-gist-clause? (dialogue-turn-gists turn)))))
     (with-open-file (outfile fname-sem  :direction :output :if-exists :append :if-does-not-exist :create)
-      (format outfile "~a : ~s~%" agent-name (remove nil semantics)))
+      (format outfile "~a : ~s~%" agent (remove nil (dialogue-turn-semantics turn))))
     (with-open-file (outfile fname-prag :direction :output :if-exists :append :if-does-not-exist :create)
-      (format outfile "~s~%" (remove nil pragmatics)))
+      (format outfile "~s~%" (remove nil (dialogue-turn-pragmatics turn))))
     (with-open-file (outfile fname-oblg :direction :output :if-exists :append :if-does-not-exist :create)
-      (format outfile "~s~%" (remove nil obligations)))
+      (format outfile "~s~%" (remove nil (dialogue-turn-obligations turn))))
     (setq *print-pretty* t))
   ; Additionally write conversation log to appropriate log directories when in read-log mode.
   (when *read-log*
@@ -190,19 +184,20 @@
           (fname-sem  (concatenate 'string "logs/logs_out/semantic/" (pathname-name *read-log*) ".txt"))
           (fname-prag (concatenate 'string "logs/logs_out/pragmatic/" (pathname-name *read-log*) ".txt"))
           (fname-oblg (concatenate 'string "logs/logs_out/obligations/" (pathname-name *read-log*) ".txt"))
-          (text (first turn)) (gists (second turn)) (semantics (third turn)) (pragmatics (fourth turn)) (obligations (fifth turn))
-          (agent-name (string-upcase (string agent))))
+          (agent (if (equal (dialogue-turn-agent turn) *^me*)
+            (if (boundp '*agent-id*) (string-upcase (string *agent-id*)) "ETA")
+            "USER")))
       (setq *print-pretty* nil)
       (with-open-file (outfile fname-text :direction :output :if-exists :append :if-does-not-exist :create)
-        (format outfile "~a : ~s~%" agent-name text))
+        (format outfile "~a : ~s~%" agent (dialogue-turn-utterance turn)))
       (with-open-file (outfile fname-gist :direction :output :if-exists :append :if-does-not-exist :create)
-        (format outfile "~a : ~s~%" agent-name (remove nil (remove-if #'nil-gist-clause? gists))))
+        (format outfile "~a : ~s~%" agent (remove nil (remove-if #'nil-gist-clause? (dialogue-turn-gists turn)))))
       (with-open-file (outfile fname-sem  :direction :output :if-exists :append :if-does-not-exist :create)
-        (format outfile "~a : ~s~%" agent-name (remove nil semantics)))
+        (format outfile "~a : ~s~%" agent (remove nil (dialogue-turn-semantics turn))))
       (with-open-file (outfile fname-prag  :direction :output :if-exists :append :if-does-not-exist :create)
-        (format outfile "~s~%" (remove nil pragmatics)))
+        (format outfile "~s~%" (remove nil (dialogue-turn-pragmatics turn))))
       (with-open-file (outfile fname-oblg  :direction :output :if-exists :append :if-does-not-exist :create)
-        (format outfile "~s~%" (remove nil obligations)))
+        (format outfile "~s~%" (remove nil (dialogue-turn-obligations turn))))
       (setq *print-pretty* t)))
 ) ; END log-turn-write
 

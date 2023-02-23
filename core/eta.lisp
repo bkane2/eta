@@ -62,8 +62,7 @@
 ; equality-sets    : hash table containing a list of aliases, keyed by canonical name
 ; gist-kb-user     : hash table of all gist clauses + associated topic keys from user
 ; gist-kb-eta      : hash table of all gist clauses + associated topic keys from Eta
-; conversation-log : contains chronological records of each turn in the conversation
-;                    is a tuple (text, gists, semantics, pragmatics, obligations, episodes)
+; conversation-log : a list containing dialogue-turn structures for each chronological turn in the conversation
 ; context          : hash table of facts that are true at Now*, e.g., <wff3>
 ; memory           : hash table of atemporal/"long-term" facts, e.g., (<wff3> ** E3) and (Now* during E3)
 ; kb               : hash table of Eta's knowledge base, containing general facts
@@ -116,6 +115,67 @@
   (inferences (priority-queue:make-pqueue #'>))
   (intentions (priority-queue:make-pqueue #'>))
 ) ; END defstruct buffers
+
+
+
+
+
+(defun deepcopy-buffers (old)
+;``````````````````````````````````
+; Deep copy a buffers structure
+;
+  (let ((new (make-buffers)))
+    (setf (buffers-perceptions new) (deepcopy-buffer (buffers-perceptions old)))
+    (setf (buffers-gists new) (deepcopy-buffer (buffers-gists old)))
+    (setf (buffers-semantics new) (deepcopy-buffer (buffers-semantics old)))
+    (setf (buffers-pragmatics new) (deepcopy-buffer (buffers-pragmatics old)))
+    (setf (buffers-inferences new) (deepcopy-buffer (buffers-inferences old)))
+    (setf (buffers-intentions new) (deepcopy-buffer (buffers-intentions old)))
+  new
+)) ; END deepcopy-buffers
+
+
+
+
+
+(defstruct dialogue-turn
+;```````````````````````````````
+; contains the following fields:
+; agent: the agent whose turn is represented
+; utterance: the surface utterance constituting the turn
+; gists: a list of gist clauses for the turn
+; semantics: a list of semantic interpretations (ULF) of the turn
+; pragmatics: a list of pragmatic interpretations (ULF) of the turn
+; obligations: a list of dialogue obligations associated with the turn
+; episode-name: the episode name associated with the turn
+; 
+  agent
+  utterance
+  gists
+  semantics
+  pragmatics
+  obligations
+  episode-name
+) ; END defstruct dialogue-turn
+
+
+
+
+
+(defun deepcopy-dialogue-turn (old)
+;``````````````````````````````````````
+; Deep copy a dialogue turn structure
+;
+  (let ((new (make-dialogue-turn)))
+    (setf (dialogue-turn-agent new) (copy-tree (dialogue-turn-agent old)))
+    (setf (dialogue-turn-utterance new) (copy-tree (dialogue-turn-utterance old)))
+    (setf (dialogue-turn-gists new) (copy-tree (dialogue-turn-gists old)))
+    (setf (dialogue-turn-semantics new) (copy-tree (dialogue-turn-semantics old)))
+    (setf (dialogue-turn-pragmatics new) (copy-tree (dialogue-turn-pragmatics old)))
+    (setf (dialogue-turn-obligations new) (copy-tree (dialogue-turn-obligations old)))
+    (setf (dialogue-turn-episode-name new) (copy-tree (dialogue-turn-episode-name old)))
+  new
+)) ; END deepcopy-dialogue-turn
 
 
 
@@ -308,8 +368,8 @@
   ; Initialize buffers
   (setf (ds-buffers *ds*) (make-buffers))
 
-  ; Initialize conversation log ((text gists semantics pragmatics obligations episodes) tuple)
-  (setf (ds-conversation-log *ds*) (list nil nil nil nil nil nil))
+  ; Initialize conversation log
+  (setf (ds-conversation-log *ds*) nil)
 
   ; Initialize fact hash tables
   (setf (ds-context *ds*) (make-hash-table :test #'equal))
@@ -892,8 +952,9 @@
             (when (equal *gist-interpreter* 'GPT3)
               ; Use previous user speech act as context for interpretation
               (setq prev-step (find-prev-turn-of-agent *^you*))
-              (setq prev-step-ep-name (fifth prev-step))
-              (setq user-gist-clauses (second prev-step))
+              (when prev-step
+                (setq prev-step-ep-name (dialogue-turn-episode-name prev-step))
+                (setq user-gist-clauses (dialogue-turn-gists prev-step)))
               ; Get Eta gist clauses
               (setq eta-gist-clauses (form-gist-clauses-using-language-model expr (car (last user-gist-clauses)) '^me))
               (format t "~%  * Storing Eta gist clauses for episode ~a and ~a:~%   ~a ~%" ep-name ep-name1 eta-gist-clauses) ; DEBUGGING
@@ -910,14 +971,17 @@
             ; Add discourse state to stack
             (push (deepcopy-ds *ds*) *ds-stack*)
 
-            ; Check both episode and parent episode for gists/ulfs
-            (log-turn (list expr
-                (get-gist-clauses-characterizing-episode ep-name)
-                (get-semantic-interpretations-characterizing-episode ep-name)
-                nil
-                user-obligations
-                ep-name)
-              :agent (if (boundp '*agent-id*) *agent-id* 'eta))
+            ; Log and write dialogue turn
+            (log-turn-write (car
+              (push (make-dialogue-turn
+                  :agent *^me*
+                  :utterance expr
+                  :gists (get-gist-clauses-characterizing-episode ep-name)
+                  :semantics (get-semantic-interpretations-characterizing-episode ep-name)
+                  :pragmatics nil
+                  :obligations user-obligations
+                  :episode-name ep-name)
+                (ds-conversation-log *ds*))))
 
             ; Output words
             (if (member '|Audio| *registered-systems-perception*)
@@ -965,8 +1029,9 @@
 
             ; Use previous user speech act as context for interpretation
             (setq prev-step (find-prev-turn-of-agent *^you*))
-            (setq prev-step-ep-name (fifth prev-step))
-            (setq user-gist-clauses (second prev-step))
+            (when prev-step
+              (setq prev-step-ep-name (dialogue-turn-episode-name prev-step))
+              (setq user-gist-clauses (dialogue-turn-gists prev-step)))
 
             (format t "~% ========== Eta Generation ==========") ; DEBUGGING
             (format t "~%  * Found user gist clauses (from previous episode ~a):~%   ~a " prev-step-ep-name user-gist-clauses) ; DEBUGGING
@@ -1483,8 +1548,9 @@
 
         ; Use previous Eta speech act as context for interpretation
         (setq prev-step (find-prev-turn-of-agent *^me*))
-        (setq prev-step-ep-name (sixth prev-step)) ; TODO: conversation-log reference
-        (setq prev-step-gist-clauses (second prev-step))
+        (when prev-step
+          (setq prev-step-ep-name (dialogue-turn-episode-name prev-step))
+          (setq prev-step-gist-clauses (dialogue-turn-gists prev-step)))
 
         ; Get gist-clauses corresponding to previous speech act
         (setq prev-step-gist-clauses (get-gist-clauses-characterizing-episode prev-step-ep-name))
@@ -1565,14 +1631,17 @@
         ; Add discourse state to stack
         (push (deepcopy-ds *ds*) *ds-stack*)
 
-        ; Log the user's turn
-        (log-turn (list words
-            user-gist-clauses
-            (resolve-references user-semantics)
-            user-pragmatics
-            eta-obligations
-            ep-name)
-          :agent 'user)
+        ; Log and write dialogue turn
+        (log-turn-write (car
+          (push (make-dialogue-turn
+              :agent *^you*
+              :utterance words
+              :gists user-gist-clauses
+              :semantics (resolve-references user-semantics)
+              :pragmatics user-pragmatics
+              :obligations eta-obligations
+              :episode-name ep-name)
+            (ds-conversation-log *ds*))))
 
       )
       ;````````````````````````````
@@ -2191,8 +2260,8 @@
 ; model will be prompted to generate the next response.
 ;
   (let ((curr-subplan (find-curr-subplan (ds-curr-plan *ds*))) utterance
-        rigid-conds static-conds preconds goals relevant-knowledge facts history
-        facts-str history-str
+        rigid-conds static-conds preconds goals relevant-knowledge facts
+        history history-agents history-utterances facts-str history-str
         choice examples examples-str emotion prev-utterance)
 
     ; Get conditions and goals of schema
@@ -2215,11 +2284,12 @@
       facts)))
 
     ; Get history strings (removing any emotion tags)
-    (setq history (reverse (first (ds-conversation-log *ds*))))
-    (setq history (mapcar (lambda (turn)
-      (list (first turn) (untag-emotions (second turn)))) history))
-    (setq history-str (mapcar (lambda (turn)
-      (list (string (first turn)) (words-to-str (second turn)))) history))
+    (setq history-agents (reverse (mapcar #'dialogue-turn-agent (ds-conversation-log *ds*))))
+    (setq history-utterances
+      (reverse (mapcar #'untag-emotions (mapcar #'dialogue-turn-utterance (ds-conversation-log *ds*)))))
+    (setq history-str
+      (mapcar (lambda (agent utterance) (list (string agent) (words-to-str utterance)))
+        history-agents history-utterances))
 
     (format t "~%  * Generating response using schema: ~a "
       (plan-schema-name (find-curr-subplan (ds-curr-plan *ds*)))) ; DEBUGGING

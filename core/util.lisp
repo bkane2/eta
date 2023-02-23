@@ -628,12 +628,12 @@
   (let ((new (make-ds)))
     (setf (ds-curr-plan new) (deepcopy-plan (ds-curr-plan old)))
     (setf (ds-task-queue new) (copy-tree (ds-task-queue old)))
-    (setf (ds-buffers new) (copy-tree (ds-buffers old)))
+    (setf (ds-buffers new) (deepcopy-buffers (ds-buffers old)))
     (setf (ds-reference-list new) (copy-tree (ds-reference-list old)))
     (setf (ds-equality-sets new) (deepcopy-hash (ds-equality-sets old)))
     (setf (ds-gist-kb-user new) (deepcopy-hash (ds-gist-kb-user old)))
     (setf (ds-gist-kb-eta new) (deepcopy-hash (ds-gist-kb-eta old)))
-    (setf (ds-conversation-log new) (copy-tree (ds-conversation-log old)))
+    (setf (ds-conversation-log new) (mapcar #'deepcopy-dialogue-turn (ds-conversation-log old)))
     (setf (ds-context new) (deepcopy-hash (ds-context old)))
     (setf (ds-memory new) (deepcopy-hash (ds-memory old)))
     (setf (ds-kb new) (deepcopy-hash (ds-kb old)))
@@ -1095,35 +1095,13 @@
 
 
 
-(defun log-turn (turn &key (agent 'user))
-;````````````````````````````````````````````````
-; Records a turn in the conversation log, as well as writing to external files.
-;
-  (let ((text (first turn)) (gists (second turn)) (semantics (third turn))
-        (pragmatics (fourth turn)) (obligations (fifth turn)) (episodes (sixth turn))
-        (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
-    (push (list agent-name text) (first (ds-conversation-log *ds*)))
-    (push gists (second (ds-conversation-log *ds*)))
-    (push semantics (third (ds-conversation-log *ds*)))
-    (push pragmatics (fourth (ds-conversation-log *ds*)))
-    (push obligations (fifth (ds-conversation-log *ds*)))
-    (push episodes (sixth (ds-conversation-log *ds*)))
-    (log-turn-write turn :agent agent)
-)) ; END log-turn
-
-
-
 (defun find-prev-turn-of-agent (agent)
 ;``````````````````````````````````````````````
 ; Finds the most recent turn in the conversation log from the given agent.
 ;
-  (let ((clog (ds-conversation-log *ds*)) turns)
-    (setq turns (mapcar
-        (lambda (text gists semantics pragmatics obligations episodes)
-          (list text gists semantics pragmatics obligations episodes))
-      (first clog) (second clog) (third clog) (fourth clog) (fifth clog) (sixth clog)))
-    (car (remove-if (lambda (turn) (not (equal (first (first turn)) (string agent)))) turns))
-)) ; END find-prev-turn-of-agent
+  (car (remove-if (lambda (turn) (not (equal (dialogue-turn-agent turn) (string agent))))
+    (ds-conversation-log *ds*)))
+) ; END find-prev-turn-of-agent
 
 
 
@@ -2023,6 +2001,15 @@
       (mapcar (lambda (e) (funcall f (first e))) dequeued-elems)
       (mapcar (lambda (e) (first e)) dequeued-elems))
 )) ; END iterate-buffer
+
+
+
+(defun deepcopy-buffer (buffer)
+;``````````````````````````````````
+; Copies a buffer to a new object by re-inserting all items in the buffer.
+;
+  (priority-queue::copy-pqueue buffer)
+) ; END deepcopy-buffer
 
 
 
