@@ -39,7 +39,7 @@
 ; ``````````````````````````````````````````````````````````````````
 
   1 (0 my cancer has gotten worse 0)
-    2 *react-emotionally* (0 :schema)
+    2 *react-emotionally* (3 :schema)
   1 (0 my cancer has not gotten worse 0)
     2 *verify-cancer-status* (100 :schema)
   1 (0 you are not sure whether my cancer has gotten worse 0)
@@ -315,7 +315,7 @@
   1 (0 I am sleeping poorly .BECAUSE of my .PAIN 0)
     2 *ask-if-stronger-medication-will-help-sleep* (100 :schema)
   1 (0 I am sleeping poorly .BECAUSE the cancer has .SPREAD 0)
-    2 *react-emotionally* (0 :schema)
+    2 *react-emotionally* (3 :schema)
   1 (0 I am sleeping poorly .BECAUSE of my mental health 0)
     2 *discuss-depression* (100 :schema)
   1 (0 you are sorry that I am sleeping poorly 0)
@@ -355,13 +355,13 @@
   1 (0 the test results .DO not appear conclusive 0)
     2 *ask-about-test-results* (100 :schema)
   1 (0 the test results are unfavorable to me 0)
-    2 *react-emotionally* (0 :schema)
+    2 *react-emotionally* (3 :schema)
   ;; 1 (0 the test results show that the cancer hasn\'t .SPREAD 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
   1 (0 the test results show that I cannot .BE cured 0)
-    2 *react-emotionally* (0 :schema)
+    2 *react-emotionally* (3 :schema)
   1 (0 the test results show that my cancer has .SPREAD 0)
-    2 *react-emotionally* (0 :schema)
+    2 *react-emotionally* (3 :schema)
   1 (0 we performed the ct scan to see how .MUCH further my cancer has progressed 0)
     2 *ask-about-test-results* (100 :schema)
   1 (0 you intend to .EXPLAIN my test results to me 0)
@@ -373,7 +373,7 @@
   1 (0 you are not sure what my test results mean 0)
     2 *ask-about-test-results* (100 :schema)
   1 (0 the test results show that the radiation is not working 0)
-    2 *react-emotionally* (0 :schema)
+    2 *react-emotionally* (3 :schema)
 
   ;; ; Example empathetic response
   ;; 1 (0 you recognize how hard receiving the test results is for me 0)

@@ -60,15 +60,27 @@
 
 
   ; Explicit
+  ;;; Cancer worse
   1 (:or
-    ;;; Test results
     (0 The test results show that I cannot be cured 0)
+    (0 My cancer is terminal 0)
+  )
+    2 ((^you be.v explicit.a) and
+       (^you tell.v ^me (about.p-arg ((^me 's) condition.n))) and
+       (^you tell.v ^me (that (((^me 's) cancer.n) be.v terminal.a)))) (0 :ulf)
+  1 (:or
     (0 The test results show that my cancer has spread 0)
-    ;;; Cancer worse
-    (0 My cancer has not gotten worse 0)
     (0 My cancer has gotten worse 0)
   )
-    2 ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) condition.n)))) (0 :ulf)
+    2 ((^you be.v explicit.a) and
+       (^you tell.v ^me (about.p-arg ((^me 's) condition.n))) and
+       (^you tell.v ^me (that (((^me 's) cancer.n) be.v worse.a)))) (0 :ulf)
+  1 (:or
+    (0 My cancer has not gotten worse 0)
+  )
+    2 ((^you be.v explicit.a) and
+       (^you tell.v ^me (about.p-arg ((^me 's) condition.n))) and
+       (^you tell.v ^me (that (((^me 's) cancer.n) be.v (not worse.a))))) (0 :ulf)
 
   1 (:or
     ;;; Prognosis bargaining (graduation)

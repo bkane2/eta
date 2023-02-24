@@ -32,6 +32,10 @@
          (Is comfort care an option for me ?)
          (I\'ve been trying to learn more about my condition\, and heard about comfort care \. Do you think that\'s an option for me at this point ?))
         ; 6
+        ((Your cancer is terminal \.)
+         (It\'s hard to hear that my cancer is terminal \. Your help means a lot to me \.)
+         (I see \. That\'s really difficult to hear\, I was hoping for something better \. Thank you for being honest with me and for being so supportive\, though \. It really helps \.))
+        ; 7
         ((One option for treatment is chemotherapy \.)
          (Is comfort care an option for me ?)
          (I\'d like to hear a bit about my other options\, since I\'m worried about the side effects of chemotherapy \. I\'ve heard about something called

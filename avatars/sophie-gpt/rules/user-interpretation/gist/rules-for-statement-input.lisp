@@ -44,6 +44,24 @@
   1 (0 .YOUR-REF .CANCER-ILLNESS 2 worse 0)
     2 ((My cancer has gotten worse \.) (Cancer-worse)) (0 :gist)
 
+  ; Your cancer is terminal
+  1 (0 .YOUR-REF .CANCER-ILLNESS 2 .BE terminal 0)
+    2 ((My cancer is terminal \.) (Cancer-worse)) (0 :gist)
+  1 (0 .YOUR-REF .CANCER-ILLNESS 2 .BE .UNFORTUNATELY terminal 0)
+    2 ((My cancer is terminal \.) (Cancer-worse)) (0 :gist)
+  1 (0 .YOUR-REF .CANCER-ILLNESS 2 .NEG 2 .CURE 0)
+    2 ((My cancer is terminal \.) (Cancer-worse)) (0 :gist)
+  1 (0 .YOUR-REF .CANCER-ILLNESS 2 .NEG 4 .DIAGNOSIS-MORE 2 .TREATMENT-OPTION 0)
+    2 ((My cancer is terminal \.) (Cancer-worse)) (0 :gist)
+  1 (0 .YOUR-REF .CANCER-ILLNESS 2 .NEG 2 .ANYTHING 4 .CAN 0)
+    2 ((My cancer is terminal \.) (Cancer-worse)) (0 :gist)
+  1 (0 .NEG 2 .ANYTHING 4 .CAN 3 .YOUR-REF .CANCER-ILLNESS 0)
+    2 ((My cancer is terminal \.) (Cancer-worse)) (0 :gist)
+  1 (0 cannot 2 .CURE .YOUR-REF .CANCER-ILLNESS 0)
+    2 ((My cancer is terminal \.) (Cancer-worse)) (0 :gist)
+  1 (0 out of 1 .TREATMENT-OPTION 5 .YOUR-REF .CANCER-ILLNESS 0)
+    2 ((My cancer is terminal \.) (Cancer-worse)) (0 :gist)
+
 ; ````````````````````    medical-history    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
