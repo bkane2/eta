@@ -24,18 +24,22 @@
          (What is my prognosis ?)
          (I\'m just worried about what this all means for me \. I want to be able to be there for my children and grandchildren \. What do you think this means for me in the future ?))
         ; 4
+        ((One option for treatment is chemotherapy \.)
+         (I\'m not sure about chemotherapy \. Are there other options I can try ?)
+         (I\'ve heard a lot of things about the side effects of chemotherapy that worry me \. What do people do if they don\'t get chemotherapy ?))
+        ; 5
         ((Why are you here today ?)
          (I feel anxious about my future \.)
          (You know\, I feel extremely anxious just thinking about my condition \. I don\'t like not knowing what will happen to me in a month from now \.))
-        ; 5
+        ; 6
         ((It\'s nice to meet you \.)
          (Is comfort care an option for me ?)
          (I\'ve been trying to learn more about my condition\, and heard about comfort care \. Do you think that\'s an option for me at this point ?))
-        ; 6
+        ; 7
         ((Your cancer is terminal \.)
          (It\'s hard to hear that my cancer is terminal \. Your help means a lot to me \.)
          (I see \. That\'s really difficult to hear\, I was hoping for something better \. Thank you for being honest with me and for being so supportive\, though \. It really helps \.))
-        ; 7
+        ; 8
         ((One option for treatment is chemotherapy \.)
          (Is comfort care an option for me ?)
          (I\'d like to hear a bit about my other options\, since I\'m worried about the side effects of chemotherapy \. I\'ve heard about something called
