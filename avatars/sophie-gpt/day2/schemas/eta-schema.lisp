@@ -37,7 +37,7 @@
 ?e1 (^me say-to.v ^you '(Hi\, doctor\. I\'m meeting with you today to help get some questions answered about my condition\.))
 
 ;; (prognosis)
-?e2 ((set-of ^me ^you) ask-about-prognosis.v)
+?e2 ((set-of ^me ^you) ask-about-future.v)
 
 )
 

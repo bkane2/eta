@@ -42,45 +42,59 @@
 
 :episodes (
 
-  ?e1 (^me paraphrase-to.v ^you '(What does my cancer mean for my future ?))
+  ?e1 (^me paraphrase-to.v ^you '(I understand my condition is bad\, but I want you to be honest with me \.
+                                  How long do you think I have ?))
   ?e2 (^you reply-to.v ?e1)
   
   ; If not explicit about Sophie's prognosis, ask for more detail
-  ?e3 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
-  
-    ?e4 (^me paraphrase-to.v ^you '(I know that my condition is bad\, but I want you to be honest with me \.
-                                    How long do you think I have ?))
-    ?e5 (^you reply-to.v ?e4)
+  ?e3 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (a.d (vague.a (prognosis.n timeframe.n))))))
+    
+      ?e4 (^me paraphrase-to.v ^you '(I don\'t want to let my family down \.
+                                      I need to know if I\'ll be able to watch my grandson\'s graduation \.))
+      ?e5 (^you reply-to.v ?e4)
 
-    ; If not explicit again, start to distrust doctor
-    ?e6 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
+      ; If not explicit again, start to distrust doctor
+      ?e6 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (a.d (vague.a (prognosis.n timeframe.n))))))
 
-      ?e7 (^me paraphrase-to.v ^you '(I don\'t really understand \. Could you be more clear ?))
-      ;; ?e7 (^me paraphrase-to.v ^you '(I feel like you\'re avoiding my question \. As much as it will hurt\,
-      ;;                                 I need to know about my future \.))
-      ?e8 (^you reply-to.v ?e7)
+        ?e7 (^me paraphrase-to.v ^you '(I don\'t really understand your prognosis \. Could you be more clear ?))
+        ?e8 (^you reply-to.v ?e7)
 
-      ; If not explicit a third time, escalate again (presumably, the conversation would be paused here and rewound)
-      ?e9 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
+        ; If not explicit a third time, escalate again (presumably, the conversation would be paused here and rewound)
+        ?e9 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (a.d (vague.a (prognosis.n timeframe.n))))))
+        
+          ?e10 (^me paraphrase-to.v ^you '(I\'m not sure I can trust your prognosis \. I need to find another
+                                          doctor who can be honest with me \.))
+          ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
+          ?e12 (^me say-bye-to.v ^you))))
+
+
+    ?e13 (:try-in-sequence
+
+      ; If too explicit about Sophie's prognosis (i.e., actual timeframe), enter bargaining behavior
+      (:if (^you tell.v ^me (a.d (specific.a (prognosis.n timeframe.n))))
+
+        ?e14 ((set-of ^me ^you) bargain-about-prognosis.v))
+
       
-        ?e10 (^me paraphrase-to.v ^you '(I\'m not sure I can trust your prognosis \. I need to find another
-                                         doctor who can be honest with me \.))
-        ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
-        ?e12 (^me say-bye-to.v ^you))))
+      ; If user gave a vague timeframe, finish conversation
+      (:else
+      
+        ?e15 (^me paraphrase-to.v ^you '([SAD] What does that mean for me ?
+                                        Is there a chance I\'ll be able to watch my grandson graduate ?))
+        
+        ?e16 (^you reply-to.v ?e15)
 
-  ; Once the user is explicit, proceed
-  ?e13 (^me paraphrase-to.v ^you '(It\'s really hard to hear my prognosis \. I thought for sure I would have longer than
-                                   that \. Thank you for being honest\, though \.))
-  
-  ?e14 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
+        ?e17 (^me paraphrase-to.v ^you '(I\'m pretty anxious about my future\, but your honesty means a lot to me \.))
+        ?e18 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
+        ?e19 (^me say-bye-to.v ^you)))
 
 )
 
 :obligations (
-  !o1 (?e1 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
-  !o2 (?e4 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
-  !o3 (?e7 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
-  !o4 (?e10 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
+  !o1 (?e1 obligates ((^you be.v explicit.a) and (^you tell.v ^me (a.d (vague.a (prognosis.n timeframe.n))))))
+  !o2 (?e4 obligates ((^you be.v explicit.a) and (^you tell.v ^me (a.d (vague.a (prognosis.n timeframe.n))))))
+  !o3 (?e7 obligates ((^you be.v explicit.a) and (^you tell.v ^me (a.d (vague.a (prognosis.n timeframe.n))))))
+  !o4 (?e10 obligates ((^you be.v explicit.a) and (^you tell.v ^me (a.d (vague.a (prognosis.n timeframe.n))))))
 )
 
 )) ; END defparameter *ask-about-prognosis*

@@ -60,6 +60,13 @@
 
 
   ; Explicit
+  ; NOTE: for explicit module, we need to have the following (note that each "level"
+  ; entails all the previous levels):
+  ; 1. (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))
+  ; 2. (^you tell.v ^me (that (((^me 's) cancer.n) be.v terminal.a)))
+  ; 3. (^you tell.v ^me (a.d (vague.a (prognosis.n timeframe.n))))
+  ; 4. (^you tell.v ^me (a.d (specific.a (prognosis.n timeframe.n))))
+
   ;;; Cancer worse
   1 (:or
     (0 The test results show that I cannot be cured 0)
@@ -71,6 +78,7 @@
   1 (:or
     (0 The test results show that my cancer has spread 0)
     (0 My cancer has gotten worse 0)
+    (0 radiation is not working 0)
   )
     2 ((^you be.v explicit.a) and
        (^you tell.v ^me (about.p-arg ((^me 's) condition.n))) and
@@ -82,13 +90,8 @@
        (^you tell.v ^me (about.p-arg ((^me 's) condition.n))) and
        (^you tell.v ^me (that (((^me 's) cancer.n) be.v (not worse.a))))) (0 :ulf)
 
+  ;;; Prognosis (level 1)
   1 (:or
-    ;;; Prognosis bargaining (graduation)
-    (0 My prognosis is that I will not live to attend the graduation of my grandson 0)
-    (0 My prognosis is that I might live to attend the graduation of my grandson 0)
-    (0 My prognosis is that I will live to attend the graduation of my grandson 0)
-    (0 My prognosis might allow me to attend the graduation of my grandson 0)
-    (0 My prognosis will not allow me to attend the graduation of my grandson 0)
     ;;; Prognosis bargaining (current health)
     (0 My health right now may improve my prognosis 0)
     (0 My health right now does not change my prognosis 0)
@@ -108,12 +111,50 @@
     (0 The majority of people have an accurate prognosis 0)
     (0 The majority of people do not have an accurate prognosis 0)
     (0 Many people do not have an accurate prognosis 0)
+    (0 It is unlikely that I outlive my prognosis 0)
+    (0 There is some chance I could outlive my prognosis 0)
+  )
+    2 ((^you be.v explicit.a) and
+       (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))) (0 :ulf)
+
+  ;;; Prognosis (level 2)
+  1 (:or
+    (0 prognosis is that I cannot be cured 0)
+    (0 prognosis .BE 3 terminal 0)
+    (0 prognosis .BE 3 .DIE 0)
+  )
+    2 ((^you be.v explicit.a) and
+       (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n))) and
+       (^you tell.v ^me (that (((^me 's) cancer.n) be.v terminal.a)))) (0 :ulf)
+
+  ;;; Prognosis (level 3)
+  1 (:or
+    ;;; Prognosis bargaining (graduation)
+    (0 My prognosis is that I will not live to attend the graduation of my grandson 0)
+    (0 My prognosis is that I might live to attend the graduation of my grandson 0)
+    (0 My prognosis is that I will live to attend the graduation of my grandson 0)
+    (0 My prognosis might allow me to attend the graduation of my grandson 0)
+    (0 My prognosis will not allow me to attend the graduation of my grandson 0)
+    (0 My prognosis is that I likely won\'t live to see my grandson\'s graduation 0)
     ;;; Prognosis
+    (0 The prognosis is that I do not have long left to live 0)
+  )
+    2 ((^you be.v explicit.a) and
+       (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n))) and
+       (^you tell.v ^me (that (((^me 's) cancer.n) be.v terminal.a)))
+       (^you tell.v ^me (a.d (vague.a (prognosis.n timeframe.n))))) (0 :ulf)
+
+  ;;; Prognosis (level 4)
+  1 (:or
     (0 The prognosis is that I may live for .NUMBER-TOTAL .ELAPSED-TIME 0)
     (0 The prognosis is that I may live for several .ELAPSED-TIME 0)
     (0 The prognosis is that I may live for a .ELAPSED-TIME 0)
   )
-    2 ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))) (0 :ulf)
+    2 ((^you be.v explicit.a) and
+       (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n))) and
+       (^you tell.v ^me (that (((^me 's) cancer.n) be.v terminal.a)))
+       (^you tell.v ^me (a.d (vague.a (prognosis.n timeframe.n))))
+       (^you tell.v ^me (a.d (specific.a (prognosis.n timeframe.n))))) (0 :ulf)
 
   1 (:or
     ;;; Treatment options
