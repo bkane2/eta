@@ -2320,6 +2320,7 @@
     (setq history-agents (reverse (mapcar #'dialogue-turn-agent (ds-conversation-log *ds*))))
     (setq history-utterances
       (reverse (mapcar #'untag-emotions (mapcar #'dialogue-turn-utterance (ds-conversation-log *ds*)))))
+    (setq history (mapcar (lambda (agent utterance) (list agent utterance)) history-agents history-utterances))
     (setq history-str
       (mapcar (lambda (agent utterance) (list (string agent) (words-to-str utterance)))
         history-agents history-utterances))
