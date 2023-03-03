@@ -1393,6 +1393,9 @@
     2 ((It is up to me whether I trust your prognosis \.)) (0 :gist)
   1 (:subtree *match-deny*)
     2 ((It is up to me whether I trust your prognosis \.)) (0 :gist)
+
+  1 (0)
+      2 *prognosis-bargaining-input* (0 :subtree)
 )) ; END *prognosis-trust-input*
 
 

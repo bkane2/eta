@@ -150,6 +150,7 @@
   (AHOLD hold)
   (HELP helped helping helps assist assists assisting assisted SUPPORT supported supporting supports aid aiding aided aids)
   (THANKFUL grateful)
+  (UNFORTUNATELY sadly regrettably)
   ; ASR errors
   (TALKING talkin)
   (ASKING askin)

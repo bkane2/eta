@@ -1,13 +1,13 @@
-;; *ask-about-prognosis*: development version 6
+;; *bargain-about-prognosis*: development version 6
 ;;
 ;; 
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *ask-about-prognosis*
+(defparameter *bargain-about-prognosis*
 
-'(event-schema :header (((set-of ^me ^you) ask-about-prognosis.v) ** ?e)
+'(event-schema :header (((set-of ^me ^you) bargain-about-prognosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (
@@ -30,49 +30,49 @@
 )
 
 :preconds (
-  ; Sophie does not know her prognosis
-  ?p1 (^me ((pres do.aux-v) not (know.v ((^me 's) prognosis.n))))
+  ; Sophie doesn't fully accept her prognosis
+  ?p1 (^me ((pres do.aux-s) not fully.adv-a (accept.v ((^me 's) prognosis.n))))
+  ; Sophie has an uncle Fred who outlived his prognosis
+  ?p2 (^me ((pres have.v) (an.d (n+preds uncle.n (= |Fred|) (who.rel ((past outlive.v) (his.d prognosis.n)))))))
 )
 
 :goals (
   ; Sophie wants to know more about her prognosis
   ?g1 (^me ((pres want.v) (to (know.v (more.d
         (n+preds {information}.n (about.p ((^me 's) prognosis.n))))))))
-)
+) 
 
 :episodes (
 
-  ?e1 (^me paraphrase-to.v ^you '(What does my cancer mean for my future ?))
+  ?e1 (^me paraphrase-to.v ^you '(I had an uncle Fred who outlived his prognosis \. Do you think I could do the same ?))
   ?e2 (^you reply-to.v ?e1)
   
-  ; If not explicit about Sophie's prognosis, ask for more detail
-  ?e3 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
+  ; If user doesn't address bargaining in explicit way, escalate emotions
+  ?e3 (:if (not (((^you be.v explicit.a) ** ?e2) and ((^you tell.v ^me (about.p-arg ((^me 's) prognosis.n))) ** ?e2)))
   
-    ?e4 (^me paraphrase-to.v ^you '(I know that my condition is bad\, but I want you to be honest with me \.
-                                    How long do you think I have ?))
+    ?e4 (^me paraphrase-to.v ^you '(I don\'t see how you could possibly know that prediction for sure !))
     ?e5 (^you reply-to.v ?e4)
 
     ; If not explicit again, start to distrust doctor
-    ?e6 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
+    ?e6 (:if (not (((^you be.v explicit.a) ** ?e5) and ((^you tell.v ^me (about.p-arg ((^me 's) prognosis.n))) ** ?e5)))
 
-      ?e7 (^me paraphrase-to.v ^you '(I don\'t really understand \. Could you be more clear ?))
-      ;; ?e7 (^me paraphrase-to.v ^you '(I feel like you\'re avoiding my question \. As much as it will hurt\,
-      ;;                                 I need to know about my future \.))
+      ?e7 (^me paraphrase-to.v ^you '([ANGRY] That\'s ridiculous \. I know I have more time than that \.))
       ?e8 (^you reply-to.v ?e7)
 
       ; If not explicit a third time, escalate again (presumably, the conversation would be paused here and rewound)
-      ?e9 (:if (not ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
+      ?e9 (:if (not (((^you be.v explicit.a) ** ?e8) and ((^you tell.v ^me (about.p-arg ((^me 's) prognosis.n))) ** ?e8)))
       
-        ?e10 (^me paraphrase-to.v ^you '(I\'m not sure I can trust your prognosis \. I need to find another
-                                         doctor who can be honest with me \.))
+        ?e10 (^me paraphrase-to.v ^you '([ANGRY] I\'m going to find a different doctor \.))
         ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
         ?e12 (^me say-bye-to.v ^you))))
 
+
   ; Once the user is explicit, proceed
-  ?e13 (^me paraphrase-to.v ^you '(It\'s really hard to hear my prognosis \. I thought for sure I would have longer than
-                                   that \. Thank you for being honest\, though \.))
+  ?e13 (^me paraphrase-to.v ^you '(I see \. Well\, I guess I am pretty anxious about my future \. I just want to make sure I'm there for my grandson \.))
+  ?e14 (^you reply-to.v ?e13)
   
-  ?e14 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
+  ?e15 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
+  ?e16 (^me say-bye-to.v ^you)
 
 )
 
@@ -83,14 +83,14 @@
   !o4 (?e10 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
 )
 
-)) ; END defparameter *ask-about-prognosis*
+)) ; END defparameter *bargain-about-prognosis*
 
 
 
 ;````````````````````````````````````````````````````````
 ; Store schema variable name under header in *schemas*
 ;
-(store-schema-name 'ask-about-prognosis.v '*ask-about-prognosis*)
+(store-schema-name 'bargain-about-prognosis.v '*bargain-about-prognosis*)
 
 
 
@@ -98,9 +98,9 @@
 ; Create empty hash tables for semantics,
 ; gist-clauses, and topic-keys
 ;
-(setf (get '*ask-about-prognosis* 'semantics) (make-hash-table))
-(setf (get '*ask-about-prognosis* 'gist-clauses) (make-hash-table))
-(setf (get '*ask-about-prognosis* 'topic-keys) (make-hash-table))
+(setf (get '*bargain-about-prognosis* 'semantics) (make-hash-table))
+(setf (get '*bargain-about-prognosis* 'gist-clauses) (make-hash-table))
+(setf (get '*bargain-about-prognosis* 'topic-keys) (make-hash-table))
 
 
 
@@ -108,7 +108,7 @@
 ; EL Semantics - Not yet used
 ;
 (mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*ask-about-prognosis*))
+      (store-output-semantics (first x) (second x) '*bargain-about-prognosis*))
   '()
 ) ; END mapcar #'store-output-semantics
 
@@ -118,7 +118,7 @@
 ; Gist clauses
 ;
 (mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*ask-about-prognosis*))
+      (store-output-gist-clauses (first x) (second x) '*bargain-about-prognosis*))
   '()
 ) ; END mapcar #'store-output-gist-clauses
 
@@ -128,6 +128,6 @@
 ; Topic keys
 ;
 (mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*ask-about-prognosis*))
+      (store-topic-keys (first x) (second x) '*bargain-about-prognosis*))
   '()
 ) ; END mapcar #'store-topic-keys

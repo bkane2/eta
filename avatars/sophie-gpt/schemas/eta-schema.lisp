@@ -52,7 +52,7 @@
 
 
 ;; (prognosis)
-;; ?e3 ((set-of ^me ^you) ask-about-prognosis.v)
+;; ?e3 ((set-of ^me ^you) ask-about-future.v)
 
 
 ;; ;; (options)

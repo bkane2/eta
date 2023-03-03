@@ -32,18 +32,21 @@
     (what 3 mean for 1 future ?)
     (I .KNOW that my cancer has gotten worse \, but i\'m not sure how .BAD it is \.)
     (I .WANT to .TALK about my prognosis today \.)
-    (0 How long do you think I have ?)
-    (0 I need to know about my future \.))
+    (0 How long do you think I have ? 0)
+    (0 I need to know about my future 0)
+    (0 What does my cancer mean for my future ? 0)
+    (0 How bad does my future look ? 0)
+    (0 I 1 .NEG 2 understand your prognosis 0))
     2 (*prognosis-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
     (what 2 my options for .TREATMENT ?)
     (what are my .TREATMENT options if I .DO not .DO .CHEMOTHERAPY ?)
-    (I\'m finding it stressful to decide which treatment option to take \.)
-    (I really need to know how these treatments help with my own goals 0)
-    (You\'re giving me too much information at once and not listening to my goals 0)
-    (Given the goals that we discussed \, what option do you think is the best ?))
+    (0 I\'m finding it stressful to decide which treatment option to take 0)
+    (0 I really need to know how these treatments help with my own goals 0)
+    (0 You\'re giving me too much information at once and not listening to my goals 0)
+    (0 Given the goals that we discussed \, what option do you think is the best ? 0))
     2 (*treatment-option-input*
        *general-input*) (0 :subtrees)
 
@@ -209,44 +212,60 @@
   1 (:or
     (.SHOULD I get a .SECOND opinion about my prognosis ?))
     2 (*prognosis-second-opinion-input*
+       *prognosis-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
     (.CAN I trust your prognosis ?)
-    (I\'m not sure I can trust your prognosis 0))
+    (I\'m not sure I can trust your prognosis 0)
+    (0 There\'s no way your prognosis is true 0)
+    (0 I don\'t believe your prognosis 0)
+    (0 That\'s ridiculous \. I know I have more time than that 0))
     2 (*prognosis-trust-input*
+       *prognosis-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
-    (.CAN I outlive your prognosis like my uncle Fred did ?))
+    (.CAN I outlive your prognosis like my uncle Fred did ?)
+    (0 I had an uncle Fred who outlived his prognosis 0))
     2 (*prognosis-bargaining-uncle-input*
+       *prognosis-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
     (.CAN I outlive your prognosis if I .HAVE .GOOD-HEALTH habits ?))
     2 (*prognosis-bargaining-habits-input*
+       *prognosis-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
     (.CAN I outlive your prognosis if I .QUIT smoking ?))
     2 (*prognosis-bargaining-quit-smoke-input*
+       *prognosis-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
     (.CAN I outlive your prognosis if I am .GOOD-HEALTH .NOW ?))
     2 (*prognosis-bargaining-now-input*
+       *prognosis-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
     (.CAN I outlive your prognosis until the graduation of my grandson ?)
-    (my goal is to survive .LONG enough to .BE there for my .FAMILY \.))
+    (my goal is to survive .LONG enough to .BE there for my .FAMILY \.)
+    (0 I need to know if I\'ll be able to watch my grandson\'s graduation 0)
+    (0 Is there a chance I\'ll be able to watch my grandson graduate ? 0)
+    (0 I just want to make sure I'm there for my grandson 0))
     ; (.BE 1 .ANYTHING 5 .IMPROVE 1 prognosis 8 .GRAD-WORDS 1 ?)
     2 (*prognosis-bargaining-graduation-input*
+       *prognosis-input*
        *general-input*) (0 :subtrees)
 
   1 (:or
-    (.CAN I outlive your prognosis 0))
+    (.CAN I outlive your prognosis 0)
+    (0 I don\'t see how you could possibly know that prediction for sure 0))
     2 (*prognosis-bargaining-input*
+       *prognosis-input*
        *general-input*) (0 :subtrees)
 
   1 (:or

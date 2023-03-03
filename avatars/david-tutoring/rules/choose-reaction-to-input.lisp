@@ -33,13 +33,9 @@
   1 (spatial-question 0)
     2 *reaction-to-spatial-question-input* (0 :subtree)
   1 (goodbye 0)
-    2 (Oh \, thank you for participating \. Good bye for now \!) (0 :out)
+    2 *say-bye* (0 :schema)
   1 (pause 0)
-    2 (Sure \, let me know when you want to continue \.) (0 :out)
-  1 (resume 0)
-    2 (Hello again \.) (0 :out)
-  1 (0)
-    2 (I apologize \, I could not understand what you said \.) (0 :out)
+    2 *pause-conversation* (0 :schema)
 ))
 
 

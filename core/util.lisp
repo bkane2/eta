@@ -559,91 +559,7 @@
         (setf (gethash (copy-tree k) new) (copy-tree v)))
       old)
     new
-)) ; END copy-hash
-
-
-
-(defun deepcopy-plan-step (old &key step-of prev-step next-step)
-;````````````````````````````````````````````````````````````````
-; Deep copy a plan-step structure
-;
-  (let ((new (make-plan-step)))
-    (setf (plan-step-ep-name new) (copy-tree (plan-step-ep-name old)))
-    (setf (plan-step-wff new) (copy-tree (plan-step-wff old)))
-    (setf (plan-step-certainty new) (copy-tree (plan-step-certainty old)))
-    (setf (plan-step-obligation new) (copy-tree (plan-step-obligation old)))
-
-    (setf (plan-step-step-of new) step-of)
-
-    (when (plan-step-prev-step old)
-      (setf (plan-step-prev-step new)
-        (if prev-step
-          prev-step
-          (deepcopy-plan-step (plan-step-prev-step old) :step-of step-of :next-step new))))
-
-    (when (plan-step-next-step old)
-      (setf (plan-step-next-step new)
-        (if next-step
-          next-step
-          (deepcopy-plan-step (plan-step-next-step old) :step-of step-of :prev-step new))))
-
-    (when (plan-step-subplan old)
-      (setf (plan-step-subplan new) (deepcopy-plan (plan-step-subplan old) :subplan-of new)))
-
-    new
-)) ; END deepcopy-plan-step
-
-
-
-(defun deepcopy-plan (old &key subplan-of)
-;```````````````````````````````````````````
-; Deep copy a plan structure
-;
-  (let ((new (make-plan)))
-    (setf (plan-plan-name new) (copy-tree (plan-plan-name old)))
-    (setf (plan-schema-name new) (copy-tree (plan-schema-name old)))
-    (setf (plan-schema-contents new) (copy-tree (plan-schema-contents old)))
-    (setf (plan-vars new) (copy-tree (plan-vars old)))
-    (setf (plan-types new) (copy-tree (plan-types old)))
-    (setf (plan-var-roles new) (copy-tree (plan-var-roles old)))
-    (setf (plan-rigid-conds new) (copy-tree (plan-rigid-conds old)))
-    (setf (plan-static-conds new) (copy-tree (plan-static-conds old)))
-    (setf (plan-preconds new) (copy-tree (plan-preconds old)))
-    (setf (plan-goals new) (copy-tree (plan-goals old)))
-
-    (setf (plan-subplan-of new) subplan-of)
-
-    (when (plan-curr-step old)
-      (setf (plan-curr-step new) (deepcopy-plan-step (plan-curr-step old) :step-of new)))
-
-    new
-)) ; END deepcopy-plan
-
-
-
-(defun deepcopy-ds (old)
-;```````````````````````````````````````````
-; Deep copy a dialogue state
-;
-  (let ((new (make-ds)))
-    (setf (ds-curr-plan new) (deepcopy-plan (ds-curr-plan old)))
-    (setf (ds-task-queue new) (copy-tree (ds-task-queue old)))
-    (setf (ds-input-queue new) (copy-tree (ds-input-queue old)))
-    (setf (ds-reference-list new) (copy-tree (ds-reference-list old)))
-    (setf (ds-equality-sets new) (deepcopy-hash (ds-equality-sets old)))
-    (setf (ds-gist-kb-user new) (deepcopy-hash (ds-gist-kb-user old)))
-    (setf (ds-gist-kb-eta new) (deepcopy-hash (ds-gist-kb-eta old)))
-    (setf (ds-conversation-log new) (copy-tree (ds-conversation-log old)))
-    (setf (ds-context new) (deepcopy-hash (ds-context old)))
-    (setf (ds-memory new) (deepcopy-hash (ds-memory old)))
-    (setf (ds-kb new) (deepcopy-hash (ds-kb old)))
-    ; TODO: need to modify below line to use deepcopy function from tg package
-    ;; (setf (ds-tg new) (deepcopy-hash (ds-tg old)))
-    (setf (ds-time new) (copy-tree (ds-time old)))
-    (setf (ds-count new) (copy-tree (ds-count old)))
-
-    new
-)) ; END deepcopy-ds
+)) ; END deepcopy-hash
 
 
 
@@ -709,7 +625,8 @@
 ; Check whether a symbol is a variable, i.e. starts with '?', '!'.
 ; NOTE: this excludes indexical variables, such as '^you'.
 ;
-  (and (symbolp atm) (member (car (explode atm)) '(#\? #\!) :test #'char-equal))
+  (and (symbolp atm) (member (car (explode atm)) '(#\? #\!) :test #'char-equal)
+    (not (or (equal atm '?) (equal atm '!))))
 ) ; END variable?
 
 
@@ -1094,35 +1011,13 @@
 
 
 
-(defun log-turn (turn &key (agent 'user))
-;````````````````````````````````````````````````
-; Records a turn in the conversation log, as well as writing to external files.
-;
-  (let ((text (first turn)) (gists (second turn)) (semantics (third turn))
-        (pragmatics (fourth turn)) (obligations (fifth turn)) (episodes (sixth turn))
-        (agent-name (if (equal agent 'user) (string *^you*) (string *^me*))))
-    (push (list agent-name text) (first (ds-conversation-log *ds*)))
-    (push gists (second (ds-conversation-log *ds*)))
-    (push semantics (third (ds-conversation-log *ds*)))
-    (push pragmatics (fourth (ds-conversation-log *ds*)))
-    (push obligations (fifth (ds-conversation-log *ds*)))
-    (push episodes (sixth (ds-conversation-log *ds*)))
-    (log-turn-write turn :agent agent)
-)) ; END log-turn
-
-
-
 (defun find-prev-turn-of-agent (agent)
 ;``````````````````````````````````````````````
 ; Finds the most recent turn in the conversation log from the given agent.
 ;
-  (let ((clog (ds-conversation-log *ds*)) turns)
-    (setq turns (mapcar
-        (lambda (text gists semantics pragmatics obligations episodes)
-          (list text gists semantics pragmatics obligations episodes))
-      (first clog) (second clog) (third clog) (fourth clog) (fifth clog) (sixth clog)))
-    (car (remove-if (lambda (turn) (not (equal (first (first turn)) (string agent)))) turns))
-)) ; END find-prev-turn-of-agent
+  (car (remove-if (lambda (turn) (not (equal (dialogue-turn-agent turn) (string agent))))
+    (ds-conversation-log *ds*)))
+) ; END find-prev-turn-of-agent
 
 
 
@@ -1300,6 +1195,15 @@
     (remove-unsupported-tags
       (if *emotions* tagged-resp (remove-if #'emotion-tag? tagged-resp)))
 )) ; END tag-emotions
+
+
+
+(defun split-emotion-tag (resp)
+;`````````````````````````````````
+; Splits an emotion tag (if any) from a response.
+;
+  (list (car (remove-if-not #'emotion-tag? resp)) (remove-if #'emotion-tag? resp))
+) ; END split-emotion-tag
 
 
 
@@ -1599,7 +1503,7 @@
 ; Store the wff in context as well.
 ;
   (when (null wff) (return-from store-semantic-interpretation-characterizing-episode nil))
-  (let ((wff `(,subj articulate2-to.v ,obj (that ,wff))))
+  (let ((wff `(,subj articulate2-to.v ,obj ',wff)))
     (store-in-memory `(,wff * ,ep-name))
     (store-in-context wff)
 )) ; END store-semantic-interpretation-characterizing-episode
@@ -1794,18 +1698,29 @@
 ;
 ; TODO: should we add (<timestamp> during E1), or (<timestamp> ends E1)?
 ;
-  (let ((facts (get-from-context pred-patt)) ep-wffs ep-names time-record)
+  (let ((facts (get-from-context pred-patt))
+        ep-wffs-* ep-wffs-** ep-names-* ep-names-**
+        all-wffs-* time-record)
     (if (and facts (not (listp facts)))
       (setq facts (list pred-patt)))
     ; Remove each matching fact from context
     (dolist (fact facts)
       (setq time-record (get-time))
       ; Get all formulas with fact and ** operator, and extract ep-names
-      (setq ep-wffs (append (get-from-memory `(,fact ** ?e)) (get-from-memory `(,fact * ?e))))
-      (setq ep-names (apply #'append (mapcar #'last ep-wffs)))
-      ; For each ep-name, remove NOW* fact from memory and add ending timestamp
-      (dolist (ep-name ep-names)
+      (setq ep-wffs-** (get-from-memory `(,fact ** ?e)))
+      (setq ep-wffs-* (get-from-memory `(,fact * ?e)))
+      (setq ep-names-** (apply #'append (mapcar #'last ep-wffs-**)))
+      (setq ep-names-* (apply #'append (mapcar #'last ep-wffs-*)))
+      ; For each ep-name characterized by fact, remove (NOW* during ep-name) fact
+      ; from memory and add ending timestamp
+      (dolist (ep-name ep-names-**)
         (store-end-time-of-episode ep-name :time-record time-record))
+      ; For each ep-name partially characterized by fact, if there are no other facts
+      ; partially characterizing ep-name, remove (NOW* during ep-name) from memory
+      (dolist (ep-name ep-names-*)
+        (setq all-wffs-* (get-from-memory `(?fact * ,ep-name)))
+        (if (and (= 1 (length all-wffs-*)) (equal fact (first (car all-wffs-*))))
+          (store-end-time-of-episode ep-name :time-record time-record)))
       ; Remove fact from context
       (remove-from-context fact)))
 ) ; END remove-old-contextual-fact
@@ -1894,6 +1809,132 @@
       (remove-fact pred-patt (ds-kb *ds*))
       (remove-facts facts (ds-kb *ds*))))
 ) ; END remove-from-kb
+
+
+
+;``````````````````````````````````````````````````````
+;
+; [*] BUFFER UTIL
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun enqueue-in-buffer (item buffer &optional (importance 1))
+;````````````````````````````````````````````````````````````````
+; Adds an item to the priority queue for a given buffer, given an
+; importance value (1 by default if not given).
+;
+  (if (numberp importance) (priority-queue:pqueue-push item importance buffer))
+) ; END enqueue-in-buffer
+
+
+
+(defun buffer-empty-p (buffer)
+;````````````````````````````````
+; Checks if a buffer is empty.
+;
+  (priority-queue:pqueue-empty-p buffer)
+) ; END buffer-empty-p
+
+
+
+(defun pop-item-from-buffer (buffer)
+;``````````````````````````````````````
+; Pops the most important item from the given buffer.
+;
+  (if (not (buffer-empty-p buffer))
+    (priority-queue:pqueue-pop buffer))
+) ; END pop-item-from-buffer
+
+
+
+(defun pop-item-from-buffer (buffer)
+;``````````````````````````````````````
+; Pops the most important item from the given buffer.
+;
+  (if (not (buffer-empty-p buffer))
+    (priority-queue:pqueue-pop buffer))
+) ; END pop-item-from-buffer
+
+
+
+(defun pop-item-from-buffer-with-importance (buffer)
+;``````````````````````````````````````````````````````
+; Pops the most important item from the given buffer as
+; an (item, importance) tuple.
+;
+  (let (item importance)
+    (when (not (buffer-empty-p buffer))
+      (setq item (priority-queue:pqueue-front-value buffer))
+      (setq importance (priority-queue:pqueue-front-key buffer))
+      (priority-queue:pqueue-pop buffer)
+      (list item importance))
+)) ; END pop-item-from-buffer-with-importance
+
+
+
+(defun pop-all-from-buffer (buffer)
+;``````````````````````````````````````
+; Pops all elements from a buffer and returns them as a list.
+;
+  (loop while (not (buffer-empty-p buffer))
+    collect (pop-item-from-buffer buffer))
+) ; END pop-all-from-buffer
+
+
+
+(defun pop-all-from-buffer-with-importance (buffer)
+;``````````````````````````````````````````````````````
+; Pops all elements from a buffer and returns them as a list
+; of (item, importance) tuples.
+;
+  (loop while (not (buffer-empty-p buffer))
+    collect (pop-item-from-buffer-with-importance buffer))
+) ; END pop-all-from-buffer-with-importance
+
+
+
+(defun get-item-from-buffer (buffer)
+;``````````````````````````````````````
+; Gets the most important item from the given buffer without removing.
+;
+  (if (not (buffer-empty-p buffer))
+    (priority-queue:pqueue-front-value buffer))
+) ; END get-item-from-buffer
+
+
+
+(defun clear-buffer (buffer)
+;`````````````````````````````
+; Clears the given buffer.
+;
+  (priority-queue:pqueue-clear buffer)
+) ; END clear-buffer
+
+
+
+(defun iterate-buffer (buffer &optional f)
+;````````````````````````````````````````````
+; "Iterates" a buffer by popping all elements from the
+; buffer, adding them to a list, and re-inserting into the buffer.
+; If a function is given, invoke that function on each buffer element.
+;
+  (let ((dequeued-elems (pop-all-from-buffer-with-importance buffer)))
+    (mapcar (lambda (e) (enqueue-in-buffer (first e) buffer (second e))) dequeued-elems)
+    (if (and f (functionp f))
+      (mapcar (lambda (e) (funcall f (first e))) dequeued-elems)
+      (mapcar (lambda (e) (first e)) dequeued-elems))
+)) ; END iterate-buffer
+
+
+
+(defun deepcopy-buffer (buffer)
+;``````````````````````````````````
+; Copies a buffer to a new object by re-inserting all items in the buffer.
+;
+  (priority-queue::copy-pqueue buffer)
+) ; END deepcopy-buffer
 
 
 
@@ -2536,7 +2577,7 @@
 
 (defun unwrap-semantic-interpretation (semantic-fact)
 ;``````````````````````````````````````````````````````
-; Given a fact of the form (?x articulate2-to.v ?y (that (<wff>))),
+; Given a fact of the form (?x articulate2-to.v ?y '(<wff>)),
 ; return the wff.
 ;
   (second (fourth semantic-fact))
@@ -2620,7 +2661,7 @@
 ;````````````````````
 ; Creates a unique skolem constant given a name.
 ;
-  (intern (format nil "~a.SK" (gensym (string-upcase (string name)))))
+  (intern (format nil "~a.SK" (gen (string-upcase (string name)))))
 ) ; END skolem
 
 
@@ -2647,7 +2688,7 @@
 ;`````````````````````````````
 ; Return a unique episode name, e.g., E38
 ;
-  (gensym "E")
+  (gentemp "E")
 ) ; END episode-name
 
 

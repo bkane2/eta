@@ -63,7 +63,7 @@
       ; (presumably, the conversation would be paused here and rewound)
       ?e9 (:if (not (^you be.v empowering.a))
       
-        ?e10 (^me paraphrase-to.v ^you '(You\'re giving me too much information at once and not listening to my goals \.
+        ?e10 (^me paraphrase-to.v ^you '(You\'re giving me too much information at once \.
                                          I need to take a break to process this information \.))
         ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
         ?e12 (^me say-bye-to.v ^you))))
