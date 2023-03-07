@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *ask-if-stronger-medication-will-help-sleep*
+(store-schema 'ask-if-stronger-medication-will-help-sleep.v
 
 '(event-schema :header (((set-of ^me ^you) ask-if-stronger-medication-will-help-sleep.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -50,51 +50,4 @@
 
 )
 
-)) ; END defparameter *ask-if-stronger-medication-will-help-sleep*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'ask-if-stronger-medication-will-help-sleep.v '*ask-if-stronger-medication-will-help-sleep*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*ask-if-stronger-medication-will-help-sleep* 'semantics) (make-hash-table))
-(setf (get '*ask-if-stronger-medication-will-help-sleep* 'gist-clauses) (make-hash-table))
-(setf (get '*ask-if-stronger-medication-will-help-sleep* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*ask-if-stronger-medication-will-help-sleep*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*ask-if-stronger-medication-will-help-sleep*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*ask-if-stronger-medication-will-help-sleep*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END ask-if-stronger-medication-will-help-sleep.v

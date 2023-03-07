@@ -23,9 +23,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defparameter *reactions-to-historical-question*
+(store-schema 'react-to-historical-question.v
 
-  '(event-schema :header ((^me react-to-historical-question) ** ?e)
+  '(event-schema :header ((^me react-to-historical-question.v) ** ?e)
   ;````````````````````````````````````````````````````````````````````````````````````
     :episodes (
               ;; ?e1 (^me perceive-world.v |Blocks-World-System| ?ulf ?perceptions)
@@ -50,20 +50,4 @@
                ; to ?e4, I suppose).
     )
 
-)) ; END parameter *reactions-to-historical-question*
-
-
-(setf (get '*reactions-to-historical-question* 'semantics) (make-hash-table))
- ; To fill this in, EL formulas would need to be derived from
- ; Eta reactions (not yet used). This would be rather unlike
- ; the explicit 'store-output-semantics' used in *Eta-schema*
- ; (see "Eta5-schema.lisp").
-
-
-(setf (get '*reactions-to-historical-question* 'gist-clauses) (make-hash-table))
- ; Much the same comment as above applies -- something other than
- ; the straightforward 'store-output-gist-clauses' used in
- ; the *Eta-schema* code would be needed.
-
-(setf (get '*reactions-to-historical-question* 'topic-keys) (make-hash-table))
-
+)) ; END react-to-historical-question.v

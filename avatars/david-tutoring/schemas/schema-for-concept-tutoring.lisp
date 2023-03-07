@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *teach-BW-concept-to*
+(store-schema 'teach-BW-concept-to.v
 
 '(event-schema :header ((^me teach-BW-concept-to.v ^you) ** ?e)
 ;``````````````````````````````````````````````````````````````````
@@ -40,13 +40,6 @@
   !r6 ((the.d (|Mercedes| block.n)) red.a)
   !r7 ((the.d (|Toyota| block.n)) blue.a)
   !r8 ((the.d (|Burger King| block.n)) green.a)
-)
-
-:var-roles (
-;  !r9 (?ka1 (kind1-of.n action1.n)); LKS: I've dropped it because I now think
-                                    ; constraints on "ad-hoc variables (introduced
-                                    ; existentially as some point) should be
-                                    ; placed at that point of introduction
 )
 
 :static-conds (
@@ -102,7 +95,8 @@
   ; they now understand the concept.
   ?e6 (^me say-to.v ^you '(Excellent\. You have now built the simplest possible
                             (concept-noun.f ?c) \.))
-  ?e7 (^me say-to.v ^you '(Do you think you understand the concept ?))
+  ; TODO: add rule paraphrasing naturally to (Do you think you understand the concept ?)
+  ?e7 (^me paraphrase-to.v ^you '(Do you understand the concept ?))
 
   ; Two generalizations need to be made in the following dialogue:
   ; First, the system shouldn't assume that building one 'additional' extension
@@ -172,7 +166,8 @@
     (:else
     
       ; David asks if user wants to make a bigger example.
-      ?e25 (^me say-to.v ^you '(Do you want to try to make a bigger one?))
+      ; TODO: add rule paraphrasing naturally to (Do you want to try to make a bigger one?)
+      ?e25 (^me paraphrase-to.v ^you '(Do you want to make a bigger example of the concept ?))
 
       ; The user responds to the request (possibly just silent acknowledgement).
       ?e26 (^you reply-to.v ?e25)
@@ -237,55 +232,4 @@
 )
 
 
-)) ; END defparameter *teach-BW-concept-to*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'teach-BW-concept-to.v
-                  '*teach-BW-concept-to*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*teach-BW-concept-to* 'semantics) (make-hash-table))
-(setf (get '*teach-BW-concept-to* 'gist-clauses) (make-hash-table))
-(setf (get '*teach-BW-concept-to* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*teach-BW-concept-to*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*teach-BW-concept-to*))
-  '(
-    (?e7 ((Do you understand the concept ?)))
-    (?e25 ((Do you want to make a bigger example of the concept ?)))
-  )
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*teach-BW-concept-to*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END teach-BW-concept-to.v

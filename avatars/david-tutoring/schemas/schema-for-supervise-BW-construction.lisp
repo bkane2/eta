@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *supervise-BW-construction*
+(store-schema 'supervise-BW-construction.v
 
 '(event-schema :header ((^me supervise-BW-construction.v ^you ?goal-rep) ** ?e)
 ;```````````````````````````````````````````````````````````````````````````````
@@ -43,13 +43,6 @@
   !r6 ((the.d (|Mercedes| block.n)) red.a)
   !r7 ((the.d (|Toyota| block.n)) blue.a)
   !r8 ((the.d (|Burger King| block.n)) green.a)
-)
-
-:var-roles (
-;  !r9 (?ka1 (kind1-of.n action1.n)); LKS: I've dropped it because I now think
-                                    ; constraints on "ad-hoc variables (introduced
-                                    ; existentially as some point) should be
-                                    ; placed at that point of introduction
 )
 
 :static-conds (
@@ -143,52 +136,4 @@
 )
 
 
-)) ; END defparameter *supervise-BW-construction*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'supervise-BW-construction.v
-                  '*supervise-BW-construction*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*supervise-BW-construction* 'semantics) (make-hash-table))
-(setf (get '*supervise-BW-construction* 'gist-clauses) (make-hash-table))
-(setf (get '*supervise-BW-construction* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*supervise-BW-construction*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*supervise-BW-construction*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*supervise-BW-construction*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END supervise-BW-construction.v

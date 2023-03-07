@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *refuse-stronger-pain-medication*
+(store-schema 'refuse-stronger-pain-medication.v
 
 '(event-schema :header (((set-of ^me ^you) refuse-stronger-pain-medication.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -50,51 +50,4 @@
 
 )
 
-)) ; END defparameter *refuse-stronger-pain-medication*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'refuse-stronger-pain-medication.v '*refuse-stronger-pain-medication*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*refuse-stronger-pain-medication* 'semantics) (make-hash-table))
-(setf (get '*refuse-stronger-pain-medication* 'gist-clauses) (make-hash-table))
-(setf (get '*refuse-stronger-pain-medication* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*refuse-stronger-pain-medication*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*refuse-stronger-pain-medication*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*refuse-stronger-pain-medication*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END refuse-stronger-pain-medication.v

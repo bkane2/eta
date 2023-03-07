@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *mention-feeling-better-after-radiation*
+(store-schema 'mention-feeling-better-after-radiation.v
 
 '(event-schema :header (((set-of ^me ^you) mention-feeling-better-after-radiation.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -20,51 +20,4 @@
 
 )
 
-)) ; END defparameter *mention-feeling-better-after-radiation*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'mention-feeling-better-after-radiation.v '*mention-feeling-better-after-radiation*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*mention-feeling-better-after-radiation* 'semantics) (make-hash-table))
-(setf (get '*mention-feeling-better-after-radiation* 'gist-clauses) (make-hash-table))
-(setf (get '*mention-feeling-better-after-radiation* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*mention-feeling-better-after-radiation*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*mention-feeling-better-after-radiation*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*mention-feeling-better-after-radiation*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END mention-feeling-better-after-radiation.v

@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *ask-about-future*
+(store-schema 'ask-about-future.v
 
 '(event-schema :header (((set-of ^me ^you) ask-about-future.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -89,51 +89,4 @@
   !o4 (?e10 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
 )
 
-)) ; END defparameter *ask-about-future*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'ask-about-future.v '*ask-about-future*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*ask-about-future* 'semantics) (make-hash-table))
-(setf (get '*ask-about-future* 'gist-clauses) (make-hash-table))
-(setf (get '*ask-about-future* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*ask-about-future*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*ask-about-future*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*ask-about-future*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END ask-about-future.v

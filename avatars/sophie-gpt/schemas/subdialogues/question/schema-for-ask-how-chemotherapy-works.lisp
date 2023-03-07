@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *ask-how-chemotherapy-works*
+(store-schema 'ask-how-chemotherapy-works.v
 
 '(event-schema :header (((set-of ^me ^you) ask-how-chemotherapy-works.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -51,51 +51,4 @@
   !o1 (?e1 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg (k chemotherapy.n)))))
 )
 
-)) ; END defparameter *ask-how-chemotherapy-works*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'ask-how-chemotherapy-works.v '*ask-how-chemotherapy-works*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*ask-how-chemotherapy-works* 'semantics) (make-hash-table))
-(setf (get '*ask-how-chemotherapy-works* 'gist-clauses) (make-hash-table))
-(setf (get '*ask-how-chemotherapy-works* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*ask-how-chemotherapy-works*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*ask-how-chemotherapy-works*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*ask-how-chemotherapy-works*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END ask-how-chemotherapy-works.v

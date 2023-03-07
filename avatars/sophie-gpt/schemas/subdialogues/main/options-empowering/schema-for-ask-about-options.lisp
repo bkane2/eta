@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *ask-about-options*
+(store-schema 'ask-about-options.v
 
 '(event-schema :header (((set-of ^me ^you) ask-about-options.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -100,51 +100,4 @@
   !o4 (?e10 obligates (^you be.v empowering.a))
 )
 
-)) ; END defparameter *ask-about-options*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'ask-about-options.v '*ask-about-options*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*ask-about-options* 'semantics) (make-hash-table))
-(setf (get '*ask-about-options* 'gist-clauses) (make-hash-table))
-(setf (get '*ask-about-options* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*ask-about-options*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*ask-about-options*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*ask-about-options*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END ask-about-options.v

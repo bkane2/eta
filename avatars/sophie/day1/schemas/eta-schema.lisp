@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *eta-schema*
+(store-schema 'have-eta-dialog.v
 
 '(event-schema :header (((set-of ^me ^you) have-eta-dialog.v) ** ?e)
 ;`````````````````````````````````````````````````````````````````````
@@ -81,56 +81,11 @@
 
 )
 
-)) ; END defparameter *eta-schema*
+)) ; END have-eta-dialog.v
 
 
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'have-eta-dialog.v '*eta-schema*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*eta-schema* 'semantics) (make-hash-table))
-(setf (get '*eta-schema* 'gist-clauses) (make-hash-table))
-(setf (get '*eta-schema* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*eta-schema*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*eta-schema*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*eta-schema*))
-  '(
-    (?e10 (test-results))
-    (?e20 (prognosis))
-    (?e30 (reason-for-cancer))
-    (?e40 (tell-family))
-  )
-) ; END mapcar #'store-topic-keys
+; TODO REFACTOR : store following topic keys:
+;; (?e10 (test-results))
+;; (?e20 (prognosis))
+;; (?e30 (reason-for-cancer))
+;; (?e40 (tell-family))

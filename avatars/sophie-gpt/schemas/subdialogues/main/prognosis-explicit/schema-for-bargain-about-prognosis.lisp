@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *bargain-about-prognosis*
+(store-schema 'bargain-about-prognosis.v
 
 '(event-schema :header (((set-of ^me ^you) bargain-about-prognosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -83,51 +83,4 @@
   !o4 (?e10 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
 )
 
-)) ; END defparameter *bargain-about-prognosis*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'bargain-about-prognosis.v '*bargain-about-prognosis*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*bargain-about-prognosis* 'semantics) (make-hash-table))
-(setf (get '*bargain-about-prognosis* 'gist-clauses) (make-hash-table))
-(setf (get '*bargain-about-prognosis* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*bargain-about-prognosis*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*bargain-about-prognosis*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*bargain-about-prognosis*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END bargain-about-prognosis.v

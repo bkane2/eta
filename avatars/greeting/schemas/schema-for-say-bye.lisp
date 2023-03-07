@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *say-bye*
+(store-schema 'say-bye.v
 
 '(event-schema :header (((set-of ?s ?h) say-bye.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -51,51 +51,8 @@
 
 )
 
-)) ; END defparameter *say-bye*
+:obligations (
+  !o1 (?e3 obligates (?h say-bye-to.v ?s))
+)
 
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'say-bye.v '*say-bye*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*say-bye* 'semantics) (make-hash-table))
-(setf (get '*say-bye* 'gist-clauses) (make-hash-table))
-(setf (get '*say-bye* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*say-bye*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*say-bye*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*say-bye*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END say-bye.v

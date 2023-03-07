@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *deny-prognosis*
+(store-schema 'deny-prognosis.v
 
 '(event-schema :header (((set-of ^me ^you) deny-prognosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -77,51 +77,4 @@
   !o4 (?e10 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
 )
 
-)) ; END defparameter *deny-prognosis*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'deny-prognosis.v '*deny-prognosis*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*deny-prognosis* 'semantics) (make-hash-table))
-(setf (get '*deny-prognosis* 'gist-clauses) (make-hash-table))
-(setf (get '*deny-prognosis* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*deny-prognosis*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*deny-prognosis*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*deny-prognosis*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END deny-prognosis.v

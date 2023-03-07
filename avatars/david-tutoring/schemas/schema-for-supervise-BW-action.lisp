@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *supervise-BW-action*
+(store-schema 'supervise-BW-action.v
 
 '(event-schema :header ((^me supervise-BW-action.v ^you ?ka1) ** ?e)
 ;`````````````````````````````````````````````````````````````````````````````
@@ -68,52 +68,4 @@
   !c1 (!e2 0.4)
 )
 
-)) ; END defparameter *supervise-BW-action*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'supervise-BW-action.v
-                  '*supervise-BW-action*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*supervise-BW-action* 'semantics) (make-hash-table))
-(setf (get '*supervise-BW-action* 'gist-clauses) (make-hash-table))
-(setf (get '*supervise-BW-action* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*supervise-BW-action*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*supervise-BW-action*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*supervise-BW-action*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END supervise-BW-action.v

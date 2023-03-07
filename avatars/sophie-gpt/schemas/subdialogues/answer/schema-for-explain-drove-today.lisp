@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *explain-drove-today*
+(store-schema 'explain-drove-today.v
 
 '(event-schema :header (((set-of ^me ^you) explain-drove-today.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -46,51 +46,4 @@
 
 )
 
-)) ; END defparameter *explain-drove-today*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'explain-drove-today.v '*explain-drove-today*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*explain-drove-today* 'semantics) (make-hash-table))
-(setf (get '*explain-drove-today* 'gist-clauses) (make-hash-table))
-(setf (get '*explain-drove-today* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*explain-drove-today*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*explain-drove-today*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*explain-drove-today*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END explain-drove-today.v

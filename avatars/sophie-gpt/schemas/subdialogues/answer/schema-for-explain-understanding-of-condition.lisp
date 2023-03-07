@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *explain-understanding-of-condition*
+(store-schema 'explain-understanding-of-condition.v
 
 '(event-schema :header (((set-of ^me ^you) explain-understanding-of-condition.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -47,51 +47,4 @@
 
 )
 
-)) ; END defparameter *explain-understanding-of-condition*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'explain-understanding-of-condition.v '*explain-understanding-of-condition*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*explain-understanding-of-condition* 'semantics) (make-hash-table))
-(setf (get '*explain-understanding-of-condition* 'gist-clauses) (make-hash-table))
-(setf (get '*explain-understanding-of-condition* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*explain-understanding-of-condition*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*explain-understanding-of-condition*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*explain-understanding-of-condition*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END explain-understanding-of-condition.v

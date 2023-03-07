@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *react-moderately-to-non-empathy*
+(store-schema 'react-moderately-to-non-empathy.v
 
 '(event-schema :header (((set-of ^me ^you) react-moderately-to-non-empathy.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -80,51 +80,4 @@
   !o1 (?e2 obligates (^you be.v empathetic.a))
 )
 
-)) ; END defparameter *react-moderately-to-non-empathy*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'react-moderately-to-non-empathy.v '*react-moderately-to-non-empathy*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*react-moderately-to-non-empathy* 'semantics) (make-hash-table))
-(setf (get '*react-moderately-to-non-empathy* 'gist-clauses) (make-hash-table))
-(setf (get '*react-moderately-to-non-empathy* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*react-moderately-to-non-empathy*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*react-moderately-to-non-empathy*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*react-moderately-to-non-empathy*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END react-moderately-to-non-empathy.v

@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *confirm-no-comfort-care*
+(store-schema 'confirm-no-comfort-care.v
 
 '(event-schema :header (((set-of ^me ^you) confirm-no-comfort-care.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -52,51 +52,4 @@
   !o1 (?e1 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg (k (comfort.n care.n))))))
 )
 
-)) ; END defparameter *confirm-no-comfort-care*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'confirm-no-comfort-care.v '*confirm-no-comfort-care*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*confirm-no-comfort-care* 'semantics) (make-hash-table))
-(setf (get '*confirm-no-comfort-care* 'gist-clauses) (make-hash-table))
-(setf (get '*confirm-no-comfort-care* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*confirm-no-comfort-care*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*confirm-no-comfort-care*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*confirm-no-comfort-care*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END confirm-no-comfort-care.v

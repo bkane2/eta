@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *ask-why-have-cancer*
+(store-schema 'ask-why-have-cancer.v
 
 '(event-schema :header (((set-of ^me ^you) ask-why-have-cancer.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -49,51 +49,4 @@
   !o1 (?e1 obligates (^you be.v empathetic.a))
 )
 
-)) ; END defparameter *ask-why-have-cancer*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'ask-why-have-cancer.v '*ask-why-have-cancer*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*ask-why-have-cancer* 'semantics) (make-hash-table))
-(setf (get '*ask-why-have-cancer* 'gist-clauses) (make-hash-table))
-(setf (get '*ask-why-have-cancer* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*ask-why-have-cancer*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*ask-why-have-cancer*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*ask-why-have-cancer*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END ask-why-have-cancer.v

@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *explain-why-future-feels-out-of-control*
+(store-schema 'explain-why-future-feels-out-of-control.v
 
 '(event-schema :header (((set-of ^me ^you) explain-why-future-feels-out-of-control.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -20,51 +20,4 @@
 
 )
 
-)) ; END defparameter *explain-why-future-feels-out-of-control*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'explain-why-future-feels-out-of-control.v '*explain-why-future-feels-out-of-control*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*explain-why-future-feels-out-of-control* 'semantics) (make-hash-table))
-(setf (get '*explain-why-future-feels-out-of-control* 'gist-clauses) (make-hash-table))
-(setf (get '*explain-why-future-feels-out-of-control* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*explain-why-future-feels-out-of-control*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*explain-why-future-feels-out-of-control*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*explain-why-future-feels-out-of-control*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END explain-why-future-feels-out-of-control.v

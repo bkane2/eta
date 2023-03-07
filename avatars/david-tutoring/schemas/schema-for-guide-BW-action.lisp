@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *guide-BW-action*
+(store-schema 'guide-BW-action.v
 
 '(event-schema :header ((^me guide-BW-action.v ^you ?ka1) ** ?e)
 ;`````````````````````````````````````````````````````````````````````````````
@@ -64,52 +64,4 @@
   !c1 (!e3 0.4)
 )
 
-)) ; END defparameter *guide-BW-action*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'guide-BW-action.v
-                  '*guide-BW-action*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*guide-BW-action* 'semantics) (make-hash-table))
-(setf (get '*guide-BW-action* 'gist-clauses) (make-hash-table))
-(setf (get '*guide-BW-action* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*guide-BW-action*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*guide-BW-action*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*guide-BW-action*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END guide-BW-action.v

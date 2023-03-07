@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *discuss-sleep-routine*
+(store-schema 'discuss-sleep-routine.v
 
 '(event-schema :header (((set-of ^me ^you) discuss-sleep-routine.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -20,51 +20,4 @@
 
 )
 
-)) ; END defparameter *discuss-sleep-routine*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'discuss-sleep-routine.v '*discuss-sleep-routine*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*discuss-sleep-routine* 'semantics) (make-hash-table))
-(setf (get '*discuss-sleep-routine* 'gist-clauses) (make-hash-table))
-(setf (get '*discuss-sleep-routine* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*discuss-sleep-routine*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*discuss-sleep-routine*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*discuss-sleep-routine*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END discuss-sleep-routine.v

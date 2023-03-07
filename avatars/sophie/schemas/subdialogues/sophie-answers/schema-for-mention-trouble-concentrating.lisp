@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *mention-trouble-concentrating*
+(store-schema 'mention-trouble-concentrating.v
 
 '(event-schema :header (((set-of ^me ^you) mention-trouble-concentrating.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -20,51 +20,4 @@
 
 )
 
-)) ; END defparameter *mention-trouble-concentrating*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'mention-trouble-concentrating.v '*mention-trouble-concentrating*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*mention-trouble-concentrating* 'semantics) (make-hash-table))
-(setf (get '*mention-trouble-concentrating* 'gist-clauses) (make-hash-table))
-(setf (get '*mention-trouble-concentrating* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*mention-trouble-concentrating*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*mention-trouble-concentrating*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*mention-trouble-concentrating*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END mention-trouble-concentrating.v

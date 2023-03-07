@@ -23,9 +23,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defparameter *reactions-to-spatial-question*
+(store-schema 'react-to-spatial-question.v
 
-  '(event-schema :header ((^me react-to-spatial-question) ** ?e)
+  '(event-schema :header ((^me react-to-spatial-question.v) ** ?e)
   ;````````````````````````````````````````````````````````````````````````````````````
     :episodes (
               ;; ?e1 (^me perceive-world.v |Blocks-World-System| ?ulf ?perceptions)
@@ -61,20 +61,4 @@
                ; to ?e4, I suppose).
     )
 
-)) ; END parameter *reactions-to-spatial-question*
-
-
-(setf (get '*reactions-to-spatial-question* 'semantics) (make-hash-table))
- ; To fill this in, EL formulas would need to be derived from
- ; Eta reactions (not yet used). This would be rather unlike
- ; the explicit 'store-output-semantics' used in *Eta-schema*
- ; (see "Eta5-schema.lisp").
-
-
-(setf (get '*reactions-to-spatial-question* 'gist-clauses) (make-hash-table))
- ; Much the same comment as above applies -- something other than
- ; the straightforward 'store-output-gist-clauses' used in
- ; the *Eta-schema* code would be needed.
-
-(setf (get '*reactions-to-spatial-question* 'topic-keys) (make-hash-table))
-
+)) ; END react-to-spatial-question.v

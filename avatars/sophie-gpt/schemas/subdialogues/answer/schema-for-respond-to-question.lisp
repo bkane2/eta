@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *respond-to-question*
+(store-schema 'respond-to-question.v
 
 '(event-schema :header (((set-of ^me ^you) respond-to-question.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -48,51 +48,4 @@
 
 )
 
-)) ; END defparameter *respond-to-question*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'respond-to-question.v '*respond-to-question*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*respond-to-question* 'semantics) (make-hash-table))
-(setf (get '*respond-to-question* 'gist-clauses) (make-hash-table))
-(setf (get '*respond-to-question* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*respond-to-question*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*respond-to-question*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*respond-to-question*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END respond-to-question.v

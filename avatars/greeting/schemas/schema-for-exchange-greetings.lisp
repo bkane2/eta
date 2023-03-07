@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *exchange-greetings*
+(store-schema 'exchange-greetings.v
 
 '(event-schema :header ((?s exchange-greetings.v ?h) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -47,51 +47,4 @@
   !c1 (!e3 0.1)
 )
 
-)) ; END defparameter *exchange-greetings*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'exchange-greetings.v '*exchange-greetings*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*exchange-greetings* 'semantics) (make-hash-table))
-(setf (get '*exchange-greetings* 'gist-clauses) (make-hash-table))
-(setf (get '*exchange-greetings* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*exchange-greetings*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*exchange-greetings*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*exchange-greetings*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END exchange-greetings.v

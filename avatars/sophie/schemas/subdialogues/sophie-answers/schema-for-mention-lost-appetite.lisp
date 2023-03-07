@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *mention-lost-appetite*
+(store-schema 'mention-lost-appetite.v
 
 '(event-schema :header (((set-of ^me ^you) mention-lost-appetite.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
@@ -20,51 +20,4 @@
 
 )
 
-)) ; END defparameter *mention-lost-appetite*
-
-
-
-;````````````````````````````````````````````````````````
-; Store schema variable name under header in *schemas*
-;
-(store-schema-name 'mention-lost-appetite.v '*mention-lost-appetite*)
-
-
-
-;````````````````````````````````````````````````````````
-; Create empty hash tables for semantics,
-; gist-clauses, and topic-keys
-;
-(setf (get '*mention-lost-appetite* 'semantics) (make-hash-table))
-(setf (get '*mention-lost-appetite* 'gist-clauses) (make-hash-table))
-(setf (get '*mention-lost-appetite* 'topic-keys) (make-hash-table))
-
-
-
-;````````````````````````````````````````````````````````
-; EL Semantics - Not yet used
-;
-(mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*mention-lost-appetite*))
-  '()
-) ; END mapcar #'store-output-semantics
-
-
-
-;````````````````````````````````````````````````````````
-; Gist clauses
-;
-(mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*mention-lost-appetite*))
-  '()
-) ; END mapcar #'store-output-gist-clauses
-
-
-
-;````````````````````````````````````````````````````````
-; Topic keys
-;
-(mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*mention-lost-appetite*))
-  '()
-) ; END mapcar #'store-topic-keys
+)) ; END mention-lost-appetite.v
