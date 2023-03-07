@@ -5,14 +5,6 @@
 ;;
 
 
-;`````````````````````````````````````````````````````
-; Store a global hash table of schema headers to
-; the corresponding schema variable names.
-; NOTE: This is only defined in the eta-schema.lisp file.
-;
-(defparameter *schemas* (make-hash-table))
-
-
 
 ;``````````````````````````````````````````````````````
 ;
@@ -338,6 +330,15 @@
 
 
 
+(defun sym-join (lst chr)
+;```````````````````````````
+; Given a list of symbols, join into one symbol around delimiter symbol.
+; 
+  (intern (str-join (mapcar #'string lst) chr))
+) ; END sym-join
+
+
+
 (defun list-split (l sym)
 ;```````````````````````````
 ; Given a list, split into multiple lists based on delimiter sym.
@@ -413,6 +414,15 @@
 ;
   (if (member char (explode sym) :test #'char-equal) t)
 ) ; END sym-contains
+
+
+
+(defun global-var-to-pred (var &key (pred-type 'v))
+;`````````````````````````````````````````````````````
+; Converts a global variable (e.g., *test*) to a predicate (e.g., test.v).
+;
+  (implode (append (cdr (butlast (explode var))) (cons #\. (explode pred-type))))
+) ; END global-var-to-pred
 
 
 
@@ -539,11 +549,12 @@
 
 
 
-(defun deepcopy-hash (old)
+(defun deepcopy-hash-table (old)
 ;```````````````````````````````
 ; Deep copy a hash table.
 ;
-  (when (not (hash-table-p old)) (return-from deepcopy-hash (copy-tree old)))
+  (when (not (hash-table-p old))
+    (return-from deepcopy-hash-table (copy-tree old)))
   (let ((new (make-hash-table
               :test (hash-table-test old)
               :size (hash-table-size old))))
@@ -551,7 +562,7 @@
         (setf (gethash (copy-tree k) new) (copy-tree v)))
       old)
     new
-)) ; END deepcopy-hash
+)) ; END deepcopy-hash-table
 
 
 
@@ -588,6 +599,15 @@
   (not (fbound? x))
 ) ; END not-fbound?
 
+
+
+(defun global-var? (x)
+;`````````````````````````
+; Returns t if x is a global var (e.g., *variable*), nil otherwise.
+;
+  (and (equal (car (explode x)) #\*) (equal (car (last (explode x))) #\*))
+) ; END global-var?
+ 
 
 
 (defun ulf-symbol? (atm)
@@ -950,39 +970,6 @@
           (if (not (isa x feat))
               (push feat (gethash x *isa-features*))))
 )) ; END attachfeat
-
-
-
-(defun store-output-semantics (var wff schema-name)
-;````````````````````````````````````````````````````
-; Stores a wff as the semantic interpretation of an episode in
-; a schema - this is stored in the schema's semantics hash table,
-; with the key being the propositional var for the episode.
-;
-  (setf (gethash var (get schema-name 'semantics)) wff)
-) ; END store-output-semantics
-
-
-
-(defun store-output-gist-clauses (var clauses schema-name)
-;````````````````````````````````````````````````````
-; Stores a gist clause corresponding to an episode in
-; a schema - this is stored in the schema's gist-clauses hash table,
-; with the key being the propositional var for the episode.
-;
-  (setf (gethash var (get schema-name 'gist-clauses)) clauses)
-) ; END store-output-gist-clauses
-
-
-
-(defun store-topic-keys (var keys schema-name)
-;````````````````````````````````````````````````````
-; Stores a topic key corresponding to an episode in
-; a schema - this is stored in the schema's topic-keys hash table,
-; with the key being the propositional var for the episode.
-;
-  (setf (gethash var (get schema-name 'topic-keys)) keys)
-) ; END store-topic-keys
 
 
 
@@ -2081,18 +2068,19 @@
 
 
 
-(defun store-obj-schema (obj-type canonical-name schema)
-;``````````````````````````````````````````````````````````
-; Stores an object schema with an associated canonical name. Also stores the
-; generic name as an alias, e.g., (k BW-arch.n), generated from the header.
+(defun store-aliases-of-concept (concept-predicate canonical-name obj-type)
+;```````````````````````````````````````````````````````````````````````````
+; Stores an object schema (record structure) as an alias of an associated
+; canonical name (e.g., |BW-Stack|), as well as a generic name (e.g., (k BW-arch.n)).
+; Also store the type of the canonical name (e.g., BW-concept-primitive.n) in context.
 ;
   (let (generic-name schema-record)
-    (setq schema-record (cons '$ schema))
-    (setq generic-name (list 'k (cadar (get-keyword-contents schema '(:header)))))
+    (setq schema-record (cons '$ (obj-schema-contents (get-stored-schema concept-predicate))))
+    (setq generic-name (list 'k concept-predicate))
     (add-alias generic-name canonical-name)
     (add-alias schema-record canonical-name)
-    (store-in-context (list canonical-name obj-type)))
-) ; END store-obj-schema
+    (store-in-context (list canonical-name obj-type))
+)) ; END store-aliases-of-concept
 
 
 
@@ -2583,51 +2571,9 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; [*] SCHEMA UTIL
+; [*] EPISODE UTIL
 ;
 ;``````````````````````````````````````````````````````
-
-
-
-(defun store-schema-name (header schema-name)
-;````````````````````````````````````````````````````
-; Stores the schema variable name in the *schemas* hash table,
-; using the schema header as the key.
-;
-  (setf (gethash header *schemas*) schema-name)
-) ; END store-schema-name
-
-
-
-(defun print-schema-names (&key surface-english)
-;````````````````````````````````````````````````````
-; Prints all of the dialogue schema names (if :surface-english t
-; is given, convert from ULF to words)).
-;
-  (maphash (lambda (k v) (format t "~a~%"
-      (if surface-english
-        (string-downcase (str-replace (string (car (sym-split k 2))) "-" " "))
-        (string-downcase (string k)))))
-    *schemas*)
-) ; END print-schema-names
-
-
-
-(defun schema-header? (x)
-;``````````````````````````
-; Predicate which returns true if x is a schema header, e.g. 'discuss-food.v'.
-;
-  (gethash x *schemas*)
-) ; END schema-header?
-
-
-
-(defun schema-name! (header)
-;`````````````````````````````
-; Gets the schema variable name given the header.
-;
-  (gethash header *schemas*)
-) ; END schema-name!
 
 
 
@@ -2653,7 +2599,7 @@
 ;````````````````````
 ; Creates a unique skolem constant given a name.
 ;
-  (intern (format nil "~a.SK" (gen (string-upcase (string name)))))
+  (intern (format nil "~a.SK" (gentemp (string-upcase (string name)))))
 ) ; END skolem
 
 
@@ -2729,22 +2675,6 @@
       (setq result (list (cons dual-var prop-name))))
     (push (cons ep-var ep-name) result)
 )) ; END episode-and-proposition-name
-
-
-
-(defun get-schema-sections (schema)
-;```````````````````````````````````
-; Gets a hash table containing each schema section as a key, and the
-; contents of that section as the value.
-;
-  (let ((schema-ht (make-hash-table :test #'equal)))
-    (dolist (section '(:header :types :var-roles :rigid-conds :static-conds :preconds
-                       :goals :episodes :episode-relations :necessities :certainties :obligations))
-      (let ((contents (car (get-keyword-contents schema (list section)))))
-        (when contents
-          (setf (gethash section schema-ht) contents))))
-    schema-ht)
-) ; END get-schema-sections
 
 
 

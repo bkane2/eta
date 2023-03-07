@@ -1,4 +1,4 @@
-(store-obj-schema 'BW-concept-primitive.n '|BW-block|
+(store-schema 'BW-block.n
   ; Block
   '(obj-schema
     :header (?x BW-block.n)
@@ -12,11 +12,11 @@
       !r1 ((color-of.f ?x) = ?c)
       !r2 (?x carry26.v ?l)
     )
-)) ; END |BW-block|
+)) ; END BW-block.n
 
 
 
-(store-obj-schema 'BW-concept-primitive.n '|BW-row-of|
+(store-schema 'row-of.n
   ; Row-of
   '(obj-schema
     :header (?x row-of.n ?P)
@@ -31,11 +31,11 @@
     :skeletal-prototype (
         row.obj
     )
-)) ; END |BW-row-of|
+)) ; END row-of.n
 
 
 
-(store-obj-schema 'BW-concept-primitive.n '|BW-stack-of|
+(store-schema 'stack-of.n
   ; Stack-of
   '(obj-schema
     :header (?x stack-of.n ?P)
@@ -50,11 +50,11 @@
     :skeletal-prototype (
       stack.obj
     )
-)) ; END |BW-stack-of|
+)) ; END stack-of.n
 
 
 
-(store-obj-schema 'BW-concept-primitive.n '|BW-row|
+(store-schema 'BW-row.n
   ; Row
   '(obj-schema
     :header (?x BW-row.n)
@@ -66,11 +66,11 @@
       bw-row2.obj
       bw-row3.obj
     )
-)) ; END |BW-row|
+)) ; END BW-row.n
 
 
 
-(store-obj-schema 'BW-concept-primitive.n '|BW-stack|
+(store-schema 'BW-stack.n
   ; Stack
   '(obj-schema
     :header (?x BW-stack.n)
@@ -84,7 +84,15 @@
       bw-stack2.obj
       bw-stack3.obj
     )
-)) ; END |BW-stack|
+)) ; END BW-stack.n
+
+
+
+(store-aliases-of-concept 'BW-block.n '|BW-block|    'BW-concept-primitive.n)
+(store-aliases-of-concept 'row-of.n   '|BW-row-of|   'BW-concept-primitive.n)
+(store-aliases-of-concept 'stack-of.n '|BW-stack-of| 'BW-concept-primitive.n)
+(store-aliases-of-concept 'BW-row.n   '|BW-row|      'BW-concept-primitive.n)
+(store-aliases-of-concept 'BW-stack.n '|BW-stack|    'BW-concept-primitive.n)
 
 
 

@@ -10,10 +10,8 @@
 ;; has been initiated by supplying a hash table of (some) Eta 
 ;; output interpretations,
 ;;     *output-semantics*
-;; (which uses keys such as (*eta-schema* ?e3) along with the
-;; hash table of gist clauses,
 ;;     *output-gist-clauses*
-;; (indexed in the same way). These tables can be used to set up
+;; These tables can be used to set up
 ;; the 'interpretation' and 'output-gist-clauses' properties of
 ;; action proposition names, generated in forming plans from 
 ;; schemas.
@@ -65,7 +63,7 @@
 ; conversation-log : a list containing dialogue-turn structures for each chronological turn in the conversation
 ; context          : hash table of facts that are true at Now*, e.g., <wff3>
 ; memory           : hash table of atemporal/"long-term" facts, e.g., (<wff3> ** E3) and (Now* during E3)
-; kb               : hash table of Eta's knowledge base, containing general facts
+; kb               : hash table of Eta's episodic knowledge base, containing general episodic facts
 ; tg               : timegraph of all episodes
 ; time             : the constant denoting the current time period. NOW0 is taken uniquely to refer
 ;                    to the beginning, with all moves/etc. occurring at subsequent times
@@ -106,15 +104,15 @@
     (setf (ds-task-queue new) (copy-tree (ds-task-queue old)))
     (setf (ds-buffers new) (deepcopy-buffers (ds-buffers old)))
     (setf (ds-reference-list new) (copy-tree (ds-reference-list old)))
-    (setf (ds-equality-sets new) (deepcopy-hash (ds-equality-sets old)))
-    (setf (ds-gist-kb-user new) (deepcopy-hash (ds-gist-kb-user old)))
-    (setf (ds-gist-kb-eta new) (deepcopy-hash (ds-gist-kb-eta old)))
+    (setf (ds-equality-sets new) (deepcopy-hash-table (ds-equality-sets old)))
+    (setf (ds-gist-kb-user new) (deepcopy-hash-table (ds-gist-kb-user old)))
+    (setf (ds-gist-kb-eta new) (deepcopy-hash-table (ds-gist-kb-eta old)))
     (setf (ds-conversation-log new) (mapcar #'deepcopy-dialogue-turn (ds-conversation-log old)))
-    (setf (ds-context new) (deepcopy-hash (ds-context old)))
-    (setf (ds-memory new) (deepcopy-hash (ds-memory old)))
-    (setf (ds-kb new) (deepcopy-hash (ds-kb old)))
+    (setf (ds-context new) (deepcopy-hash-table (ds-context old)))
+    (setf (ds-memory new) (deepcopy-hash-table (ds-memory old)))
+    (setf (ds-kb new) (deepcopy-hash-table (ds-kb old)))
     ; TODO: need to modify below line to use deepcopy function from tg package
-    ;; (setf (ds-tg new) (deepcopy-hash (ds-tg old)))
+    ;; (setf (ds-tg new) (deepcopy-hash-table (ds-tg old)))
     (setf (ds-time new) (copy-tree (ds-time old)))
     (setf (ds-count new) (copy-tree (ds-count old)))
 
@@ -218,7 +216,6 @@
 ; are:  ***THIS NEEDS UPDATING
 ;      *output-semantics*
 ;      *output-gist-clauses*
-;      *eta-schema* (top-level schema) & possibly many subschemas
 ;      *reactions-to-input* (top-level choice tree for selecting a
 ;         schema or subtree to react to a user turn (possibly multiple
 ;         extracted "gist clauses")
@@ -483,14 +480,13 @@
     (setq *log-answer* nil)
     (setq *log-ptr* -1))
 
-  ; If '*eta-schema* is not bound, return an error
-  (when (not (boundp '*eta-schema*))
-    (format t "***  *eta-schema* is not bound. If using a multi-session avatar, make sure *session-number* is set.~%")
+  ; If have-eta-dialog.v is not present in schema library, return an error
+  (when (null (get-stored-schema 'have-eta-dialog.v))
+    (format t "***  schema for have-eta-dialog.v not found. If using a multi-session avatar, make sure *session-number* is set.~%")
     (return-from eta nil))
 
-  ; Initiate the dialogue plan. The schema named
-  ; *eta-schema* is used to create the top-level plan
-  (setf (ds-curr-plan *ds*) (init-plan-from-schema '*eta-schema* nil))
+  ; Initiate the dialogue plan, beginning from the schema for have-eta-dialog.v
+  (setf (ds-curr-plan *ds*) (init-plan-from-schema (get-stored-schema 'have-eta-dialog.v) nil))
 
   ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
@@ -859,7 +855,7 @@
       ;````````````````````````````````
       ; instantiation of any subschema involving both participants.
       ((setq bindings (bindings-from-ttt-match '((! (set-of ^me ^you) (set-of ^you ^me))
-                                                  schema-header? (? _*)) wff))
+                                                  schema-predicate? (? _*)) wff))
         (setq args-list (cdr (get-single-binding bindings)))
         (setq bindings (cdr bindings))
         (setq args-list (append args-list (get-multiple-bindings bindings)))
@@ -867,7 +863,7 @@
         (cond
           ((obviated-action ep-name)
             (setq new-subplan nil))
-          (t (setq new-subplan (init-plan-from-schema (schema-name! (second wff)) args-list)))))
+          (t (setq new-subplan (init-plan-from-schema (get-stored-schema (second wff)) args-list)))))
       
       ; Unrecognizable step
       (t (format t "~%*** UNRECOGNIZABLE STEP ~a " wff) (error))
@@ -963,7 +959,7 @@
                 (setq expr-new (if (equal *response-generator* 'GPT3)
                   (form-surface-utterance-using-language-model)
                   nil))
-                (nsubst-variable subplan `(quote ,expr-new) expr)
+                (bind-variable-in-plan subplan `(quote ,expr-new) expr)
                 (setq expr expr-new))
               (t (setq expr (flatten (second expr)))))
             
@@ -1512,13 +1508,13 @@
       ;````````````````````````````
       ; Eta: Initiating Subschema
       ;````````````````````````````
-      ((setq bindings (bindings-from-ttt-match '(^me schema-header? ^you (? _*)) wff))
+      ((setq bindings (bindings-from-ttt-match '(^me schema-predicate? ^you (? _*)) wff))
         (setq args-list (cons '^me (cons '^you (get-multiple-bindings bindings))))
         ; If episode is an obviated action, skip, otherwise generate subplan from schema name
         (cond
           ((obviated-action ep-name)
             (setq new-subplan nil))
-          (t (setq new-subplan (init-plan-from-schema (schema-name! (second wff)) args-list)))))
+          (t (setq new-subplan (init-plan-from-schema (get-stored-schema (second wff)) args-list)))))
       
       ; Unrecognizable step
       (t (format t "~%*** UNRECOGNIZABLE STEP ~a " wff) (error))
@@ -1788,15 +1784,12 @@
   (let ((cond1 (first expr)) (expr-rest (cdr expr)) truth-val new-subplan)
     ; First check termination condition
     (setq truth-val (eval-truth-value cond1))
-    ; Substitute expr-rest with duplicate variables
-    (setq expr-rest (subst-duplicate-variables subplan expr-rest))
     (cond
       ; Termination has been reached - return nil so the calling program can delete loop
       (truth-val nil)
       ; Otherwise, create a subplan that has the steps of the loop & a recursive copy of the loop
       (t (setq new-subplan
-          (init-plan-from-episode-list
-            (cons :episodes (append expr-rest (list ep-name (cons :repeat-until expr))))))
+          (init-plan-from-episode-list-repeating subplan ep-name expr-rest expr))
         new-subplan))
 )) ; END plan-repeat-until
 
@@ -1822,7 +1815,7 @@
 ; directive :subtree), this will be automatically pursued recursively
 ; in the search for a choice, ultimately delivering a verbal output.
 ;
-  (let (choice wff schema-name args eta-gist-clause keys)
+  (let (choice wff args eta-gist-clause keys)
     
     (if (null user-gist-clause)
       (return-from plan-reply-to nil))
@@ -1835,10 +1828,9 @@
     ; 'choice' may be an instantiated reassembly pattern corresponding to a
     ; gist-clause (directive :gist), to be contextually paraphrased by Eta
     ; as a subplan, or a direct output (directive :out) to be spoken to the
-    ; user as a subplan. Otherwise it may be the name of a schema (to be initialized).
+    ; user as a subplan.
     ; In the first case we create a 1-step subplan whose action is of
     ; the type (^me paraphrase-to.v ^you '(...)) or (^me say-to.v ^you '(...)), respectively.
-    ; In the case of a schema, we initiate a multistep plan.
     (cond
       ; null choice -- use GPT3 to generate a reply (if in GPT3 response generation mode);
       ; otherwise generate an "empty" say-to.v action.
@@ -1949,7 +1941,7 @@
       ; :schema directive
       ((eq (car choice) :schema)
         (setq schema-name (cdr choice))
-        (init-plan-from-schema schema-name nil))
+        (init-plan-from-schema (get-stored-schema schema-name) nil))
 
       ; :schema+args directive
       ((eq (car choice) :schema+args)
@@ -1960,7 +1952,7 @@
         ; steps of the schema. These are provided as sublists in 
         ; <argument list>.
         (setq schema-name (first (cdr choice)) args (second (cdr choice)))
-        (init-plan-from-schema schema-name args))
+        (init-plan-from-schema (get-stored-schema schema-name) args))
     )
 )) ; END plan-reaction-to
 
@@ -2123,66 +2115,6 @@
 
 
 
-;; (defun form-spatial-representation ()
-;; ;``````````````````````````````````````
-;; ; TODO: now deprecated; will delete in the future.
-;; ; Forms a spatial representation from the currently chosen BW-concept.n
-;; ; (assuming such a choice has actually been made at this point), through
-;; ; sending the BW system the chosen concept schema and receiving a goal
-;; ; schema.
-;; ; TODO: I'm not sold on how this is done currently, but I'm stumped on
-;; ; how to do it more sensibly. The issue is that, for the lambda expression
-;; ; + find-all-instances to work, the facts about the goal schema need to be
-;; ; stored ahead-of-time, so the communication of the goal schema needs to be
-;; ; done before the 'choice' step of the indefinite quantifier. This requires
-;; ; sending the BW system the chosen concept schema, but the concept schema
-;; ; name is nested inside the lambda extract, and messing with that here would
-;; ; be a pretty messy approach. Instead, I check context for some individual such
-;; ; that it is a BW-concept.n and Eta has chosen it.
-;; ; TODO: BW-concept.n in lambda descr should be valid, reachable through subsumption
-;; ; relationship between BW-concept.n and BW-concept-structure.n/BW-concept-primitive.n
-;; ; in noun hierarchy.
-;; ;
-;;   (let (concept-name goal-schema goal-name)
-;;     (setq concept-name (car (find-all-instances-context
-;;       '(:l (?x) (and (?x BW-concept-structure.n) (^me choose.v ?x))))))
-;;     (request-goal-rep (cdr (get-record-structure concept-name)))
-;;     ; NOTE: currently no special offline (terminal mode) procedure
-;;     ; for getting goal schema.
-;;     (setq goal-schema (get-goal-rep))
-;;     (setq goal-name (gensym "BW-goal-rep"))
-;;     (add-alias (cons '$ goal-schema) goal-name)
-;;     (store-in-context (list goal-name 'goal-schema1.n))
-;;     (store-in-context (list goal-name 'instance-of.p concept-name)))
-;; ) ; END form-spatial-representation
-
-
-
-
-
-;; (defun observe-step-towards-goal (goal-rep)
-;; ;`````````````````````````````````````````````
-;; ; TODO: now deprecated; will delete in the future.
-;; ; Observes next step towards the currently active BW goal-schema,
-;; ; through reading IO file. Store fact in context.
-;; ; TODO: might need changing - see note on 'find4.v' implementation.
-;; ; Currently, the (?x step1-toward.p ?goal-rep) step is hard-coded
-;; ; (based on the value of ?goal-rep extracted from the lambda function
-;; ; in the find4.v action), which it shouldn't be.
-;; ;
-;;   (let (step)
-;;     (setq step (if (member '|Spatial-Reasoning-System| *registered-systems-specialist*)
-;;                     (get-planner-input)
-;;                     (get-planner-input-offline)))
-;;     (remove-from-context `(?x step1-toward.p ,goal-rep))
-;;     (if step
-;;       (store-in-context `(,step step1-toward.p ,goal-rep))))
-;; ) ; END observe-step-toward-goal
-
-
-
-
-
 (defun choose-variable-restrictions (sk-var restrictions)
 ;``````````````````````````````````````````````````````````
 ; Handles any indefinite quantification of a variable filled
@@ -2301,10 +2233,10 @@
 
     ; Get conditions and goals of schema
     ; TODO: add other relevant schema categories here in the future
-    (setq rigid-conds (mapcar #'second (reverse (plan-rigid-conds curr-subplan))))
-    (setq static-conds (mapcar #'second (reverse (plan-static-conds curr-subplan))))
-    (setq preconds (mapcar #'second (reverse (plan-preconds curr-subplan))))
-    (setq goals (mapcar #'second (reverse (plan-goals curr-subplan))))
+    (setq rigid-conds (get-schema-section-wffs (plan-schema curr-subplan) :rigid-conds))
+    (setq static-conds (get-schema-section-wffs (plan-schema curr-subplan) :static-conds))
+    (setq preconds (get-schema-section-wffs (plan-schema curr-subplan) :preconds))
+    (setq goals (get-schema-section-wffs (plan-schema curr-subplan) :goals))
 
     ; Get relevant knowledge
     ; TODO: replace the following once a more general retrieval method is used
@@ -2326,8 +2258,8 @@
       (mapcar (lambda (agent utterance) (list (string agent) (words-to-str utterance)))
         history-agents history-utterances))
 
-    (format t "~%  * Generating response using schema: ~a "
-      (get-curr-schema (ds-curr-plan *ds*))) ; DEBUGGING
+    (format t "~%  * Generating response using schema for ~a "
+      (schema-predicate (plan-schema curr-subplan))) ; DEBUGGING
 
     ; Generate response
     (cond
@@ -2981,6 +2913,16 @@
         ; If result is disjunctive, randomly choose one element
         (when (and (listp result) (equal (car result) :or))
           (setq result (choose-random-element (cdr result))))
+        ; If schema directive using schema variable name (old format),
+        ; attempt to replace with corresponding predicate
+        (when (and (equal directive :schema) (global-var? result))
+          (setq result (global-var-to-pred result)))
+        (when (equal directive :schemas)
+          (setq result (mapcar (lambda (s)
+            (if (global-var? s) (global-var-to-pred s) s)) result)))
+        (when (and (equal directive :schema+args) (global-var? (car result)))
+          (setq result (cons (global-var-to-pred (car result)) (cdr result))))
+        ; Update count and return result
         (setq result (cons directive result))
         (setf (get rule-node 'time-last-used) (ds-count *ds*))
         (return-from choose-result-for1 result))

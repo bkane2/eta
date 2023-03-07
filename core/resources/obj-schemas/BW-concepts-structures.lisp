@@ -1,4 +1,4 @@
-(store-obj-schema 'BW-concept-structure.n '|BW-arch|
+(store-schema 'BW-arch.n
   ; Arch
   '(obj-schema
     :header (?x BW-arch.n)
@@ -20,11 +20,11 @@
       bw-arch1.obj
       bw-arch2.obj
     )
-)) ; END |BW-arch|
+)) ; END BW-arch.n
 
 
 
-(store-obj-schema 'BW-concept-structure.n '|BW-staircase|
+(store-schema 'BW-staircase.n
   ; Staircase
   '(obj-schema
     :header (?x BW-staircase.n)
@@ -40,11 +40,11 @@
       bw-staircase1.obj
       bw-staircase2.obj
     )
-)) ; END |BW-staircase|
+)) ; END BW-staircase.n
 
 
 
-(store-obj-schema 'BW-concept-structure.n '|BW-wedge|
+(store-schema 'BW-wedge.n
   ; Wedge
   '(obj-schema
     :header (?x BW-wedge.n)
@@ -61,11 +61,11 @@
       bw-wedge1.obj
       bw-wedge2.obj
     )
-)) ; END |BW-wedge|
+)) ; END BW-wedge.n
 
 
 
-(store-obj-schema 'BW-concept-structure.n '|BW-pyramid|
+(store-schema 'BW-pyramid.n
   ; Pyramid
   '(obj-schema
     :header (?x BW-pyramid.n)
@@ -84,7 +84,14 @@
       bw-pyramid2.obj
       bw-pyramid3.obj
     )
-)) ; END |BW-pyramid|
+)) ; END BW-pyramid.n
+
+
+
+(store-aliases-of-concept 'BW-arch.n      '|BW-arch|      'BW-concept-structure.n)
+(store-aliases-of-concept 'BW-staircase.n '|BW-staircase| 'BW-concept-structure.n)
+(store-aliases-of-concept 'BW-wedge.n     '|BW-wedge|     'BW-concept-structure.n)
+(store-aliases-of-concept 'BW-pyramid.n   '|BW-pyramid|   'BW-concept-structure.n)
 
 
 

@@ -1,9 +1,15 @@
-;; Aug 5/2020
+;; Feb 21/2023
 ;; ===========================================================
 ;;
-;; Contains the schema-based planning module used by Eta, built around
-;; the 'plan' and 'plan-step' structures defined below (essentially a doubly-linked-list
-;; with pointers for subplan relations.)
+;; Contains the schema-based planning module used by Eta, built around the 'plan-step' structure
+;; defined below. Each plan-step is a node in a plan polytree containing an episode name and
+;; corresponding WFF, as well as possibly other information (probabilistic certainty scores,
+;; obligations associated with the episode, etc.). Each plan-step is also marked as an intention
+;; or expectation, depending on whether the episode is an action with Eta as the agent, or some
+;; other type of episode.
+;;
+;; Each plan-step contains a pointer to a list of abstract plan-steps that it instantiates (parents),
+;; as well as a pointer to a list of more concrete substeps (children).
 ;;
 ;; Functions described in more detail in their headers.
 ;;
@@ -14,32 +20,15 @@
 ;```````````````````````````````
 ; contains the following fields:
 ; plan-name       : the generated name for the plan
-; schema-name     : the name of the schema used to generate the plan (if any)
-; schema-contents : the contents of the schema used to generate the plan (if any)
 ; curr-step       : the current (to be processed) step of the plan
-; vars            : contains any local variables in plan (potentially inherited)
 ; subplan-of      : points to a plan-step that the plan is a subplan of
-; (the following fields are inherited from the schema (if any))
-; types           : contains formulas for types in plan
-; var-roles       : contains formulas for var-roles in plan
-; rigid-conds     : contains formulas for rigid conditions of plan
-; static-conds    : contains formulas for static conditions of plan
-; preconds        : contains formulas for preconditions of plan
-; goals           : contains formulas for goals of plan
+; schema          : points to the partially instantiated schema structure that
+;                   the plan was created from
 ;
   plan-name
-  schema-name
-  schema-contents
   curr-step
-  vars
   subplan-of
-  ; == facts inherited from schema ==
-  types
-  var-roles
-  rigid-conds
-  static-conds
-  preconds
-  goals
+  schema
 ) ; END defstruct plan
 
 
@@ -50,17 +39,12 @@
 ;
   (let ((new (make-plan)))
     (setf (plan-plan-name new) (copy-tree (plan-plan-name old)))
-    (setf (plan-schema-name new) (copy-tree (plan-schema-name old)))
-    (setf (plan-schema-contents new) (copy-tree (plan-schema-contents old)))
-    (setf (plan-vars new) (copy-tree (plan-vars old)))
-    (setf (plan-types new) (copy-tree (plan-types old)))
-    (setf (plan-var-roles new) (copy-tree (plan-var-roles old)))
-    (setf (plan-rigid-conds new) (copy-tree (plan-rigid-conds old)))
-    (setf (plan-static-conds new) (copy-tree (plan-static-conds old)))
-    (setf (plan-preconds new) (copy-tree (plan-preconds old)))
-    (setf (plan-goals new) (copy-tree (plan-goals old)))
 
     (setf (plan-subplan-of new) subplan-of)
+
+    ; TODO: possible bug here if a plan and a subplan both point to the same schema structure;
+    ; this deepcopy will create two separate schema structures for each
+    (setf (plan-schema new) (deepcopy-epi-schema (plan-schema old)))
 
     (when (plan-curr-step old)
       (setf (plan-curr-step new) (deepcopy-plan-step (plan-curr-step old) :step-of new)))
@@ -127,225 +111,71 @@
 
 
 
-(defun init-plan-from-schema (schema-name args) 
-;````````````````````````````````````````````````
-; Given a schema name (e.g. '*eta-schema*), instantiate the
-; schema that a plan is to be based on. For non-nil 'args', we
-; replace successive variables occurring in the header (excluding
-; the episode variable ?e itself) by successive elements of 'args'.
+(defun init-plan-from-schema (schema args) 
+;`````````````````````````````````````````````
+; Given a schema structure, instantiate the schema that a plan is to
+; be based on. For non-nil 'args', we replace successive variables
+; occurring in the header (excluding the episode variable ?e itself)
+; by successive elements of 'args'.
 ;
-; TODO: should ?e be instantiated and (<schema-header> ** E1) be
-; stored in context at this point?
-;
-  (let (plan schema sections ep-vars)
-    ; Make plan structure plan-name corresponding to schema-name
-    (setq plan (make-plan))
-    (setf (plan-plan-name plan) (gentemp "PLAN"))
-    (setf (plan-schema-name plan) schema-name)
-
-    ;; (format t "'schema-name' of ~a has been set to ~a~%"
-    ;;   (plan-plan-name plan) (plan-schema-name plan)) ; DEBUGGING
-
-    ; Retrieve schema contents from schema-name
-    ; (copying so destructive edits can be made)
-    (setq schema (copy-tree (eval schema-name)))
-
-    ; Substitute all episode vars in schema with globally unique vars,
-    ; to avoid conflicts when using property lists
-    (setq ep-vars (remove-duplicates (remove-if-not #'ep-var? (flatten schema))))
-    (dolist (ep-var ep-vars)
-      (setq schema (subst (gentemp (string ep-var)) ep-var schema)))
-
-    (setf (plan-schema-contents plan) schema)
-
-    ; Return error if schema has no :episodes keyword
-    (when (not (find :episodes schema))
-      (format t "*** Attempt to form plan ~a from schema ~a with no :episodes keyword"
-        (plan-plan-name plan) (plan-schema-name plan))
+  (let (plan schema-instance sections ep-vars)
+    ; Return error if schema has no episodes
+    (when (null (epi-schema-episodes schema))
+      (format t "*** Attempt to form plan from schema ~a with no episodes"
+        (schema-predicate schema))
       (return-from init-plan-from-schema nil))
 
-    ;; (format t "schema used to initialize plan ~a is ~% ~a~%"
-    ;;   (plan-plan-name plan) (plan-schema-contents plan)) ; DEBUGGING
+    ; Create copy of general schema to instantiate
+    (setq schema-instance (instantiate-epi-schema schema args))
 
-    ; Destructively substitute the arguments 'args' for the variables
-    ; in the plan/schema header (other than the episode variable)
-    (nsubst-schema-args args schema)
+    ; Create a plan structure from the episodes of the schema (in
+    ; addition to certainties and obligations)
+    (setq plan (init-plan-from-episode-list
+      (get-schema-section schema-instance :episodes)
+      :certainties (get-schema-section schema-instance :certainties)
+      :obligations (get-schema-section schema-instance :obligations)))
 
-    ;; (format t "schema used for plan ~a, with arguments instantiated ~% ~a~%"
-    ;;   (plan-plan-name plan) (plan-schema-contents plan)) ; DEBUGGING
-
-    ; Get schema sections. 'sections' is a hash table with schema sections as keys
-    (setq sections (get-schema-sections schema))
-
-    ; Process each part of the schema separately
-    (process-schema-types             plan (gethash :types sections))
-    (process-schema-var-roles         plan (gethash :var-roles sections))
-    (process-schema-rigid-conds       plan (gethash :rigid-conds sections))
-    (process-schema-static-conds      plan (gethash :static-conds sections))
-    (process-schema-preconds          plan (gethash :preconds sections))
-    (process-schema-goals             plan (gethash :goals sections))
-    (process-schema-episode-relations plan (gethash :episode-relations sections))
-    (process-schema-necessities       plan (gethash :necessities sections))
-    (process-schema-certainties       plan (gethash :certainties sections))
-    (process-schema-obligations       plan (gethash :obligations sections))
-    ; Process episodes last so things like certainties can be used
-    (process-schema-episodes          plan (gethash :episodes sections))
+    (when plan
+      (setf (plan-schema plan) schema-instance))
 
   ; If goals of plan are already satisfied, skip over plan by returning nil,
   ; otherwise return new plan
-  (if (and (plan-goals plan) (every #'check-goal-satisfied (plan-goals plan)))
-    nil
-    plan)
+  ;; TODO REFACTOR : modify the below once goal queue is implemented
+  ;; (if (and (plan-goals plan) (every #'check-goal-satisfied (plan-goals plan)))
+  ;;   nil
+  ;;   plan)
+  plan
 )) ; END init-plan-from-schema
 
 
 
-(defun init-plan-from-episode-list (episodes) 
-;```````````````````````````````````````````````
+(defun init-plan-from-episode-list (episodes &key certainties obligations) 
+;````````````````````````````````````````````````````````````````````````````
 ; Given a list of episodes, create a plan corresponding to that
-; sequence of episodes. Used for creating subplans from certain
-; non-primitive actions.
+; sequence of episodes. May be called as a subroutine in instantiating
+; a plan from an overall schema, or from procedurally creating a subplan
+; for a particular action (e.g., a say-to action from a paraphrase-to action).
 ;
-  (let (plan)
+; The episodes are converted to a linked list representing the steps in a plan;
+; the first plan step is returned. Optionally, certainties and obligations for
+; episodes may be given, in which case these are attached to the corresponding
+; plan steps.
+;
+  (let (plan steps first-step prev-step curr-step)
+
+    ; Remove :episodes keyword (if given), and group episodes into steps
+    (if (equal :episodes (car episodes)) (setq episodes (cdr episodes)))
+    (setq steps (group-facts-in-schema-section episodes))
+
     ; Make plan structure plan-name
     (setq plan (make-plan))
     (setf (plan-plan-name plan) (gentemp "PLAN"))
 
-    ; Remove :episodes keyword (if given)
-    (if (equal :episodes (car episodes)) (setq episodes (cdr episodes)))
-
-    ; Process episodes
-    (process-schema-episodes plan episodes)
-
-  plan)
-) ; END init-plan-from-episode-list
-
-
-
-(defun process-schema-types (plan types) 
-;`````````````````````````````````````````
-; Add all types to context.
-; TODO: This is incomplete and needs to be updated in the future.
-; Currently doesn't do anything with the proposition variables e.g. !t1
-; TODO: Should typed variables try to find a value right away? Probably not,
-; if I'm requiring all variables "local" to a schema to be included in
-; the :types section. For now, I've kept this the same as before though.
-;
-  (let ((type-pairs (form-name-wff-pairs types)) type-name type-wff var)
-    (dolist (type-pair type-pairs)
-      (setq type-name (first type-pair))
-      (setq type-wff (second type-pair))
-      ; If typed variable, find value for variable through observation and
-      ; substitute in both type and in contents of each schema section.
-      (when (variable? (car type-wff))
-        (setq var (car type-wff))
-        (push var (plan-vars plan))
-        ; Get skolem name and replace in schema.
-        (setq sk-name (observe-variable-type var (second type-wff)))
-        (nsubst sk-name var (plan-schema-contents plan))
-        (setq type-wff (subst sk-name var type-wff)))
-      ; Store type as fact in context.
-      (store-in-context type-wff))
-      (push (list type-name type-wff) (plan-types plan)))
-) ; END process-schema-types
-
-
-
-(defun process-schema-var-roles (plan var-roles)
-;```````````````````````````````````````````````````
-; TBC
-; e.g., !r9 (?ka1 (kind1-of.n action1.n))
-;
-  (let ((var-role-pairs (form-name-wff-pairs var-roles)) var-role-name var-role-wff)
-    (dolist (var-role-pair var-role-pairs)
-      (setq var-role-name (first var-role-pair))
-      (setq var-role-wff (second var-role-pair))
-      (push (list var-role-name var-role-wff) (plan-var-roles plan))))
-) ; END process-schema-var-roles
-
-
-
-(defun process-schema-rigid-conds (plan rigid-conds)
-;`````````````````````````````````````````````````````
-; Add all rigid-conds to context.
-; TODO: This is incomplete and needs to be updated in the future.
-; Currently doesn't handle formula variables at all (e.g., for a
-; rigid-cond like (?b1 red.a)), or do anything with the proposition
-; variables e.g. !r1
-;
-  (let ((rigid-cond-pairs (form-name-wff-pairs rigid-conds)) rigid-cond-name rigid-cond-wff)
-    (dolist (rigid-cond-pair rigid-cond-pairs)
-      (setq rigid-cond-name (first rigid-cond-pair))
-      (setq rigid-cond-wff (second rigid-cond-pair))
-      (store-in-context rigid-cond-wff)
-      (push (list rigid-cond-name rigid-cond-wff) (plan-rigid-conds plan))))
-) ; END process-schema-rigid-conds
-
-
-
-(defun process-schema-static-conds (plan static-conds)
-;````````````````````````````````````````````````````````
-; Adds any static conditions of the schema to the plan structure, as a list (static-cond-name static-cond-wff).
-; e.g., ?s2 (^you at-loc.p |Table|) gets added as:
-; (?s2 (^you at-loc.p |Table|))
-; TBC
-;
-  (let ((static-cond-pairs (form-name-wff-pairs static-conds)) static-cond-name static-cond-wff)
-    (dolist (static-cond-pair static-cond-pairs)
-      (setq static-cond-name (first static-cond-pair))
-      (setq static-cond-wff (second static-cond-pair))
-      (push (list static-cond-name static-cond-wff) (plan-static-conds plan))))
-) ; END process-schema-static-conds
-
-
-
-(defun process-schema-preconds (plan preconds)
-;```````````````````````````````````````````````
-; Adds any preconditions of the schema to the plan structure, as a list (precond-name precond-wff).
-; e.g., ?p1 (some ?c ((?c member-of.p ?cc) and (not (^you understand.v ?c)))) gets added as:
-; (?p1 (some ?c ((?c member-of.p ?cc) and (not (^you understand.v ?c)))))
-; TBC
-;
-  (let ((precond-pairs (form-name-wff-pairs preconds)) precond-name precond-wff)
-    (dolist (precond-pair precond-pairs)
-      (setq precond-name (first precond-pair))
-      (setq precond-wff (second precond-pair))
-      (push (list precond-name precond-wff) (plan-preconds plan))))
-) ; END process-schema-preconds
-
-
-
-(defun process-schema-goals (plan goals)
-;`````````````````````````````````````````
-; Adds any goals of the schema to the plan structure, as a list (goal-name goal-wff).
-; e.g., ?g1 (^me want1.v (that (^you understand1.v ?c))) gets added as:
-; (?g1 (^me want1.v (that (^you understand1.v ?c))))
-;
-  (let ((goal-pairs (form-name-wff-pairs goals)) goal-name goal-wff)
-    (dolist (goal-pair goal-pairs)
-      (setq goal-name (first goal-pair))
-      (setq goal-wff (second goal-pair))
-      (push (list goal-name goal-wff) (plan-goals plan))))
-) ; END process-schema-goals
-
-
-
-(defun process-schema-episodes (plan episodes)
-;```````````````````````````````````````````````
-; Converts episodes contents of schema to a linked list
-; representing the steps in a plan. Returns the first
-; plan step.
-; TODO: eventually, it seems like we should allow for steps
-; to be added to the plan non-sequentially, based on the
-; episode-relations defined in the schema.
-;
-  (let ((steps (form-name-wff-pairs episodes)) first-step prev-step curr-step)
-
     ; Give error if first element of first pair isn't episode variable starting with '?'
     (when (not (variable? (caar steps)))
-      (format t "*** malformed step ~a while trying to form plan ~a from schema ~a (doesn't begin with episode variable)~%"
-        (car steps) (plan-plan-name plan) (plan-schema-name plan))
-      (return-from process-schema-episodes nil))
+      (format t "*** malformed step ~a while trying to form plan ~a (doesn't begin with episode variable)~%"
+        (car steps) (plan-plan-name plan))
+      (return-from init-plan-from-episode-list nil))
 
     ; Iterate over steps in episodes list
     (dolist (step steps)
@@ -357,11 +187,15 @@
       (setf (plan-step-ep-name curr-step) (first step))
       (setf (plan-step-wff curr-step) (second step))
       ; When episode name has certainty associated, add to step
-      (when (get (first step) 'certainty)
-        (setf (plan-step-certainty curr-step) (get (first step) 'certainty)))
+      ; certainties are formulas like (!c1 (!e16 0.3))
+      (dolist (certainty (group-facts-in-schema-section certainties))
+        (when (equal (first step) (dual-var (first (second certainty))))
+          (setf (plan-step-certainty curr-step) (second (second certainty)))))
       ; When episode name has obligation associated, add to step
-      (when (get (first step) 'obligation)
-        (setf (plan-step-obligation curr-step) (get (first step) 'obligation)))
+      ; obligations are formulas like (!o1 (?e1 obligates <wff>))
+      (dolist (obligation (group-facts-in-schema-section obligations))
+        (when (equal (first step) (first (second obligation)))
+          (setf (plan-step-obligation curr-step) (third (second obligation)))))
       ; When previous step exists, set bidirectional pointers
       (when prev-step
         (setf (plan-step-prev-step curr-step) prev-step)
@@ -375,78 +209,31 @@
     ;; (format t "action list of argument-instantiated schema is:~%")
     ;; (print-current-plan-steps plan) ; DEBUGGING
 
-)) ; END process-schema-episodes
+  plan
+)) ; END init-plan-from-episode-list
 
 
 
-(defun process-schema-episode-relations (plan episode-relations)
-;``````````````````````````````````````````````````````````````````
-; TBC
-; e.g., !w8 (?e8 before1.p ?e9)
+(defun init-plan-from-episode-list-repeating (plan ep-name episodes-embedded episodes-loop)
+;`````````````````````````````````````````````````````````````````````````````````````````````
+; Initializes a plan from an episode list for a :repeat-until loop. Before initializing
+; the subplan, we need to create duplicate episode variables for all of the embedded episodes
+; that get instantiated during this particular iteration (while keeping the original episode
+; variables for the loop 'yet to be unrolled'). These duplicate variables need to inherit the
+; certainties and obligations of the original episode variables in the plan schema (if any).
 ;
-  (let ((episode-relation-pairs (form-name-wff-pairs episode-relations)) episode-relation-name episode-relation-wff)
-    (dolist (episode-relation-pair episode-relation-pairs)
-      (setq episode-relation-name (first episode-relation-pair))
-      (setq episode-relation-wff (second episode-relation-pair))
-    )
-  )
-) ; END process-schema-episode-relations
-
-
-
-(defun process-schema-necessities (plan necessities)
-;``````````````````````````````````````````````````````
-; TBC
-; e.g., !n1 (!bb .99)
+; TODO REFACTOR : test david-qa w/ obligation to make sure this is working
 ;
-  (let ((necessity-pairs (form-name-wff-pairs necessities)) necessity-name necessity-wff)
-    (dolist (necessity-pair necessity-pairs)
-      (setq necessity-name (first necessity-pair))
-      (setq necessity-wff (second necessity-pair))
-    )
-  )
-) ; END process-schema-necessities
-
-
-
-(defun process-schema-certainties (plan certainties)
-;``````````````````````````````````````````````````````
-; Processes certainty formulas in the schema, adding the certainty to a
-; property list of the episode var/name.
-; e.g., !c1 (!e1 .8)
-;
-  (let ((certainty-pairs (form-name-wff-pairs certainties)) certainty-name certainty-wff
-        episode-name certainty)
-    (dolist (certainty-pair certainty-pairs)
-      (setq certainty-name (first certainty-pair))
-      (setq certainty-wff (second certainty-pair))
-      (setq episode-name (first certainty-wff))
-      (setq certainty (second certainty-wff))
-      ; ((that ,episode-name) is-necessary-to-degree ,certainty)
-      (setf (get (dual-var episode-name) 'certainty) certainty)
-    )
-  )
-) ; END process-schema-certainties
-
-
-
-(defun process-schema-obligations (plan obligations)
-;``````````````````````````````````````````````````````
-; Processes obligation formulas in the schema, adding the obligation to a
-; property list of the episode var/name.
-; e.g., !o1 (?e1 obligates (...))
-;
-  (let ((obligation-pairs (form-name-wff-pairs obligations)) obligation-name obligation-wff
-        episode-name obligation)
-    (dolist (obligation-pair obligation-pairs)
-      (setq obligation-name (first obligation-pair))
-      (setq obligation-wff (second obligation-pair))
-      (setq episode-name (first obligation-wff))
-      (setq obligation (third obligation-wff))
-      (setf (get episode-name 'obligation) obligation)
-    )
-  )
-) ; END process-schema-obligations
+  (let (duplicates new-plan)
+    (setq duplicates (subst-duplicate-variables
+      episodes-embedded
+      (get-schema-section (plan-schema plan) :certainties)
+      (get-schema-section (plan-schema plan) :obligations)))
+    (init-plan-from-episode-list
+      (cons :episodes (append (first duplicates) (list ep-name (cons :repeat-until episodes-loop))))
+      :certainties (second duplicates)
+      :obligations (third duplicates))
+)) ; END init-plan-from-episode-list-repeating
 
 
 
@@ -467,40 +254,16 @@
 
 
 
-(defun form-name-wff-pairs (contents)
-;`````````````````````````````````````
-; Groups contents of a schema section, assumed to be a series of
-; declarations of the following form:
-; <name> <wff>
-; into a list of (name wff) pairs. Here, name is assumed to be
-; a variable of the form ?x or !x.
-;
-  (cond
-    ((null contents) nil)
-    (t (cons (list (first contents) (second contents))
-             (form-name-wff-pairs (cddr contents)))))
-) ; END form-name-wff-pairs
-
-
-
 (defun add-subplan-curr-step (plan subplan) 
 ;````````````````````````````````````````````
 ; Given a plan and a subplan, attaches the subplan to the
 ; currently active step of the plan using the add-subplan function.
-; Unless the subplan already has an associated schema name/contents, it
-; inherits the schema name/contents of the schema used to create the subplan.
-; TODO: should this inherit variables defined in the parent plan at all?
+; Unless the subplan already has an associated subschema, it inherits
+; the schema used to create the subplan.
 ; 
   (add-subplan (plan-curr-step plan) subplan)
-  (unless (plan-schema-name subplan)
-    (setf (plan-schema-name subplan) (plan-schema-name plan))
-    (setf (plan-schema-contents subplan) (plan-schema-contents plan))
-    (setf (plan-types subplan) (plan-types plan))
-    (setf (plan-var-roles subplan) (plan-var-roles plan))
-    (setf (plan-rigid-conds subplan) (plan-rigid-conds plan))
-    (setf (plan-static-conds subplan) (plan-static-conds plan))
-    (setf (plan-preconds subplan) (plan-preconds plan))
-    (setf (plan-goals subplan) (plan-goals plan)))
+  (when (null (plan-schema subplan))
+    (setf (plan-schema subplan) (plan-schema plan)))
 ) ; END add-subplan-curr-step
 
 
@@ -560,12 +323,13 @@
         (when (null (plan-curr-step subplan))
 
           ; If goals of subplan (if any) still unsatisfied, try replanning based on the first unsatisfied goal
-          (when (plan-goals subplan)
-            (setq unsatisfied-goals (remove-if #'check-goal-satisfied (plan-goals subplan)))
-            (when unsatisfied-goals
-              ;; (dolist (ug unsatisfied-goals) (format t "~%  unsatisfied goal: ~a" ug)) ; DEBUGGING
-              (setq replanned? (replan-for-goal plan (car unsatisfied-goals)))
-              (if replanned? (return-from update-plan-state nil))))
+          ;; TODO REFACTOR : modify the below once goal queue is implemented
+          ;; (when (plan-goals subplan)
+          ;;   (setq unsatisfied-goals (remove-if #'check-goal-satisfied (plan-goals subplan)))
+          ;;   (when unsatisfied-goals
+          ;;     ;; (dolist (ug unsatisfied-goals) (format t "~%  unsatisfied goal: ~a" ug)) ; DEBUGGING
+          ;;     (setq replanned? (replan-for-goal plan (car unsatisfied-goals)))
+          ;;     (if replanned? (return-from update-plan-state nil))))
 
           ;; (format t "subplan ~a has no curr-step, so advancing plan ~a past step: ~%  ~a ~a ~%"
           ;;   (plan-plan-name subplan) (plan-plan-name plan) (plan-step-ep-name curr-step) (plan-step-wff curr-step)) ; DEBUGGING
@@ -579,12 +343,10 @@
 (defun instantiate-curr-step (plan) 
 ;`````````````````````````````````````
 ; Instantiates the first episode in the plan, destructively substituting
-; the skolemized episode wherever it occurs in the plan. Also attaches
-; any properties from the hash tables associated with the episode variable
-; in the schema.
+; the skolemized episode wherever it occurs in the plan, as well as binding
+; that episode variable in the schema.
 ;
-  (let ((curr-step (plan-curr-step plan)) ep-var ep-name schema-name
-        gist-clauses semantics topic-keys)
+  (let ((curr-step (plan-curr-step plan)) ep-var ep-name)
 
     ; If no curr-step, return nil
     (if (null curr-step) (return-from instantiate-curr-step nil))
@@ -597,48 +359,15 @@
     (setq ep-name (episode-name))
     ; TODO: use episode-relations formulas to assert relations in timegraph
     (store-init-time-of-episode ep-name)
-    (nsubst-variable plan ep-name ep-var)
+    (bind-variable-in-plan plan ep-name ep-var)
 
     ;; (format t "action list after substituting ~a for ~a:~%" ep-name ep-var)
     ;; (print-current-plan-steps plan) ; DEBUGGING
 
-    ; Attach wff to episode name (likely not used, but for convenience's sake)
     ; TODO: should (wff ** ep-name) be stored in context at this point?
     ;       as well as instantiating the non-fluent variable, e.g. '!e1'?
-    (setf (get ep-name 'wff) (plan-step-wff curr-step))
     
-    ; In the case of an Eta or joint action, transfer properties from ep-var hash tables
-    (setq schema-name (plan-schema-name plan))
-    (when (or (eq '^me (car (plan-step-wff curr-step))) 
-              (and (listp (car (plan-step-wff curr-step)))
-                   (member '^me (car (plan-step-wff curr-step)))))
-      ; Gist clauses
-      (when (get schema-name 'gist-clauses)
-        (setq gist-clauses (gethash ep-var (get schema-name 'gist-clauses)))
-        (dolist (gist-clause gist-clauses)
-          (store-gist-clause-characterizing-episode gist-clause ep-name '^me '^you)))
-
-      ;; (format t "Gist clauses attached to ~a (~a) from ~a =~% ~a~%"
-      ;;   ep-name (plan-step-wff curr-step) ep-var (get-gist-clauses-characterizing-episode ep-name)) ; DEBUGGING
-
-      ; Logical forms
-      (when (get schema-name 'semantics)
-        (setq semantics (gethash ep-var (get schema-name 'semantics)))
-        (dolist (wff semantics)
-          (store-semantic-interpretation-characterizing-episode wff ep-name '^me '^you)))
-
-      ;; (format t "Semantics attached to ~a (~a) from ~a =~% ~a~%"
-      ;;   ep-name (plan-step-wff curr-step) ep-var (get-semantic-interpretations-characterizing-episode ep-name)) ; DEBUGGING
-
-      ; Topic-keys
-      (when (get schema-name 'topic-keys)
-        (setq topic-keys (gethash ep-var (get schema-name 'topic-keys)))
-        (setf (get ep-name 'topic-keys) topic-keys))
-
-      ;; (format t "Topic keys attached to ~a =~% ~a (from ~a ~a)~%"
-      ;;   ep-name (get ep-name 'topic-keys) ep-var (plan-step-wff curr-step)) ; DEBUGGING
-  ))
-) ; END instantiate-curr-step
+)) ; END instantiate-curr-step
 
 
 
@@ -754,21 +483,18 @@
       (setq ep-name (get-episode-from-contextual-fact match))
       
       ; Substitute that episode name for the episode variable in the plan
-      (nsubst-variable plan ep-name ep-var)
+      (bind-variable-in-plan plan ep-name ep-var)
 
       ; Make all variable substitutions needed to unify wff and match
-      (mapcar (lambda (x y) (if (and (variable? x) y) (nsubst-variable plan y x)))
+      (mapcar (lambda (x y) (if (and (variable? x) y) (bind-variable-in-plan plan y x)))
         wff match)
-
-      ; Attach wff to episode name (likely not used, but for convenience's sake)
-      (setf (get ep-name 'wff) match)
 
       ; Remove the matched predicate from context if a telic predicate, i.e., assume
       ; something like (^you say-to.v ^me ...) is no longer relevant after matched once.
       ; TODO: I'm not sure if this is a safe or realistic assumption to make... but it's
       ; currently necessary to prevent the program from automatically looping in the case
       ; where a :repeat-until episode consists of the user saying something and the agent
-      ; replying, since the say-to.v in the schema will keep matching the same fact in context.
+      ; replying, since the say-to.v expectation will keep matching the same fact in context.
       (if (member (second match) *verbs-telic*) (remove-old-contextual-fact match))
 
       ; Advance the plan
@@ -828,12 +554,12 @@
       ; :schema directive
       ((eq (car choice) :schema)
         (setq schema-name (cdr choice))
-        (setq subplan (init-plan-from-schema schema-name nil)))
+        (setq subplan (init-plan-from-schema (get-stored-schema schema-name) nil)))
 
       ; :schema+args directive
       ((eq (car choice) :schema+args)
         (setq schema-name (first (cdr choice)) args (second (cdr choice)))
-        (setq subplan (init-plan-from-schema schema-name args))))
+        (setq subplan (init-plan-from-schema (get-stored-schema schema-name) args))))
     
     ; If subplan was obtained, attach to current step and return t, otherwise return nil
     (when subplan
@@ -929,7 +655,7 @@
 
     ; Make all variable substitutions in the plan
     (dolist (binding bindings)
-      (nsubst-variable plan (second binding) (first binding)))
+      (bind-variable-in-plan plan (second binding) (first binding)))
 
     ; If a new subplan was generated, add it as a subplan to the
     ; current step. Otherwise, advance the current (sub)plan.
@@ -942,12 +668,12 @@
 
 
 
-(defun nsubst-variable (plan val var) 
-;```````````````````````````````````````
+(defun bind-variable-in-plan (plan val var) 
+;`````````````````````````````````````````````
 ; Traverses the linked list of steps, starting from the current step,
 ; and destructively substitutes val for var in the ep-name and wff
-; of each step (this should also replace them in schema-contents, if
-; the plan has any defined).
+; of each step (this should also bind them in the corresponding schema,
+; if the plan has any defined).
 ; TODO: need to think of whether this should also substitute val for var
 ; in any parent plan containing var in the 'vars' slot of the plan structure.
 ; I've left the step-of pointer in case this is done in the future.
@@ -960,119 +686,33 @@
         (subst val var (plan-step-ep-name curr-step)))
       (nsubst val var (plan-step-wff curr-step))
       (setq curr-step (plan-step-next-step curr-step)))
-  
-    ; If plan has schema-contents, substitute val for var there too
-    (nsubst val var (plan-schema-contents plan)))
-) ; END nsubst-variable
+
+    ; If plan has a schema, bind variable in schema
+    (when (plan-schema plan)
+      (bind-variable-in-schema (plan-schema plan) var val))
+
+)) ; END bind-variable-in-plan
 
 
 
-(defun nsubst-schema-args (args schema) 
-;```````````````````````````````````````
-; Substitute the successive arguments in the 'args' list for successive
-; variables occurring in the schema or plan header exclusive of the 
-; episode variable characterized by the header predication (for 
-; episodic headers). In relational schemas, headers are assumed to 
-; be simple (infix) predications,
-;          (<term> <pred> <term> ... <term>),
-; and for event schemas they are of form
-;          ((<term> <pred> <term> ... <term>) ** <term>).
-; We look for variables among the terms (exclusive of the one following
-; "**" in the latter header type), and replace them in succession by
-; the members of 'args'.
-;
-  (let (header predication vars)
-    (setq header (second (member :header schema)))
-    (if (eq (second header) '**)
-      (setq predication (first header)) ; episodic
-      (setq predication header)) ; nonepisodic
-    (if (atom predication) ; unexpected
-      (return-from nsubst-schema-args schema))
-    (dolist (x predication)
-      ; account for (set-of ...) arguments
-      ; (TODO: ultimately, might just want to do a deep search for variables)
-      (if (and (listp x) (equal (car x) 'set-of))
-        (dolist (x1 (cdr x))
-          (if (variable? x1) (push x1 vars))))
-      ; otherwise, add variable to list
-      (if (variable? x) (push x vars)))
-    (when (null vars) ; unexpected
-      (format t "@@@ Warning: Attempt to substitute values~%    ~a~%    in header ~a, which has no variables~%"
-                args predication)
-      (return-from nsubst-schema-args schema))
-    (setq vars (reverse vars))
-    (cond
-      ; If more args given than variables, print warning. If the first variables are ^me and/or ^you, remove these
-      ; from the args list. Otherwise, remove superfluous arguments from the end of the list.
-      ((> (length args) (length vars))
-        (format t "@@@ Warning: More values supplied, viz.,~%    ~a,~%    than header ~a has variables~%"
-                  args predication)
-        (if (member '^me (flatten predication)) (setq args (remove '^me args)))
-        (if (member '^you (flatten predication)) (setq args (remove '^you args)))
-        (setq args (butlast args (- (length args) (length vars))))
-        (format t "@@@ Now using args: ~a~%" args))
-      ; If fewer args given than variables, print warning and assume that the first two missing args are ^me and ^you
-      ; if they don't appear in the header.
-      ((< (length args) (length vars))
-        (format t "@@@ Warning: Fewer values supplied, viz.,~%    ~a,~%    than header ~a has variables~%"
-                  args predication)
-        (if (and (>= (- (length vars) (length args)) 2) (not (member '^you (flatten predication))))
-          (setq args (cons '^you args)))
-        (if (not (member '^me (flatten predication)))
-          (setq args (cons '^me args)))
-        (setq vars (butlast vars (- (length vars) (length args))))
-        (format t "@@@ Now using args: ~a, for vars: ~a~%" args vars)))
-            
-      ; Length of 'args' and 'vars' are equal (or have just been equalized)
-    (dotimes (i (length args))
-      (nsubst (pop args) (pop vars) schema))
-
-    schema)
-) ; END nsubst-schema-args
-
-
-
-(defun subst-duplicate-variables (plan episodes) 
-;``````````````````````````````````````````````````
-; Substitutes all variables in an episode list with duplicate variables,
-; inheriting the gist-clauses, semantics, etc. attached to them in the schema
-; used (directly or indirectly) to create the current plan.
+(defun subst-duplicate-variables (episodes certainties obligations) 
+;`````````````````````````````````````````````````````````````````````
+; Substitutes all variables in an episode list with duplicate variables.
+; Also make substitutions in certainties and obligations lists if given.
 ;
   (let* ((episode-vars (get-episode-vars episodes))
         (new-episode-vars (mapcar (lambda (episode-var)
-          (duplicate-variable plan episode-var)) episode-vars))
-        (result episodes))
+          (gentemp (string episode-var))) episode-vars))
+        (episodes-new episodes)
+        (certainties-new certainties)
+        (obligations-new obligations))
     (mapcar (lambda (var new-var)
-      (setq result (subst new-var var result)))
+        (setq episodes-new (subst new-var var episodes-new))
+        (setq certainties-new (subst new-var var certainties-new))
+        (setq obligations-new (subst new-var var obligations-new)))
       episode-vars new-episode-vars)
-  result)
-) ; END subst-duplicate-variables
-
-
-
-(defun duplicate-variable (plan var) 
-;`````````````````````````````````````````````
-; Duplicates an episode variable, inheriting the gist-clauses,
-; semantics, etc. attached to it in the schema used (directly or
-; indirectly) to create the current plan.
-;
-  (let (new-var schema-name)
-    ; Create new episode variable
-    (setq new-var (gentemp (string var)))
-    (setq schema-name (plan-schema-name plan))
-    ; Inherit gist-clauses, semantics, and topic keys
-    (setf (gethash new-var (get schema-name 'gist-clauses))
-      (gethash var (get schema-name 'gist-clauses)))
-    (setf (gethash new-var (get schema-name 'semantics))
-      (gethash var (get schema-name 'semantics)))
-    (setf (gethash new-var (get schema-name 'topic-keys))
-      (gethash var (get schema-name 'topic-keys)))
-    ; New var has same certainty and obligation as old var
-    (setf (get new-var 'certainty) (get var 'certainty))
-    (setf (get new-var 'obligation) (get var 'obligation))
-  ; Return new var
-  new-var)
-) ; END duplicate-variable
+  (list episodes-new certainties-new obligations-new)
+)) ; END subst-duplicate-variables
 
 
 
@@ -1117,15 +757,6 @@
           (remove nil (apply #'append (mapcar #'get-episode-vars episodes)))
           :test #'equal))))
 ) ; END get-episode-vars
-
-
-
-(defun get-curr-schema (plan)
-;```````````````````````````````````
-; Gets the schema corresponding to the current (sub)plan.
-;
-  (plan-schema-name (find-curr-subplan plan))
-) ; END get-curr-schema
 
 
 
@@ -1190,8 +821,8 @@
   (let ((curr-plan plan) curr-step superstep subplan (cont t))
 
     ; Print top-level information about plan
-    (format t "Status of ~a (schema ~a) "
-      (plan-plan-name plan) (plan-schema-name plan))
+    (format t "Status of ~a "
+      (plan-plan-name plan))
     (setq superstep (plan-subplan-of plan))
     (if superstep
       (format t "(subplan-of ~a):~%" (plan-step-ep-name superstep))
