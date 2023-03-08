@@ -30,6 +30,9 @@
 :preconds (
   ; The user is not currently talking about Sophie's test results.
   ?p1 (^you ((pres prog) not currently.adv-e (talk.v (adv-a (about.p ((^me 's) (test.n results.n)))))))
+  ; Sophie is not ready to talk about her prognosis or options until she better understands her condition.
+  ?p2 (^me ((pres be.v) not ready.a (to (talk.v (about.p-arg (((^me 's) prognosis.n) or.cc ((^me 's) (plur option.n))))))
+        (until.ps (^me (better.adv-s ((pres understand.v) ((^me 's) condition.n)))))))
 )
 
 :goals (
@@ -46,7 +49,7 @@
 )
 
 :obligations (
-  !o1 (?e1 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n)))))
+  !o1 (?e1 obligates ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) condition.n)))))
 )
 
 )) ; END defparameter *redirect-to-test-results*

@@ -33,6 +33,191 @@
 ; Define any useful predicates here:
 
 
+(READRULES '*reaction-to-chemotherapy-statement*
+;``````````````````````````````````````````````````
+; Reactions to chemotherapy will differ between modules, so this rule tree
+; will be overridden by the rule files defined within each session subdirectory.
+;
+'(
+  ;; TODO:
+  ;; 1 (0 you .DO not think I need .CHEMOTHERAPY 3)
+  ;;  2 (I see \. I think it will be best to hold off on chemotherapy \, at least for now \.) (100 :out)
+  ;;  2 (Ah \. In that case \, I may think about chemotherapy for a bit longer before I come to any decision \.) (0 :out)
+  1 (:or
+    (0 you think I need .CHEMOTHERAPY 0)
+    (0 a side .EFFECT of .CHEMOTHERAPY is 0)
+    )
+    2 *ask-about-chemotherapy-side-effects* (100 :schema)
+    2 *ask-how-chemotherapy-works* (100 :schema)
+
+)) ; END *reaction-to-chemotherapy-statement*
+
+
+
+(READRULES '*reaction-to-comfort-care-statement*
+;``````````````````````````````````````````````````
+; Reactions to comfort care will differ between modules, so this rule tree
+; will be overridden by the rule files defined within each session subdirectory.
+;
+'(
+  1 (0 you .DO not think I need comfort .CARE 0)
+    2 *confirm-no-comfort-care* (100 :schema)
+  1 (:or
+    (0 comfort .CARE .SHOULD alleviate my .PAIN 0)
+    (0 comfort .CARE is a .TREATMENT .OPTION 0)
+    )
+    2 *ask-how-comfort-care-works* (100 :schema)
+  ;; TODO:
+  ;; 1 (0 you think I need comfort .CARE 0)
+  ;;   2 ([HAPPY] that sounds good to me \. I also think comfort care is the way to go \.) (100 :out)
+  ;;   2 ([HAPPY] good to hear \. I\'d say that comfort care is the best choice for me right now as well \.) (0 :out)
+  1 (:or
+    (0 I would need a .REFERRAL to start comfort .CARE 0)
+    (0 receiving comfort .CARE .IN a dedicated facility is an .OPTION 0)
+    (0 receiving comfort .CARE from a specialized service is an .OPTION 0)
+    (0 receiving comfort .CARE .IN my own .HOME is an .OPTION 0)
+    (0 receiving comfort .CARE from a .NURSE is an .OPTION 0)
+    (0 comfort .CARE allows me to .SPEND time with my .FAMILY 0)
+    (0 you .DO not think I need .CHEMOTHERAPY .BECAUSE I .SHOULD get comfort .CARE instead 0)
+    )
+    2 *ask-about-comfort-care* (100 :schema)
+
+)) ; END *reaction-to-comfort-care-statement*
+
+
+
+(READRULES '*reaction-to-treatment-options-statement*
+;``````````````````````````````````````````````````````
+; Reactions to treatment options will differ between modules, so this rule tree
+; will be overridden by the rule files defined within each session subdirectory.
+;
+'(
+  1 (:or
+    (0 maintaining .GOOD quality of .LIFE is a .TREATMENT .OPTION 0)
+    (0 you need more tests .BEFORE .TALKING about .TREATMENT options 0)
+    )
+    2 *ask-about-treatment-options* (100 :schema)
+  1 (0 radiation is a .TREATMENT .OPTION 0)
+    2 *ask-about-will-radiation-help* (100 :schema)
+  1 (0 .CHEMOTHERAPY is a .TREATMENT .OPTION 0)
+    2 *ask-about-what-happens-without-chemotherapy* (100 :schema)
+    2 *ask-about-will-chemotherapy-help* (100 :schema)
+
+)) ; END *reaction-to-treatment-options-statement*
+
+
+
+(READRULES '*reaction-to-prognosis-statement*
+;``````````````````````````````````````````````````````
+; Reactions to prognosis will differ between modules, so this rule tree
+; will be overridden by the rule files defined within each session subdirectory.
+;
+'(
+  ;; TODO:
+  ;; 1 (:or
+  ;;   (0 I may live for .NUMBER-PLUR .ELAPSED-TIME-PLUR 0)
+  ;;   (0 the prognosis is that I may live for .NUMBER-TOTAL .ELAPSED-TIME 0)
+  ;;   (0 the prognosis is that I may live for several .ELAPSED-TIME 0)
+  ;;   (0 the prognosis is that I .DO not .HAVE .LONG .LEFT to live 0)
+  ;;   (0 the prognosis is that I may live for a .ELAPSED-TIME 0)
+  ;;   (0 the prognosis is unfavorable to me 0)
+  ;;   (0 you are sorry to .INFORM me of a poor prognosis 0)
+  ;;   )
+  ;;   2 *ask-if-can-trust-prognosis* (100 :schema)
+  ;; 1 (0 the prognosis is that I cannot .BE cured 0)
+  ;;   2 *ask-about-will-experimental-therapies-help* (100 :schema)
+  ;; ;; 1 (my .FAMILY is .IMPORTANT to understanding what I .WANT to .DO with my prognosis \.)
+  ;; ;;   2 *ask-about-prognosis* (100 :schema)
+  ;; ;;   2 (My family has always been one of the most important parts of my life \, especially since I moved back to rochester \. I\'m only hoping this prognosis won\'t be too hard on them \.) (0 :out)
+  ;; ;; 1 (the prognosis is that I will survive \.)
+  ;; ;;   2 ([HAPPY] my previous doctor didn\'t seem so optimistic \, so that\'s quite the relief that you think i\'ll get better \.) (100 :out)
+  ;; ;;   2 ([HAPPY] that\'s wonderful news \. My former doctor wasn\'t so sure that i\'d get better so i\'m glad to hear it from you \.) (0 :out)
+  ;; ;; 1 (the prognosis is that my cancer .SHOULD .BE treated with .CHEMOTHERAPY \.)
+  ;; ;;   2 *ask-about-prognosis* (3 :schema)
+  ;; ;; 1 (the prognosis is that my cancer .SHOULD .BE treated with comfort .CARE \.)
+  ;; ;;   2 *ask-about-prognosis* (3 :schema)
+  ;; ;; 1 (the prognosis is hard to .PREDICT \.)
+  ;; ;;   2 *ask-about-prognosis* (3 :schema)
+  ;; 1 (:or
+  ;;   (0 my understanding of my prognosis is .INCORRECT 0)
+  ;;   (0 my understanding of my prognosis is correct 0)
+  ;;   (0 my understanding of my prognosis may .BE correct 0)
+  ;;   )
+  ;;   2 *ask-if-can-outlive-prognosis-health-now* (100 :schema)
+  ;; ;; 1 (I will outlive my prognosis \.)
+  ;; ;;   2 (Oh \, that\'s good to hear \. A little bit of extra time with my children and grandchildren makes all the difference to me \.) (100 :out)
+  ;; ;;   2 (That\'s such great news \. I can\'t tell you how happy I am to hear that \.) (0 :out)
+  ;; ;; 1 (I will not outlive my prognosis \.)
+  ;; ;;   2 ([SAD] that\'s frustrating \. I feel already as though there\'s so little I can do to help my future \. But at least I know I can spend the remaining time with my family \.) (100 :out)
+  ;; ;;   2 ([SAD] that\'s hard to hear \. There\'s so much more I want to do with my family \.) (0 :out)
+  ;; ;; 1 (I may outlive my prognosis \.)
+  ;; ;;   2 (I wish I could know for sure \, but I understand how hard these things are to predict \. No matter what happens \, i\'ll have to make the best of the time I have left \.) (100 :out)
+  ;; ;;   2 (It\'s hard that things are so unknown right now \. But I know that no one has the ability to tell the future \.) (0 :out)
+  ;; ;; 1 (my prognosis is that I will not live to attend the graduation of my grandson \.)
+  ;; ;;   2 ([SAD] that\'s really difficult to hear \. My grandson is the most important thing in the world to me \. He\'ll be heartbroken \.) (2 :out)
+  ;; ;;   2 ([SAD] oh \. That\'s very hard to hear \. But i\'m glad that you\'re telling me now \. I\'ll be sure to prepare for the worst and cherish the remaining time with my family \.) (0 :out)
+  ;; ;; 1 (my prognosis is that I will live to attend the graduation of my grandson \.)
+  ;; ;;   2 ([HAPPY] that\'s good to hear \. My grandson is incredibly important to me and I want to make it at least to his graduation \. I know i\'ll cherish all the time I have left with him \.) (100 :out)
+  ;; ;;   2 ([HAPPY] I can\'t tell you how happy that makes me \. Even if I don\'t have much time left \, I want to make the most of it \.) (0 :out)
+  ;; ;; 1 (my prognosis is that I .MIGHT live to attend the graduation of my grandson \.)
+  ;; ;;   2 (Oh \. Well \, I know how difficult these things are to figure out \. I\'ll keep spending time with my grandson and hope for the best \.) (100 :out)
+  ;; ;;   2 (I know how hard it is to predict these things \. I\'ll just try to make the most of the time I have with my family \.) (0 :out)
+  ;; 1 (:or
+  ;;   (0 the majority of people .DO not .HAVE an accurate prognosis 0)
+  ;;   (0 the majority of people .HAVE an accurate prognosis 0)
+  ;;   )
+  ;;   2 *ask-if-can-outlive-prognosis-health-practices* (100 :schema)
+  ;; 1 (:or
+  ;;   (0 quitting smoking will not make my prognosis better 0)
+  ;;   (0 quitting smoking will make my prognosis better 0)
+  ;;   (0 quitting smoking .MIGHT make my prognosis better 0)
+  ;;   (0 .GOOD-HEALTH habits will .HELP me outlive my prognosis 0)
+  ;;   (0 .GOOD-HEALTH habits may .HELP me outlive my prognosis 0)
+  ;;   )
+  ;;   2 *ask-if-can-outlive-prognosis-graduation* (100 :schema)
+  ;; ;; 1 (.EXPERIMENTAL treatments will make my prognosis better \.)
+  ;; ;;   2 ([HAPPY] i\'m happy to hear you think it\'s worth a shot \. I may talk things over with my family though before I look into those sort of treatments \. No matter how much time I have left being around them will always be my top priority \.) (100 :out)
+  ;; ;;   2 ([HAPPY] i\'m glad to hear you think I have options \. I may discuss it a bit with my family before I come to any decision though \.) (0 :out)
+  ;; ;; 1 (.EXPERIMENTAL treatments .MIGHT make my prognosis better \.)
+  ;; ;;   2 ([HAPPY] thank you \. It\'s good to hear that there\'s at least a chance \. Still \, I may talk this over with my family before I make any big decisions \. No matter how long I have left \, spending time with them is my top priority \.) (100 :out)
+  ;; ;;   2 ([HAPPY] it\'s good to hear that I might have some options \. I\'ll talk it over with my family then let you know what we decide \.) (0 :out)
+  ;; ;; 1 (.EXPERIMENTAL treatments will not make my prognosis better \.)
+  ;; ;;   2 ([SAD] oh \. In that case \, I don\'t think i\'ll try it then \. It\'s probably for the best \. No matter how much time I have left \, I want to focus on spending time with my family \.) (100 :out)
+  ;; ;;   2 ([SAD] ah \. I suppose it\'s best that I focus more on my family any way \.) (0 :out)
+  ;; ;; 1 (.GOOD-HEALTH habits will not .HELP me outlive my prognosis \.)
+  ;; ;;   2 ([SAD] oh \. That\'s unfortunate \. Still \, I hope I can keep this good health as long as i\'m able and use it to spend time with my family \.) (100 :out)
+  ;; ;;   2 ([SAD] ah \. I wish I knew that there was something I could do to keep my health \. But I guess i\'ve got to do the best with what I have \.) (0 :out)
+  ;; ;; 1 (my health right .NOW does not .CHANGE my prognosis \.)
+  ;; ;;   2 ([SAD] oh \. That\'s unfortunate \. Still \, I hope I can keep this good health as long as i\'m able and use it to spend time with my family \.) (100 :out)
+  ;; ;;   2 ([SAD] ah \. I wish I knew for certain that there was something I could do to keep my health \. But I guess i\'ve got to do the best with what I have \.) (0 :out)
+  ;; ;; 1 (my health right .NOW improves my prognosis \.)
+  ;; ;;   2 ([HAPPY] that\'s great to hear \. I hope I can live in good health as long as possible and spend time with my family \.) (100 :out)
+  ;; ;;   2 ([HAPPY] that\'s such a relief \. I hope my good health lasts a while longer so I can spend time with my family \.) (0 :out)
+  ;; ;; 1 (my health right .NOW may .CHANGE my prognosis \.)
+  ;; ;;   2 (At the very least \, I hope I can keep up this good health as long as possible and spend my remaining time with my family \.) (100 :out)
+  ;; ;;   2 (I hope that my health might remain for a while longer \. There\'s nothing I want more than to have the ability to spend time with my family \.) (0 :out)
+  ;; ;; 1 (you are glad to .HEAR that I am still .FEELING .GOOD-HEALTH after my prognosis \.)
+  ;; ;;   2 (Thank you \. I hope that I can hold out for a little longer \, so I can give my grandson some good memories to look back on \.) (100 :out)
+  ;; ;;   2 (Thank you \. It\'s good to know that my strength has not left me yet \. I still have some memories I want to make with my family \.) (100 :out)
+  ;; ;; 1 (I .SHOULD obtain a .SECOND opinion about the prognosis \.)
+  ;; ;;   2 (That\'s good to know \. In that case \, I may look into getting a second opinion on my prognosis \.) (100 :out)
+  ;; ;;   2 (I appreciate your honesty \. I\'ll look into getting a second opinion on my prognosis \.) (0 :out)
+  ;; ;; 1 (it is up to me whether I obtain a .SECOND opinion \.)
+  ;; ;;   2 (Okay \. In that case \, I may look into getting a second opinion on my prognosis \. Thank you so much for giving me your opinion \.) (100 :out)
+  ;; ;;   2 (Okay \. I\'ll talk it over with my family and we may look into getting a second opinion on my prognosis \.) (0 :out)
+  ;; ;; 1 (I .SHOULD not obtain a .SECOND opinion about the prognosis \.)
+  ;; ;;   2 (In that case \, it might not be worth the bother to find a second opinion \. Thank you for letting me know \.) (100 :out)
+  ;; ;;   2 (I may not bother to look into it then \. Thank you for telling me in advance \.) (0 :out)
+  ;; ;; 1 (I .SHOULD .SPEND the time predicted by my prognosis with my .FAMILY \.)
+  ;; ;;   2 (You\'re right \. No matter how much time I have left \, being with my children and grandchild is the most important thing for me right now \.) (100 :out)
+  ;; ;;   2 (I agree \. There\'s nothing i\'d like more than to spend every second I have left with my children and grandchildren \.) (0 :out)
+
+)) ; END *reaction-to-prognosis-statement*
+
+
+
+
+
 (READRULES '*reaction-to-statement*
 '(
 ; ````````````````````     cancer-worse      ```````````````````````
@@ -133,41 +318,14 @@
 ; ````````````````````     chemotherapy      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  ;; TODO:
-  ;; 1 (0 you .DO not think I need .CHEMOTHERAPY 3)
-  ;;  2 (I see \. I think it will be best to hold off on chemotherapy \, at least for now \.) (100 :out)
-  ;;  2 (Ah \. In that case \, I may think about chemotherapy for a bit longer before I come to any decision \.) (0 :out)
-  1 (:or
-    (0 you think I need .CHEMOTHERAPY 0)
-    (0 a side .EFFECT of .CHEMOTHERAPY is 0)
-    )
-    2 *ask-about-chemotherapy-side-effects* (100 :schema)
-    2 *ask-how-chemotherapy-works* (100 :schema)
+  1 (0 .CHEMOTHERAPY 0)
+    2 *reaction-to-chemotherapy-statement* (0 :subtree)
 
 ; ````````````````````     comfort-care      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (0 you .DO not think I need comfort .CARE 0)
-    2 *confirm-no-comfort-care* (100 :schema)
-  1 (:or
-    (0 comfort .CARE .SHOULD alleviate my .PAIN 0)
-    (0 comfort .CARE is a .TREATMENT .OPTION 0)
-    )
-    2 *ask-how-comfort-care-works* (100 :schema)
-  ;; TODO:
-  ;; 1 (0 you think I need comfort .CARE 0)
-  ;;   2 ([HAPPY] that sounds good to me \. I also think comfort care is the way to go \.) (100 :out)
-  ;;   2 ([HAPPY] good to hear \. I\'d say that comfort care is the best choice for me right now as well \.) (0 :out)
-  1 (:or
-    (0 I would need a .REFERRAL to start comfort .CARE 0)
-    (0 receiving comfort .CARE .IN a dedicated facility is an .OPTION 0)
-    (0 receiving comfort .CARE from a specialized service is an .OPTION 0)
-    (0 receiving comfort .CARE .IN my own .HOME is an .OPTION 0)
-    (0 receiving comfort .CARE from a .NURSE is an .OPTION 0)
-    (0 comfort .CARE allows me to .SPEND time with my .FAMILY 0)
-    (0 you .DO not think I need .CHEMOTHERAPY .BECAUSE I .SHOULD get comfort .CARE instead 0)
-    )
-    2 *ask-about-comfort-care* (100 :schema)
+  1 (0 .COMFORT-CARE-WORD 0)
+    2 *reaction-to-comfort-care-statement* (0 :subtree)
 
 ; ````````````````````   medicine-request    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -202,104 +360,8 @@
 ; ````````````````````       prognosis       ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  ;; TODO:
-  ;; 1 (:or
-  ;;   (0 I may live for .NUMBER-PLUR .ELAPSED-TIME-PLUR 0)
-  ;;   (0 the prognosis is that I may live for .NUMBER-TOTAL .ELAPSED-TIME 0)
-  ;;   (0 the prognosis is that I may live for several .ELAPSED-TIME 0)
-  ;;   (0 the prognosis is that I .DO not .HAVE .LONG .LEFT to live 0)
-  ;;   (0 the prognosis is that I may live for a .ELAPSED-TIME 0)
-  ;;   (0 the prognosis is unfavorable to me 0)
-  ;;   (0 you are sorry to .INFORM me of a poor prognosis 0)
-  ;;   )
-  ;;   2 *ask-if-can-trust-prognosis* (100 :schema)
-  ;; 1 (0 the prognosis is that I cannot .BE cured 0)
-  ;;   2 *ask-about-will-experimental-therapies-help* (100 :schema)
-  ;; ;; 1 (my .FAMILY is .IMPORTANT to understanding what I .WANT to .DO with my prognosis \.)
-  ;; ;;   2 *ask-about-prognosis* (100 :schema)
-  ;; ;;   2 (My family has always been one of the most important parts of my life \, especially since I moved back to rochester \. I\'m only hoping this prognosis won\'t be too hard on them \.) (0 :out)
-  ;; ;; 1 (the prognosis is that I will survive \.)
-  ;; ;;   2 ([HAPPY] my previous doctor didn\'t seem so optimistic \, so that\'s quite the relief that you think i\'ll get better \.) (100 :out)
-  ;; ;;   2 ([HAPPY] that\'s wonderful news \. My former doctor wasn\'t so sure that i\'d get better so i\'m glad to hear it from you \.) (0 :out)
-  ;; ;; 1 (the prognosis is that my cancer .SHOULD .BE treated with .CHEMOTHERAPY \.)
-  ;; ;;   2 *ask-about-prognosis* (3 :schema)
-  ;; ;; 1 (the prognosis is that my cancer .SHOULD .BE treated with comfort .CARE \.)
-  ;; ;;   2 *ask-about-prognosis* (3 :schema)
-  ;; ;; 1 (the prognosis is hard to .PREDICT \.)
-  ;; ;;   2 *ask-about-prognosis* (3 :schema)
-  ;; 1 (:or
-  ;;   (0 my understanding of my prognosis is .INCORRECT 0)
-  ;;   (0 my understanding of my prognosis is correct 0)
-  ;;   (0 my understanding of my prognosis may .BE correct 0)
-  ;;   )
-  ;;   2 *ask-if-can-outlive-prognosis-health-now* (100 :schema)
-  ;; ;; 1 (I will outlive my prognosis \.)
-  ;; ;;   2 (Oh \, that\'s good to hear \. A little bit of extra time with my children and grandchildren makes all the difference to me \.) (100 :out)
-  ;; ;;   2 (That\'s such great news \. I can\'t tell you how happy I am to hear that \.) (0 :out)
-  ;; ;; 1 (I will not outlive my prognosis \.)
-  ;; ;;   2 ([SAD] that\'s frustrating \. I feel already as though there\'s so little I can do to help my future \. But at least I know I can spend the remaining time with my family \.) (100 :out)
-  ;; ;;   2 ([SAD] that\'s hard to hear \. There\'s so much more I want to do with my family \.) (0 :out)
-  ;; ;; 1 (I may outlive my prognosis \.)
-  ;; ;;   2 (I wish I could know for sure \, but I understand how hard these things are to predict \. No matter what happens \, i\'ll have to make the best of the time I have left \.) (100 :out)
-  ;; ;;   2 (It\'s hard that things are so unknown right now \. But I know that no one has the ability to tell the future \.) (0 :out)
-  ;; ;; 1 (my prognosis is that I will not live to attend the graduation of my grandson \.)
-  ;; ;;   2 ([SAD] that\'s really difficult to hear \. My grandson is the most important thing in the world to me \. He\'ll be heartbroken \.) (2 :out)
-  ;; ;;   2 ([SAD] oh \. That\'s very hard to hear \. But i\'m glad that you\'re telling me now \. I\'ll be sure to prepare for the worst and cherish the remaining time with my family \.) (0 :out)
-  ;; ;; 1 (my prognosis is that I will live to attend the graduation of my grandson \.)
-  ;; ;;   2 ([HAPPY] that\'s good to hear \. My grandson is incredibly important to me and I want to make it at least to his graduation \. I know i\'ll cherish all the time I have left with him \.) (100 :out)
-  ;; ;;   2 ([HAPPY] I can\'t tell you how happy that makes me \. Even if I don\'t have much time left \, I want to make the most of it \.) (0 :out)
-  ;; ;; 1 (my prognosis is that I .MIGHT live to attend the graduation of my grandson \.)
-  ;; ;;   2 (Oh \. Well \, I know how difficult these things are to figure out \. I\'ll keep spending time with my grandson and hope for the best \.) (100 :out)
-  ;; ;;   2 (I know how hard it is to predict these things \. I\'ll just try to make the most of the time I have with my family \.) (0 :out)
-  ;; 1 (:or
-  ;;   (0 the majority of people .DO not .HAVE an accurate prognosis 0)
-  ;;   (0 the majority of people .HAVE an accurate prognosis 0)
-  ;;   )
-  ;;   2 *ask-if-can-outlive-prognosis-health-practices* (100 :schema)
-  ;; 1 (:or
-  ;;   (0 quitting smoking will not make my prognosis better 0)
-  ;;   (0 quitting smoking will make my prognosis better 0)
-  ;;   (0 quitting smoking .MIGHT make my prognosis better 0)
-  ;;   (0 .GOOD-HEALTH habits will .HELP me outlive my prognosis 0)
-  ;;   (0 .GOOD-HEALTH habits may .HELP me outlive my prognosis 0)
-  ;;   )
-  ;;   2 *ask-if-can-outlive-prognosis-graduation* (100 :schema)
-  ;; ;; 1 (.EXPERIMENTAL treatments will make my prognosis better \.)
-  ;; ;;   2 ([HAPPY] i\'m happy to hear you think it\'s worth a shot \. I may talk things over with my family though before I look into those sort of treatments \. No matter how much time I have left being around them will always be my top priority \.) (100 :out)
-  ;; ;;   2 ([HAPPY] i\'m glad to hear you think I have options \. I may discuss it a bit with my family before I come to any decision though \.) (0 :out)
-  ;; ;; 1 (.EXPERIMENTAL treatments .MIGHT make my prognosis better \.)
-  ;; ;;   2 ([HAPPY] thank you \. It\'s good to hear that there\'s at least a chance \. Still \, I may talk this over with my family before I make any big decisions \. No matter how long I have left \, spending time with them is my top priority \.) (100 :out)
-  ;; ;;   2 ([HAPPY] it\'s good to hear that I might have some options \. I\'ll talk it over with my family then let you know what we decide \.) (0 :out)
-  ;; ;; 1 (.EXPERIMENTAL treatments will not make my prognosis better \.)
-  ;; ;;   2 ([SAD] oh \. In that case \, I don\'t think i\'ll try it then \. It\'s probably for the best \. No matter how much time I have left \, I want to focus on spending time with my family \.) (100 :out)
-  ;; ;;   2 ([SAD] ah \. I suppose it\'s best that I focus more on my family any way \.) (0 :out)
-  ;; ;; 1 (.GOOD-HEALTH habits will not .HELP me outlive my prognosis \.)
-  ;; ;;   2 ([SAD] oh \. That\'s unfortunate \. Still \, I hope I can keep this good health as long as i\'m able and use it to spend time with my family \.) (100 :out)
-  ;; ;;   2 ([SAD] ah \. I wish I knew that there was something I could do to keep my health \. But I guess i\'ve got to do the best with what I have \.) (0 :out)
-  ;; ;; 1 (my health right .NOW does not .CHANGE my prognosis \.)
-  ;; ;;   2 ([SAD] oh \. That\'s unfortunate \. Still \, I hope I can keep this good health as long as i\'m able and use it to spend time with my family \.) (100 :out)
-  ;; ;;   2 ([SAD] ah \. I wish I knew for certain that there was something I could do to keep my health \. But I guess i\'ve got to do the best with what I have \.) (0 :out)
-  ;; ;; 1 (my health right .NOW improves my prognosis \.)
-  ;; ;;   2 ([HAPPY] that\'s great to hear \. I hope I can live in good health as long as possible and spend time with my family \.) (100 :out)
-  ;; ;;   2 ([HAPPY] that\'s such a relief \. I hope my good health lasts a while longer so I can spend time with my family \.) (0 :out)
-  ;; ;; 1 (my health right .NOW may .CHANGE my prognosis \.)
-  ;; ;;   2 (At the very least \, I hope I can keep up this good health as long as possible and spend my remaining time with my family \.) (100 :out)
-  ;; ;;   2 (I hope that my health might remain for a while longer \. There\'s nothing I want more than to have the ability to spend time with my family \.) (0 :out)
-  ;; ;; 1 (you are glad to .HEAR that I am still .FEELING .GOOD-HEALTH after my prognosis \.)
-  ;; ;;   2 (Thank you \. I hope that I can hold out for a little longer \, so I can give my grandson some good memories to look back on \.) (100 :out)
-  ;; ;;   2 (Thank you \. It\'s good to know that my strength has not left me yet \. I still have some memories I want to make with my family \.) (100 :out)
-  ;; ;; 1 (I .SHOULD obtain a .SECOND opinion about the prognosis \.)
-  ;; ;;   2 (That\'s good to know \. In that case \, I may look into getting a second opinion on my prognosis \.) (100 :out)
-  ;; ;;   2 (I appreciate your honesty \. I\'ll look into getting a second opinion on my prognosis \.) (0 :out)
-  ;; ;; 1 (it is up to me whether I obtain a .SECOND opinion \.)
-  ;; ;;   2 (Okay \. In that case \, I may look into getting a second opinion on my prognosis \. Thank you so much for giving me your opinion \.) (100 :out)
-  ;; ;;   2 (Okay \. I\'ll talk it over with my family and we may look into getting a second opinion on my prognosis \.) (0 :out)
-  ;; ;; 1 (I .SHOULD not obtain a .SECOND opinion about the prognosis \.)
-  ;; ;;   2 (In that case \, it might not be worth the bother to find a second opinion \. Thank you for letting me know \.) (100 :out)
-  ;; ;;   2 (I may not bother to look into it then \. Thank you for telling me in advance \.) (0 :out)
-  ;; ;; 1 (I .SHOULD .SPEND the time predicted by my prognosis with my .FAMILY \.)
-  ;; ;;   2 (You\'re right \. No matter how much time I have left \, being with my children and grandchild is the most important thing for me right now \.) (100 :out)
-  ;; ;;   2 (I agree \. There\'s nothing i\'d like more than to spend every second I have left with my children and grandchildren \.) (0 :out)
+  1 (0 .PROGNOSIS-WORD 0)
+    2 *reaction-to-prognosis-statement* (0 :subtree)
 
 ; ````````````````````     sleep-poorly      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -374,16 +436,8 @@
 ; ````````````````````   treatment-option    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (:or
-    (0 maintaining .GOOD quality of .LIFE is a .TREATMENT .OPTION 0)
-    (0 you need more tests .BEFORE .TALKING about .TREATMENT options 0)
-    )
-    2 *ask-about-treatment-options* (100 :schema)
-  1 (0 radiation is a .TREATMENT .OPTION 0)
-    2 *ask-about-will-radiation-help* (100 :schema)
-  1 (0 .CHEMOTHERAPY is a .TREATMENT .OPTION 0)
-    2 *ask-about-what-happens-without-chemotherapy* (100 :schema)
-    2 *ask-about-will-chemotherapy-help* (100 :schema)
+  1 (0 .TREATMENT 0)
+    2 *reaction-to-treatment-options-statement* (0 :subtree)
 
 ; ````````````````````    treatment-goals    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````

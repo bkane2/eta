@@ -33,6 +33,100 @@
 ; Define any useful predicates here:
 
 
+(READRULES '*reaction-to-chemotherapy-question*
+;``````````````````````````````````````````````````
+; Reactions to chemotherapy will differ between modules, so this rule tree
+; will be overridden by the rule files defined within each session subdirectory.
+;
+'(
+  1 (:or
+    (0 did my doctor .MENTION .CHEMOTHERAPY 0)
+    (0 what are my feelings about .CHEMOTHERAPY 0)
+    )
+    2 *ask-if-need-chemotherapy* (100 :schema)
+  1 (:or
+    (0 .DO I .UNDERSTAND how .CHEMOTHERAPY works 0)
+    (0 what .CHEMOTHERAPY details are you .ASKING about 0)
+    )
+    2 *ask-how-chemotherapy-works* (100 :schema)
+  1 (0 .DO I .HAVE a .QUESTION about .CHEMOTHERAPY 0)
+    2 *ask-about-chemotherapy-side-effects* (100 :schema)
+
+)) ; END *reaction-to-chemotherapy-question*
+
+
+
+(READRULES '*reaction-to-comfort-care-question*
+;``````````````````````````````````````````````````
+; Reactions to comfort care will differ between modules, so this rule tree
+; will be overridden by the rule files defined within each session subdirectory.
+;
+'(
+  1 (:or
+    (0 .HAVE I considered comfort .CARE 0)
+    (0 .DO I .UNDERSTAND how comfort .CARE works 0)
+    (0 .DO I .HAVE a .QUESTION about comfort .CARE 0)
+    )
+    2 *ask-how-comfort-care-works* (100 :schema)
+
+)) ; END *reaction-to-comfort-care-question*
+
+
+
+(READRULES '*reaction-to-treatment-options-question*
+;``````````````````````````````````````````````````````
+; Reactions to treatment options will differ between modules, so this rule tree
+; will be overridden by the rule files defined within each session subdirectory.
+;
+'(
+  1 (:or
+    (0 what .DO I .UNDERSTAND about my .TREATMENT options 0)
+    )
+    2 *ask-about-treatment-options* (100 :schema)
+  1 (0 .DO I .HAVE a .QUESTION about my .TREATMENT options 0)
+    2 *ask-about-will-experimental-therapies-help* (100 :schema)
+
+)) ; END *reaction-to-treatment-options-question*
+
+
+
+(READRULES '*reaction-to-prognosis-question*
+;``````````````````````````````````````````````````````
+; Reactions to prognosis will differ between modules, so this rule tree
+; will be overridden by the rule files defined within each session subdirectory.
+;
+'(
+  1 (0 how .DO I feel about my prognosis 0)
+    2 *mention-sadness-about-prognosis* (100 :schema)
+  1 (:or
+    (0 how .SPECIFIC .DO I .WANT you to .BE about my prognosis 0)
+    (0 how .MUCH information .DO I .WANT about my prognosis 0)
+    )
+    2 *request-all-of-information-about-prognosis* (100 :schema)
+
+  ;; TODO:
+  ;; 1 (0 what scares me about my prognosis 0)
+  ;;   2 *ask-about-prognosis* (100 :schema)
+  ;; 1 (0 .DO I .HAVE a .QUESTION about my prognosis 0)
+  ;;   2 *ask-about-prognosis* (100 :schema)
+  ;; 1 (0 what is the prognosis that was given to me previously 0)
+  ;;   2 *ask-about-treatment-options* (100 :schema)
+  ;; 1 (0 .DO I .UNDERSTAND my prognosis 0)
+  ;;   2 *ask-about-prognosis* (100 :schema)
+  ;;   2 *ask-if-can-trust-prognosis* (0 :schema)
+  ;; 1 (0 .DO I .WANT my .FAMILY to .BE present when you .TELL me about the prognosis 0)
+  ;;   2 *ask-about-prognosis* (100 :schema)
+  ;; 1 (0 .DO I .WANT anyone to .BE present when you .TELL me about the prognosis 0)
+  ;;   2 *ask-about-prognosis* (100 :schema)
+  ;; 1 (0 how prepared for the prognosis are my .FAMILY 0)
+  ;;   2 *ask-about-prognosis* (100 :schema)
+
+)) ; END *reaction-to-prognosis-question*
+
+
+
+
+
 (READRULES '*reaction-to-question*
 '(
 ; ````````````````````     cancer-worse      ```````````````````````
@@ -189,28 +283,14 @@
 ; ````````````````````     chemotherapy      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (:or
-    (0 did my doctor .MENTION .CHEMOTHERAPY 0)
-    (0 what are my feelings about .CHEMOTHERAPY 0)
-    )
-    2 *ask-if-need-chemotherapy* (100 :schema)
-  1 (:or
-    (0 .DO I .UNDERSTAND how .CHEMOTHERAPY works 0)
-    (0 what .CHEMOTHERAPY details are you .ASKING about 0)
-    )
-    2 *ask-how-chemotherapy-works* (100 :schema)
-  1 (0 .DO I .HAVE a .QUESTION about .CHEMOTHERAPY 0)
-    2 *ask-about-chemotherapy-side-effects* (100 :schema)
+  1 (0 .CHEMOTHERAPY 0)
+    2 *reaction-to-chemotherapy-question* (0 :subtree)
 
 ; ````````````````````     comfort-care      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (:or
-    (0 .HAVE I considered comfort .CARE 0)
-    (0 .DO I .UNDERSTAND how comfort .CARE works 0)
-    (0 .DO I .HAVE a .QUESTION about comfort .CARE 0)
-    )
-    2 *ask-how-comfort-care-works* (100 :schema)
+  1 (0 .COMFORT-CARE-WORD 0)
+    2 *reaction-to-comfort-care-question* (0 :subtree)
 
 ; ````````````````````   medicine-request    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -225,7 +305,8 @@
 ; ````````````````````       prognosis       ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-
+1 (0 .PROGNOSIS-WORD 0)
+  2 *reaction-to-prognosis-question* (0 :subtree)
 
 ; ````````````````````     sleep-poorly      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -259,8 +340,6 @@
   1 (0 .DO I .HAVE a .QUESTION about my test results 0)
     2 *ask-what-metastasis-means* (100 :schema)
   1 (:or
-    (0 how .DO I feel about my test results 0)
-    (0 .DO I .HAVE a .QUESTION about my test results 0)
     (0 how .MUCH information .DO I .WANT about my test results 0)
     (0 .DO I .WANT my .FAMILY to .BE present when you .TELL me about the test results 0)
     (0 .DO I .WANT anyone to .BE present when you .TELL me about the test results 0)
@@ -270,17 +349,8 @@
 ; ````````````````````   treatment-option    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (:or
-    (0 what .DO I .UNDERSTAND about my .TREATMENT options 0)
-    )
-    2 *ask-about-treatment-options* (100 :schema)
-  1 (0 .DO I .HAVE a .QUESTION about my .TREATMENT options 0)
-    2 *ask-about-will-experimental-therapies-help* (100 :schema)
-  1 (:or
-    (0 am I .READY to start discussing .TREATMENT options 0)
-    (0 am I .READY to .DISCUSS my .TREATMENT goals 0)
-    )
-    2 *redirect-to-test-results* (100 :schema)
+  1 (0 .TREATMENT 0)
+    2 *reaction-to-treatment-options-question* (0 :subtree)
 
 ; ````````````````````    treatment-goals    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
