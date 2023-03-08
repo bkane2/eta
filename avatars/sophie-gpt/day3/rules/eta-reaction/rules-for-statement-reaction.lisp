@@ -361,14 +361,16 @@
     2 *react-emotionally* (0 :schema)
   1 (0 we performed the ct scan to see how .MUCH further my cancer has progressed 0)
     2 *ask-about-test-results* (100 :schema)
+  ;; REVISION: Replaced 'ask about test results' schema with 'thank for explaining test results schema' for better robustness of response.
   1 (0 you intend to .EXPLAIN my test results to me 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *thank-for-explain-test-results* (100 :schema)
   1 (0 you recognize how hard receiving the test results is for me 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *thank-for-explain-test-results* (100 :schema)
   1 (0 the test results show that I .HAVE cancer 0)
     2 *ask-about-test-results* (100 :schema)
+  ;; REVISION: Replaced 'ask about test results' schema with 'state understanding of test results' schema, for more robust responses.
   1 (0 you are not sure what my test results mean 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *state-understanding-test-results* (100 :schema)
   1 (0 the test results show that the radiation is not working 0)
     2 *react-emotionally* (0 :schema)
 
@@ -384,8 +386,9 @@
 ; ````````````````````   treatment-option    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
+  ;; Replaced 'ask about treatment options' schema with 'explain treatment goals' schema for more robust response.
   1 (0 maintaining .GOOD quality of .LIFE is a .TREATMENT .OPTION 0)
-    2 *ask-about-treatment-options* (100 :schema)
+    2 *explain-treatment-goals* (100 :schema)
   1 (0 radiation is a .TREATMENT .OPTION 0)
     2 *ask-about-will-radiation-help* (100 :schema)
   1 (0 .CHEMOTHERAPY is a .TREATMENT .OPTION 0)

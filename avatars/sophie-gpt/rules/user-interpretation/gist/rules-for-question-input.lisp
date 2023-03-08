@@ -151,9 +151,10 @@
   1 (0 .AUX 1 you 2 live 2 .ALONE 0)
     2 ((Do I live alone ?)) (0 :gist)
   ; When does your grandson graduate?
-  1 (0 when 2 .BE 1 .GRANDSON 1 .GRAD-WORDS 0)
+  ;; REVISON: Grandchild appears to work better as a catch-all word for this gist clause.
+  1 (0 when 2 .BE 1 .GRANDCHILD 1 .GRAD-WORDS 0)
     2 ((When does my grandson graduate ?)) (0 :gist)
-  1 (0 when .AUX-BASE 1 .GRANDSON 1 .GRAD-WORDS 0)
+  1 (0 when .AUX-BASE 1 .GRANDCHILD 1 .GRAD-WORDS 0)
     2 ((When does my grandson graduate ?)) (0 :gist)
   ; What grade is your grandson?
   1 (0 .WH_ .GRADE 2 .AUX-BASE 1 .GRANDSON 0)
@@ -209,9 +210,9 @@
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
   1 (8 .WH_ .DIAGNOSIS-TESTS 6)
     2 ((What test results am I referring to ?) (Test-results)) (0 :gist)
-  1 (8 .AUX-BASE 2 you .UNDERSTAND-GEN 3 .DIAGNOSIS-TESTS 0)
+  1 (8 .AUX-BASE 2 you .KNOW-GEN 3 .DIAGNOSIS-TESTS 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
-  1 (0 .CAN 2 you 6 .UNDERSTAND-GEN 0 .DIAGNOSIS-TESTS 0)
+  1 (0 .CAN 2 you 6 .KNOW-GEN 0 .DIAGNOSIS-TESTS 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
   1 (0 .WH_ 6 .BE 2 your 2 understanding 0 .DIAGNOSIS-TESTS 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
@@ -445,6 +446,9 @@
     2 ((Do you have the pain frequently ?) (Pain-description)) (0 :gist)
   1 (0 .AUX-BASE 3 .PAIN 3 all 1 time 0)
     2 ((Do you have the pain frequently ?) (Pain-description)) (0 :gist)
+  ;; REVISION: Allows SOPHIE to redirect (any potential) pain conversations to test results conversations; commented out for now as we have no test results conversations.
+  ;; 1 (0 about 1 .PAIN 1 instead 2 .DIAGNOSIS-TESTS 0)
+    ;; 2 ((Can I tell you about my pain instead of test results ?) (Pain-description)) (0 :gist)
 
 ; ````````````````````       radiation       ```````````````````````
 ; ``````````````````````````````````````````````````````````````````

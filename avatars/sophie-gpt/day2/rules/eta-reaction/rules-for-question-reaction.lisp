@@ -73,8 +73,9 @@
 ; ```````````````````` chemotherapy-details  ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
+  ;; REVISION: USER should not be talking about chemotherapy in this module; redirect to prognosis.
   1 (0 what .CHEMOTHERAPY details are you .ASKING about 0)
-    2 *ask-how-chemotherapy-works* (100 :schema)
+    2 *redirect-to-prognosis* (100 :schema)
 
 ; ````````````````````   diagnosis-details   ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -166,8 +167,9 @@
     2 *say-pain-worse* (100 :schema)
   1 (0 .DO you .HAVE the .PAIN .FREQUENTLY 0)
     2 *say-pain-worse* (100 :schema)
-  ;; 1 (0 .CAN I .TELL you about my .PAIN instead of test results 0)
-  ;;   2 *say-pain-worse* (100 :schema)
+  ;; REVISION: Allow SOPHIE to redirect to test results if relevant.
+  1 (0 .CAN I .TELL you about my .PAIN instead of test results 0)
+    2 *redirect-to-test-results* (100 :schema)
 
 ; ````````````````````       radiation       ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -204,24 +206,26 @@
 ; ````````````````````     chemotherapy      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
+  ;; REVISION: USER should not be talking about chemotherapy in this module; redirect to prognosis.
   1 (0 did my doctor .MENTION .CHEMOTHERAPY 0)
-    2 *ask-if-need-chemotherapy* (100 :schema)
+    2 *redirect-to-prognosis* (100 :schema)
   1 (0 .DO I .UNDERSTAND how .CHEMOTHERAPY works 0)
-    2 *ask-how-chemotherapy-works* (100 :schema)
+    2 *redirect-to-prognosis* (100 :schema)
   1 (0 .DO I .HAVE a .QUESTION about .CHEMOTHERAPY 0)
-    2 *ask-about-chemotherapy-side-effects* (100 :schema)
+    2 *redirect-to-prognosis* (100 :schema)
   1 (0 what are my feelings about .CHEMOTHERAPY 0)
-    2 *ask-if-need-chemotherapy* (100 :schema)
+    2 *redirect-to-prognosis* (100 :schema)
 
 ; ````````````````````     comfort-care      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
+  ;; REVISION: USER should not be talking about comfort care in this module; redirect to prognosis.
   1 (0 .HAVE I considered comfort .CARE 0)
-    2 *ask-how-comfort-care-works* (100 :schema)
+    2 *redirect-to-prognosis* (100 :schema)
   1 (0 .DO I .UNDERSTAND how comfort .CARE works 0)
-    2 *ask-how-comfort-care-works* (100 :schema)
+    2 *redirect-to-prognosis* (100 :schema)
   1 (0 .DO I .HAVE a .QUESTION about comfort .CARE 0)
-    2 *ask-how-comfort-care-works* (100 :schema)
+    2 *redirect-to-prognosis* (100 :schema)
 
 ; ````````````````````   medicine-request    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -236,21 +240,23 @@
 ; ````````````````````       prognosis       ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  ;; 1 (0 how .MUCH information .DO I .WANT about my prognosis 0)
-  ;;   2 *ask-about-prognosis* (100 :schema)
   ;; 1 (0 what is the prognosis that was given to me previously 0)
   ;;   2 *ask-about-treatment-options* (100 :schema)
   ;; 1 (0 .DO I .UNDERSTAND my prognosis 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
   ;;   2 *ask-if-can-trust-prognosis* (0 :schema)
-  ;; 1 (0 how .DO I feel about my prognosis 0)
-  ;;   2 *ask-about-prognosis* (100 :schema)
+  ;; REVISION: Added schema for SOPHIE to express her feelings about her prognosis; also! feel free to comment it out or move it if it needs to be-- I just wanted to test it out!
+  1 (0 how .DO I feel about my prognosis 0)
+    2 *mention-sadness-about-prognosis* (100 :schema)
   ;; 1 (0 what scares me about my prognosis 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
   ;; 1 (0 .DO I .HAVE a .QUESTION about my prognosis 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
-  ;; 1 (0 how .SPECIFIC .DO I .WANT you to .BE about my prognosis 0)
-  ;;   2 *ask-about-prognosis* (100 :schema)
+  ;; REVISION: Added schema for SOPHIE to request as much information as possible about her prognosis; same as above-- feel free to comment it out if you need to!
+  1 (0 how .SPECIFIC .DO I .WANT you to .BE about my prognosis 0)
+    2 *request-all-of-information-about-prognosis* (100 :schema)
+  1 (0 how .MUCH information .DO I .WANT about my prognosis 0)
+    2 *request-all-of-information-about-prognosis* (100 :schema)
   ;; 1 (0 .DO I .WANT my .FAMILY to .BE present when you .TELL me about the prognosis 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
   ;; 1 (0 .DO I .WANT anyone to .BE present when you .TELL me about the prognosis 0)
@@ -282,16 +288,17 @@
 ; ````````````````````     test-results      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
+  ;; REVISION: Replaced 'ask about test results' schema with 'state understanding of test results' schema, for more robust responses.
   1 (0 what test results am I referring to 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *state-understanding-test-results* (100 :schema)
   1 (0 .DO I .KNOW what the tests say 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *state-understanding-test-results* (100 :schema)
   1 (0 .CAN I .SUMMARIZE my test results 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *state-understanding-test-results* (100 :schema)
   1 (0 how .DO I feel about my test results 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *mention-stress-about-test-results* (100 :schema)
   1 (0 .DO I .HAVE a .QUESTION about my test results 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *ask-what-metastasis-means* (100 :schema)
   1 (0 how .MUCH information .DO I .WANT about my test results 0)
     2 *ask-about-test-results* (100 :schema)
   1 (0 .DO I .WANT my .FAMILY to .BE present when you .TELL me about the test results 0)
@@ -302,18 +309,23 @@
 ; ````````````````````   treatment-option    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
+  ;; REVISION: USER should not be talking about treatment options in this module; redirect to prognosis.
   1 (0 what .DO I .UNDERSTAND about my .TREATMENT options 0)
-    2 *ask-about-treatment-options* (100 :schema)
+    2 *redirect-to-prognosis* (100 :schema)
   1 (0 .DO I .HAVE a .QUESTION about my .TREATMENT options 0)
-    2 *ask-about-will-experimental-therapies-help* (100 :schema)
+    2 *redirect-to-prognosis* (100 :schema)
   ;; 1 (0 am I .READY to start discussing .TREATMENT options 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
 
 ; ````````````````````    treatment-goals    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
+  ;; REVISION: Replaced the 'ask about treatment options' schema with the new 'explain treatment goals schema'for more robust responses.
   1 (0 what are my .TREATMENT goals 0)
-    2 *ask-about-treatment-options* (100 :schema)
+    2 *explain-treatment-goals* (100 :schema)
+  ;; REVISION: Added new 'state grandson's graduation' schema response to 'when does my grandson graduate' clause.
+  1 (0 when does my .GRANDCHILD .GRAD-WORDS 0)
+    2 *say-grandson-graduation* (100 :schema)
   ;; 1 (0 am I .READY to .DISCUSS my .TREATMENT goals 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
 

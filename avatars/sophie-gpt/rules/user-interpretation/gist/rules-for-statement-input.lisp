@@ -559,6 +559,9 @@
     2 ((The test results show that I have cancer \.) (Test-results)) (0 :gist)
   1 (0 you 1 diagnosed 2 cancer 0)
     2 ((The test results show that I have cancer \.) (Test-results)) (0 :gist)
+  ;; REVISION: Added rule for discussion of test results.
+  1 (0 .DISCUSS 6 .DIAGNOSIS-TESTS 0)
+    2 ((You intend to explain my test results to me \.) (Test-results)) (0 :gist)
 
 ; ````````````````````   treatment-option    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````

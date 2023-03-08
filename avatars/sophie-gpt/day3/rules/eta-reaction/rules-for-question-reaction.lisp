@@ -243,8 +243,9 @@
   ;; 1 (0 .DO I .UNDERSTAND my prognosis 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
   ;;   2 *ask-if-can-trust-prognosis* (0 :schema)
-  ;; 1 (0 how .DO I feel about my prognosis 0)
-  ;;   2 *ask-about-prognosis* (100 :schema)
+  ;; REVISION: Added schema for SOPHIE to express her feelings about her prognosis; also! feel free to comment it out or move it if it needs to be-- I just wanted to test it out!
+  1 (0 how .DO I feel about my prognosis 0)
+    2 *mention-sadness-about-prognosis* (100 :schema)
   ;; 1 (0 what scares me about my prognosis 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
   ;; 1 (0 .DO I .HAVE a .QUESTION about my prognosis 0)
@@ -282,12 +283,13 @@
 ; ````````````````````     test-results      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
+  ;; REVISION: Replaced 'ask about test results' schema with 'state understanding of test results' schema, for more robust responses.
   1 (0 what test results am I referring to 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *state-understanding-test-results* (100 :schema)
   1 (0 .DO I .KNOW what the tests say 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *state-understanding-test-results* (100 :schema)
   1 (0 .CAN I .SUMMARIZE my test results 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *state-understanding-test-results* (100 :schema)
   1 (0 how .DO I feel about my test results 0)
     2 *ask-about-test-results* (100 :schema)
   1 (0 .DO I .HAVE a .QUESTION about my test results 0)
@@ -312,8 +314,12 @@
 ; ````````````````````    treatment-goals    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
+  ;; REVISION: Replaced the 'ask about treatment options' schema with the new 'explain treatment goals schema'for more robust responses.
   1 (0 what are my .TREATMENT goals 0)
-    2 *ask-about-treatment-options* (100 :schema)
+    2 *explain-treatment-goals* (100 :schema)
+  ;; REVISION: Added new 'state grandson's graduation' schema response to 'when does my grandson graduate' clause.
+  1 (0 when does my .GRANDCHILD .GRAD-WORDS 0)
+    2 *say-grandson-graduation* (100 :schema)
   ;; 1 (0 am I .READY to .DISCUSS my .TREATMENT goals 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
 
