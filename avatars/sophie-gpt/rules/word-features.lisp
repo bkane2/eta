@@ -222,6 +222,7 @@
   (LUCKY luck fortune fortunate blessed)
   (FUTURE-POSS MIGHT will would)
   (YOUR-REF your the)
+  (INSTEAD before)
   ; Medical history
   (QUIT quitting STOP stopping stopped forgo forgoing)
   (SMOKE smokes smoking smoked cigarettes cigarette tobacco)

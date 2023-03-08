@@ -4,13 +4,11 @@
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; REVISION: New schema so that SOPHIE can express her thank for the doctor explaining her test results.
-
 
 (defparameter *thank-for-explain-test-results*
 
 '(event-schema :header (((set-of ^me ^you) thank-for-explain-test-results.v) ** ?e)
-;````````````````````````````````````````````````````````````````````````````````
+;````````````````````````````````````````````````````````````````````````````````````
 
 :types (
   !t1 (^me person.n)
@@ -30,13 +28,14 @@
 )
 
 :preconds (
-  ; Sophie knows she received a second CT scan. 
-  ?p1 (^you ((pres intend.v) (to (explain.v (k (test.n results.n))))))
+  ; The user explained Sophie's test results
+  ?p1 (^you ((past explain.v) ((^me 's) (plur (test.n result.n)))))
 )
 
 :goals (
-  ; Sophie wants the user to know her understanding of her condition
-  ?g1 (^me ((pres want.v) ^you (to (know.v (that (^me (pres be.v) (thankful.a (that (^you (pres explain.v (k (test.n results.n))))))))))))
+  ; Sophie wants the user to know that she's thankful that the user explained her test results
+  ?g1 (^me ((pres want.v) ^you (to (know.v (that (^me ((pres be.v) thankful.a
+        (adv-a ({for}.p (that (^you ((past explain.v) ((^me 's) (plur (test.n result.n)))))))))))))))
 )
 
 :episodes (

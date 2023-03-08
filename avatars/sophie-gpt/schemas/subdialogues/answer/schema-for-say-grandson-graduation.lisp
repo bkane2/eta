@@ -4,8 +4,6 @@
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; REVISION: new schema so that Sophie can reply to questions about the time that her grandson graduates.
-
 (defparameter *say-grandson-graduation*
 
 '(event-schema :header (((set-of ^me ^you) say-grandson-graduation.v) ** ?e)
@@ -24,7 +22,7 @@
 )
 
 :static-conds (
-  ;; Sophie has a grandson
+  ; Sophie has a grandson
   ?s1 (^me ((pres have.v) (k grandson.n)))
   ; Sophie has lung cancer
   ?s2 (^me ((pres have.v) (k (lung.n cancer.n))))
@@ -33,9 +31,9 @@
 )
 
 :preconds (
-  ; Sophie knows that her grandson will graduate from middle school in 6 months.
-  ; Debatable grammer here.
-  ?p1 (^me ((pres know.v) (that (((^me 's) grandson) (((pres will.aux-s) graduate.v) (adv-a (adv-a (from.p (k (middle.n school.n)))) (in.p (mod-a (6.a (plur month.n))))))))))
+  ; Sophie's grandson will graduate from middle school in 6 months.
+  ?p1 (((^me 's) grandson.n) ((pres will.aux-s) (graduate.v
+        (adv-a (from.p (k (middle.n school.n)))) (adv-e (in.p (six.d (plur month.n)))))))
 )
 
 :goals (

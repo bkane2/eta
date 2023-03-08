@@ -38,10 +38,7 @@
 ; ````````````````````     cancer-worse      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (0 how has my condition gotten worse 0)
-    2 *say-pain-worse* (100 :schema)
-  1 (0 what causes me to .BELIEVE that my cancer has gotten worse 0)
-    2 *say-pain-worse* (100 :schema)
+
 
 ; ````````````````````    medical-history    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -50,8 +47,6 @@
     2 *discuss-drinking-habits* (100 :schema)
   1 (0 what is my .HISTORY with smoking 0)
     2 *discuss-smoking-habits* (100 :schema)
-  1 (0 what is my .HISTORY with .MED-NARCOTIC 0)
-    2 *mention-taking-lortab* (100 :schema)
   1 (0 does my .FAMILY .HAVE a .HISTORY of mental illness 0)
     2 *discuss-history-mental-illness* (100 :schema)
   1 (0 how did my parents .DIE 0)
@@ -73,8 +68,7 @@
 ; ```````````````````` chemotherapy-details  ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (0 what .CHEMOTHERAPY details are you .ASKING about 0)
-    2 *ask-how-chemotherapy-works* (100 :schema)
+
 
 ; ````````````````````   diagnosis-details   ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -83,9 +77,10 @@
     2 *explain-how-got-diagnosis* (100 :schema)
   1 (0 what symptoms .DO I .HAVE 0)
     2 *explain-symptoms* (100 :schema)
-  1 (0 .HAVE I changed weight 0)
-    2 *mention-lost-weight* (100 :schema)
-  1 (0 how .MUCH weight .HAVE I lost 0)
+  1 (:or
+      (0 .HAVE I changed weight 0)
+      (0 how .MUCH weight .HAVE I lost 0)
+    )
     2 *mention-lost-weight* (100 :schema)
   1 (0 .HAVE I changed appetite 0)
     2 *mention-lost-appetite* (100 :schema)
@@ -101,50 +96,49 @@
     2 *mention-trouble-concentrating* (100 :schema)
   1 (0 how is my mental health 0)
     2 *mention-mild-depression* (100 :schema)
-  1 (0 is something harming my mental health 0)
+  1 (:or
+    (0 is something harming my mental health 0)
+    (0 was I nervous for this .APPOINTMENT 0)
+    (0 how .HAVE I been .FEELING since the cancer metastasized 0)
+    )
     2 *mention-anxiety* (100 :schema)
   1 (0 what parts of my future feel out of my control 0)
     2 *explain-why-future-feels-out-of-control* (100 :schema)
-  1 (0 how .HAVE I been .FEELING since the cancer metastasized 0)
-    2 *mention-anxiety* (100 :schema)
 
 ; ````````````````````       medicine        ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
   1 (0 .DO I .HAVE allergies to any .MEDICINE 0)
     2 *deny-allergies* (100 :schema)
-  1 (0 what .MEDICINE am I taking 0)
+  1 (:or
+    (0 what is my .HISTORY with .MED-NARCOTIC 0)
+    (0 what .MEDICINE am I taking 0)
+    (0 how were you prescribed your current .PAIN medication 0)
+    (0 what dosage of .PAIN medication am I taking 0)
+    (0 am I taking .PAIN-MED 0)
+    (0 am I taking .MEDICINE for my .PAIN 0)
+    (0 am I taking .PAIN-MED-OTHER 0)
+    (0 am I taking .MED-NARCOTIC 0)
+    )
     2 *mention-taking-lortab* (100 :schema)
-  1 (0 how were you prescribed your current .PAIN medication 0)
-    2 *mention-taking-lortab* (100 :schema)
-  1 (0 what dosage of .PAIN medication am I taking 0)
-    2 *mention-taking-lortab* (100 :schema)
-  1 (0 am I taking .PAIN-MED 0)
-    2 *mention-taking-lortab* (100 :schema)
-  1 (0 am I taking .MEDICINE for my .PAIN 0)
-    2 *mention-taking-lortab* (100 :schema)
-  1 (0 how often am I taking medication 0)
+  1 (:or
+    (0 how often am I taking medication 0)
+    (0 does taking medication more .FREQUENTLY .HELP 0)
+    )
     2 *mention-lortab-frequency* (100 :schema)
-  1 (0 does taking medication more .FREQUENTLY .HELP 0)
-    2 *mention-lortab-frequency* (100 :schema)
-  1 (0 am I taking .PAIN-MED-OTHER 0)
-    2 *mention-taking-lortab* (100 :schema)
   1 (0 am I taking .BLOOD-PRESSURE-MED 0)
     2 *mention-blood-medication* (100 :schema)
-  1 (0 am I taking .MED-NARCOTIC 0)
-    2 *mention-taking-lortab* (100 :schema)
-  1 (0 is the .PAIN medication working at all 0)
-    2 *ask-why-pain-medication-not-working* (100 :schema)
-  1 (0 is the .PAIN medication working 0)
-    2 *ask-why-pain-medication-not-working* (100 :schema)
-  1 (0 how is the .PAIN medication working 0)
+  1 (:or
+    (0 is the .PAIN medication working at all 0)
+    (0 is the .PAIN medication working 0)
+    (0 how is the .PAIN medication working 0)
+    (0 .DO I .HAVE a .QUESTION about my .MEDICINE 0)
+    )
     2 *ask-why-pain-medication-not-working* (100 :schema)
   1 (0 .DO I .WANT stronger .PAIN medication 0)
     2 *ask-about-pain-medication-side-effects* (100 :schema)
   1 (0 .DO I need more .MEDICINE 0)
     2 *ask-for-lortab-refill* (100 :schema)
-  1 (0 .DO I .HAVE a .QUESTION about my .MEDICINE 0)
-    2 *ask-why-pain-medication-not-working* (100 :schema)
 
 ; ````````````````````         pain          ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -152,22 +146,17 @@
   1 (:or
     (0 .CAN I .TELL you about my .PAIN 1)
     (0 .WH_ 2 .PAIN feel like 0)
-    (0 describe 2 .YOUR-REF 2 .PAIN 0))
+    (0 describe 2 .YOUR-REF 2 .PAIN 0)
+    (0 how .DO I rate my .PAIN 0)
+    (0 where is the .PAIN located 0)
+    (0 does it hurt to 0)
+    (0 did my .PAIN .COME back 0)
+    (0 has the .PAIN .BECOME worse 0)
+    (0 .DO you .HAVE the .PAIN .FREQUENTLY 0)
+    (0 how has my condition gotten worse 0)
+    (0 what causes me to .BELIEVE that my cancer has gotten worse 0)
+    )
     2 *say-pain-worse* (100 :schema)
-  1 (0 how .DO I rate my .PAIN 0)
-    2 *say-pain-worse* (100 :schema)
-  1 (0 where is the .PAIN located 0)
-    2 *say-pain-worse* (100 :schema)
-  1 (0 does it hurt to 0)
-    2 *say-pain-worse* (100 :schema)
-  1 (0 did my .PAIN .COME back 0)
-    2 *say-pain-worse* (100 :schema)
-  1 (0 has the .PAIN .BECOME worse 0)
-    2 *say-pain-worse* (100 :schema)
-  1 (0 .DO you .HAVE the .PAIN .FREQUENTLY 0)
-    2 *say-pain-worse* (100 :schema)
-  ;; 1 (0 .CAN I .TELL you about my .PAIN instead of test results 0)
-  ;;   2 *say-pain-worse* (100 :schema)
 
 ; ````````````````````       radiation       ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -182,45 +171,45 @@
 ; ````````````````````         sleep         ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (0 .HAVE I been sleeping .OKAY 0)
-    2 *explain-not-sleeping-well* (100 :schema)
-  1 (0 how often am I waking up at night 0)
+  1 (:or
+    (0 .HAVE I been sleeping .OKAY 0)
+    (0 how often am I waking up at night 0)
+    (0 what is on my mind when I .TRY to .SLEEP 0)
+    (0 what happens when I .TRY to .SLEEP 0)
+    (0 is my mental health keeping me awake 0)
+    (0 is .COFFEE keeping me awake 0)
+    (0 .CAN I .TELL you about my .SLEEP instead of test results 0)
+    )
     2 *explain-not-sleeping-well* (100 :schema)
   1 (0 .DO I .SLEEP during the .DAY 0)
     2 *mention-taking-naps* (100 :schema)
-  1 (0 what is on my mind when I .TRY to .SLEEP 0)
-    2 *explain-not-sleeping-well* (100 :schema)
-  1 (0 what happens when I .TRY to .SLEEP 0)
-    2 *explain-not-sleeping-well* (100 :schema)
   1 (0 what is my .SLEEP routine 0)
     2 *discuss-sleep-routine* (100 :schema)
-  1 (0 is my mental health keeping me awake 0)
-    2 *explain-not-sleeping-well* (100 :schema)
-  1 (0 is .COFFEE keeping me awake 0)
-    2 *explain-not-sleeping-well* (100 :schema)
-  1 (0 .CAN I .TELL you about my .SLEEP instead of test results 0)
-    2 *explain-not-sleeping-well* (100 :schema)
 
 ; ````````````````````     chemotherapy      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (0 did my doctor .MENTION .CHEMOTHERAPY 0)
+  1 (:or
+    (0 did my doctor .MENTION .CHEMOTHERAPY 0)
+    (0 what are my feelings about .CHEMOTHERAPY 0)
+    )
     2 *ask-if-need-chemotherapy* (100 :schema)
-  1 (0 .DO I .UNDERSTAND how .CHEMOTHERAPY works 0)
+  1 (:or
+    (0 .DO I .UNDERSTAND how .CHEMOTHERAPY works 0)
+    (0 what .CHEMOTHERAPY details are you .ASKING about 0)
+    )
     2 *ask-how-chemotherapy-works* (100 :schema)
   1 (0 .DO I .HAVE a .QUESTION about .CHEMOTHERAPY 0)
     2 *ask-about-chemotherapy-side-effects* (100 :schema)
-  1 (0 what are my feelings about .CHEMOTHERAPY 0)
-    2 *ask-if-need-chemotherapy* (100 :schema)
 
 ; ````````````````````     comfort-care      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (0 .HAVE I considered comfort .CARE 0)
-    2 *ask-how-comfort-care-works* (100 :schema)
-  1 (0 .DO I .UNDERSTAND how comfort .CARE works 0)
-    2 *ask-how-comfort-care-works* (100 :schema)
-  1 (0 .DO I .HAVE a .QUESTION about comfort .CARE 0)
+  1 (:or
+    (0 .HAVE I considered comfort .CARE 0)
+    (0 .DO I .UNDERSTAND how comfort .CARE works 0)
+    (0 .DO I .HAVE a .QUESTION about comfort .CARE 0)
+    )
     2 *ask-how-comfort-care-works* (100 :schema)
 
 ; ````````````````````   medicine-request    ```````````````````````
@@ -236,6 +225,10 @@
 ; ````````````````````       prognosis       ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
+  1 (0 how .DO I feel about my prognosis 0)
+    2 *mention-sadness-about-prognosis* (100 :schema)
+
+  ;; TODO:
   ;; 1 (0 how .MUCH information .DO I .WANT about my prognosis 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
   ;; 1 (0 what is the prognosis that was given to me previously 0)
@@ -243,9 +236,6 @@
   ;; 1 (0 .DO I .UNDERSTAND my prognosis 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
   ;;   2 *ask-if-can-trust-prognosis* (0 :schema)
-  ;; REVISION: Added schema for SOPHIE to express her feelings about her prognosis; also! feel free to comment it out or move it if it needs to be-- I just wanted to test it out!
-  1 (0 how .DO I feel about my prognosis 0)
-    2 *mention-sadness-about-prognosis* (100 :schema)
   ;; 1 (0 what scares me about my prognosis 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
   ;; 1 (0 .DO I .HAVE a .QUESTION about my prognosis 0)
@@ -267,92 +257,84 @@
 ; ````````````````````      tell-family      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (0 .DO my .FAMILY .KNOW about my cancer 0)
-    2 *ask-what-to-tell-family* (100 :schema)
-  1 (0 .DO I .WANT you to .BE present when I .TELL my .FAMILY about the prognosis 0)
-    2 *ask-what-to-tell-family* (100 :schema)
-  1 (0 how .MUCH .DO I .WANT my .FAMILY to .KNOW about the prognosis 0)
-    2 *ask-what-to-tell-family* (100 :schema)
-  1 (0 who .IN my .FAMILY .DO I .WANT to .TELL about the prognosis 0)
-    2 *ask-what-to-tell-family* (100 :schema)
-  1 (0 .DO I .WANT you to .CONTACT a .FAMILY member .NOW 0)
-    2 *ask-what-to-tell-family* (100 :schema)
-  1 (0 what .CAN you .DO to .HELP me break the news to my .FAMILY 0)
+  1 (:or
+    (0 .DO my .FAMILY .KNOW about my cancer 0)
+    (0 .DO I .WANT you to .BE present when I .TELL my .FAMILY about the prognosis 0)
+    (0 how .MUCH .DO I .WANT my .FAMILY to .KNOW about the prognosis 0)
+    (0 who .IN my .FAMILY .DO I .WANT to .TELL about the prognosis 0)
+    (0 .DO I .WANT you to .CONTACT a .FAMILY member .NOW 0)
+    (0 what .CAN you .DO to .HELP me break the news to my .FAMILY 0)
+    )
     2 *ask-what-to-tell-family* (100 :schema)
 
 ; ````````````````````     test-results      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  ;; REVISION: Replaced 'ask about test results' schema with 'state understanding of test results' schema, for more robust responses.
-  1 (0 what test results am I referring to 0)
-    2 *state-understanding-test-results* (100 :schema)
-  1 (0 .DO I .KNOW what the tests say 0)
-    2 *state-understanding-test-results* (100 :schema)
-  1 (0 .CAN I .SUMMARIZE my test results 0)
+  1 (:or
+    (0 what test results am I referring to 0)
+    (0 .DO I .KNOW what the tests say 0)
+    (0 .CAN I .SUMMARIZE my test results 0)
+    )
     2 *state-understanding-test-results* (100 :schema)
   1 (0 how .DO I feel about my test results 0)
-    2 *ask-about-test-results* (100 :schema)
+    2 *mention-stress-about-test-results* (100 :schema)
   1 (0 .DO I .HAVE a .QUESTION about my test results 0)
-    2 *ask-about-test-results* (100 :schema)
-  1 (0 how .MUCH information .DO I .WANT about my test results 0)
-    2 *ask-about-test-results* (100 :schema)
-  1 (0 .DO I .WANT my .FAMILY to .BE present when you .TELL me about the test results 0)
-    2 *ask-about-test-results* (100 :schema)
-  1 (0 .DO I .WANT anyone to .BE present when you .TELL me about the test results 0)
+    2 *ask-what-metastasis-means* (100 :schema)
+  1 (:or
+    (0 how .MUCH information .DO I .WANT about my test results 0)
+    (0 .DO I .WANT my .FAMILY to .BE present when you .TELL me about the test results 0)
+    (0 .DO I .WANT anyone to .BE present when you .TELL me about the test results 0)
+    )
     2 *ask-about-test-results* (100 :schema)
 
 ; ````````````````````   treatment-option    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (0 what .DO I .UNDERSTAND about my .TREATMENT options 0)
+  1 (:or
+    (0 what .DO I .UNDERSTAND about my .TREATMENT options 0)
+    )
     2 *ask-about-treatment-options* (100 :schema)
   1 (0 .DO I .HAVE a .QUESTION about my .TREATMENT options 0)
     2 *ask-about-will-experimental-therapies-help* (100 :schema)
-  ;; 1 (0 am I .READY to start discussing .TREATMENT options 0)
-  ;;   2 *ask-about-prognosis* (100 :schema)
 
 ; ````````````````````    treatment-goals    ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  ;; REVISION: Replaced the 'ask about treatment options' schema with the new 'explain treatment goals schema'for more robust responses.
-  1 (0 what are my .TREATMENT goals 0)
+  1 (:or
+    (0 what are my .TREATMENT goals 0)
+    (0 .DO I .WANT to .TRY to .FIGHT the cancer 0)
+    )
     2 *explain-treatment-goals* (100 :schema)
-  ;; REVISION: Added new 'state grandson's graduation' schema response to 'when does my grandson graduate' clause.
   1 (0 when does my .GRANDCHILD .GRAD-WORDS 0)
     2 *say-grandson-graduation* (100 :schema)
-  ;; 1 (0 am I .READY to .DISCUSS my .TREATMENT goals 0)
-  ;;   2 *ask-about-prognosis* (100 :schema)
 
 ; ````````````````````  open-ended-question  ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-  1 (0 what .DO I .UNDERSTAND 0)
-    2 *explain-understanding-of-condition* (100 :schema)
-  1 (0 how am I .FEELING about my condition 0)
-    2 *explain-understanding-of-condition* (100 :schema)
-  1 (0 what scares me about my condition 0)
+  1 (:or
+    (0 what .DO I .UNDERSTAND 0)
+    (0 how am I .FEELING about my condition 0)
+    (0 what scares me about my condition 0)
+    )
     2 *explain-understanding-of-condition* (100 :schema)
   1 (0 what is the .MOST .IMPORTANT thing for my future 0)
     2 *explain-future-goals* (100 :schema)
-  1 (0 was I nervous for this .APPOINTMENT 0)
-    2 *mention-anxiety* (100 :schema)
   1 (0 .CAN you .CALL me sophie 0)
     2 *confirm-name* (100 :schema)
   1 (0 .CAN I .HEAR you 0)
     2 *confirm-doctor-is-audible* (100 :schema)
   1 (0 what would .HELP me manage my condition 0)
     2 *say-how-to-help* (100 :schema)
-  1 (0 .CAN you ask me some questions 0)
-    2 *ask-for-questions* (0 :schema)
-  1 (0 how .MUCH information .DO I .WANT 0)
-    2 *ask-for-questions* (0 :schema)
-  1 (0 how .DO I think this .CONVERSATION is going 0)
-    2 *ask-for-questions* (0 :schema)
-  1 (0 am I following what you say 0)
-    2 *ask-for-questions* (0 :schema)
-  1 (0 you .HAVE a .QUESTION for me 0)
+  1 (:or
+    (0 .CAN you ask me some questions 0)
+    (0 how .MUCH information .DO I .WANT 0)
+    (0 how .DO I think this .CONVERSATION is going 0)
+    (0 am I following what you say 0)
+    (0 you .HAVE a .QUESTION for me 0)
+    )
     2 *ask-for-questions* (0 :schema)
 
+  ;; TODO:
   ;; ; Questions about daughter
   ;; 1 (where does my .DAUGHTER .WORK ?)
   ;;   2 (She works as a nurse in the county school system \. She\'s very diligent \. They gave her an award last year \, but i\'m blanking on the name of it \.) (0 :out)
@@ -375,7 +357,7 @@
   ;; 1 (how am I doing today ?)
   ;;   2 ([SAD] the pain isn\'t too bad today \. I\'m mostly just anxious \.) (0 :out)
 
-  1 (0 NIL Question ? 0)
+  1 (0 ? 0)
     2 *respond-to-question* (0 :schema)
     
 )) ; END *reaction-to-question*

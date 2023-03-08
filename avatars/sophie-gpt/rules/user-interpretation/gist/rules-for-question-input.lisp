@@ -446,9 +446,9 @@
     2 ((Do you have the pain frequently ?) (Pain-description)) (0 :gist)
   1 (0 .AUX-BASE 3 .PAIN 3 all 1 time 0)
     2 ((Do you have the pain frequently ?) (Pain-description)) (0 :gist)
-  ;; REVISION: Allows SOPHIE to redirect (any potential) pain conversations to test results conversations; commented out for now as we have no test results conversations.
-  ;; 1 (0 about 1 .PAIN 1 instead 2 .DIAGNOSIS-TESTS 0)
-    ;; 2 ((Can I tell you about my pain instead of test results ?) (Pain-description)) (0 :gist)
+  ; Can we talk about your pain instead of/before your tests?
+  1 (0 .DISCUSS 2 .PAIN 1 .INSTEAD 2 .DIAGNOSIS-TESTS 0)
+    2 ((Can I tell you about my pain instead of test results ?) (Pain-description)) (0 :gist)
 
 ; ````````````````````       radiation       ```````````````````````
 ; ``````````````````````````````````````````````````````````````````

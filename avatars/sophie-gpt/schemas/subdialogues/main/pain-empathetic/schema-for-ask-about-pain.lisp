@@ -29,6 +29,8 @@
   ?s2 (^me ((pres have.v) (k (n+preds pain.n (in.p ((^me 's) chest.n))))))
   ; Sophie is taking Lortab for her pain
   ?s3 (^me ((pres take.v) (k |Lortab|.n) (adv-a (for.p ((^me 's) pain.n)))))
+  ; Sophie is not ready to talk about treatment options yet
+  ?s4 (^me ((pres be.v) not ready.a (to (talk.v (about.p-arg (k (plur (treatment.n option.n)))) yet.adv-e))))
 )
 
 :preconds (

@@ -4,12 +4,10 @@
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; REVISION: Allows SOPHIE to respond to questions about feelings on test results.
-
 (defparameter *mention-stress-about-test-results*
 
 '(event-schema :header (((set-of ^me ^you) mention-stress-about-test-results.v) ** ?e)
-;````````````````````````````````````````````````````````````````````````````````
+;````````````````````````````````````````````````````````````````````````````````````````
 
 :types (
   !t1 (^me person.n)
@@ -30,7 +28,7 @@
 
 :preconds (
   ; Sophie feels stressed about her test results.
-  ?p1 (^me ((pres feel.v) anxious.a (about.p-arg ((^me 's) (k (test.n results.n))))))
+  ?p1 (^me ((pres feel.v) anxious.a (adv-a (about.p ((^me 's) (plur (test.n result.n)))))))
 )
 
 :goals (

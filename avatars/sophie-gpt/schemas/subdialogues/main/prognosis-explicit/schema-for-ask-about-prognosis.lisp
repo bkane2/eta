@@ -27,6 +27,8 @@
   ?s1 (^me ((pres have.v) (k (lung.n cancer.n))))
   ; Sophie wants to be able to watch her grandson graduate
   ?s2 (^me ((pres want.v) (to (be.v able.a (to (watch.v ((^me 's) grandson.n) (ke graduate.v)))))))
+  ; Sophie is not ready to talk about treatment options yet
+  ?s3 (^me ((pres be.v) not ready.a (to (talk.v (about.p-arg (k (plur (treatment.n option.n)))) yet.adv-e))))
 )
 
 :preconds (

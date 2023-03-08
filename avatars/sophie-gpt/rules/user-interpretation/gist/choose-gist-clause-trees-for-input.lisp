@@ -43,11 +43,8 @@
   1 (:or
     (what 2 my options for .TREATMENT ?)
     (what are my .TREATMENT options if I .DO not .DO .CHEMOTHERAPY ?)
-    ;; REVISION: added user gists about treatment goals and maintaining quality of life as a treatment option to the gist clause context tree.
     (0 what are my .TREATMENT goals 0)
     (0 maintaining .GOOD quality of .LIFE is a .TREATMENT .OPTION 0)
-
-
     (0 I\'m finding it stressful to decide which treatment option to take 0)
     (0 I really need to know how these treatments help with my own goals 0)
     (0 You\'re giving me too much information at once and not listening to my goals 0)

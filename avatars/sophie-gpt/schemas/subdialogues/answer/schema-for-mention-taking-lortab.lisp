@@ -33,7 +33,7 @@
 
 :preconds (
   ; Sophie is only taking Lortab to treat her pain
-  ?p1 (^me ((pres prog) (take.v only.adv-s |Lortab| (adv-a ({for}.p (to (treat.v (their.d pain.n))))))))
+  ?p1 (^me ((pres prog) (take.v only.adv-s |Lortab| (adv-a ({for}.p (to (treat.v ((^me 's) pain.n))))))))
 )
 
 :goals (

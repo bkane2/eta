@@ -29,12 +29,12 @@
 
 :preconds (
   ; The user is not currently talking about Sophie's test results.
-  ?p1 (^you ((pres prog) not currently.adv-e (talk.v (adv-a (about.p ((^me 's) (k (test.n results.n))))))))
+  ?p1 (^you ((pres prog) not currently.adv-e (talk.v (adv-a (about.p ((^me 's) (test.n results.n)))))))
 )
 
 :goals (
   ; Sophie wants to talk about her test results.
-  ?g1 (^me ((pres want.v) (to (talk.v (adv-a (about.p ((^me 's) (k (test.n results.)))))))))
+  ?g1 (^me ((pres want.v) (to (talk.v (adv-a (about.p ((^me 's) (test.n results.n))))))))
 )
 
 :episodes (

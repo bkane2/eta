@@ -8,7 +8,7 @@
 (defparameter *request-all-of-information-about-prognosis*
 
 '(event-schema :header (((set-of ^me ^you) request-all-of-information-about-prognosis.v) ** ?e)
-;````````````````````````````````````````````````````````````````````````````````
+;``````````````````````````````````````````````````````````````````````````````````````````````````
 
 :types (
   !t1 (^me person.n)
@@ -31,8 +31,8 @@
 )
 
 :goals (
-  ; Sophie wants a stronger pain medication
-  ?g1 (^me ((pres want.v) (to (have.v (all-of.p (information.n (about.p prognosis.n)))))))
+  ; Sophie wants to hear all available information about her prognosis
+  ?g1 (^me ((pres want.v) (to (hear.v (all.d (n+preds (available.a information.n) (about.p ((^me 's) prognosis.n))))))))
 )
 
 :episodes (

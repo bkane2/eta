@@ -4,13 +4,11 @@
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; REVISION: New schema so that SOPHIE can state her understanding of her test results if the doctor asks.
-
 
 (defparameter *state-understanding-test-results*
 
 '(event-schema :header (((set-of ^me ^you) state-understanding-test-results.v) ** ?e)
-;````````````````````````````````````````````````````````````````````````````````
+;````````````````````````````````````````````````````````````````````````````````````````
 
 :types (
   !t1 (^me person.n)
@@ -31,23 +29,23 @@
 
 :preconds (
   ; Sophie knows she received a second CT scan.
-  ?p1 (^me ((pres know.v) (that (^me ((past have.v) (mod-a (2.a (k (CT.n scan.n)))))))))
+  ?p1 (^me ((pres know.v) (that (^me ((past receive.v) (a.d (second.a (|CT|.n scan.n))))))))
   ; Sophie knows the CT scan shows that her tumor is still there.
-  ?p2 (^me ((pres know.v) (that ((k (CT.n scan.n)) ((pres show.v) (that ((k (lung.n cancer)) (pres remain.v))))))))
+  ?p2 (^me ((pres know.v) (that ((the.d (|CT|.n scan.n)) ((pres show.v) (that (((^me 's) tumor.n) (pres remain.v))))))))
   ; Sophie knows the CT scan mentioned metastasis.
-  ?p3 (^me ((pres know.v) (that ((k (CT.n scan.n)) ((pres mention.v) metastasis.n)))))
-  ; Sophie does not know what metastasis is.
-  ?p2 (^me ((pres do.aux-s) not (know.v (ans-to (sub what.mod-a metastasis.n (pres be.v))))))
+  ?p3 (^me ((pres know.v) (that ((the.d (plur (test.n result.n))) ((past mention.v) (k metastasis.n))))))
+  ; Sophie does not know what metastasis means.
+  ?p4 (^me ((pres do.aux-s) not (know.v (ans-to (sub what.pq ((k metastasis.n) ((pres mean.v) *h)))))))
 )
 
 :goals (
-  ; Sophie wants the user to know her understanding of her condition
-  ?g1 (^me ((pres want.v) ^you (to (know.v (their.d (n+preds understanding.n (of.p ((^me 's) (plur (k (lung.n cancer.n)))))))))))
+  ; Sophie wants the user to know her understanding of her test results
+  ?g1 (^me ((pres want.v) ^you (to (know.v ((^me 's) (n+preds understanding.n (of.p ((^me 's) (plur (test.n result.n))))))))))
 )
 
 :episodes (
 
-    ?e1 (^me paraphrase-to.v ^you '(I know that I received a second CT scan\, that the CT scan shows the tumor is still there\, but I do not know what metastasis is \.))
+    ?e1 (^me paraphrase-to.v ^you '(I know that my CT scan shows the tumor is still there\, but I do not know what the results mean \.))
  
     ?e2 (^you reply-to.v ?e1)
 

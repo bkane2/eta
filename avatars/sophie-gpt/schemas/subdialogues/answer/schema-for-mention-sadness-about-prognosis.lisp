@@ -4,12 +4,11 @@
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; REVISION: Allows SOPHIE to express sadness about prognosis.
 
 (defparameter *mention-sadness-about-prognosis*
 
 '(event-schema :header (((set-of ^me ^you) mention-sadness-about-prognosis.v) ** ?e)
-;````````````````````````````````````````````````````````````````````````````````
+;`````````````````````````````````````````````````````````````````````````````````````
 
 :types (
   !t1 (^me person.n)
@@ -29,16 +28,19 @@
 )
 
 :preconds (
-  ; Sophie feels mildly depressed
-  ?p1 (^me ((pres feel.v) sad.a (about.p-arg ((^me 's) prognosis.n))))
+  ; Sophie feels sad about her prognosis
+  ?p1 (^me ((pres feel.v) sad.a (adv-a (about.p ((^me 's) prognosis.n)))))
+  ; Sophie is extremely upset and emotional
+  ?p2 (^me ((pres be.v) ((extremely.mod-a upset.a) and.cc emotional.a)))
 )
 
 :goals (
+  ?g1 (^me ((pres want.v) (to (let.v ^you (ka (know.v ((^me 's) (plur feeling.n))))))))
 )
 
 :episodes (
 
-?e1 (^me paraphrase-to.v ^you '(I feel sad about my prognosis \.))
+?e1 (^me say-to.v ^you ?words)
  
 ?e2 (^you reply-to.v ?e1)
 

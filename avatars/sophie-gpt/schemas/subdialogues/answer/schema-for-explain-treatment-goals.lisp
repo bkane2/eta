@@ -4,10 +4,6 @@
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; REVISION: New schema for Sophie to state her treatment goals of:
-;; - Spending time with her family
-;; - Maintaining a high quality of life.
-
 
 (defparameter *explain-treatment-goals*
 
@@ -34,10 +30,10 @@
 )
 
 :preconds (
-    ; Sophie's treatment goal is spending more time with her grandson.
-  ?s3 (^me (pres have.v (k (treatment.n goal.n (of.p (spend.v (plur time (with.p grandson.n))))))))
+  ; Sophie's treatment goal is spending more time with her grandson.
+  ?p1 (((^me 's) (treatment.n goal.n)) ((pres be.v) (= (to (spend.v (more.d time.n) (with.p-arg ((^me 's) grandson.n)))))))
   ; Sophie's treatment goal is high quality of life.
-  ?s4 (^me (pres have.v (k (treatment.n goal.n (of.p (high.a (quality.n (of.p life.n))))))))
+  ?p2 (((^me 's) (treatment.n goal.n)) ((pres be.v) (= (to (have.v (a.d (n+preds (high.a quality.n) (of.p (k life.n)))))))))
 )
 
 :goals (
@@ -47,7 +43,7 @@
 
 :episodes (
 
-?e1 (^me paraphrase-to.v ^you '(I have the treatment goals of spending time with my grandson and maintaining a high quality of life \.))
+?e1 (^me paraphrase-to.v ^you '(My treatment goals are to spend time with my grandson and to maintain a high quality of life \.))
  
 ?e2 (^you reply-to.v ?e1)
 
