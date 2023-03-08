@@ -16,65 +16,51 @@
 
 (setf *print-circle* t) ; needed to prevent recursive loop when printing plan-step
 
-(defstruct plan
+(defstruct plan-node
 ;```````````````````````````````
 ; contains the following fields:
-; plan-name       : the generated name for the plan
-; curr-step       : the current (to be processed) step of the plan
-; subplan-of      : points to a plan-step that the plan is a subplan of
-; schema          : points to the partially instantiated schema structure that
-;                   the plan was created from
+; plan-step : the plan step associated with the node
+; prev-step : the previous step in the overall 'surface' plan
+; next-step : the next step in the overall 'surface' plan
 ;
-  plan-name
-  curr-step
-  subplan-of
-  schema
-) ; END defstruct plan
+  plan-step
+  prev-step
+  next-step
+) ; END defstruct plan-node
 
 
 
-(defun deepcopy-plan (old &key subplan-of)
-;```````````````````````````````````````````
+(defun deepcopy-plan-node (old)
+;`````````````````````````````````
 ; Deep copy a plan structure
 ;
-  (let ((new (make-plan)))
-    (setf (plan-plan-name new) (copy-tree (plan-plan-name old)))
-
-    (setf (plan-subplan-of new) subplan-of)
-
-    ; TODO: possible bug here if a plan and a subplan both point to the same schema structure;
-    ; this deepcopy will create two separate schema structures for each
-    (setf (plan-schema new) (deepcopy-epi-schema (plan-schema old)))
-
-    (when (plan-curr-step old)
-      (setf (plan-curr-step new) (deepcopy-plan-step (plan-curr-step old) :step-of new)))
+  (let ((new (make-plan-node)))
+    ; TODO REFACTOR : revise deepcopy algorithm
 
     new
-)) ; END deepcopy-plan
+)) ; END deepcopy-plan-node
 
 
 
 (defstruct plan-step
 ;```````````````````````````````
 ; contains the following fields:
-; step-of   : points to the plan structure that this is a step of
-; prev-step : points to the previous step in the plan
-; next-step : points to the next step in the plan
-; ep-name   : episode name of step (gist-clauses, etc. are implicitly attached to ep-name)
-; wff       : action formula corresponding to episode name
-; subplan   : subplan of step (if any)
-; certainty : how certain the step is (if the step is an expected step). The patience of the
+; substeps   : a list of concrete substeps that are associated with this step
+; supersteps : a list of abstract steps that this step instantiates
+; ep-name    : episode name of step (gist-clauses, etc. are implicitly attached to ep-name)
+; wff        : action formula corresponding to episode name
+; certainty  : how certain the step is (if the step is an expected step). The patience of the
 ;             system in waiting to observe the step is proportional to this
 ; obligation : the obligation(s) associated with the step
+; schema     : the instantiated schema that created this step (if any)
 ;
-  step-of
-  prev-step
-  next-step
+  substeps
+  supersteps
   ep-name
   wff
   (certainty 1.0) ; defaults to 1, i.e. a certain step
   obligation
-  subplan
+  schema
 ) ; END defstruct plan-step
 
 
@@ -84,6 +70,7 @@
 ; Deep copy a plan-step structure
 ;
   (let ((new (make-plan-step)))
+    ; TODO REFACTOR : revise deepcopy algorithm
     (setf (plan-step-ep-name new) (copy-tree (plan-step-ep-name old)))
     (setf (plan-step-wff new) (copy-tree (plan-step-wff old)))
     (setf (plan-step-certainty new) (copy-tree (plan-step-certainty old)))
@@ -221,8 +208,6 @@
 ; that get instantiated during this particular iteration (while keeping the original episode
 ; variables for the loop 'yet to be unrolled'). These duplicate variables need to inherit the
 ; certainties and obligations of the original episode variables in the plan schema (if any).
-;
-; TODO REFACTOR : test david-qa w/ obligation to make sure this is working
 ;
   (let (duplicates new-plan)
     (setq duplicates (subst-duplicate-variables

@@ -52,7 +52,7 @@
 (defstruct ds
 ;```````````````````````````````
 ; contains the following fields:
-; curr-plan        : points to the currently active dialogue plan
+; curr-plan        : points to the currently due step in the 'surface' dialogue plan (an ordered list of steps)
 ; task-queue       : a list of time-sharing tasks to repeatedly execute in cycles
 ; buffers          : a structure containing buffers (importance-ranked priority queues) for items that the dialogue
 ;                    system must process during a corresponding task (perceptions, inferences, intentions, etc.)
@@ -126,20 +126,20 @@
 (defstruct buffers
 ;```````````````````````````````
 ; contains the following fields:
-; perceptions: an importance-ranked priority queue of perceptions for the system to interpret
-; gists: an importance-ranked priority queue of gist clauses for the system to semantically interpret
-; semantics: an importance-ranked priority queue of semantic interpretations for the system to pragmatically interpret
-; pragmatics: an importance-ranked priority queue of pragmatic interpretations for the system to generate inferences from
-; inferences: an importance-ranked priority queue of inferences for the system to generate further inferences from (until
-;             some depth/importance threshold is reached)
-; intentions: an importance-ranked priority queue of intentions for the system to add to the current plan
+; perceptions : an importance-ranked priority queue of perceptions for the system to interpret
+; gists       : an importance-ranked priority queue of gist clauses for the system to semantically interpret
+; semantics   : an importance-ranked priority queue of semantic interpretations for the system to pragmatically interpret
+; pragmatics  : an importance-ranked priority queue of pragmatic interpretations for the system to generate inferences from
+; inferences  : an importance-ranked priority queue of inferences for the system to generate further inferences from (until
+;               some depth/importance threshold is reached)
+; actions     : an importance-ranked priority queue of possible actions under consideration to add to the plan
 ; 
   (perceptions (priority-queue:make-pqueue #'>))
   (gists (priority-queue:make-pqueue #'>))
   (semantics (priority-queue:make-pqueue #'>))
   (pragmatics (priority-queue:make-pqueue #'>))
   (inferences (priority-queue:make-pqueue #'>))
-  (intentions (priority-queue:make-pqueue #'>))
+  (actions (priority-queue:make-pqueue #'>))
 ) ; END defstruct buffers
 
 
@@ -156,7 +156,7 @@
     (setf (buffers-semantics new) (deepcopy-buffer (buffers-semantics old)))
     (setf (buffers-pragmatics new) (deepcopy-buffer (buffers-pragmatics old)))
     (setf (buffers-inferences new) (deepcopy-buffer (buffers-inferences old)))
-    (setf (buffers-intentions new) (deepcopy-buffer (buffers-intentions old)))
+    (setf (buffers-actions new) (deepcopy-buffer (buffers-actions old)))
   new
 )) ; END deepcopy-buffers
 
@@ -792,7 +792,7 @@
   (clear-buffer (buffers-semantics (ds-buffers *ds*)))
   (clear-buffer (buffers-pragmatics (ds-buffers *ds*)))
   (clear-buffer (buffers-inferences (ds-buffers *ds*)))
-  (clear-buffer (buffers-intentions (ds-buffers *ds*)))
+  (clear-buffer (buffers-actions (ds-buffers *ds*)))
 ) ; END evict-buffers
 
 
