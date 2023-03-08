@@ -1077,7 +1077,7 @@
 
     (if (member 'and obligations)
       (remove 'and obligations)
-      (list obligations))
+      (if (null obligations) nil (list obligations)))
 )) ; END get-step-obligations
 
 

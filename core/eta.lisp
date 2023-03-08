@@ -772,7 +772,7 @@
 
     ; Choose the first possible subplan and add to current step
     (setq poss-subplans (remove nil poss-subplans))
-    (setq new-subplan (car poss-subplans))
+    (setq new-subplan (car (reverse poss-subplans)))
 
     (if new-subplan
       (add-subplan-curr-step subplan new-subplan))
@@ -970,7 +970,13 @@
 
             ; Inherit any gists/semantics from parent episode, if any
             (setq ep-name1 (get-parent-ep-name subplan))
-            (when ep-name1
+            ; NOTE: The variable check here is necessary due to the fact that, with the new reaction mechanism, a
+            ; subplan may be added to a user reply whose episode var in the plan has yet to be instantiated. This
+            ; technically shouldn't be the case (the reaction plan should be inserted into the plan as a child of
+            ; the parent plan, rather than added as a subplan), but since this will be fixed in the future when the
+            ; plan structure is refactored, we currently have this hacky 'fix' to prevent gist clauses from being
+            ; attributed incorrectly.
+            (when (and ep-name1 (not (variable? ep-name1)))
               (mapcar (lambda (gist) (store-gist-clause-characterizing-episode gist ep-name '^me '^you))
                 (get-gist-clauses-characterizing-episode ep-name1))
               (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
