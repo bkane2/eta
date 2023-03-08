@@ -2661,7 +2661,7 @@
 ;````````````````````
 ; Creates a unique skolem constant given a name.
 ;
-  (intern (format nil "~a.SK" (gen (string-upcase (string name)))))
+  (intern (format nil "~a.SK" (gentemp (string-upcase (string name)))))
 ) ; END skolem
 
 
