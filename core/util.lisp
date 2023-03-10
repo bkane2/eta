@@ -779,7 +779,7 @@
     ;; (format t "~% ****** quoted-question? third line = ~a **** ~%" sentence) ; DEBUGGING
     (if (and (listp sentence) (every #'atom sentence))
       (setq word (car (last sentence)))
-      (return-from quoted-question? nil))
+      (return-from question? nil))
     (or
       (eq word '?)
       (char-equal #\? (car (last (explode word))))))
@@ -872,6 +872,17 @@
 ;
   (if (and (symbolp atm) (member atm *emotions-list*)) t nil)
 ) ; END emotion-tag?
+
+
+
+(defun sentence-conjunction? (atm)
+;``````````````````````````````````````````````
+; Checks whether a symbol is a conjunction that can separate
+; two sentences, when following a comma (e.g., but, and, however, etc.).
+; NOTE: not currently a complete list.
+;
+  (member atm '(but and however because since although as if))
+) ; END sentence-conjunction?
 
 
 
@@ -1113,6 +1124,8 @@
 ;```````````````````````````````
 ; Given the list of words 'words', split into multiple lists of words for each sentence,
 ; delimited by punctuation.
+; For sentences that combine two sentence clauses with a comma (e.g., "... , but ..."),
+; we split into two sentences while also keeping the original sentence as well.
 ;
   (let (result cur)
     ; Loop through each word, keeping a buffer which is emptied once punctuation is reached
@@ -1127,8 +1140,23 @@
     ; Empty buffer (in case the last sentence is missing punctuation)
     (when cur
       (setq result (cons (reverse cur) result)))
-  (reverse result))
-) ; END split-sentences
+    (setq cur nil)
+    ; Loop through each word with lookahead to split sentences conjoined by a comma+connective
+    (mapcar (lambda (wordlist)
+        (mapcar (lambda (word lookahead)
+            (cond
+              ((and (member word '(|,|)) (sentence-conjunction? lookahead))
+                (setq result (cons (reverse (cons '|.| cur)) result))
+                (setq cur nil))
+              (t
+                (setq cur (cons word cur)))))
+          wordlist (cdr (append wordlist '(nil))))
+        (when cur
+          (setq result (cons (reverse cur) result)))
+        (setq cur nil))
+      (reverse result))
+  (remove-duplicates (reverse result) :test #'equal :from-end t)
+)) ; END split-sentences
 
 
 
