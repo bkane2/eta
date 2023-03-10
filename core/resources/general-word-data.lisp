@@ -181,7 +181,7 @@
   (INTEROG that whether if)
   (NECESSITY need HAVE)
   (HAVE has had)
-  (BE am are is was were)
+  (BE am are is was were been)
   (DO does did doing)
   (AUX-BASE HAVE BE DO) ; "basic", i.e. non-modal auxiliary verbs
   (AUX MODAL HAVE BE DO)
