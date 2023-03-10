@@ -297,6 +297,8 @@
       3 ((The prognosis is that I may live for several 4 \.) (Prognosis)) (0 :gist)
     2 (0 .ANTICIPATE 8 .ELAPSED-TIME 0)
       3 ((The prognosis is that I may live for a 4 \.) (Prognosis)) (0 :gist)
+    2 (0 .PROGNOSIS-DEALING 3 .ELAPSED-TIME 0)
+      3 ((The prognosis is that I may live for several 4 \.) (Prognosis)) (0 :gist)
   ; Your cancer has gotten worse so you may live for x amount of time.
   1 (0 .CANCER-ILLNESS 2 .CANCER-WORSE 0)
     2 (0 .NUMBER-TOTAL 2 .ELAPSED-TIME 0)
@@ -315,6 +317,8 @@
       3 ((The prognosis is that I may live for several 4 \.) (Prognosis)) (0 :gist)
     2 (0 .ANTICIPATE 8 .ELAPSED-TIME 0)
       3 ((The prognosis is that I may live for a 4 \.) (Prognosis)) (0 :gist)
+    2 (0 .PROGNOSIS-DEALING 3 .ELAPSED-TIME 0)
+      3 ((The prognosis is that I may live for several 4 \.) (Prognosis)) (0 :gist)
   ; You don't have long left to live.
   1 (0 you 1 .NEG 2 .HAVE 3 .LONG 2 .CANCER-LIVE 0)
     2 ((The prognosis is that I do not have long left to live \.)) (0 :gist)
@@ -813,6 +817,8 @@
     2 ((You are glad that I came to this appointment \.)) (0 :gist)
   1 (0 .HAPPY-WORDS 3 you 2 here 0)
     2 ((You are glad that I came to this appointment \.)) (0 :gist)
+  1 (0 we 3 .RELATIONSHIP-DEVELOP 5 .RELATIONSHIP 0)
+    2 ((You feel that we have developed a good doctor patient relationship \.)) (0 :gist)
   1 (0 sorry 0)
     2 ((You are sorry that I have cancer \.)) (0 :gist)
 

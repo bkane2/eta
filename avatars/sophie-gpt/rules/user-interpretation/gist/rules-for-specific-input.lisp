@@ -990,6 +990,8 @@
     2 ((The prognosis is that I may live for several 4 \.) (Prognosis)) (0 :gist)
   1 (0 .ANTICIPATE 8 .ELAPSED-TIME 0)
     2 ((The prognosis is that I may live for a 4 \.) (Prognosis)) (0 :gist)
+  1 (0 .PROGNOSIS-DEALING 3 .ELAPSED-TIME 0)
+    2 ((The prognosis is that I may live for several 4 \.) (Prognosis)) (0 :gist)
   ; You don't have much long left to live.
   1 (0 you 1 .NEG 2 .HAVE 3 .LONG 2 .CANCER-LIVE 0)
     2 ((The prognosis is that I do not have long left to live \.)) (0 :gist)
