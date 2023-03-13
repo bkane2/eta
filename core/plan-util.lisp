@@ -19,32 +19,48 @@
 (defstruct plan-node
 ;```````````````````````````````
 ; contains the following fields:
-; plan-step : the plan step associated with the node
-; prev-step : the previous step in the overall 'surface' plan
-; next-step : the next step in the overall 'surface' plan
+; step : the plan step associated with the node
+; prev : the previous step in the overall 'surface' plan
+; next : the next step in the overall 'surface' plan
 ;
-  plan-step
-  prev-step
-  next-step
+  step
+  prev
+  next
 ) ; END defstruct plan-node
 
 
 
-(defun deepcopy-plan-node (old)
+(defun deepcopy-plan-node (old1) ; {@}
 ;`````````````````````````````````
-; Deep copy a plan structure
+; Deep copy a plan-node structure recursively (note that we need to maintain a
+; hash table mapping visited plan-step IDs to the new plan-step structures, in
+; order to prevent creation of duplicates).
 ;
-  (let ((new (make-plan-node)))
-    ; TODO REFACTOR : revise deepcopy algorithm
-
-    new
-)) ; END deepcopy-plan-node
+  (let ((visited (make-hash-table)))
+    (labels ((deepcopy-plan-node-recur (old prev next)
+      (let ((new (make-plan-node)))
+        (setf (plan-node-step new)
+          (deepcopy-plan-step (plan-node-step old) :visited visited))
+        (when (plan-node-prev old)
+          (setf (plan-node-prev new)
+            (if prev
+              prev
+              (deepcopy-plan-node-recur (plan-node-prev old) nil new))))
+        (when (plan-node-next old)
+          (setf (plan-node-next new)
+            (if next
+              next
+              (deepcopy-plan-node-recur (plan-node-next old) new nil))))
+        new)))
+    (deepcopy-plan-node-recur old1 nil nil)
+))) ; END deepcopy-plan-node
 
 
 
 (defstruct plan-step
 ;```````````````````````````````
 ; contains the following fields:
+; id         : a unique ID for this plan-step
 ; substeps   : a list of concrete substeps that are associated with this step
 ; supersteps : a list of abstract steps that this step instantiates
 ; ep-name    : episode name of step (gist-clauses, etc. are implicitly attached to ep-name)
@@ -54,6 +70,7 @@
 ; obligation : the obligation(s) associated with the step
 ; schema     : the instantiated schema that created this step (if any)
 ;
+  (id (gentemp "STEP"))
   substeps
   supersteps
   ep-name
@@ -65,33 +82,42 @@
 
 
 
-(defun deepcopy-plan-step (old &key step-of prev-step next-step)
-;````````````````````````````````````````````````````````````````
-; Deep copy a plan-step structure
+(defun deepcopy-plan-step (old &key substep visited) ; {@}
+;```````````````````````````````````````````````````````
+; Deep copy a plan-step structure recursively (note that we need to maintain a
+; hash table mapping visited plan-step IDs to the new plan-step structures, in
+; order to prevent creation of duplicates).
+; Since we assume that plan-nodes are at the "surface" of the plan hierarchy,
+; this function recurs "downwards" (i.e., towards supersteps).
 ;
-  (let ((new (make-plan-step)))
-    ; TODO REFACTOR : revise deepcopy algorithm
-    (setf (plan-step-ep-name new) (copy-tree (plan-step-ep-name old)))
-    (setf (plan-step-wff new) (copy-tree (plan-step-wff old)))
-    (setf (plan-step-certainty new) (copy-tree (plan-step-certainty old)))
-    (setf (plan-step-obligation new) (copy-tree (plan-step-obligation old)))
+  (let (new)
+    (cond
+      ; If step has already been visited, get new step structure from hash table
+      ((and (hash-table-p visited) (gethash (plan-step-id old) visited))
+        (setq new (gethash (plan-step-id old) visited))
+        (when substep
+          (push substep (plan-step-substeps new))))
+          
+      ; Otherwise, create new step structure and add to visited hash table
+      (t
+        (setq new (make-plan-step))
+        (setf (plan-step-ep-name new) (copy-tree (plan-step-ep-name old)))
+        (setf (plan-step-wff new) (copy-tree (plan-step-wff old)))
+        (setf (plan-step-certainty new) (copy-tree (plan-step-certainty old)))
+        (setf (plan-step-obligation new) (copy-tree (plan-step-obligation old)))
+        ; TODO REFACTOR - the following needs to be modified so as to not create duplicate schema copies
+        (setf (plan-step-schema new) (deepcopy-epi-schema (plan-step-schema old)))
 
-    (setf (plan-step-step-of new) step-of)
+        (when substep
+          (push substep (plan-step-substeps new)))
 
-    (when (plan-step-prev-step old)
-      (setf (plan-step-prev-step new)
-        (if prev-step
-          prev-step
-          (deepcopy-plan-step (plan-step-prev-step old) :step-of step-of :next-step new))))
+        (when (plan-step-supersteps old)
+          (setf (plan-step-supersteps new)
+            (mapcar (lambda (superstep-old)
+                (deepcopy-plan-step superstep-old :substep new :visited visited))
+              (plan-step-supersteps old))))
 
-    (when (plan-step-next-step old)
-      (setf (plan-step-next-step new)
-        (if next-step
-          next-step
-          (deepcopy-plan-step (plan-step-next-step old) :step-of step-of :prev-step new))))
-
-    (when (plan-step-subplan old)
-      (setf (plan-step-subplan new) (deepcopy-plan (plan-step-subplan old) :subplan-of new)))
+        (setf (gethash (plan-step-id old) visited) new)))
 
     new
 )) ; END deepcopy-plan-step
@@ -781,88 +807,273 @@
 
 
 
-(defun print-current-plan-steps (plan) 
-;``````````````````````````````````````
-; Prints each subsequent step in a plan, starting from the current
-; step, showing the ep-name and wff of each. Does not include subplans.
-; For debugging purposes.
+;; (defun print-current-plan-steps (plan) 
+;; ;``````````````````````````````````````
+;; ; Prints each subsequent step in a plan, starting from the current
+;; ; step, showing the ep-name and wff of each. Does not include subplans.
+;; ; For debugging purposes.
+;; ;
+;;   (let ((curr-step (plan-curr-step plan)))
+
+;;     ; Iterate through each subsequent step and print ep-name and wff
+;;     (loop while (not (null curr-step)) do
+;;       (format t "~a ~a~%" (plan-step-ep-name curr-step) (plan-step-wff curr-step))
+;;       (setq curr-step (plan-step-next-step curr-step))))
+;; ) ; END print-current-plan-steps
+
+
+
+(defun format-plan-step (step) ; {@}
+;`````````````````````````````````````
+; Formats the step corresponding to a given plan node, as:
+; ep-name : wff [certainty]
 ;
-  (let ((curr-step (plan-curr-step plan)))
-
-    ; Iterate through each subsequent step and print ep-name and wff
-    (loop while (not (null curr-step)) do
-      (format t "~a ~a~%" (plan-step-ep-name curr-step) (plan-step-wff curr-step))
-      (setq curr-step (plan-step-next-step curr-step))))
-) ; END print-current-plan-steps
+  (format nil "~a : ~a [~a]"
+    (plan-step-ep-name step)
+    (plan-step-wff step)
+    (plan-step-certainty step))
+) ; END format-plan-step
 
 
 
-(defun print-current-plan-status (plan) 
-;````````````````````````````````````````
-; Prints the current plan status. Shows ep-name and wff of
-; current pending step in plan, as well as the status of
-; any subplans of that step. For debugging purposes.
+(defun print-current-plan-status (node &key (before 3) (after 5)) ; {@}
+;``````````````````````````````````````````````````````````````````
+; Prints the current plan status (i.e., steps that are currently in
+; the surface plan, with a pointer to the currently due step). Allows
+; the number of steps to be shown before and after this pointer to be
+; specified as key arguments.
 ;
-  (let ((curr-plan plan) curr-step superstep subplan (cont t))
-
-    ; Print top-level information about plan
-    (format t "Status of ~a "
-      (plan-plan-name plan))
-    (setq superstep (plan-subplan-of plan))
-    (if superstep
-      (format t "(subplan-of ~a):~%" (plan-step-ep-name superstep))
-      (format t "(no superstep):~%"))
-
-    ; Print each current step and repeat for subplan, if any
-    (loop while cont do
-      (setq curr-step (plan-curr-step curr-plan))
-      (when (null curr-step)
-        (format t "  No more steps in ~a.~%" (plan-plan-name curr-plan))
-        (format t "  --------------------~%")
-        (return-from print-current-plan-status nil))
-      (format t "  rest of ~a = (~a ~a ...)~%" (plan-plan-name curr-plan)
-        (plan-step-ep-name curr-step) (plan-step-wff curr-step))
-      (setq subplan (plan-step-subplan curr-step))
-      (cond
-        (subplan
-          (format t "  subplan ~a of ~a:"
-            (plan-plan-name subplan) (plan-step-ep-name curr-step))
-          (setq curr-plan subplan))
-        (t (setq cont nil)))))
-) ; END print-current-plan-status
+  (let ((prev (plan-node-prev node)) (next (plan-node-next node))
+        steps-prev step-curr steps-next)
+    (loop while (and prev (> before 0)) do
+      (push (format-plan-step (plan-node-step prev)) steps-prev)
+      (setq prev (plan-node-prev prev))
+      (decf before))
+    (setq step-curr (format-plan-step (plan-node-step node)))
+    (loop while (and next (> after 0)) do
+      (push (format-plan-step (plan-node-step next)) steps-next)
+      (setq next (plan-node-next next))
+      (decf after))
+    ; Print
+    (format t "~% --- CURRENT PLAN STATUS: ----------~%")
+    (if prev (format t "   ...~%"))
+    (dolist (step-prev steps-prev)
+      (format t "   ~a~%" step-prev))
+    (format t ">> ~a~%" step-curr)
+    (dolist (step-next (reverse steps-next))
+      (format t "   ~a~%" step-next))
+    (if next (format t "   ...~%"))
+    (format t " -----------------------------------~%")
+)) ; END print-current-plan-status
 
 
 
-(defun print-plan-as-tree (plan)
-;`````````````````````````````````````````````````
-; Prints the given plan as a tree, showing the sequence of steps for each (sub)plan.
+;; (defun print-current-plan-status (plan) 
+;; ;````````````````````````````````````````
+;; ; Prints the current plan status. Shows ep-name and wff of
+;; ; current pending step in plan, as well as the status of
+;; ; any subplans of that step. For debugging purposes.
+;; ;
+;;   (let ((curr-plan plan) curr-step superstep subplan (cont t))
+
+;;     ; Print top-level information about plan
+;;     (format t "Status of ~a "
+;;       (plan-plan-name plan))
+;;     (setq superstep (plan-subplan-of plan))
+;;     (if superstep
+;;       (format t "(subplan-of ~a):~%" (plan-step-ep-name superstep))
+;;       (format t "(no superstep):~%"))
+
+;;     ; Print each current step and repeat for subplan, if any
+;;     (loop while cont do
+;;       (setq curr-step (plan-curr-step curr-plan))
+;;       (when (null curr-step)
+;;         (format t "  No more steps in ~a.~%" (plan-plan-name curr-plan))
+;;         (format t "  --------------------~%")
+;;         (return-from print-current-plan-status nil))
+;;       (format t "  rest of ~a = (~a ~a ...)~%" (plan-plan-name curr-plan)
+;;         (plan-step-ep-name curr-step) (plan-step-wff curr-step))
+;;       (setq subplan (plan-step-subplan curr-step))
+;;       (cond
+;;         (subplan
+;;           (format t "  subplan ~a of ~a:"
+;;             (plan-plan-name subplan) (plan-step-ep-name curr-step))
+;;           (setq curr-plan subplan))
+;;         (t (setq cont nil)))))
+;; ) ; END print-current-plan-status
+
+
+
+(defun print-plan-tree-from-node (plan-node) ; {@}
+;`````````````````````````````````````````````
+; Prints the subtree of the plan structure reachable from the given node.
+;
+  (print-plan-tree-from-surface-step (plan-node-step plan-node))
+) ; END print-plan-tree-from-node
+
+
+
+(defun print-plan-tree-from-surface-step (plan-step) ; {@}
+;``````````````````````````````````````````````````````
+; Prints the subtree of the plan structure reachable from the given surface step.
 ;
   (let ((indent-str "       "))
-    (labels (
-      (print-plan-steps-recur (plan-step direction i)
-        (when (null plan-step) (return-from print-plan-steps-recur nil))
-        (format t
-          (if (equal direction 'curr)
-            "~a>>>[~a] ~a~%"
-            "~a-  [~a] ~a~%")
-          (str-repeat indent-str i)
-          (plan-step-ep-name plan-step)
-          (plan-step-wff plan-step))
-        (when (plan-step-subplan plan-step)
-          (print-plan-as-tree-recur (plan-step-subplan plan-step) (+ i 1)))
-        (cond
-          ((equal direction 'before)
-            (print-plan-steps-recur (plan-step-prev-step plan-step) 'before i))
-          ((equal direction 'after)
-            (print-plan-steps-recur (plan-step-next-step plan-step) 'after i))))
+    (labels ((print-tree-recur (step i)
+      (when (null step) (return-from print-tree-recur nil))
+      (format t "~a~a~%" (str-repeat indent-str i) (format-plan-step step))
+      (mapcar (lambda (superstep) (print-tree-recur superstep (+ i 1))) (plan-step-supersteps step))))  
+    (print-tree-recur plan-step 0)
+    nil
+))) ; END print-plan-tree-from-surface-step
 
-      (print-plan-as-tree-recur (plan i)
-        (when (null plan) (return-from print-plan-steps-recur nil))
-        (when (plan-curr-step plan)
-          (format t "~a|- ~a~%" (str-repeat indent-str i) (plan-plan-name plan))
-          (print-plan-steps-recur (plan-step-prev-step (plan-curr-step plan)) 'before i)
-          (print-plan-steps-recur (plan-curr-step plan) 'curr i)
-          (print-plan-steps-recur (plan-step-next-step (plan-curr-step plan)) 'after i))))
+
+
+(defun print-plan-tree-from-root-step (plan-step) ; {@}
+;`````````````````````````````````````````````````
+; Prints the subtree of the plan structure reachable from the given root step.
+;
+  (let ((indent-str "       "))
+    (labels ((print-tree-recur (step i)
+      (when (null step) (return-from print-tree-recur nil))
+      (format t "~a~a~%" (str-repeat indent-str i) (format-plan-step step))
+      (mapcar (lambda (substep) (print-tree-recur substep (+ i 1))) (plan-step-substeps step))))  
+    (print-tree-recur plan-step 0)
+    nil
+))) ; END print-plan-tree-from-root-step
+
+
+
+;; (defun print-plan-as-tree (plan)
+;; ;`````````````````````````````````````````````````
+;; ; Prints the given plan as a tree, showing the sequence of steps for each (sub)plan.
+;; ;
+;;   (let ((indent-str "       "))
+;;     (labels (
+;;       (print-plan-steps-recur (plan-step direction i)
+;;         (when (null plan-step) (return-from print-plan-steps-recur nil))
+;;         (format t
+;;           (if (equal direction 'curr)
+;;             "~a>>>[~a] ~a~%"
+;;             "~a-  [~a] ~a~%")
+;;           (str-repeat indent-str i)
+;;           (plan-step-ep-name plan-step)
+;;           (plan-step-wff plan-step))
+;;         (when (plan-step-subplan plan-step)
+;;           (print-plan-as-tree-recur (plan-step-subplan plan-step) (+ i 1)))
+;;         (cond
+;;           ((equal direction 'before)
+;;             (print-plan-steps-recur (plan-step-prev-step plan-step) 'before i))
+;;           ((equal direction 'after)
+;;             (print-plan-steps-recur (plan-step-next-step plan-step) 'after i))))
+
+;;       (print-plan-as-tree-recur (plan i)
+;;         (when (null plan) (return-from print-plan-steps-recur nil))
+;;         (when (plan-curr-step plan)
+;;           (format t "~a|- ~a~%" (str-repeat indent-str i) (plan-plan-name plan))
+;;           (print-plan-steps-recur (plan-step-prev-step (plan-curr-step plan)) 'before i)
+;;           (print-plan-steps-recur (plan-curr-step plan) 'curr i)
+;;           (print-plan-steps-recur (plan-step-next-step (plan-curr-step plan)) 'after i))))
           
-    (print-plan-as-tree-recur plan 0)
-))) ; END print-plan-as-tree
+;;     (print-plan-as-tree-recur plan 0)
+;; ))) ; END print-plan-as-tree
+
+
+
+(defun get-all-unique-plan-step-ids (plan-node) ; {@}
+;`````````````````````````````````````````````````
+; This is a test function to make sure plan methods (primarily deepcopy)
+; are working correctly; it returns all unique ids traversable within a plan
+; structure, beginning at the current plan-node.
+;
+  (let (ret)
+    (labels
+      ((get-all-unique-plan-step-ids-recur1 (node left right)
+        (get-all-unique-plan-step-ids-recur2 (plan-node-step node))
+        (when (and (plan-node-prev node) left)
+          (get-all-unique-plan-step-ids-recur1 (plan-node-prev node) t nil))
+        (when (and (plan-node-next node) right)
+          (get-all-unique-plan-step-ids-recur1 (plan-node-next node) nil t)))
+      (get-all-unique-plan-step-ids-recur2 (step)
+        (setq ret (cons (plan-step-id step) ret))
+        (mapcar #'get-all-unique-plan-step-ids-recur2 (plan-step-supersteps step))))
+  (get-all-unique-plan-step-ids-recur1 plan-node t t)
+  (remove-duplicates ret)
+))) ; END get-all-unique-plan-step-ids
+
+
+
+(defun get-all-plan-structure-roots (plan-node) ; {@}
+;`````````````````````````````````````````````````
+; Get all root plan-steps in a plan structure
+; (i.e., those without any supersteps).
+;
+  (let (ret)
+    (labels
+      ((get-all-plan-structure-roots-recur1 (node left right)
+        (get-all-plan-structure-roots-recur2 (plan-node-step node))
+        (when (and (plan-node-prev node) left)
+          (get-all-plan-structure-roots-recur1 (plan-node-prev node) t nil))
+        (when (and (plan-node-next node) right)
+          (get-all-plan-structure-roots-recur1 (plan-node-next node) nil t)))
+      (get-all-plan-structure-roots-recur2 (step)
+        (when (null (plan-step-supersteps step))
+          (setq ret (cons step ret)))
+        (mapcar #'get-all-plan-structure-roots-recur2 (plan-step-supersteps step))))
+  (get-all-plan-structure-roots-recur1 plan-node t t)
+  (remove-duplicates ret :test (lambda (x y) (equal (plan-step-id x) (plan-step-id y))))
+))) ; END get-all-plan-structure-roots
+
+
+
+(defun make-test-plan-structure () ; {@}
+;```````````````````````````````````````````
+; Creates an artificial plan structure for testing purposes.
+;
+  (let* (
+    (pe1  (make-plan-step :ep-name 'e1))
+    (pe2  (make-plan-step :ep-name 'e2))
+    (pe3  (make-plan-step :ep-name 'e3))
+    (pe4  (make-plan-step :ep-name 'e4))
+    (pe5  (make-plan-step :ep-name 'e5))
+    (pe6  (make-plan-step :ep-name 'e6))
+    (pe7  (make-plan-step :ep-name 'e7))
+    (pe8  (make-plan-step :ep-name 'e8))
+    (pe9  (make-plan-step :ep-name 'e9))
+    (pe10 (make-plan-step :ep-name 'e10))
+    (pe11 (make-plan-step :ep-name 'e11))
+    (pe12 (make-plan-step :ep-name 'e12))
+    (n8  (make-plan-node :step pe8))
+    (n9  (make-plan-node :step pe9))
+    (n10 (make-plan-node :step pe10))
+    (n11 (make-plan-node :step pe11))
+    (n12 (make-plan-node :step pe12))
+    (n7  (make-plan-node :step pe7))
+    )
+  (setf (plan-step-substeps pe1) (list pe3 pe4 pe5))
+  (setf (plan-step-substeps pe2) (list pe4 pe6 pe7))
+  (setf (plan-step-substeps pe3) (list pe8 pe9))
+  (setf (plan-step-substeps pe4) (list pe10))
+  (setf (plan-step-substeps pe5) (list pe9 pe11))
+  (setf (plan-step-substeps pe6) (list pe12))
+  (setf (plan-step-supersteps pe3) (list pe1))
+  (setf (plan-step-supersteps pe4) (list pe1 pe2))
+  (setf (plan-step-supersteps pe5) (list pe1))
+  (setf (plan-step-supersteps pe6) (list pe2))
+  (setf (plan-step-supersteps pe7) (list pe2))
+  (setf (plan-step-supersteps pe8) (list pe3))
+  (setf (plan-step-supersteps pe9) (list pe3 pe5))
+  (setf (plan-step-supersteps pe10) (list pe4))
+  (setf (plan-step-supersteps pe11) (list pe5))
+  (setf (plan-step-supersteps pe12) (list pe6))
+  (setf (plan-node-next n8) n9)
+  (setf (plan-node-prev n9) n8)
+  (setf (plan-node-next n9) n10)
+  (setf (plan-node-prev n10) n9)
+  (setf (plan-node-next n10) n11)
+  (setf (plan-node-prev n11) n10)
+  (setf (plan-node-next n11) n12)
+  (setf (plan-node-prev n12) n11)
+  (setf (plan-node-next n12) n7)
+  (setf (plan-node-prev n7) n12)
+  n11
+)) ; END make-test-plan-structure
