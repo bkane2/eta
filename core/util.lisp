@@ -2684,51 +2684,6 @@
 
 
 
-(defun instance (pattern parts)
-;```````````````````````````````
-; NOTE: depracated after 10/15/2021 (see 'fill-template' in tt.lisp)
-; Top-level call to 'instance1', dealing with special case where pattern
-; is an in-range integer and the part it indexes has just one word in it,
-; which will be returned as result. Also this function serves for top-
-; level tracing of pattern instantiation;
-;
-  (let ((n (length parts)) part)
-    (cond
-      ((and
-          (integerp pattern)
-          (> pattern 0)
-          (<= pattern n))
-        (setq part (car (nthcdr (- pattern 1) parts)))
-        (if (= (length part) 1) (car part)
-          (format nil "~%***Incoherent 'instance' arguments: ~%   ~
-                      ~a, ~a" pattern parts)))
-      (t (instance1 pattern parts)))
-)) ; END instance
-
-
-
-(defun instance1 (pattern parts)
-;````````````````````````````````
-; NOTE: depracated after 10/15/2021 (see 'fill-template' in tt.lisp)
-; Substitute the words in the ith sublist of 'parts' for any occurrences 
-; of i in 'pattern'. This done recursively by replacing in-range integers
-; by corresponding parts, while recursively processing other elements and
-; wrapping a pair of brackets around them, and in the end appending 
-; everything;
-;
-  (if (atom pattern)
-    pattern
-    (let ((n (length parts)))
-      (apply #'append
-        (mapcar (lambda (x)
-          (if (and (integerp x) (> x 0) (<= x n))
-            (car (nthcdr (- x 1) parts))
-            (list (instance1 x parts))))
-        pattern))))
-) ; END instance1
-
-
-
 (defun readrules (rootname packet)
 ;``````````````````````````````````
 ; This reads in the set of decomposition and output rules. 
