@@ -1320,32 +1320,6 @@
 
 
 
-(defun print-history ()
-;```````````````````````
-; Pretty-prints the discourse history in order.
-; TODO: gist-clauses and LFs are now explicitly stored in memory, so
-; this needs to be reworked making use of the timegraph and/or temporal
-; relations between these episodes in memory.
-;
-  ;; (let ((ht (ds-dialogue-history *ds*)) (i 1))
-  ;;   (mapcar (lambda (turn-words turn-gist-clauses turn-semantics)
-  ;;     (let ((agent (first turn-words)) (words (second turn-words))
-  ;;           (gist-clauses (second turn-gist-clauses)) (semantics (second turn-semantics)))
-  ;;       (if (or (null gist-clauses) (not (listp (car gist-clauses))))
-  ;;         (setq gist-clauses (list gist-clauses)))
-  ;;       (format t "~a. ~a : ~a~%" i agent words)
-  ;;       (mapcar (lambda (gist-clause)
-  ;;         (format t "   gist: ~a~%" (if gist-clause gist-clause "None"))) gist-clauses)
-  ;;       (mapcar (lambda (ulf)
-  ;;         (format t "   ulf: ~a~%" (if ulf ulf "None"))) semantics))
-  ;;     (setq i (1+ i)))
-  ;;   (reverse (gethash 'words ht))
-  ;;   (reverse (gethash 'gist-clauses ht))
-  ;;   (reverse (gethash 'semantics ht))))
-) ; END print-history
-
-
-
 ;``````````````````````````````````````````````````````
 ;
 ; [*] MEMORY UTIL
