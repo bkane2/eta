@@ -33,12 +33,14 @@
 (defstruct schema
 ;```````````````````
 ; contains the following fields:
+; id            : a unique ID for this schema
 ; predicate     : the main predicate of the schema
 ; participants  : the participant roles of a schema present in the header (e.g., '(^me ^you))
 ; vars          : the variables scoped within a schema
 ; bindings      : current bindings for each variable in the schema (initialized to empty hash table)
 ; header        : the full header of the schema
 ; contents      : the contents of the schema as a list
+  (id (gentemp "SCHEMA"))
   predicate
   participants
   vars
@@ -316,16 +318,24 @@
 
 
 
+(defun subst-binding-expr (expr schema)
+;````````````````````````````````````````
+; Applies the variable bindings of a given schema to the given expression.
+;
+  (maphash (lambda (var val)
+        (setq expr (subst val var expr)))
+      (schema-bindings schema))
+  expr
+) ; END subst-binding-expr
+
+
+
 (defun get-schema-contents (schema)
 ;``````````````````````````````````````
 ; Gets the contents of a schema (substituting any bindings).
 ;
-  (let ((contents (schema-contents schema)))
-    (maphash (lambda (var val))
-        (setq contents (subst val var contents))
-      (schema-bindings schema))
-    contents
-)) ; END get-schema-contents
+  (subst-binding-expr (schema-contents schema) schema)
+) ; END get-schema-contents
 
 
 
@@ -333,12 +343,8 @@
 ;`````````````````````````````````````````````````````````````
 ; Gets a section of a schema by the given keyword (substituting any bindings).
 ;
-  (let ((section (funcall (sym-join (list type 'schema section) #\-) schema)))
-    (maphash (lambda (var val)
-        (setq section (subst val var section)))
-      (schema-bindings schema))
-    section
-)) ; END get-schema-section
+  (subst-binding-expr (funcall (sym-join (list type 'schema section) #\-) schema) schema)
+) ; END get-schema-section
 
 
 
@@ -429,3 +435,22 @@
     (t (cons (list (first contents) (second contents))
              (group-facts-in-schema-section (cddr contents)))))
 ) ; END group-facts-in-schema-section
+
+
+
+(defun print-schema (schema &key bindings)
+;```````````````````````````````````````````
+; Prints a given schema (with any variable substitutions made).
+;
+  (format t "~% ----------- ~a: ----------~%" (schema-id schema))
+  (format t " >> predicate: ~a~%" (schema-predicate schema))
+  (format t " >> participants: ~a~%" (schema-participants schema))
+  (when bindings
+    (format t " >> bindings:~%")
+    (maphash (lambda (k v)
+        (format t "     * ~a : ~a~%" k v))
+      (schema-bindings schema)))
+  (format t " >> contents:~%")
+  (format t "~s~%" (get-schema-contents schema))
+  (format t " -----------------------------------~%")
+) ; END print-schema

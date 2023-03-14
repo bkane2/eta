@@ -1,6 +1,7 @@
 ;; July 10/19 
 ;; ===========================================================
 ;;
+;; TODO REFACTOR : update this
 ;; For inputs, we use the question it answers to create a list
 ;; of simple, explicit English clauses, especially the first of 
 ;; which is intended to capture the "gist" of what was said,
@@ -52,7 +53,7 @@
 (defstruct ds
 ;```````````````````````````````
 ; contains the following fields:
-; curr-plan        : points to the currently due step in the 'surface' dialogue plan (an ordered list of steps)
+; curr-plan        : points to the currently due step in the 'surface' dialogue plan (an ordered list of plan nodes)
 ; task-queue       : a list of time-sharing tasks to repeatedly execute in cycles
 ; buffers          : a structure containing buffers (importance-ranked priority queues) for items that the dialogue
 ;                    system must process during a corresponding task (perceptions, inferences, intentions, etc.)
@@ -95,12 +96,12 @@
 
 
 
-(defun deepcopy-ds (old)
+(defun deepcopy-ds (old) ; {@}
 ;```````````````````````````````````````````
 ; Deep copy a dialogue state
 ;
   (let ((new (make-ds)))
-    (setf (ds-curr-plan new) (deepcopy-plan (ds-curr-plan old)))
+    (setf (ds-curr-plan new) (deepcopy-plan-node (ds-curr-plan old)))
     (setf (ds-task-queue new) (copy-tree (ds-task-queue old)))
     (setf (ds-buffers new) (deepcopy-buffers (ds-buffers old)))
     (setf (ds-reference-list new) (copy-tree (ds-reference-list old)))
@@ -146,7 +147,7 @@
 
 
 
-(defun deepcopy-buffers (old)
+(defun deepcopy-buffers (old) ; {@}
 ;``````````````````````````````````
 ; Deep copy a buffers structure
 ;
@@ -188,7 +189,7 @@
 
 
 
-(defun deepcopy-dialogue-turn (old)
+(defun deepcopy-dialogue-turn (old) ; {@}
 ;``````````````````````````````````````
 ; Deep copy a dialogue turn structure
 ;
@@ -207,25 +208,9 @@
 
 
 
-(defun init ()
+(defun init () ; {@}
 ;`````````````````````````````
 ; Initialize global parameters
-;
-; TODO:
-; Other global parameters used here, but whose values are set elsewhere,
-; are:  ***THIS NEEDS UPDATING
-;      *output-semantics*
-;      *output-gist-clauses*
-;      *reactions-to-input* (top-level choice tree for selecting a
-;         schema or subtree to react to a user turn (possibly multiple
-;         extracted "gist clauses")
-;      *reaction-to-assertion* for individual user assertions
-;      *reaction-to-question* for individual user questions
-;      *interpretation-of-input* (top-level interpretation tree),
-;         and many other interpretation trees (built from packets).
-;      *gist-clause-trees* (top-level gist clause extraction
-;         tree) and many subsidiary gist-clause extraction trees
-;         (formed from corresponding packets).
 ;
   ; Use response inhibition via latency numbers when *use-latency* = T
   (defvar *use-latency* t)
@@ -235,13 +220,13 @@
     perform-next-step
     perceive-world
     interpret-perceptions
-    ;; form-intentions-from-input
+    suggest-possible-actions-from-input
     infer-facts-top-down
     infer-facts-bottom-up
-    ;; add-intentions-to-plan
-    react-to-input
-    ;; merge-equivalent-plan-steps
-    ;; reorder-conflicting-plan-step
+    add-possible-actions-to-plan
+    elaborate-abstract-plan-steps
+    merge-equivalent-plan-steps
+    reorder-conflicting-plan-step
     evict-buffers
   ))
 
@@ -375,7 +360,7 @@
 
 
 
-(defun init-ds ()
+(defun init-ds () ; {@}
 ;``````````````````````
 ; Initializes a dialogue state record structure with any special
 ; properties of the dialogue state (e.g. hash tables, task queues, etc.)
@@ -409,7 +394,7 @@
 
 
 
-(defun rewind-ds (offset)
+(defun rewind-ds (offset) ; {@}
 ;```````````````````````````
 ; Rewind the dialogue state to a previous state in the stack of recorded states
 ; (specified by a relative offset).
@@ -429,7 +414,7 @@
 
 (defun eta (&key (subsystems-perception '(|Terminal| |Audio|)) (subsystems-specialist '())
                  (dependencies nil) (response-generator 'RULE) (gist-interpreter 'RULE) (parser 'RULE)
-                 (emotions nil) (read-log nil))
+                 (emotions nil) (read-log nil)) ; {x}
 ;``````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Main program: Originally handled initial and final formalities,
 ; (now largely commented out) and controls the loop for producing,
@@ -481,17 +466,19 @@
     (setq *log-ptr* -1))
 
   ; If have-eta-dialog.v is not present in schema library, return an error
+  ; TODO REFACTOR
   (when (null (get-stored-schema 'have-eta-dialog.v))
     (format t "***  schema for have-eta-dialog.v not found. If using a multi-session avatar, make sure *session-number* is set.~%")
     (return-from eta nil))
 
   ; Initiate the dialogue plan, beginning from the schema for have-eta-dialog.v
+  ; TODO REFACTOR
   (setf (ds-curr-plan *ds*) (init-plan-from-schema (get-stored-schema 'have-eta-dialog.v) nil))
 
   ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
-  ; The interaction continues so long as the dialogue plan has another step
-  (loop while (has-next-step? (ds-curr-plan *ds*)) do
+  ; The interaction continues so long as the dialogue plan has a current step to execute
+  (loop while (ds-curr-plan *ds*) do
     (do-task (select-and-remove-task)))
 
   ; Write any final buffered output
@@ -504,7 +491,7 @@
 
 
 
-(defun refill-task-queue ()
+(defun refill-task-queue () ; {@}
 ;```````````````````````````````````
 ; Refills the task queue after it becomes empty.
 ;
@@ -515,7 +502,7 @@
 
 
 
-(defun select-and-remove-task ()
+(defun select-and-remove-task () ; {@}
 ;```````````````````````````````````
 ; Select the task at the front of the task queue. Return the
 ; task and update the queue, refilling the queue when empty.
@@ -534,7 +521,7 @@
 
 
 
-(defun do-task (task)
+(defun do-task (task) ; {@}
 ;````````````````````````
 ; Given a symbol denoting a task, call the top-level function
 ; implementing that task.
@@ -547,14 +534,14 @@
     (perform-next-step (perform-next-step))
     (perceive-world (perceive-world))
     (interpret-perceptions (interpret-perceptions))
-    ;; (form-intentions-from-input (form-intentions-from-input))
+    (suggest-possible-actions-from-input (suggest-possible-actions-from-input))
     (infer-facts-top-down (infer-facts-top-down))
     (infer-facts-bottom-up (infer-facts-bottom-up))
-    ;; (add-intentions-to-plan (add-intentions-to-plan))
-    (react-to-input (react-to-input))
+    (add-possible-actions-to-plan (add-possible-actions-to-plan))
+    (elaborate-abstract-plan-steps (elaborate-abstract-plan-steps))
+    (merge-equivalent-plan-steps (merge-equivalent-plan-steps))
+    (reorder-conflicting-plan-step (reorder-conflicting-plan-step))
     (evict-buffers (evict-buffers))
-    ;; (merge-equivalent-plan-steps (merge-equivalent-plan-steps))
-    ;; (reorder-conflicting-plan-step (reorder-conflicting-plan-step))
   )
 
 ) ; END do-task
@@ -563,10 +550,21 @@
 
 
 
-(defun perform-next-step ()
+;``````````````````````````````````````````````````````
+;
+; [*] CORE TASK IMPLEMENTATIONS
+;
+;``````````````````````````````````````````````````````
+
+
+
+
+
+(defun perform-next-step () ; {x}
 ;````````````````````````````````````
 ; Performs the next step of the current dialogue plan, and
 ; updates the plan state, removing any completed subplans.
+; TODO REFACTOR
 ;
   (let ((plan (ds-curr-plan *ds*)) subplan curr-step wff subj certainty plan-advanced?)
 
@@ -595,6 +593,7 @@
         ; read next tuple in log as input.
         ; NOTE: the following code is only relevant if (*read-log-mode* t) is set in config.lisp.
         ; TODO: this still isn't working; need to look into this more.
+        ; TODO REFACTOR
         (when (and (= *output-listen-prompt* 1) *read-log*)
           (process-and-increment-log)
           (update-plan-state plan)
@@ -643,7 +642,7 @@
 
 
 
-(defun perceive-world ()
+(defun perceive-world () ; {@}
 ;````````````````````````````````````
 ; Perceive the world by cycling through each of Eta's registered subsystems
 ; collecting facts from each one, and adding them to context as well as a
@@ -691,15 +690,15 @@
       (mapcar (lambda (input)
         (enqueue-in-buffer (list ep-name-new input)
           (buffers-perceptions (ds-buffers *ds*))))
-        inputs)
-    )
+        inputs))
+
 )) ; END perceive-world
 
 
 
 
 
-(defun interpret-perceptions ()
+(defun interpret-perceptions () ; {x}
 ;```````````````````````````````
 ; Given a list of enqueued perceptions, go through each one and interpret it
 ; in the context of the current (sub)plan (emptying the queue in the process).
@@ -719,7 +718,26 @@
 
 
 
-(defun infer-facts-top-down ()
+(defun suggest-possible-actions-from-input () ; {@}
+;````````````````````````````````````````````````
+; TBC
+;
+  (let* (poss-action)
+
+    ; Form a reaction to each gist clause in the buffer (removing nil gists, unless they are
+    ; the only gist present, in which case it may be possible to form a reaction to that)
+    (dolist (gist (mapcar #'second (purify-func (iterate-buffer (buffers-gists (ds-buffers *ds*))))))
+      (setq poss-action (suggest-reaction-to-input gist))
+      (when poss-action
+        (enqueue-in-buffer poss-action (buffers-actions (ds-buffers *ds*)))))
+
+)) ; END suggest-possible-actions-from-input
+
+
+
+
+
+(defun infer-facts-top-down () ; {@}
 ;```````````````````````````````
 ; TBC
 ;
@@ -730,8 +748,8 @@
 
 
 
-(defun infer-facts-bottom-up ()
-;````````````````````````````````````
+(defun infer-facts-bottom-up () ; {@}
+;``````````````````````````````````
 ; TBC
 ; 
   nil
@@ -741,44 +759,63 @@
 
 
 
-(defun react-to-input ()
-;````````````````````````````````````
-; React to the system's interpretation of user's input with a new subplan, if
-; appropriate. Currently, this is determined by a pattern transduction tree for
-; choosing reactions (as :schema or :out directives). In the future, this might
-; be replaced by more sophisticated schema selection mechanisms.
-;
-; TODO: currently, this makes the following assumptions:
-; * Reactions are selected according to only the gist clause(s) for a particular
-;   episode. While this suffices for current applications, this may need to take
-;   into account ULF interpretations in the future.
-; * In cases where multiple gists are extracted, the system may choose multiple
-;   different subschemas to react with. For now, we simply choose the first subschema.
-; * The chosen subschema will be added as a subplan to the current action. However, other
-;   possibilities may be pursued in the future, such as replacing the current plan with the
-;   chosen schema entirely.
+(defun add-possible-actions-to-plan () ; {x}
+;```````````````````````````````````````
+; TBC
 ; 
-  (let* ((subplan (find-curr-subplan (ds-curr-plan *ds*))) (curr-step (get-curr-pending-step subplan)) new-subplan
-         (ep-name (get-step-ep-name curr-step)) (wff (get-step-wff curr-step)) poss-subplans)
+  (let (poss-action)
+    ; For now, we assume that the system will only attempt to fit the most urgent
+    ; action into the plan, and the rest will be evicted before the next task cycle
+    (setq poss-action (pop-item-from-buffer (buffers-actions (ds-buffers *ds*))))
+    (when poss-action
+      ; (add-action-to-plan poss-action)
+    )
+  ;; ; Choose the first possible subplan and add to current step
+  ;;   (setq poss-subplans (remove nil poss-subplans))
+  ;;   (setq new-subplan (car (reverse poss-subplans)))
 
-    ; Form a reaction to each gist clause in the buffer (removing nil gists, unless they are
-    ; the only gist present, in which case it may be possible to form a reaction to that)
-    (dolist (gist (mapcar #'second (purify-func (iterate-buffer (buffers-gists (ds-buffers *ds*))))))
-      (push (plan-reaction-to gist ep-name) poss-subplans))
-
-    ; Choose the first possible subplan and add to current step
-    (setq poss-subplans (remove nil poss-subplans))
-    (setq new-subplan (car poss-subplans))
-
-    (if new-subplan
-      (add-subplan-curr-step subplan new-subplan))
-)) ; END react-to-input
-
+  ;;   (if new-subplan
+  ;;     (add-subplan-curr-step subplan new-subplan))
+)) ; END add-possible-actions-to-plan
 
 
 
 
-(defun evict-buffers ()
+
+(defun elaborate-abstract-plan-steps () ; {x}
+;```````````````````````````````````````
+; TBC
+; 
+  nil
+) ; END elaborate-abstract-plan-steps
+
+
+
+
+
+(defun merge-equivalent-plan-steps () ; {@}
+;```````````````````````````````````````
+; TBC
+; 
+  nil
+) ; END merge-equivalent-plan-steps
+
+
+
+
+
+(defun reorder-conflicting-plan-step () ; {@}
+;```````````````````````````````````````
+; TBC
+; 
+  nil
+) ; END reorder-conflicting-plan-step
+
+    
+
+
+
+(defun evict-buffers () ; {@}
 ;```````````````````````````
 ; Clears buffers of pending facts upon each full cycle through
 ; task list. This assumes that facts are handled "in batch"
@@ -799,12 +836,98 @@
 
 
 
-(defun implement-next-plan-episode (subplan)
+(defun suggest-reaction-to-input (user-gist-clause) ; {@}
+;````````````````````````````````````````````````````
+; Starting at a top-level choice tree root, choose an action
+; suitable for reacting to 'user-gist-clause' (which is a single
+; sentence, without tags (and with a final detached "\." or "?"),
+; that captures the main content (gist) of a user input). Return
+; a WFF for an action suitable for reacting to that input.
+;
+; If the action arrived at is a particular verbal output (or gist
+; clause to paraphrase), signalled by either an :out or :gist directive
+; respectfully, return the respective speech act.
+;
+; Otherwise, the action will correspond to a schema (potentially with
+; specified arguments), signalled by either the :schema or :schema+args
+; directive, respectfully.
+;
+; TODO REFACTOR : is there any need for explicit :schema or :schema+args
+; directives now?
+;
+  (let (choice wff schema-name args eta-gist-clause keys)
+    
+    (if (null user-gist-clause)
+      (return-from suggest-reaction-to-input nil))
+
+    (format t "~% ========== Eta Reaction ==========") ; DEBUGGING
+
+    ; Use choice tree '*reaction-to-input* to select reaction to gist clause
+    (format t "~%  * Reacting to user clause: ~a " user-gist-clause) ; DEBUGGING
+    (setq choice (choose-result-for user-gist-clause '*reaction-to-input*))
+    (format t "~%  * Chose reaction: ~a ~%" choice) ; DEBUGGING
+
+    (cond
+      ; null choice -- do nothing (return nil)
+      ((null choice) nil)
+
+      ; :gist directive
+      ((eq (car choice) :gist)
+        (cond
+          ((atom (first (cdr choice)))
+            (setq eta-gist-clause (cdr choice)))
+          (t
+            (setq eta-gist-clause (first (cdr choice)))
+            (setq keys (second (cdr choice)))))
+        ;; (format t "~%chosen Eta gist clause = ~a~%" eta-gist-clause) ; DEBUGGING
+        `(^me paraphrase-to.v ^you (quote ,eta-gist-clause)))
+
+      ; :out directive
+      ((eq (car choice) :out)
+        (if (null (cdr choice))
+          nil
+          (create-say-to-wff (cdr choice))))
+
+      ; :schema directive
+      ((eq (car choice) :schema)
+        (setq schema-name (cdr choice))
+        schema-name)
+
+      ; :schema+args directive
+      ((eq (car choice) :schema+args)
+        ; We assume that the cdr of 'choice' must then be of form
+        ; (<schema name> <argument list>)
+        ; The idea is that the separate pieces of the word sequence
+        ; supply separate gist clauses that Eta may react to in the
+        ; steps of the schema. These are provided as sublists in 
+        ; <argument list>.
+        (setq schema-name (first (cdr choice)) args (second (cdr choice)))
+        (cons (car args) (cons schema-name (cdr args)))))
+
+)) ; END suggest-reaction-to-input
+
+
+
+
+
+;``````````````````````````````````````````````````````
+;
+; [*] CORE SUBPLAN EXPANSION METHODS
+;
+;``````````````````````````````````````````````````````
+
+
+
+
+
+(defun implement-next-plan-episode (subplan) ; {x}
 ;``````````````````````````````````````````````
 ; Any "abstract" plan episodes concerned with control flow (e.g., conditional events,
 ; repeating an event, etc.), as opposed to actions starting with "^me" or "^you", are
 ; implemented here. Execution of such episodes by Eta involves modifying the plan structure
 ; in a way that corresponds to the episode in question.
+; TODO REFACTOR : the "expand subplan" part of this should be split off into the
+; elaborate-abstract-plan-steps task, rather than execution
 ;
   (let* ((curr-step (get-curr-pending-step subplan)) bindings expr new-subplan var-bindings
          (ep-name (get-step-ep-name curr-step)) (wff (get-step-wff curr-step))
@@ -878,7 +1001,7 @@
 
 
 
-(defun implement-next-eta-action (subplan)
+(defun implement-next-eta-action (subplan) ; {x}
 ;``````````````````````````````````````````````````
 ; Any actions by Eta are implemented here. We assume that this program
 ; is called only if the first action of the plan is already known to be of
@@ -917,6 +1040,9 @@
 ;   TREES FOR FINDING SUITABLE METHODS FOR ELABORATION (AND DOING 
 ;   FREQUENT OVERALL CONSISTENCY, PROBABILITY, AND UTILITY 
 ;   CALCULATIONS).
+;
+; TODO REFACTOR : the "expand subplan" part of this should be split off into the
+; elaborate-abstract-plan-steps task, rather than execution
 ;
   (let* ((curr-step (get-curr-pending-step subplan)) bindings expr expr-new new-subplan var-bindings
          (ep-name (get-step-ep-name curr-step)) (wff (get-step-wff curr-step)) n
@@ -1529,7 +1655,7 @@
 
 
 
-(defun interpret-perception-in-context (fact plan)
+(defun interpret-perception-in-context (fact plan) ; {x}
 ;````````````````````````````````````````````````````````
 ; Interpret a 'primitive' perception in the context of the current plan status.
 ; In the case of a perceived "^you say-to.v ^me" action by the user, the relevant
@@ -1547,6 +1673,8 @@
 ; for the user, and possibly additional pragmatic interpretations. After doing so (and storing them in memory),
 ; we store the fact:
 ; ((^you reply-to.v E1) ** E2)
+;
+; TODO REFACTOR : this only seems to require the wff of the current plan step, so should be easy enough
 ;
   (let* (ep-name wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gist-clauses
          user-gist-clauses user-semantics user-pragmatics eta-obligations goal-step ka try-success relative-ep-name
@@ -1711,11 +1839,31 @@
 
 
 
-(defun plan-if-else (expr)
+;``````````````````````````````````````````````````````
+;
+; [*] CORE PRIMITIVE ACTION IMPLEMENTATIONS
+; TODO REFACTOR : should have a separate file allowing for
+; implementations of primitive actions
+; (maybe specific to each avatar??)
+;
+;``````````````````````````````````````````````````````
+
+
+
+
+
+(defun plan-if-else (expr) ; {x}
 ;``````````````````````````````````````````
 ; expr = (cond name1 wff1 name2 wff2 ... :else (name3 wff3 name4 wff4 ...))
 ; Expr is a condition followed by consecutive name & wff pairs. Optionally,
 ; this is followed by an :else keyword and additional name & wff pairs.
+;
+; TODO REFACTOR : the "expand subplan" part of this should be split off into the
+; elaborate-abstract-plan-steps task, rather than execution.
+; Simply expand an abstract :if/:else step into the respective substeps depending on
+; whether the condition holds? NOTE: this means that only the currently due step can
+; be expanded in this case (since future steps may depend on conditions that will be
+; satisfied in the course of executing current step).
 ;
   (let* ((cnd (car expr)) (rst (cdr expr))
          (else-episodes (car (get-keyword-contents rst '(:else))))
@@ -1734,7 +1882,7 @@
 
 
 
-(defun plan-try-in-sequence (expr)
+(defun plan-try-in-sequence (expr) ; {x}
 ;``````````````````````````````````````````````````
 ; expr = ((:if cond1 name1.1 wff1.1 name1.2 wff1.2 ...)
 ;         (:if cond2 name2.1 wff2.1 name2.2 wff2.2 ...) ...
@@ -1742,6 +1890,8 @@
 ; Expr is a list of consecutive (:if cond e1 e2 ...) lists, potentially followed
 ; by a final (:else e1 e2 ...) list. These conditions should be tried in sequence,
 ; instantiating the first one which holds true.
+;
+; TODO REFACTOR : see note in plan-if-else
 ;
   (let* ((lst1 (car expr)) (else1 (if (equal (first lst1) :else) t))
          (cond1 (if (not else1) (second lst1)))
@@ -1760,7 +1910,7 @@
 
 
 
-(defun plan-repeat-until (subplan ep-name expr)
+(defun plan-repeat-until (subplan ep-name expr) ; {x}
 ;`````````````````````````````````````````````````````````
 ; expr = (ep-var cond name1 wff1 name2 wff2 ...)
 ;
@@ -1781,6 +1931,8 @@
 ; THESE SHOULD BE PRETTY SIMPLE, JUST LISTING THE ACTIONS & PROVIDING
 ; seq-ep, consec-ep, ETC. RELATIONS IN THE SUBPLAN. 
 ;
+; TODO REFACTOR : see note in plan-if-else
+;
   (let ((cond1 (first expr)) (expr-rest (cdr expr)) truth-val new-subplan)
     ; First check termination condition
     (setq truth-val (eval-truth-value cond1))
@@ -1797,7 +1949,7 @@
 
 
 
-(defun plan-reply-to (user-gist-clause ep-name)
+(defun plan-reply-to (user-gist-clause ep-name) ; {x}
 ;````````````````````````````````````````````````````````````````
 ; Starting at a top-level choice tree root, choose a reply utterance 
 ; based on 'user-gist-clauses' (which is one or more sentences, without tags
@@ -1814,6 +1966,9 @@
 ; If the action arrived at is another choice tree root (signalled by
 ; directive :subtree), this will be automatically pursued recursively
 ; in the search for a choice, ultimately delivering a verbal output.
+;
+; TODO REFACTOR : expand abstract step. Can a generic reply-to.v schema be
+; created instead here?
 ;
   (let (choice wff args eta-gist-clause keys)
     
@@ -1869,7 +2024,7 @@
 
 
 
-(defun plan-reaction-to (user-gist-clause ep-name)
+(defun plan-reaction-to (user-gist-clause ep-name) ; {x}
 ;``````````````````````````````````````````````````````
 ; Starting at a top-level choice tree root, choose an action or
 ; subschema suitable for reacting to 'user-gist-clause' (which
@@ -1892,6 +2047,8 @@
 ; If the action arrived at is a :schema+args "action" (a schema name
 ; along with an argument list), use this schema to form a subplan.
 ;
+; TODO REFACTOR : expand abstract step. Can a generic reply-to.v schema be
+; created instead here?
 ;
   (let (choice wff schema-name args eta-gist-clause keys)
     
@@ -1960,7 +2117,7 @@
 
 
 
-(defun plan-proposal (proposal-gist)
+(defun plan-proposal (proposal-gist) ; {x}
 ;````````````````````````````````````````````````
 ; Given a proposal gist clause, convert it to an utterance using
 ; hierarchical transduction trees, starting at a top-level choice
@@ -1992,7 +2149,7 @@
 
 
 
-(defun plan-correction (correction-gist)
+(defun plan-correction (correction-gist) ; {x}
 ;````````````````````````````````````````````````````
 ; Given a correction gist clause, convert it to an utterance using
 ; hierarchical transduction trees, starting at a top-level choice
@@ -2021,7 +2178,7 @@
 
 
 
-(defun plan-tell (info) ; TBC
+(defun plan-tell (info) ; {@}
 ;`````````````````````````````
 ; Return the name of a plan for telling the user the 'info';
 ; 'info' is a reified proposition that may be in a form that makes
@@ -2045,7 +2202,7 @@
 
 
 
-(defun plan-description (topic) ; TBC
+(defun plan-description (topic) ; {@}
 ;`````````````````````````````````````
   (if (null info) (return-from plan-description nil))
   ; TBC
@@ -2055,7 +2212,7 @@
 
 
 
-(defun plan-suggest (suggestion) ; TBC
+(defun plan-suggest (suggestion) ; {@}
 ;````````````````````````````````````````
   (if (null suggestion) (return-from plan-suggest nil))
   ; TBC
@@ -2065,7 +2222,7 @@
 
 
 
-(defun plan-question (query) ; TBC
+(defun plan-question (query) ; {@}
 ;```````````````````````````````````
   (if (null query) (return-from plan-question nil))
   ; TBC
@@ -2075,7 +2232,7 @@
 
 
 
-(defun plan-saying-hello () ; TBC
+(defun plan-saying-hello () ; {@}
 ;`````````````````````````````````
   ; TBC
 ) ; END plan-saying-hello
@@ -2084,7 +2241,7 @@
 
 
 
-(defun plan-saying-bye ()
+(defun plan-saying-bye () ; {@}
 ;```````````````````````````````
 ; At the moment, this just causes Eta to immediately exit.
   ; Write any final buffered output
@@ -2097,7 +2254,18 @@
 
 
 
-(defun observe-variable-type (sk-var type)
+;``````````````````````````````````````````````````````
+;
+; [*] CORE MISC FUNCTIONS
+; TODO REFACTOR : might be able to move these to util
+;
+;``````````````````````````````````````````````````````
+
+
+
+
+
+(defun observe-variable-type (sk-var type) ; {@}
 ;```````````````````````````````````````````
 ; Through observation of the world, find an entity which can fill in
 ; variable of type (variable assumed to be neither in schema header or
@@ -2115,7 +2283,7 @@
 
 
 
-(defun choose-variable-restrictions (sk-var restrictions)
+(defun choose-variable-restrictions (sk-var restrictions) ; {@}
 ;``````````````````````````````````````````````````````````
 ; Handles any indefinite quantification of a variable filled
 ; through a choice  made by Eta, given a list of restrictions.
@@ -2145,7 +2313,7 @@
 
 
 
-(defun obviated-question (sentence eta-action-name)
+(defun obviated-question (sentence eta-action-name) ; {@}
 ;````````````````````````````````````````````````````
 ; Check whether this is a (quoted, bracketed) question.
 ; If so, check what facts, if any, are stored in gist-kb-user under 
@@ -2154,6 +2322,7 @@
 ; seem to provide an answer to the gist-version of the question.
 ; NOTE: modified to check if gist clause contains question rather than surface
 ; sentence (B.K. 4/17/2020)
+; TODO REFACTOR : can this be replaced with more generic method for detecting obviated questions?
 ;
   (let (gist-clauses topic-keys facts)
     ;; (format t "~% ****** input sentence: ~a~%" sentence)
@@ -2181,12 +2350,13 @@
 
 
 
-(defun obviated-action (eta-action-name)
+(defun obviated-action (eta-action-name) ; {@}
 ;`````````````````````````````````````````
 ; Check whether this is an obviated action (such as a schema instantiation),
 ; i.e. if the action has a topic-key(s) associated, check if any facts are stored
 ; in gist-kb-user under the topic-key(s). If there are such facts, we assume that
 ; these facts obviate the action, so the action can be deleted from the plan.
+; TODO REFACTOR : can this be replaced with more generic method for detecting obviated actions?
 ;
   (let (topic-keys facts)
     (setq topic-keys (get eta-action-name 'topic-keys))
@@ -2204,8 +2374,19 @@
 
 
 
-(defun form-surface-utterance-using-language-model (&optional gist-clause)
-;```````````````````````````````````````````````````````````````````````````````````````````
+;``````````````````````````````````````````````````````
+;
+; [*] CORE INTERPRETATION/GENERATION
+; TODO REFACTOR : should move these to separate nlp module
+;
+;``````````````````````````````````````````````````````
+
+
+
+
+
+(defun form-surface-utterance-using-language-model (&optional gist-clause) ; {@}
+;```````````````````````````````````````````````````````````````````````````````
 ; Generate a surface utterance using a language model (currently, GPT-3).
 ;
 ; This will automatically generate a prompt using the system's current schema
@@ -2221,9 +2402,9 @@
 ; generation: the prompt will be followed by the full dialogue hisory, and the
 ; model will be prompted to generate the next response.
 ;
-  (let ((curr-subplan (find-curr-subplan (ds-curr-plan *ds*))) utterance
-        rigid-conds static-conds preconds goals relevant-knowledge facts
-        history history-agents history-utterances facts-str history-str
+  (let ((schemas (plan-step-schemas (plan-node-step (ds-curr-plan *ds*))))
+        utterance rigid-conds static-conds preconds goals relevant-knowledge
+        facts history history-agents history-utterances facts-str history-str
         choice examples examples-str emotion prev-utterance)
 
     ; Split off emotion in given gist-clause (if any)
@@ -2231,19 +2412,24 @@
       (setq emotion (first (split-emotion-tag gist-clause)))
       (if emotion (setq gist-clause (second (split-emotion-tag gist-clause)))))
 
-    ; Get conditions and goals of schema
+    ; Get conditions and goals of schema(s)
     ; TODO: add other relevant schema categories here in the future
-    (setq rigid-conds (get-schema-section-wffs (plan-schema curr-subplan) :rigid-conds))
-    (setq static-conds (get-schema-section-wffs (plan-schema curr-subplan) :static-conds))
-    (setq preconds (get-schema-section-wffs (plan-schema curr-subplan) :preconds))
-    (setq goals (get-schema-section-wffs (plan-schema curr-subplan) :goals))
+    (dolist (schema schemas)
+      (setq rigid-conds (append rigid-conds (get-schema-section-wffs schema :rigid-conds)))
+      (setq static-conds (append static-conds (get-schema-section-wffs schema :static-conds)))
+      (setq preconds (append preconds (get-schema-section-wffs schema :preconds)))
+      (setq goals (append goals (get-schema-section-wffs schema :goals))))
+
+    (format t "~%  * Generating response using schemas: <~a> "
+      (str-join (mapcar #'schema-predicate schemas) #\,)) ; DEBUGGING
 
     ; Get relevant knowledge
     ; TODO: replace the following once a more general retrieval method is used
     (setq relevant-knowledge (reverse (get-all-from-kb)))
 
     ; Combine facts and convert to strings
-    (setq facts (append relevant-knowledge rigid-conds static-conds preconds goals))
+    (setq facts (remove-duplicates
+      (append relevant-knowledge rigid-conds static-conds preconds goals) :test #'equal))
     (setq facts-str (remove nil (mapcar (lambda (fact)
       (if (sentence? fact)
         (words-to-str fact)
@@ -2257,9 +2443,6 @@
     (setq history-str
       (mapcar (lambda (agent utterance) (list (string agent) (words-to-str utterance)))
         history-agents history-utterances))
-
-    (format t "~%  * Generating response using schema for ~a "
-      (schema-predicate (plan-schema curr-subplan))) ; DEBUGGING
 
     ; Generate response
     (cond
@@ -2309,7 +2492,7 @@
 
 
 
-(defun form-surface-utterance-from-gist-clause (gist-clause prior-gist-clause)
+(defun form-surface-utterance-from-gist-clause (gist-clause prior-gist-clause) ; {@}
 ;``````````````````````````````````````````````````````````````````````````````
 ; Given a gist-clause by Eta, elaborate it into a surface utterance using the
 ; context provided by the prior gist-clause using choice trees.
@@ -2353,7 +2536,7 @@
 
 
 
-(defun form-gist-clauses-using-language-model (words prior-gist-clause &optional (agent '^you))
+(defun form-gist-clauses-using-language-model (words prior-gist-clause &optional (agent '^you)) ; {@}
 ;`````````````````````````````````````````````````````````````````````````````````````````````````
 ; Extract gist clauses from words using a language model (currently, GPT-3), given
 ; the context of the previous gist clause.
@@ -2402,7 +2585,7 @@
 
 
 
-(defun form-gist-clauses-from-input (words prior-gist-clause)
+(defun form-gist-clauses-from-input (words prior-gist-clause) ; {@}
 ;``````````````````````````````````````````````````````````````
 ; Find a list of gist-clauses corresponding to the user's 'words',
 ; interpreted in the context of 'prior-gist-clause' (usually a
@@ -2496,7 +2679,7 @@
 
 
 
-(defun form-semantics-from-gist-clause (clause)
+(defun form-semantics-from-gist-clause (clause) ; {@}
 ;``````````````````````````````````````````````````
 ; Find the ULF corresponding to the user's 'clause' (a gist clause).
 ;
@@ -2521,7 +2704,7 @@
 
 
 
-(defun form-pragmatics-from-gist-clause (clause)
+(defun form-pragmatics-from-gist-clause (clause) ; {@}
 ;``````````````````````````````````````````````````
 ; Interpret additional (secondary) pragmatic ULFs from the
 ; user's 'clause' (a gist clause). E.g., the direct semantic
@@ -2545,7 +2728,7 @@
 
 
 
-(defun eval-truth-value (wff)
+(defun eval-truth-value (wff) ; {@}
 ;```````````````````````````````
 ; Evaluates the truth of a conditional schema action.
 ; This assumes a CWA, i.e., if something is not found in
@@ -2578,7 +2761,7 @@
 
 
 
-(defun choose-result-for (clause rule-node)
+(defun choose-result-for (clause rule-node) ; {@}
 ;`````````````````````````````````````````````
 ; This is just the top-level call to 'choose-result-for', with
 ; no prior match providing a value of 'parts', i.e., 'parts' = nil;
@@ -2590,7 +2773,7 @@
 
 
 
-(defun choose-result-for1 (clause parts rule-node visited-subtrees)
+(defun choose-result-for1 (clause parts rule-node visited-subtrees) ; {@}
 ;``````````````````````````````````````````````````````````````````````````
 ; This is a generic choice-tree search program, used both for
 ; (i) finding gist clauses in user inputs (starting with selection
