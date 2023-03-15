@@ -323,7 +323,7 @@
 
   ; If *emotions* is T, Eta will allow use of emotion tags at beginning of outputs.
   (defparameter *emotions* nil)
-  (defparameter *emotions-list* '([NEUTRAL] [SAD] [HAPPY] [WORRIED] [ANGRY]))
+  (defparameter *emotions-list* '([NEUTRAL] [SAD] [HAPPY] [AFRAID] [ANGRY] [SURPRISED] [DISGUSTED]))
 
   ; Log contents and pointer corresponding to current position in log.
   (defparameter *log-contents* nil)
