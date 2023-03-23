@@ -81,11 +81,14 @@
 
 
 
-(defun deepcopy-epi-schema (old)
-;```````````````````````````````````
+(defun deepcopy-epi-schema (old &key keep-id)
+;```````````````````````````````````````````````
 ; Deep copy an episode schema structure
 ;
-  (let ((new (make-epi-schema)))
+  (let (new)
+    (if keep-id
+      (setq new (make-epi-schema :id (schema-id old)))
+      (setq new (make-epi-schema)))
     (setf (epi-schema-predicate new) (copy-tree (epi-schema-predicate old)))
     (setf (epi-schema-participants new) (copy-tree (epi-schema-participants old)))
     (setf (epi-schema-vars new) (copy-tree (epi-schema-vars old)))
@@ -118,7 +121,7 @@
     (push (list :predicate predicate) schema)
     (setq header (car (get-keyword-contents schema-contents '(:header))))
     (push (list :participants (remove 'set-of (remove predicate (butlast (flatten header) 2)))) schema)
-    (push (list :vars (remove-if-not #'variable? (flatten schema-contents))) schema)
+    (push (list :vars (remove-duplicates (remove-if-not #'variable? (flatten schema-contents)))) schema)
     (push (list :contents schema-contents) schema)
 
     ; schema sections
@@ -153,11 +156,14 @@
 
 
 
-(defun deepcopy-obj-schema (old)
-;```````````````````````````````````
+(defun deepcopy-obj-schema (old &key keep-id)
+;```````````````````````````````````````````````
 ; Deep copy an object schema structure
 ;
-  (let ((new (make-obj-schema)))
+  (let (new)
+    (if keep-id
+      (setq new (make-obj-schema :id (schema-id old)))
+      (setq new (make-obj-schema)))
     (setf (obj-schema-predicate new) (copy-tree (obj-schema-predicate old)))
     (setf (obj-schema-participants new) (copy-tree (obj-schema-participants old)))
     (setf (obj-schema-vars new) (copy-tree (obj-schema-vars old)))
@@ -211,6 +217,17 @@
       (store-obj-schema predicate schema-contents))
     (t (format t "~% *** error: schema for ~a must begin with either epi-schema or obj-schema ~%" predicate)))
 ) ; END store-schema
+
+
+
+(defun deepcopy-schema (schema &key keep-id)
+;`````````````````````````````````````````````
+; Deep copy a schema structure.
+;
+  (if (epi-schema-p schema)
+    (deepcopy-epi-schema schema :keep-id keep-id)
+    (deepcopy-obj-schema schema :keep-id keep-id))
+) ; END deepcopy-schema
 
 
 
@@ -390,6 +407,7 @@
 ; skolem constant, if any.
 ; TODO: once more general schema matching is implemented, these variable bindings should
 ; be done upon matching the :types in a schema to corresponding formulas in context.
+; USES DS
 ;
   (let (name wff var)
     (dolist (pair (group-facts-in-schema-section (get-schema-section schema :types)))
@@ -412,6 +430,7 @@
 (defun instantiate-epi-schema-rigid-conds (schema)
 ;``````````````````````````````````````````````````````
 ; Adds the instantiated rigid-conds within a schema to context.
+; USES DS
 ;
   (let (name wff)
     (dolist (pair (group-facts-in-schema-section (get-schema-section schema :rigid-conds)))
@@ -454,3 +473,13 @@
   (format t "~s~%" (get-schema-contents schema))
   (format t " -----------------------------------~%")
 ) ; END print-schema
+
+
+
+(defun print-schema-instances (schema-instances &key bindings)
+;````````````````````````````````````````````````````````````````
+; Prints all schema instances (given a hash table).
+;
+  (maphash (lambda (schema-id schema)
+    (print-schema schema :bindings bindings)) schema-instances)
+) ; END print-schema-instances

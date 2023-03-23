@@ -34,13 +34,13 @@
 ;`````````````````````````````````
 ; Deep copy a plan-node structure recursively (note that we need to maintain a
 ; hash table mapping visited plan-step IDs to the new plan-step structures, in
-; order to prevent creation of duplicates; likewise for schemas).
+; order to prevent creation of duplicates).
 ;
-  (let ((visited (make-hash-table)) (schemas (make-hash-table)))
+  (let ((visited (make-hash-table)))
     (labels ((deepcopy-plan-node-recur (old prev next)
       (let ((new (make-plan-node)))
         (setf (plan-node-step new)
-          (deepcopy-plan-step (plan-node-step old) :visited visited :schemas schemas))
+          (deepcopy-plan-step (plan-node-step old) :visited visited))
         (when (plan-node-prev old)
           (setf (plan-node-prev new)
             (if prev
@@ -68,7 +68,7 @@
 ; certainty  : how certain the step is (if the step is an expected step). The patience of the
 ;              system in waiting to observe the step is proportional to this
 ; obligation : the obligation(s) associated with the step
-; schemas    : the instantiated schema that created this step (if any). Since a plan-step can
+; schemas    : IDs for each schema instance that created this step (if any). Since a plan-step can
 ;              instantiate multiple abstract actions, it can also have multiple associated schemas
 ;
   (id (gentemp "STEP"))
@@ -83,15 +83,15 @@
 
 
 
-(defun deepcopy-plan-step (old &key substep visited schemas) ; {@}
+(defun deepcopy-plan-step (old &key substep visited) ; {@}
 ;````````````````````````````````````````````````````````````
 ; Deep copy a plan-step structure recursively (note that we need to maintain a
 ; hash table mapping visited plan-step IDs to the new plan-step structures, in
-; order to prevent creation of duplicates; likewise for schemas).
+; order to prevent creation of duplicates).
 ; Since we assume that plan-nodes are at the "surface" of the plan hierarchy,
 ; this function recurs "downwards" (i.e., towards supersteps).
 ;
-  (let (new schema-new)
+  (let (new)
     (cond
       ; If step has already been visited, get new step structure from hash table
       ((and (hash-table-p visited) (gethash (plan-step-id old) visited))
@@ -106,18 +106,7 @@
         (setf (plan-step-wff new) (copy-tree (plan-step-wff old)))
         (setf (plan-step-certainty new) (copy-tree (plan-step-certainty old)))
         (setf (plan-step-obligation new) (copy-tree (plan-step-obligation old)))
-        
-        ; Deepcopy any schemas that haven't been copied already
-        (setf (plan-step-schemas new)
-          (mapcar (lambda (schema)
-              (cond
-                ((and (hash-table-p schemas) (gethash (schema-id schema) schemas))
-                  (gethash (schema-id schema) schemas))
-                (t
-                  (setq schema-new (deepcopy-epi-schema schema))
-                  (setf (gethash (schema-id schema) schemas) schema-new)
-                  schema-new)))
-            (plan-step-schemas old)))
+        (setf (plan-step-schemas new) (copy-tree (plan-step-schemas old)))
 
         (when substep
           (push substep (plan-step-substeps new)))
@@ -125,7 +114,7 @@
         (when (plan-step-supersteps old)
           (setf (plan-step-supersteps new)
             (mapcar (lambda (superstep-old)
-                (deepcopy-plan-step superstep-old :substep new :visited visited :schemas schemas))
+                (deepcopy-plan-step superstep-old :substep new :visited visited))
               (plan-step-supersteps old))))
 
         (setf (gethash (plan-step-id old) visited) new)))
@@ -135,18 +124,108 @@
 
 
 
-(defun init-plan-from-schema (schema args) ; {x}
-;`````````````````````````````````````````````
-; Given a schema structure, instantiate the schema that a plan is to
-; be based on. For non-nil 'args', we replace successive variables
-; occurring in the header (excluding the episode variable ?e itself)
-; by successive elements of 'args'.
+(defun add-superstep-to-plan (subplan-node-start plan-node) ; {@}
+;`````````````````````````````````````````````````````````````````
+; Given a plan node assumed to be the start node of a subplan, add the step of
+; a given plan-node as a superstep of each node within the subplan.
 ;
-; TODO REFACTOR : initializing a plan from schema should create a
-; subtree of plan-steps, and return a list of plan-nodes corresponding
-; to surface steps (?)
+; TODO REFACTOR : should substep inherit schemas of superstep if it has none of its own?
 ;
-  (let (plan schema-instance sections ep-vars)
+  (loop while (plan-node-next subplan-node-start) do
+    (add-superstep-to-plan-step (plan-node-step plan-node) (plan-node-step subplan-node-start))
+    (setq subplan-node-start (plan-node-next subplan-node-start)))
+  (add-superstep-to-plan-step (plan-node-step plan-node) (plan-node-step subplan-node-start))
+) ; END add-superstep-to-plan
+
+
+
+(defun add-superstep-to-plan-step (superstep plan-step) ; {@}
+;`````````````````````````````````````````````````````````````````
+; Adds bidirectional subplan/superplan links between a plan-step and a superstep.
+; Also add the schemas of the superstep to the plan-step in the case where the
+; plan-step doesn't have any associated schemas (e.g., the step was created from
+; an episode list in expanding an action).
+; TODO: should we instead always append the schemas of the superstep?
+;
+  (push superstep (plan-step-supersteps plan-step))
+  (push plan-step (plan-step-substeps superstep))
+  (when (null (plan-step-schemas plan-step))
+    (setf (plan-step-schemas plan-step) (plan-step-schemas superstep)))
+  ;; (setf (plan-step-schemas plan-step) (remove-duplicates
+  ;;   (append (plan-step-schemas superstep) (plan-step-schemas plan-step))))
+) ; END add-superstep-to-plan-step
+
+
+
+(defun expand-plan-node (plan-node subplan-node-start) ; {@}
+;````````````````````````````````````````````````````````
+; Given a plan-node and the start/end plan-nodes of some subplan, insert the
+; subplan into the plan in place of the given plan-node. This modifies the
+; pointers of the previous/next steps in the plan (if any), and also adds the
+; plan-step of the original plan-node to the list of supersteps of each substep.
+; Returns the start node of the subplan.
+;
+  (let ((subplan-node-end (get-last-plan-node subplan-node-start)))
+    (add-superstep-to-plan subplan-node-start plan-node)
+    (when (plan-node-prev plan-node)
+      (setf (plan-node-next (plan-node-prev plan-node)) subplan-node-start)
+      (setf (plan-node-prev subplan-node-start) (plan-node-prev plan-node)))
+    (when (plan-node-next plan-node)
+      (setf (plan-node-prev (plan-node-next plan-node)) subplan-node-end)
+      (setf (plan-node-next subplan-node-end) (plan-node-next plan-node)))
+    subplan-node-start
+)) ; END expand-plan-node
+
+
+
+(defun insert-before-plan-node (plan-node new-plan-node-start) ; {@}
+;``````````````````````````````````````````````````````````````
+; Inserts a new plan before the given plan node (adjusting the pointers),
+; and returns the new plan node.
+;
+  (let ((new-plan-node-end (get-last-plan-node new-plan-node-start)))
+    (when (plan-node-prev plan-node)
+      (setf (plan-node-next (plan-node-prev plan-node)) new-plan-node-start)
+      (setf (plan-node-prev new-plan-node-start) (plan-node-prev plan-node)))
+    (setf (plan-node-prev plan-node) new-plan-node-end)
+    (setf (plan-node-next new-plan-node-end) plan-node)
+    new-plan-node-start
+)) ; END insert-before-plan-node
+
+
+
+(defun add-schema-to-plan (plan-node-start schema-id) ; {@}
+;``````````````````````````````````````````````````````
+; Adds the given schema-id to each plan-step in a plan structure, beginning
+; from the given plan node.
+;
+  (loop while (plan-node-next plan-node-start) do
+    (push schema-id (plan-step-schemas (plan-node-step plan-node-start)))
+    (setq plan-node-start (plan-node-next plan-node-start)))
+) ; END add-schema-to-plan
+
+
+
+(defun init-plan-from-schema (schema args &key plan-var-table schema-instances) ; {@}
+;`````````````````````````````````````````````````````````````````````````````````
+; Given a general schema, instantiate a schema instance (replacing
+; variables occurring in the header with the supplied args, if any),
+; and then instantiate a plan structure from the episodes list of that
+; schema. By default, we assume that the episodes of the schema define
+; sequential steps.
+;
+; If a plan-var-table and schema-instances table are given as keys, record the
+; instantiated schema and any variable replacements that are made in the
+;
+; TODO: the plan structure created when instantiating a schema is currently
+; "flat" - in the future, we might want to add support for annotating abstraction
+; hierarchies in the schema, in which case these would be added as supersteps to
+; the steps of the plan-nodes that are created.
+;
+; TODO: add support for using schema episode-relations when chaining
+; together plan-nodes.
+;
+  (let (schema-instance plan-node-duplicates plan-node duplicates)
     ; Return error if schema has no episodes
     (when (null (epi-schema-episodes schema))
       (format t "*** Attempt to form plan from schema ~a with no episodes"
@@ -155,16 +234,28 @@
 
     ; Create copy of general schema to instantiate
     (setq schema-instance (instantiate-epi-schema schema args))
+    (when schema-instances
+      (setf (gethash (schema-id schema-instance) schema-instances) schema-instance))
 
     ; Create a plan structure from the episodes of the schema (in
     ; addition to certainties and obligations)
-    (setq plan (init-plan-from-episode-list
+    (setq plan-node-duplicates (init-plan-from-episode-list
       (get-schema-section schema-instance :episodes)
-      :certainties (get-schema-section schema-instance :certainties)
-      :obligations (get-schema-section schema-instance :obligations)))
+      :certainties (group-facts-in-schema-section (get-schema-section schema-instance :certainties))
+      :obligations (group-facts-in-schema-section (get-schema-section schema-instance :obligations))
+      :return-duplicates t))
+    (setq plan-node (first plan-node-duplicates))
+    (setq duplicates (second plan-node-duplicates))
 
-    (when plan
-      (setf (plan-schema plan) schema-instance))
+    ; Add schema-id to newly created plan
+    (when plan-node (add-schema-to-plan plan-node (schema-id schema-instance)))
+
+    ; Add any variable replacements to plan-var-table
+    (when plan-var-table
+      (dolist (pair duplicates)
+        (push (list (first pair) (schema-id schema-instance))
+          (gethash (second pair) plan-var-table))))
+
 
   ; If goals of plan are already satisfied, skip over plan by returning nil,
   ; otherwise return new plan
@@ -172,97 +263,148 @@
   ;; (if (and (plan-goals plan) (every #'check-goal-satisfied (plan-goals plan)))
   ;;   nil
   ;;   plan)
-  plan
+  plan-node
 )) ; END init-plan-from-schema
 
 
 
-(defun init-plan-from-episode-list (episodes &key certainties obligations) ; {x}
-;````````````````````````````````````````````````````````````````````````````
-; Given a list of episodes, create a plan corresponding to that
+(defun init-plan-from-episodes-from-schemas (episodes schemas &key plan-var-table schema-instances) ; {@}
+;````````````````````````````````````````````````````````````````````````````````````````````````````
+; Creates a plan structure corresponding to a list of episodes, subject to the corresponding
+; obligations and certainties from a set of schemas. This function is necessary for expanding
+; conditional/looping plan steps in schemas, since the sub-episode lists of these steps will
+; have duplicated variables that need to be associated with the corresponding schema episodes.
+;
+; TODO: it might be possible to optimize this function by combining it with
+; init-plan-from-episode-list in some way; the main difference is that this function is intended
+; for episode lists where the variables are already assumed to be duplicates of schema variables
+; (and thus need to inherit all relevant information), whereas the other function is for "fresh"
+; episode lists that are supplied by functions, rather than schemas.
+;
+  (let (vars var-replacements steps certainties obligations certainties-all obligations-all
+        plan-node-duplicates plan-node duplicates)
+    (setq vars (get-all-variables episodes))
+    (dolist (schema schemas)
+      (setq certainties (group-facts-in-schema-section (get-schema-section (gethash schema schema-instances) :certainties)))
+      (setq obligations (group-facts-in-schema-section (get-schema-section (gethash schema schema-instances) :obligations)))
+      (when plan-var-table
+        (dolist (var vars)
+          (setq var-replacements (remove-if-not
+            (lambda (pair) (equal (second pair) schema))
+              (gethash var plan-var-table)))
+          (dolist (pair var-replacements)
+            (setq certainties-all (append (subst (dual-var var) (dual-var (first pair)) certainties) certainties-all))
+            (setq obligations-all (append (subst var (first pair) obligations) obligations-all)))))
+      (setq certainties-all (remove-duplicates certainties-all :test #'equal))
+      (setq obligations-all (remove-duplicates obligations-all :test #'equal)))
+
+    (setq plan-node-duplicates
+      (init-plan-from-episode-list episodes :certainties certainties-all :obligations obligations-all :return-duplicates t))
+    (setq plan-node (first plan-node-duplicates))
+    (setq duplicates (second plan-node-duplicates))
+
+    ; Copy any plan-var-table entries for duplicated variables
+    (when plan-var-table
+      (dolist (pair duplicates)
+        (setf (gethash (second pair) plan-var-table) (gethash (first pair) plan-var-table))))
+    
+    plan-node
+)) ; END init-plan-from-episodes-from-schemas
+
+
+
+(defun init-plan-from-episode-list (episodes &key certainties obligations return-duplicates) ; {@}
+;``````````````````````````````````````````````````````````````````````````````````````````````
+; Given a list of episodes, create a plan structure corresponding to that
 ; sequence of episodes. May be called as a subroutine in instantiating
 ; a plan from an overall schema, or from procedurally creating a subplan
 ; for a particular action (e.g., a say-to action from a paraphrase-to action).
 ;
-; The episodes are converted to a linked list representing the steps in a plan;
-; the first plan step is returned. Optionally, certainties and obligations for
-; episodes may be given, in which case these are attached to the corresponding
-; plan steps.
+; The episodes are converted to plan nodes representing each step in the (sub)plan;
+; the first node is returned. Optionally, certainties and obligations for episode
+; may be given, in which case these are attached to the corresponding plan steps.
+; The assumption is that the ordering of the episodes in the list is the default
+; ordering of the resulting plan steps.
 ;
-; TODO REFACTOR : initializing a plan from episode list should create a
-; subtree of plan-steps, and return a list of plan-nodes corresponding
-; to surface steps (?)
-;
-  (let (plan steps first-step prev-step curr-step)
+  (let (steps duplicates first-node prev-node curr-node)
 
     ; Remove :episodes keyword (if given), and group episodes into steps
     (if (equal :episodes (car episodes)) (setq episodes (cdr episodes)))
     (setq steps (group-facts-in-schema-section episodes))
 
-    ; Make plan structure plan-name
-    (setq plan (make-plan))
-    (setf (plan-plan-name plan) (gentemp "PLAN"))
-
     ; Give error if first element of first pair isn't episode variable starting with '?'
     (when (not (variable? (caar steps)))
-      (format t "*** malformed step ~a while trying to form plan ~a (doesn't begin with episode variable)~%"
-        (car steps) (plan-plan-name plan))
+      (format t "*** malformed step ~a while trying to form plan (doesn't begin with episode variable)~%"
+        (car steps))
       (return-from init-plan-from-episode-list nil))
+
+    ; Replace variables in episodes list with new unique variable names
+    (setq duplicates (duplicate-vars steps))
+    (setq steps (first duplicates))
+    (setq duplicates (second duplicates))
+    (dolist (pair duplicates)
+      (setq certainties (subst (dual-var (second pair)) (dual-var (first pair)) certainties))
+      (setq obligations (subst (second pair) (first pair) obligations)))
 
     ; Iterate over steps in episodes list
     (dolist (step steps)
 
       ; Make plan step structure and set data
-      (setq curr-step (make-plan-step))
-      (setf (plan-step-step-of curr-step) plan)
-      (if (null first-step) (setq first-step curr-step))
-      (setf (plan-step-ep-name curr-step) (first step))
-      (setf (plan-step-wff curr-step) (second step))
+      (setq curr-node (make-plan-node))
+      (if (null first-node) (setq first-node curr-node))
+      (setf (plan-node-step curr-node)
+        (make-plan-step
+          :ep-name (first step)
+          :wff (second step)))
       ; When episode name has certainty associated, add to step
       ; certainties are formulas like (!c1 (!e16 0.3))
-      (dolist (certainty (group-facts-in-schema-section certainties))
+      (dolist (certainty certainties)
         (when (equal (first step) (dual-var (first (second certainty))))
-          (setf (plan-step-certainty curr-step) (second (second certainty)))))
+          (setf (plan-step-certainty (plan-node-step curr-node)) (second (second certainty)))))
       ; When episode name has obligation associated, add to step
       ; obligations are formulas like (!o1 (?e1 obligates <wff>))
-      (dolist (obligation (group-facts-in-schema-section obligations))
+      (dolist (obligation obligations)
         (when (equal (first step) (first (second obligation)))
-          (setf (plan-step-obligation curr-step) (third (second obligation)))))
+          (setf (plan-step-obligation (plan-node-step curr-node)) (third (second obligation)))))
       ; When previous step exists, set bidirectional pointers
-      (when prev-step
-        (setf (plan-step-prev-step curr-step) prev-step)
-        (setf (plan-step-next-step prev-step) curr-step))
+      (when prev-node
+        (setf (plan-node-prev curr-node) prev-node)
+        (setf (plan-node-next prev-node) curr-node))
       ; Previous step becomes current step
-      (setq prev-step curr-step))
-    
-    ; Set curr-step pointer in plan to first step in plan
-    (setf (plan-curr-step plan) first-step)
+      (setq prev-node curr-node))
 
-    ;; (format t "action list of argument-instantiated schema is:~%")
-    ;; (print-current-plan-steps plan) ; DEBUGGING
+    ;; (format t "plan instantiated from episode list is:~%")
+    ;; (print-current-plan-status first-node) ; DEBUGGING
 
-  plan
+    (if return-duplicates
+      (list first-node duplicates)
+      first-node)
 )) ; END init-plan-from-episode-list
 
 
 
-(defun init-plan-from-episode-list-repeating (plan ep-name episodes-embedded episodes-loop) ; {x}
-;`````````````````````````````````````````````````````````````````````````````````````````````
+(defun init-plan-from-episode-list-repeating (episodes-embedded episodes-loop &key schemas plan-var-table schema-instances) ; {@}
+;```````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Initializes a plan from an episode list for a :repeat-until loop. Before initializing
 ; the subplan, we need to create duplicate episode variables for all of the embedded episodes
 ; that get instantiated during this particular iteration (while keeping the original episode
 ; variables for the loop 'yet to be unrolled'). These duplicate variables need to inherit the
 ; certainties and obligations of the original episode variables in the plan schema (if any).
 ;
-  (let (duplicates new-plan)
-    (setq duplicates (subst-duplicate-variables
-      episodes-embedded
-      (get-schema-section (plan-schema plan) :certainties)
-      (get-schema-section (plan-schema plan) :obligations)))
-    (init-plan-from-episode-list
-      (cons :episodes (append (first duplicates) (list ep-name (cons :repeat-until episodes-loop))))
-      :certainties (second duplicates)
-      :obligations (third duplicates))
+; TODO REFACTOR : Need to verify that this works in full execution
+;
+  (let (duplicates episodes-embedded-cloned)
+    (setq duplicates (duplicate-vars episodes-embedded))
+    (setq episodes-embedded-cloned (first duplicates))
+    (setq duplicates (second duplicates))
+    (dolist (pair duplicates)
+      (when plan-var-table
+        (setf (gethash (second pair) plan-var-table) (gethash (first pair) plan-var-table))))
+    (init-plan-from-episodes-from-schemas 
+      (cons :episodes (append episodes-embedded-cloned episodes-loop))
+      schemas
+      :plan-var-table plan-var-table
+      :schema-instances schema-instances)
 )) ; END init-plan-from-episode-list-repeating
 
 
@@ -284,484 +426,74 @@
 
 
 
-(defun add-subplan-curr-step (plan subplan) ; {x}
-;````````````````````````````````````````````
-; Given a plan and a subplan, attaches the subplan to the
-; currently active step of the plan using the add-subplan function.
-; Unless the subplan already has an associated subschema, it inherits
-; the schema used to create the subplan.
-; 
-  (add-subplan (plan-curr-step plan) subplan)
-  (when (null (plan-schema subplan))
-    (setf (plan-schema subplan) (plan-schema plan)))
-) ; END add-subplan-curr-step
-
-
-
-(defun add-subplan (plan-step subplan) ; {x}
-;```````````````````````````````````````````
-; Adds a subplan to a given plan-step using bidirectional links.
+(defun get-parent-ep-name (plan-step) ; {@}
+;``````````````````````````````````````
+; If the plan-step is a subplan of another step, get the episode
+; name corresponding to that step (in the case that there are multiple
+; supersteps, this currently just returns the first).
 ;
-  (setf (plan-step-subplan plan-step) subplan)
-  (setf (plan-subplan-of subplan) plan-step)
-) ; END add-subplan
+  (let ((supersteps (plan-step-supersteps plan-step)))
+    (if supersteps (plan-step-ep-name (car supersteps)))
+)) ; END get-parent-ep-name
 
 
 
-(defun advance-plan (plan) ; {x}
-;````````````````````````````
-; Advances the curr-step in plan to the next step.
-; TODO REFACTOR : do we even need this method now, or can we just set
-; curr-plan in dialogue state to plan-node-next?
+(defun get-schema-instance-ids (plan-node) ; {@}
+;````````````````````````````````````````
+; Gets the schema instance IDs corresponding to a given plan-node.
 ;
-  ; If no curr-step, return nil
-  (if (null (plan-curr-step plan)) (return-from advance-plan nil))
-
-  ;; (format t "current action being advanced in plan ~a: ~%  ~a ~a~%" (plan-plan-name plan)
-  ;;   (plan-step-ep-name (plan-curr-step plan)) (plan-step-wff (plan-curr-step plan))) ; DEBUGGING
-
-  ; Set curr-step to the next step in plan
-  (setf (plan-curr-step plan)
-    (plan-step-next-step (plan-curr-step plan)))
-
-  ;; (format t "remaining steps in plan ~a after advancing: ~%" (plan-plan-name plan))
-  ;; (print-current-plan-steps plan) ; DEBUGGING
-
-) ; END advance-plan
+  (plan-step-schemas (plan-node-step plan-node))
+) ; END get-schema-instance-ids
 
 
 
-(defun update-plan-state (plan) ; {x}
-;`````````````````````````````````
-; Updates the state of the plan by advancing any step whose
-; subplan has been completed, i.e. has no more steps left.
-; TODO REFACTOR : this is likely deprecated now that all surface steps are in the
-; plan, but we still need a way to detect failures and replan accordingly
-; 
-  (let ((curr-step (plan-curr-step plan)) subplan unsatisfied-goals replanned?)
-
-    ; If no curr-step, return nil
-    (if (null curr-step) (return-from update-plan-state nil))
-
-    (setq subplan (plan-step-subplan curr-step))
-    (cond
-      ; If no subplan, do nothing
-      ((null subplan) nil)
-      ; If subplan forms an infinite loop, break loop and do nothing
-      ((and (plan-curr-step subplan) (equal subplan (plan-step-subplan (plan-curr-step subplan))))
-        (setf (plan-step-subplan curr-step) nil))
-      ; Otherwise, recursively update each subplan
-      (t (update-plan-state subplan)
-
-        ; Advance plan once subplan is finished
-        (when (null (plan-curr-step subplan))
-
-          ; If goals of subplan (if any) still unsatisfied, try replanning based on the first unsatisfied goal
-          ;; TODO REFACTOR : modify the below once goal queue is implemented
-          ;; (when (plan-goals subplan)
-          ;;   (setq unsatisfied-goals (remove-if #'check-goal-satisfied (plan-goals subplan)))
-          ;;   (when unsatisfied-goals
-          ;;     ;; (dolist (ug unsatisfied-goals) (format t "~%  unsatisfied goal: ~a" ug)) ; DEBUGGING
-          ;;     (setq replanned? (replan-for-goal plan (car unsatisfied-goals)))
-          ;;     (if replanned? (return-from update-plan-state nil))))
-
-          ;; (format t "subplan ~a has no curr-step, so advancing plan ~a past step: ~%  ~a ~a ~%"
-          ;;   (plan-plan-name subplan) (plan-plan-name plan) (plan-step-ep-name curr-step) (plan-step-wff curr-step)) ; DEBUGGING
-
-          ; Advance plan if subplan is finished and goals (if any) satisfied
-          (advance-plan plan)))))
-) ; END update-plan-state
-
-
-
-(defun instantiate-curr-step (plan) ; {x}
-;`````````````````````````````````````
-; Instantiates the first episode in the plan, destructively substituting
-; the skolemized episode wherever it occurs in the plan, as well as binding
-; that episode variable in the schema.
+(defun bind-variable-in-plan (plan-node val var &key plan-var-table schema-instances) ; {@}
+;```````````````````````````````````````````````````````````````````````````````````````
+; Top-level function for binding a variable in the current plan structure
+; (i.e., beginning from the current plan-node).
 ;
-  (let ((curr-step (plan-curr-step plan)) ep-var ep-name)
-
-    ; If no curr-step, return nil
-    (if (null curr-step) (return-from instantiate-curr-step nil))
-    
-    ; Get episode-var (if already instantiated, return nil)
-    (setq ep-var (plan-step-ep-name curr-step))
-    (if (not (variable? ep-var)) (return-from instantiate-curr-step nil))
-
-    ; Generate a constant for the episode and destructively substitute in plan
-    (setq ep-name (episode-name))
-    ; TODO: use episode-relations formulas to assert relations in timegraph
-    (store-init-time-of-episode ep-name)
-    (bind-variable-in-plan plan ep-name ep-var)
-
-    ;; (format t "action list after substituting ~a for ~a:~%" ep-name ep-var)
-    ;; (print-current-plan-steps plan) ; DEBUGGING
-
-    ; TODO: should (wff ** ep-name) be stored in context at this point?
-    ;       as well as instantiating the non-fluent variable, e.g. '!e1'?
-    
-)) ; END instantiate-curr-step
-
-
-
-(defun find-curr-subplan (plan) ; {x}
-;`````````````````````````````````
-; Finds the deepest subplan of the given plan (starting with current step)
-; with an immediately pending step.
-; TODO REFACTOR : should be unecessary now that all surface steps are in the plan
+; This consists of the following steps:
+; 1. Destructively substitute val for var everywhere in plan structure
+; 2. Check plan-var-table for (schema-var, schema-id) pairs
+; 3. Retrieve the schema instance for each schema-id
+; 4. Bind schema-var to val in each schema instance
 ;
-  (let ((curr-step (plan-curr-step plan)) subplan)
-
-    ; If no curr-step, return nil
-    (if (null curr-step) (return-from find-curr-subplan nil))
-
-    ;; (format t "current step of plan ~a is: ~%  ~a ~a~%" (plan-plan-name plan)
-    ;;   (plan-step-ep-name curr-step) (plan-step-wff curr-step)) ; DEBUGGING
-
-    (setq subplan (plan-step-subplan curr-step))
-    (cond
-      ; If no subplan, next action is top-level
-      ((null subplan) plan)
-      ; If subplan forms an infinite loop, break loop and return subplan
-      ((and (plan-curr-step subplan) (equal subplan (plan-step-subplan (plan-curr-step subplan))))
-        (format t "*** found infinite loop in subplan ~a; breaking loop ~%"
-          (plan-plan-name subplan))
-        (setf (plan-step-subplan curr-step) nil)
-        subplan)
-      ; If the subplan is fully executed, then remove subplan and return plan
-      ((null (plan-curr-step subplan))
-        (format t "*** find-curr-subplan arrived at a completed subplan ~a~%"
-          (plan-plan-name subplan))
-        (setf (plan-step-subplan curr-step) nil)
-        plan)
-      ; Otherwise, subplan is active, so find deepest subplan recursively
-      (t (find-curr-subplan subplan))))
-) ; END find-curr-subplan
+  (let (pairs schema-var schema-id schema-instance)
+    (bind-variable-in-plan-node plan-node val var t t)
+    (when (and plan-var-table schema-instances)
+      (setq pairs (gethash var plan-var-table))
+      (dolist (pair pairs)
+        (setq schema-var (first pair))
+        (setq schema-id (second pair))
+        (setq schema-instance (gethash schema-id schema-instances))
+        (bind-variable-in-schema schema-instance schema-var val)))
+)) ; END bind-variable-in-plan
 
 
 
-
-
-(defun get-parent-ep-name (plan) ; {x}
-;`````````````````````````````````
-; If plan is a subplan of a step, get the episode name
-; corresponding to that step.
-;
-  (let ((superstep (plan-subplan-of plan)))
-    (if superstep (plan-step-ep-name superstep)))
-) ; END get-parent-ep-name
-
-
-
-(defun inquire-truth-of-next-episode (plan) ; {x}
-;`````````````````````````````````````````````
-; Checks the truth of the immediately pending episode in the plan,
-; through a process of "self-inquiry" (i.e. checking the system's
-; context/memory, potentially with some level of inference (TBC) as well).
-; TODO: in addition to updating the plan accordingly, this should
-; return t if the inquiry was a success, or nil otherwise.
-; 
-  (let (curr-step ep-var ep-name wff match)
-  
-    ; Get current expected step, expected wff, and episode var
-    (setq curr-step (plan-curr-step plan))
-    (setq ep-var (plan-step-ep-name curr-step))
-    (setq wff (plan-step-wff curr-step))
-
-    ; Inquire about truth of wff in context; use first match
-    (setq match (get-from-context wff))
-    (if (equal match T) (setq match (list wff)))
-    (when match
-      (setq match (car match))
-
-      ; Get episode name corresponding to contextual fact
-      (setq ep-name (get-episode-from-contextual-fact match))
-      
-      ; Substitute that episode name for the episode variable in the plan
-      (bind-variable-in-plan plan ep-name ep-var)
-
-      ; Make all variable substitutions needed to unify wff and match
-      (mapcar (lambda (x y) (if (and (variable? x) y) (bind-variable-in-plan plan y x)))
-        wff match)
-
-      ; Remove the matched predicate from context if a telic predicate, i.e., assume
-      ; something like (^you say-to.v ^me ...) is no longer relevant after matched once.
-      ; TODO: I'm not sure if this is a safe or realistic assumption to make... but it's
-      ; currently necessary to prevent the program from automatically looping in the case
-      ; where a :repeat-until episode consists of the user saying something and the agent
-      ; replying, since the say-to.v expectation will keep matching the same fact in context.
-      (if (member (second match) *verbs-telic*) (remove-old-contextual-fact match))
-
-      ; Advance the plan
-      (advance-plan plan)))
-) ; END inquire-truth-of-next-episode
-
-
-
-(defun check-goal-satisfied (goal) ; {@}
-;`````````````````````````````````````
-; Check whether a goal is satisfied through process of "self-inquiry",
-; i.e. checking context to verify whether the content of the goal
-; (assuming, for now, a standard "want that ..." goal) is true in context.
-; TODO: should also check knowledge base and/or memory if the goal is
-; something like "want that me know ...".
-;
-  (let (goal-var goal-wff bindings goal-clause)
-    (setq goal-var (first goal))
-    (setq goal-wff (second goal))
-
-    ; Check goal wff (currently only 'want that ...' goals are supported)
-    (cond
-      ((setq bindings (bindings-from-ttt-match '(^me want.v (that _!)) goal-wff))
-        (setq goal-clause (get-single-binding bindings))
-        ; Check if goal clause is true in context
-        (if (get-from-context goal-clause) t nil))
-      ; Support for tensed version as well
-      ((setq bindings (bindings-from-ttt-match '(^me ((pres want.v) (that _!))) goal-wff))
-        (setq goal-clause (get-single-binding bindings))
-        ; Check if goal clause is true in context
-        (if (get-from-context goal-clause) t nil))
-
-      (t
-        ;; (format t "~%*** UNSUPPORTED GOAL ~a (~a) " goal-var goal-wff) ; DEBUGGING
-        nil))
-)) ; END check-goal-satisfied
-
-
-
-(defun replan-for-goal (plan goal) ; {x}
-;```````````````````````````````````````
-; Given an unsatisfied goal, use a transduction tree to determine an appropriate subplan to instantiate
-; and attach to the current plan step.
-;
-  (let (curr-step goal-var goal-wff bindings goal-words choice schema-name args subplan)
-
-    ; Get current expected step, expected wff, and instantiated ep-name
-    (setq curr-step (plan-curr-step plan))
-    (setq goal-var (first goal))
-    (setq goal-wff (second goal))
-
-    ; Select subplan for replanning
-    (setq choice (choose-result-for goal-wff '*replan-tree*))
-
-    ; Create subplan depending on directive
-    (cond
-      ; :schema directive
-      ((eq (car choice) :schema)
-        (setq schema-name (cdr choice))
-        (setq subplan (init-plan-from-schema (get-stored-schema schema-name) nil)))
-
-      ; :schema+args directive
-      ((eq (car choice) :schema+args)
-        (setq schema-name (first (cdr choice)) args (second (cdr choice)))
-        (setq subplan (init-plan-from-schema (get-stored-schema schema-name) args))))
-    
-    ; If subplan was obtained, attach to current step and return t, otherwise return nil
-    (when subplan
-      (add-subplan-curr-step plan subplan)
-      t)
-
-)) ; END replan-for-goal
-
-
-
-(defun determine-next-episode-failed (plan) ; {@}
-;``````````````````````````````````````````````
-; Determine that the immediately pending episode in the plan is a
-; 'failed' episode; i.e. an expected episode which did not end up
-; coming true during the "period" of expectation (governed by the
-; certainty of the episode). Instantiate the episode with a new episode
-; name characterized as a failure.
-; Should return t after instantiating failed episode.
-;
-  (let (curr-step ep-name wff)
-
-    ; Instantiate the episode variable of the new step and substitute
-    (instantiate-curr-step plan)
-
-    ; Get current expected step, expected wff, and instantiated ep-name
-    (setq curr-step (plan-curr-step plan))
-    (setq ep-name (plan-step-ep-name curr-step))
-    (setq wff (plan-step-wff curr-step))
-
-    ; Add (^you do.v (no.d thing.n)) to context, characterizing <ep-name>. This is
-    ; essentially a no-op and isn't currently used for any further inference or replanning.
-    ; TODO: this needs to be reworked after working out semantics for failed episodes.
-    (store-contextual-fact-characterizing-episode `(^you do.v (no.d thing.n)) ep-name)
-
-    ; Advance the plan
-    (advance-plan plan)
-  
-)) ; END determine-next-episode-failed
-
-
-
-(defun process-next-episode (plan)  ; {x}
-;```````````````````````````````````````
-; Executes the immediately pending episode in the plan.
-;
-; Successful execution of an action returns a pair of variable bindings
-; for any variables instantiated during execution of the action, and a
-; newly generated subplan (possibly nil). The appropriate substitutions
-; are made in the plan. If a new subplan was obtained, it's added as a
-; subplan to the current step; otherwise, the plan is advanced.
-;
-; TODO: Why not use the names of nonprimitive steps themselves as
-; subplan names? Answer: We want to potentially allow for associating
-; multiple alternative subplans with a given step (if we do this, we
-; should change 'subplan' to 'subplans', which will point to a *list* 
-; of subplan names); when one subplan fails, the step may still be
-; achievable with an alternative subplan. (For user inputs, different
-; subplans represent alternative expectations about user behavior, and
-; this eventually opens the door to an AND-OR style of planning, as in
-; two-person games.)
-;
-  (let (curr-step wff ret bindings new-subplan)
-
-    ; Current step becomes whatever the current step of plan is
-    (setq curr-step (plan-curr-step plan))
-
-    ; If no curr-step, return nil
-    (if (null curr-step) (return-from process-next-episode nil))
-
-    ;; (format t "~%steps of currently due plan ~a are: ~%" (plan-plan-name plan))
-    ;; (print-current-plan-steps plan) ; DEBUGGING
-
-    (setq wff (plan-step-wff curr-step))
-
-    ; Instantiate the episode variable of the new step and substitute
-    (instantiate-curr-step plan)
-
-    ; Perform the episode corresponding to the current step accordingly,
-    ; returning a pair of variable bindings obtained by the action, as
-    ; well as a subplan generated by the action (if any, otherwise this is nil),
-    ; e.g., (((var1 val1) (var2 val2)) PLAN788)
-    (setq ret (if (eq (car wff) '^me)
-      (implement-next-eta-action plan)
-      (implement-next-plan-episode plan)))
-
-    (setq bindings (first ret))
-    (setq new-subplan (second ret))
-
-    ;; (when bindings
-    ;;   (format t "variable substitutions to be made: ~%  ~a~%" bindings)) ; DEBUGGING
-    ;; (when new-subplan
-    ;;   (format t "new subplan generated: ~a~%" (plan-plan-name new-subplan))) ; DEBUGGING
-
-    ; Make all variable substitutions in the plan
-    (dolist (binding bindings)
-      (bind-variable-in-plan plan (second binding) (first binding)))
-
-    ; If a new subplan was generated, add it as a subplan to the
-    ; current step. Otherwise, advance the current (sub)plan.
-    (if new-subplan
-      (add-subplan-curr-step plan new-subplan)
-      (advance-plan plan))
-
-  wff
-)) ; END process-next-episode
-
-
-
-(defun bind-variable-in-plan (plan-node val var) ; {@}
-;`````````````````````````````````````````````````
-; Binds a variable in the current plan-node.
+(defun bind-variable-in-plan-node (plan-node val var left right) ; {@}
+;`````````````````````````````````````````````````````````````````
+; Recursively binds a variable throughout a plan structure.
 ;
   (bind-variable-in-plan-step (plan-node-step plan-node) val var)
-) ; END bind-variable-in-plan
+  (when (and (plan-node-prev plan-node) left)
+    (bind-variable-in-plan-node (plan-node-prev plan-node) val var t nil))
+  (when (and (plan-node-next plan-node) right)
+    (bind-variable-in-plan-node (plan-node-next plan-node) val var nil t))
+) ; END bind-variable-in-plan-node
 
 
 
-(defun bind-variable-in-plan-step (plan-step val var) ; {x}
+(defun bind-variable-in-plan-step (plan-step val var) ; {@}
 ;```````````````````````````````````````````````````````
-; Binds a variable present in a plan-step by binding it in the schema
-; associated with the plan-step.
-; TODO REFACTOR : currently unsure whether to propagate the variable
-; binding upwards to supersteps - this might be necessary if the same
-; variable is used in the schema that invoked the subschema associated
-; with one of the plan-nodes. One challenge is that the variable may
-; differ between the schema and subschema (although upon instantiation
-; of the subschema, the variable of the subschema may be 'unified' with
-; the variable used in the superschema).
+; Recursively binds a variable throughout a plan-step subtree.
 ;
-  (dolist (schema (plan-step-schemas plan-step))
-    (bind-variable-in-schema schema val var))
+  (setf (plan-step-ep-name plan-step) (subst val var (plan-step-ep-name plan-step)))
+  (setf (plan-step-wff plan-step) (subst val var (plan-step-wff plan-step)))
+  (setf (plan-step-obligation plan-step) (subst val var (plan-step-obligation plan-step)))
+  (mapcar (lambda (superstep) (bind-variable-in-plan-step superstep val var))
+    (plan-step-supersteps plan-step))
 ) ; END bind-variable-in-plan-step
-
-
-
-;; (defun bind-variable-in-plan (plan val var) 
-;; ;`````````````````````````````````````````````
-;; ; Traverses the linked list of steps, starting from the current step,
-;; ; and destructively substitutes val for var in the ep-name and wff
-;; ; of each step (this should also bind them in the corresponding schema,
-;; ; if the plan has any defined).
-;; ; TODO: need to think of whether this should also substitute val for var
-;; ; in any parent plan containing var in the 'vars' slot of the plan structure.
-;; ; I've left the step-of pointer in case this is done in the future.
-;; ;
-;;   (let ((curr-step (plan-curr-step plan)))
-
-;;     ; Iterate through each subsequent step and substitute val for var
-;;     (loop while (not (null curr-step)) do
-;;       (setf (plan-step-ep-name curr-step)
-;;         (subst val var (plan-step-ep-name curr-step)))
-;;       (nsubst val var (plan-step-wff curr-step))
-;;       (setq curr-step (plan-step-next-step curr-step)))
-
-;;     ; If plan has a schema, bind variable in schema
-;;     (when (plan-schema plan)
-;;       (bind-variable-in-schema (plan-schema plan) var val))
-
-;; )) ; END bind-variable-in-plan
-
-
-
-(defun subst-duplicate-variables (episodes certainties obligations) ; {@}
-;`````````````````````````````````````````````````````````````````````
-; Substitutes all variables in an episode list with duplicate variables.
-; Also make substitutions in certainties and obligations lists if given.
-;
-  (let* ((episode-vars (get-episode-vars episodes))
-        (new-episode-vars (mapcar (lambda (episode-var)
-          (gentemp (string episode-var))) episode-vars))
-        (episodes-new episodes)
-        (certainties-new certainties)
-        (obligations-new obligations))
-    (mapcar (lambda (var new-var)
-        (setq episodes-new (subst new-var var episodes-new))
-        (setq certainties-new (subst new-var var certainties-new))
-        (setq obligations-new (subst new-var var obligations-new)))
-      episode-vars new-episode-vars)
-  (list episodes-new certainties-new obligations-new)
-)) ; END subst-duplicate-variables
-
-
-
-(defun get-step-obligations (plan-step) ; {x}
-;````````````````````````````````````````
-; Gets any obligations associated with a particular step in a plan in the
-; schema that the step is part of (look at the parent step as well in case of
-; no obligations).
-; TODO: this will likely need to be changed in the future once a more general
-; mechanism is figured out.
-; TODO REFACTOR : apply variable bindings
-; INSTEAD OF STORING OBLIGATIONS IN STEP, JUST RETRIEVE THEM FROM SCHEMA? SHOULD SOLVE
-; BOTH PROBLEMS.
-;
-  (let ((obligations (plan-step-obligation plan-step)) supersteps)
-    (setq supersteps (plan-step-supersteps plan-step))
-    ; TODO: this is a bit hacky currently because say-to.v actions may need to access
-    ; the parent paraphrase-to.v actions in order to access obligations. Rather, it seems
-    ; that the say-to.v actions should inherit the obligations upon creation.
-    (when (and supersteps (null obligations))
-      (setq obligations (plan-step-obligation (car supersteps))))
-
-    (if (member 'and obligations)
-      (remove 'and obligations)
-      (list obligations))
-)) ; END get-step-obligations
 
 
 
@@ -785,39 +517,20 @@
 
 
 
-;; (defun get-curr-pending-step (plan)
-;; ;`````````````````````````````````````
-;; ; Gets the currently pending step of a given (sub)plan.
-;; ;
-;;   (plan-curr-step plan)
-;; ) ; END get-curr-pending-step
-
-
-
 (defun get-step-ep-name (plan-step) ; {@}
 ;`````````````````````````````````````
-; Gets the episode name associated with a plan step, making any variable substitutions if
-; the plan step contains a variable bound within the corresponding schema.
-; NOTE: if a plan-step has multiple schemas associated (e.g., following a merge), we assume
-; that any variables in the plan-step will have the same bindings in each schema.
+; Gets the episode name associated with a plan step.
 ;
-  (if (plan-step-schemas plan-step)
-    (subst-binding-expr (plan-step-ep-name plan-step) (car (plan-step-schemas plan-step)))
-    (plan-step-ep-name plan-step))
+  (plan-step-ep-name plan-step)
 ) ; END get-step-ep-name
 
 
 
 (defun get-step-wff (plan-step) ; {@}
 ;`````````````````````````````````````
-; Gets the wff associated with a plan step, making any variable substitutions if
-; the plan step contains a variable bound within the corresponding schema.
-; NOTE: if a plan-step has multiple schemas associated (e.g., following a merge), we assume
-; that any variables in the plan-step will have the same bindings in each schema.
+; Gets the wff associated with a plan step.
 ;
-  (if (plan-step-schemas plan-step)
-    (subst-binding-expr (plan-step-wff plan-step) (car (plan-step-schemas plan-step)))
-    (plan-step-wff plan-step))
+  (plan-step-wff plan-step)
 ) ; END get-step-wff
 
 
@@ -831,36 +544,43 @@
 
 
 
-;; (defun print-current-plan-steps (plan) 
-;; ;``````````````````````````````````````
-;; ; Prints each subsequent step in a plan, starting from the current
-;; ; step, showing the ep-name and wff of each. Does not include subplans.
-;; ; For debugging purposes.
-;; ;
-;;   (let ((curr-step (plan-curr-step plan)))
+(defun get-step-obligations (plan-step) ; {@}
+;````````````````````````````````````````
+; Gets any obligations associated with a particular step in a plan in the
+; schema that the step is part of (look at the parent step as well in case of
+; no obligations).
+; TODO: this will likely need to be changed in the future once a more general
+; mechanism is figured out.
+;
+  (let ((obligations (plan-step-obligation plan-step)) supersteps)
+    (setq supersteps (plan-step-supersteps plan-step))
+    ; TODO: this is a bit hacky currently because say-to.v actions may need to access
+    ; the parent paraphrase-to.v actions in order to access obligations. Rather, it seems
+    ; that the say-to.v actions should inherit the obligations upon creation.
+    (when (and supersteps (null obligations))
+      (setq obligations (plan-step-obligation (car supersteps))))
 
-;;     ; Iterate through each subsequent step and print ep-name and wff
-;;     (loop while (not (null curr-step)) do
-;;       (format t "~a ~a~%" (plan-step-ep-name curr-step) (plan-step-wff curr-step))
-;;       (setq curr-step (plan-step-next-step curr-step))))
-;; ) ; END print-current-plan-steps
+    (if (member 'and obligations)
+      (remove 'and obligations)
+      (if obligations (list obligations) nil))
+)) ; END get-step-obligations
 
 
 
-(defun format-plan-step (step &key show-schemas) ; {@}
-;```````````````````````````````````````````````````
+(defun format-plan-step (step &key schema-instances) ; {@}
+;````````````````````````````````````````````````````````
 ; Formats the step corresponding to a given plan node, as
 ; "ep-name : wff [certainty]"
-; Or, if :show-schemas t is given, as
+; Or, if a hash table of schema instances is given, as
 ; "ep-name : wff [certainty] <schema-pred>"
 ;
-  (if show-schemas
+  (if schema-instances
     (format nil "~a : ~a [~a] <~a>"
       (get-step-ep-name step)
       (get-step-wff step)
       (get-step-certainty step)
       (str-join (mapcar (lambda (schema)
-          (format nil "~a" (schema-predicate schema)))
+          (format nil "~a" (schema-predicate (gethash schema schema-instances))))
         (plan-step-schemas step)) #\,))
     (format nil "~a : ~a [~a]"
       (get-step-ep-name step)
@@ -870,8 +590,8 @@
 
 
 
-(defun print-current-plan-status (node &key (before 3) (after 5) show-schemas) ; {@}
-;```````````````````````````````````````````````````````````````````````````````
+(defun print-current-plan-status (node &key (before 3) (after 5) schema-instances) ; {@}
+;```````````````````````````````````````````````````````````````````````````````````
 ; Prints the current plan status (i.e., steps that are currently in
 ; the surface plan, with a pointer to the currently due step). Allows
 ; the number of steps to be shown before and after this pointer to be
@@ -880,12 +600,12 @@
   (let ((prev (plan-node-prev node)) (next (plan-node-next node))
         steps-prev step-curr steps-next)
     (loop while (and prev (> before 0)) do
-      (push (format-plan-step (plan-node-step prev) :show-schemas show-schemas) steps-prev)
+      (push (format-plan-step (plan-node-step prev) :schema-instances schema-instances) steps-prev)
       (setq prev (plan-node-prev prev))
       (decf before))
-    (setq step-curr (format-plan-step (plan-node-step node) :show-schemas show-schemas))
+    (setq step-curr (format-plan-step (plan-node-step node) :schema-instances schema-instances))
     (loop while (and next (> after 0)) do
-      (push (format-plan-step (plan-node-step next) :show-schemas show-schemas) steps-next)
+      (push (format-plan-step (plan-node-step next) :schema-instances schema-instances) steps-next)
       (setq next (plan-node-next next))
       (decf after))
     ; Print
@@ -902,114 +622,79 @@
 
 
 
-;; (defun print-current-plan-status (plan) 
-;; ;````````````````````````````````````````
-;; ; Prints the current plan status. Shows ep-name and wff of
-;; ; current pending step in plan, as well as the status of
-;; ; any subplans of that step. For debugging purposes.
-;; ;
-;;   (let ((curr-plan plan) curr-step superstep subplan (cont t))
-
-;;     ; Print top-level information about plan
-;;     (format t "Status of ~a "
-;;       (plan-plan-name plan))
-;;     (setq superstep (plan-subplan-of plan))
-;;     (if superstep
-;;       (format t "(subplan-of ~a):~%" (plan-step-ep-name superstep))
-;;       (format t "(no superstep):~%"))
-
-;;     ; Print each current step and repeat for subplan, if any
-;;     (loop while cont do
-;;       (setq curr-step (plan-curr-step curr-plan))
-;;       (when (null curr-step)
-;;         (format t "  No more steps in ~a.~%" (plan-plan-name curr-plan))
-;;         (format t "  --------------------~%")
-;;         (return-from print-current-plan-status nil))
-;;       (format t "  rest of ~a = (~a ~a ...)~%" (plan-plan-name curr-plan)
-;;         (plan-step-ep-name curr-step) (plan-step-wff curr-step))
-;;       (setq subplan (plan-step-subplan curr-step))
-;;       (cond
-;;         (subplan
-;;           (format t "  subplan ~a of ~a:"
-;;             (plan-plan-name subplan) (plan-step-ep-name curr-step))
-;;           (setq curr-plan subplan))
-;;         (t (setq cont nil)))))
-;; ) ; END print-current-plan-status
-
-
-
-(defun print-plan-tree-from-node (plan-node &key show-schemas) ; {@}
-;```````````````````````````````````````````````````````````````
+(defun print-plan-tree-from-node (plan-node &key schema-instances) ; {@}
+;```````````````````````````````````````````````````````````````````
 ; Prints the subtree of the plan structure reachable from the given node.
 ;
-  (print-plan-tree-from-surface-step (plan-node-step plan-node) :show-schemas show-schemas)
+  (print-plan-tree-from-surface-step (plan-node-step plan-node) :schema-instances schema-instances)
 ) ; END print-plan-tree-from-node
 
 
 
-(defun print-plan-tree-from-surface-step (plan-step &key show-schemas) ; {@}
-;```````````````````````````````````````````````````````````````````````
+(defun print-plan-tree-from-surface-step (plan-step &key schema-instances) ; {@}
+;```````````````````````````````````````````````````````````````````````````
 ; Prints the subtree of the plan structure reachable from the given surface step.
 ;
   (let ((indent-str "       "))
+    (setq *print-pretty* nil)
     (labels ((print-tree-recur (step i)
       (when (null step) (return-from print-tree-recur nil))
-      (format t "~a~a~%" (str-repeat indent-str i) (format-plan-step step :show-schemas show-schemas))
+      (format t "~a~a~%" (str-repeat indent-str i) (format-plan-step step :schema-instances schema-instances))
       (mapcar (lambda (superstep) (print-tree-recur superstep (+ i 1))) (plan-step-supersteps step))))  
     (print-tree-recur plan-step 0)
+    (setq *print-pretty* t)
     nil
 ))) ; END print-plan-tree-from-surface-step
 
 
 
-(defun print-plan-tree-from-root-step (plan-step &key show-schemas) ; {@}
-;```````````````````````````````````````````````````````````````````
+(defun print-plan-tree-from-root-step (plan-step &key schema-instances) ; {@}
+;````````````````````````````````````````````````````````````````````````
 ; Prints the subtree of the plan structure reachable from the given root step.
 ;
   (let ((indent-str "       "))
+    (setq *print-pretty* nil)
     (labels ((print-tree-recur (step i)
       (when (null step) (return-from print-tree-recur nil))
-      (format t "~a~a~%" (str-repeat indent-str i) (format-plan-step step :show-schemas show-schemas))
+      (format t "~a~a~%" (str-repeat indent-str i) (format-plan-step step :schema-instances schema-instances))
       (mapcar (lambda (substep) (print-tree-recur substep (+ i 1))) (plan-step-substeps step))))  
     (print-tree-recur plan-step 0)
+    (setq *print-pretty* t)
     nil
 ))) ; END print-plan-tree-from-root-step
 
 
 
-;; (defun print-plan-as-tree (plan)
-;; ;`````````````````````````````````````````````````
-;; ; Prints the given plan as a tree, showing the sequence of steps for each (sub)plan.
-;; ;
-;;   (let ((indent-str "       "))
-;;     (labels (
-;;       (print-plan-steps-recur (plan-step direction i)
-;;         (when (null plan-step) (return-from print-plan-steps-recur nil))
-;;         (format t
-;;           (if (equal direction 'curr)
-;;             "~a>>>[~a] ~a~%"
-;;             "~a-  [~a] ~a~%")
-;;           (str-repeat indent-str i)
-;;           (plan-step-ep-name plan-step)
-;;           (plan-step-wff plan-step))
-;;         (when (plan-step-subplan plan-step)
-;;           (print-plan-as-tree-recur (plan-step-subplan plan-step) (+ i 1)))
-;;         (cond
-;;           ((equal direction 'before)
-;;             (print-plan-steps-recur (plan-step-prev-step plan-step) 'before i))
-;;           ((equal direction 'after)
-;;             (print-plan-steps-recur (plan-step-next-step plan-step) 'after i))))
+(defun print-plan-tree-from-all-roots (plan-node &key schema-instances) ; {@}
+;````````````````````````````````````````````````````````````````````````
+; Prints the subtree of the plan structure reachable from each root step.
+;
+  (dolist (root (get-all-plan-structure-roots plan-node))
+    (print-plan-tree-from-root-step root)
+    (format t "~%"))
+) ; END print-plan-tree-from-all-roots
 
-;;       (print-plan-as-tree-recur (plan i)
-;;         (when (null plan) (return-from print-plan-steps-recur nil))
-;;         (when (plan-curr-step plan)
-;;           (format t "~a|- ~a~%" (str-repeat indent-str i) (plan-plan-name plan))
-;;           (print-plan-steps-recur (plan-step-prev-step (plan-curr-step plan)) 'before i)
-;;           (print-plan-steps-recur (plan-curr-step plan) 'curr i)
-;;           (print-plan-steps-recur (plan-step-next-step (plan-curr-step plan)) 'after i))))
-          
-;;     (print-plan-as-tree-recur plan 0)
-;; ))) ; END print-plan-as-tree
+
+
+(defun get-first-plan-node (plan-node) ; {@}
+;`````````````````````````````````````````````````
+; Gets the first plan-node in the plan structure, given an arbitrary plan-node.
+;
+  (loop while (plan-node-prev plan-node) do
+    (setq plan-node (plan-node-prev plan-node)))
+  plan-node
+) ; END get-first-plan-node
+
+
+
+(defun get-last-plan-node (plan-node) ; {@}
+;`````````````````````````````````````````````````
+; Gets the last plan-node in the plan structure, given an arbitrary plan-node.
+;
+  (loop while (plan-node-next plan-node) do
+    (setq plan-node (plan-node-next plan-node)))
+  plan-node
+) ; END get-last-plan-node
 
 
 
@@ -1051,9 +736,7 @@
         (when (and (plan-node-next node) right)
           (get-all-unique-plan-schema-ids-recur1 (plan-node-next node) nil t)))
       (get-all-unique-plan-schema-ids-recur2 (step)
-        (when (plan-step-schemas step)
-          (dolist (schema (plan-step-schemas step))
-            (setq ret (cons (schema-id schema) ret))))
+        (setq ret (append (plan-step-schemas step) ret))
         (mapcar #'get-all-unique-plan-schema-ids-recur2 (plan-step-supersteps step))))
   (get-all-unique-plan-schema-ids-recur1 plan-node t t)
   (remove-duplicates ret)
@@ -1084,27 +767,48 @@
 
 
 
+(defun print-plan-var-table (plan-var-table) ; {@}
+;`````````````````````````````````````````````
+; Prints the entries in the plan variable table.
+;
+  (format t "~% --- PLAN VAR TABLE: ----------~%")
+  (maphash (lambda (var pairs)
+      (format t "~a:~%" var)
+      (dolist (pair pairs)
+        (format t "  ~a~%" pair)))
+    plan-var-table)
+  (format t " ---------------------------------~%")
+) ; END print-plan-var-table
+
+
+
 (defun make-test-plan-structure () ; {@}
 ;```````````````````````````````````````````
 ; Creates an artificial plan structure for testing purposes.
 ;
   (let* (
+    (plan-var-table (make-hash-table))
+    (schema-instances (make-hash-table))
     (s1 (make-epi-schema :predicate 'schema1.v))
     (s2 (make-epi-schema :predicate 'schema2.v))
     (s3 (make-epi-schema :predicate 'schema3.v))
     (s4 (make-epi-schema :predicate 'schema4.v))
-    (pe1  (make-plan-step :ep-name 'e1))
-    (pe2  (make-plan-step :ep-name 'e2))
-    (pe3  (make-plan-step :ep-name 'e3))
-    (pe4  (make-plan-step :ep-name 'e4))
-    (pe5  (make-plan-step :ep-name 'e5))
-    (pe6  (make-plan-step :ep-name 'e6))
-    (pe7  (make-plan-step :ep-name 'e7))
-    (pe8  (make-plan-step :ep-name 'e8))
-    (pe9  (make-plan-step :ep-name 'e9))
-    (pe10 (make-plan-step :ep-name 'e10))
-    (pe11 (make-plan-step :ep-name 'e11))
-    (pe12 (make-plan-step :ep-name 'e12))
+    (sid1 (schema-id s1))
+    (sid2 (schema-id s2))
+    (sid3 (schema-id s3))
+    (sid4 (schema-id s4))
+    (pe1  (make-plan-step :ep-name '?e1 :wff '(test ?e1)))
+    (pe2  (make-plan-step :ep-name '?e2 :wff '(test ?e1)))
+    (pe3  (make-plan-step :ep-name '?e3 :wff '(test ?e1 ?e2 ?words)))
+    (pe4  (make-plan-step :ep-name '?e4 :wff '(test ?e1 ?e2 ?e3)))
+    (pe5  (make-plan-step :ep-name '?e5 :wff '(test ?e1 ?e2 ?e3 ?e4 ?words)))
+    (pe6  (make-plan-step :ep-name '?e6 :wff '(test ?e4 ?words ?e5)))
+    (pe7  (make-plan-step :ep-name '?e7 :wff '(test ?e1 ?e6)))
+    (pe8  (make-plan-step :ep-name '?e8 :wff '(test ?e9 ?e7)))
+    (pe9  (make-plan-step :ep-name '?e9 :wff '(test ?e1 ?e12)))
+    (pe10 (make-plan-step :ep-name '?e10 :wff '(test ?e7 ?e8 ?e9)))
+    (pe11 (make-plan-step :ep-name '?e11 :wff '(test ?e1 ?words)))
+    (pe12 (make-plan-step :ep-name '?e12 :wff '(test ?e1 ?e11)))
     (n8  (make-plan-node :step pe8))
     (n9  (make-plan-node :step pe9))
     (n10 (make-plan-node :step pe10))
@@ -1128,18 +832,18 @@
   (setf (plan-step-supersteps pe10) (list pe4))
   (setf (plan-step-supersteps pe11) (list pe5))
   (setf (plan-step-supersteps pe12) (list pe6))
-  (setf (plan-step-schemas pe1) (list s1))
-  (setf (plan-step-schemas pe2) (list s2))
-  (setf (plan-step-schemas pe3) (list s1 s3))
-  (setf (plan-step-schemas pe4) (list s1 s2))
-  (setf (plan-step-schemas pe5) (list s1 s2 s4))
-  (setf (plan-step-schemas pe6) (list s2))
-  (setf (plan-step-schemas pe7) (list s2))
-  (setf (plan-step-schemas pe8) (list s1 s3))
-  (setf (plan-step-schemas pe9) (list s1 s3 s4))
-  (setf (plan-step-schemas pe10) (list s1 s2))
-  (setf (plan-step-schemas pe11) (list s1 s2 s4))
-  (setf (plan-step-schemas pe12) (list s2))
+  (setf (plan-step-schemas pe1) (list sid1))
+  (setf (plan-step-schemas pe2) (list sid2))
+  (setf (plan-step-schemas pe3) (list sid1 sid3))
+  (setf (plan-step-schemas pe4) (list sid1 sid2))
+  (setf (plan-step-schemas pe5) (list sid1 sid2 sid4))
+  (setf (plan-step-schemas pe6) (list sid2))
+  (setf (plan-step-schemas pe7) (list sid2))
+  (setf (plan-step-schemas pe8) (list sid1 sid3))
+  (setf (plan-step-schemas pe9) (list sid1 sid3 sid4))
+  (setf (plan-step-schemas pe10) (list sid1 sid2))
+  (setf (plan-step-schemas pe11) (list sid1 sid2 sid4))
+  (setf (plan-step-schemas pe12) (list sid2))
   (setf (plan-node-next n8) n9)
   (setf (plan-node-prev n9) n8)
   (setf (plan-node-next n9) n10)
@@ -1150,5 +854,35 @@
   (setf (plan-node-prev n12) n11)
   (setf (plan-node-next n12) n7)
   (setf (plan-node-prev n7) n12)
-  n11
+  (dolist (schema (list s1 s2 s3 s4))
+    (setf (gethash (schema-id schema) schema-instances) schema))
+  (dolist (triple
+          `(
+            (?e1 ?ea1 ,sid1)
+            (?e2 ?eb1 ,sid2)
+            (?e3 ?ea2 ,sid1)
+            (?e3 ?ec1 ,sid3)
+            (?words ?w ,sid1)
+            (?words ?w ,sid3)
+            (?e4 ?ea3 ,sid1)
+            (?e4 ?eb2 ,sid2)
+            (?e5 ?ea4 ,sid1)
+            (?e5 ?eb3 ,sid2)
+            (?e5 ?ed1 ,sid4)
+            (?e6 ?eb4 ,sid2)
+            (?e7 ?eb5 ,sid2)
+            (?e8 ?ea5 ,sid1)
+            (?e8 ?ec2 ,sid3)
+            (?e9 ?ea6 ,sid1)
+            (?e9 ?ec3 ,sid3)
+            (?e9 ?ed2 ,sid4)
+            (?e10 ?ea7 ,sid1)
+            (?e10 ?eb6 ,sid2)
+            (?e11 ?ea8 ,sid1)
+            (?e11 ?eb7 ,sid2)
+            (?e11 ?ed3 ,sid4)
+            (?e12 ?eb8 ,sid2)
+          ))
+    (push (list (second triple) (third triple)) (gethash (first triple) plan-var-table)))
+  (list n11 plan-var-table schema-instances)
 )) ; END make-test-plan-structure

@@ -1783,6 +1783,28 @@
 
 
 
+(defun enqueue-in-buffer-ordered (items buffer &key (inc-val 0.0001))
+;``````````````````````````````````````````````````````````````````````
+; Enqueues a list of items in a given buffer, using a small increment to
+; break ties and ensure that items appear in original order when not assigned
+; custom importance. Also, assume that any items without explicit importance
+; are at least as important as the previous front of the queue.
+; 'items' will be a list of either items or (item importance) pairs.
+;
+  (let ((cur-max (max-importance-in-buffer buffer)) (inc inc-val) importance)
+    (dolist (item (reverse items))
+      (cond
+        ((and (listp item) (= 2 (length item)) (numberp (second item)))
+          (setq importance (second item))
+          (setq item (first item)))
+        (t (setq importance cur-max)))
+      (incf importance inc)
+      (enqueue-in-buffer item buffer importance)
+      (incf inc inc-val))
+)) ; END enqueue-in-buffer-ordered
+
+
+
 (defun buffer-empty-p (buffer)
 ;````````````````````````````````
 ; Checks if a buffer is empty.
@@ -1855,6 +1877,17 @@
   (if (not (buffer-empty-p buffer))
     (priority-queue:pqueue-front-value buffer))
 ) ; END get-item-from-buffer
+
+
+
+(defun max-importance-in-buffer (buffer)
+;`````````````````````````````````````````
+; Gets the current maximum importance value in the given buffer.
+;
+  (if (not (buffer-empty-p buffer))
+    (priority-queue:pqueue-front-key buffer)
+    0)
+) ; END max-importance-in-buffer
 
 
 
@@ -2545,7 +2578,7 @@
 
 ;``````````````````````````````````````````````````````
 ;
-; [*] EPISODE UTIL
+; [*] EPISODE/VARIABLE UTIL
 ;
 ;``````````````````````````````````````````````````````
 
@@ -2584,6 +2617,51 @@
 ;
   (and (atom sk-name) (equal (second (sym-split sk-name 3)) '.SK))
 ) ; END skolem?
+
+
+
+(defun duplicate-var (var)
+;````````````````````````````
+; Duplicates a variable name, returning a new symbol that hasn't
+; been used elsewhere (for readability's sake, base the new symbol
+; on the text of the original, splitting off any trailing numbers)
+;
+  (gentemp (coerce (reverse
+    (member-if-not #'digit-char-p
+      (reverse (coerce (string var) 'list)))) 'string))
+) ; END duplicate-var
+
+
+
+(defun get-all-variables (x)
+;``````````````````````````````
+; Gets all variables occurring in an expression.
+;
+  (let (vars)
+    (labels ((get-all-variables-recur (y)
+      (cond
+        ((and (atom y) (variable? y))
+          (push y vars))
+        ((listp y) (mapcar #'get-all-variables-recur y)))))
+    (get-all-variables-recur x)
+    (remove-duplicates vars)
+))) ; END get-all-variables
+
+
+
+(defun duplicate-vars (x)
+;``````````````````````````
+; Given a symbol or list, replace all variables with duplicate variables.
+; Returns both the new symbol/list, and a list of all substitutions made.
+;
+  (let (vars new-var pairs (ret x))
+    (setq vars (reverse (get-all-variables x)))
+    (dolist (var vars)
+      (setq new-var (duplicate-var var))
+      (setq ret (subst new-var var ret))
+      (push (list var new-var) pairs))
+    (list ret pairs)
+)) ; END duplicate-vars
 
 
 
