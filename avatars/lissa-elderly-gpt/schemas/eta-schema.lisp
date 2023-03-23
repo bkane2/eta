@@ -24,7 +24,7 @@
 
 ?e3 ((set-of ^me ^you) discuss-activities.v)
 
-?e4 ((set-of ^me ^you) say-bye.v)
+?e4 ((set-of ^me ^you) exchange-goodbyes.v)
 
 )
 

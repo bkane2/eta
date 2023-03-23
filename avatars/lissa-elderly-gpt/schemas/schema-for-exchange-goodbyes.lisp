@@ -1,13 +1,13 @@
-;; *say-bye*: development version 6
+;; *exchange-goodbyes*: development version 6
 ;;
 ;; 
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(store-schema 'say-bye.v
+(store-schema 'exchange-goodbyes.v
 
-'(event-schema :header (((set-of ^me ^you) say-bye.v) ** ?e)
+'(event-schema :header (((set-of ^me ^you) exchange-goodbyes.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (
@@ -56,8 +56,8 @@
   )
 
   ?e3 (^me paraphrase-to.v ^you '(Thank you for meeting with me today \. Bye \.))
-  ?e4 (^me say-bye-to.v ^you)
+  ?e4 (^me say-bye.v)
 
 )
 
-)) ; END say-bye.v
+)) ; END exchange-goodbyes.v

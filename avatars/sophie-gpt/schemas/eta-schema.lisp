@@ -59,8 +59,8 @@
 ;; ?e4 ((set-of ^me ^you) ask-about-options.v)
 
 
-;; ;; (say-bye)
-;; ?e5 ((set-of ^me ^you) say-bye.v)
+;; ;; (exchange-goodbyes)
+;; ?e5 ((set-of ^me ^you) exchange-goodbyes.v)
 
 )
 
@@ -71,4 +71,4 @@
 ;; (?e2 (Pain))
 ;; (?e3 (Prognosis))
 ;; (?e4 (Options))
-;; (?e5 (Say-bye))
+;; (?e5 (Exchange-goodbyes))

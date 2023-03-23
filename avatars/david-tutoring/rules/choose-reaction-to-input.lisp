@@ -33,7 +33,7 @@
   1 (spatial-question 0)
     2 *reaction-to-spatial-question-input* (0 :subtree)
   1 (goodbye 0)
-    2 say-bye.v (0 :schema)
+    2 exchange-goodbyes.v (0 :schema)
   1 (pause 0)
     2 pause-conversation.v (0 :schema)
 ))

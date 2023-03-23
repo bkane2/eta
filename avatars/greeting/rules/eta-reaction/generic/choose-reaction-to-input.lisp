@@ -7,8 +7,8 @@
 ; questions, such as "can you answer wh-questions?".
 '(
   ; Goodbye responses
-  1 (0 goodbye \. 0)
-    2 (say-bye.v (^me ^you)) (0 :schema+args)
+  ;; 1 (0 goodbye \. 0)
+  ;;   2 (say-bye.v (^me ^you)) (0 :schema+args)
   ; Question responses
   1 (0 ?) ; anything ending with ?
     2 *reaction-to-question* (0 :subtree)

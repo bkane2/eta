@@ -65,7 +65,7 @@
           ?e10 (^me paraphrase-to.v ^you '(I\'m not sure I can trust your prognosis \. I need to find another
                                           doctor who can be honest with me \.))
           ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
-          ?e12 (^me say-bye-to.v ^you))))
+          ?e12 (^me say-bye.v))))
 
 
     ?e13 (:try-in-sequence
@@ -86,7 +86,7 @@
 
         ?e17 (^me paraphrase-to.v ^you '(I\'m pretty anxious about my future\, but your honesty means a lot to me \.))
         ?e18 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
-        ?e19 (^me say-bye-to.v ^you)))
+        ?e19 (^me say-bye.v)))
 
 )
 

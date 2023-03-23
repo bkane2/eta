@@ -20,11 +20,11 @@
 ; (Goodbye \.)
 '(
   1 (0 .BYE 0)
-    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+    2 ((Goodbye \.) (Exchange-goodbyes)) (0 :gist)
   1 (0 talk 2 again 2 soon 0)
-    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+    2 ((Goodbye \.) (Exchange-goodbyes)) (0 :gist)
   1 (0 talk to you 1 soon 0)
-    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+    2 ((Goodbye \.) (Exchange-goodbyes)) (0 :gist)
   1 (0 until 1 next 0)
-    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+    2 ((Goodbye \.) (Exchange-goodbyes)) (0 :gist)
 )) ; END *say-bye-input*

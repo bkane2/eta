@@ -66,7 +66,7 @@
         ?e10 (^me paraphrase-to.v ^you '(You\'re giving me too much information at once \.
                                          I need to take a break to process this information \.))
         ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
-        ?e12 (^me say-bye-to.v ^you))))
+        ?e12 (^me say-bye.v))))
 
   ; Once the user is empowering, proceed (but make sure that the user has actually answered Sophie's question adequately)
   ?e13 (:try-in-sequence

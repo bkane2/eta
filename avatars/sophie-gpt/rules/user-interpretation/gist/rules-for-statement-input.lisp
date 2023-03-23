@@ -821,14 +821,14 @@
 
   ; Goodbye
   1 (3 .BYE 3)
-    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+    2 ((Goodbye \.) (Exchange-goodbyes)) (0 :gist)
   1 (1 talk 2 again 2 soon 2)
-    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+    2 ((Goodbye \.) (Exchange-goodbyes)) (0 :gist)
   1 (1 talk to you 1 soon 2)
-    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+    2 ((Goodbye \.) (Exchange-goodbyes)) (0 :gist)
   1 (1 talk 2 again 2 next 2 .APPOINTMENT 2)
-    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+    2 ((Goodbye \.) (Exchange-goodbyes)) (0 :gist)
   1 (1 until next time 2)
-    2 ((Goodbye \.) (Say-bye)) (0 :gist)
+    2 ((Goodbye \.) (Exchange-goodbyes)) (0 :gist)
 
 )) ; END *statement-input*

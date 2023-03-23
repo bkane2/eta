@@ -62,7 +62,7 @@
       
         ?e10 (^me paraphrase-to.v ^you '([ANGRY] I\'m going to find a different doctor \.))
         ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
-        ?e12 (^me say-bye-to.v ^you))))
+        ?e12 (^me say-bye.v))))
 
 
   ; Once the user is explicit, proceed

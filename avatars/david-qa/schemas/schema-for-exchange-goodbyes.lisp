@@ -1,13 +1,13 @@
-;; *say-bye*: development version 6
+;; *exchange-goodbyes*: development version 6
 ;;
 ;; Dialogue for blocks world conversation 
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(store-schema 'say-bye.v
+(store-schema 'exchange-goodbyes.v
 
-'(event-schema :header (((set-of ^me ^you) say-bye.v) ** ?e)
+'(event-schema :header (((set-of ^me ^you) exchange-goodbyes.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````
 ; The user and the agent quit conversation.
 ;
@@ -16,8 +16,8 @@
 
   ; David "pauses" by repeatedly listening to the user say something, and ignoring it
   ; unless it is interpreted as a resumption request, in which case the loop is broken.
-  ?e1 (^me say-to.v ^you '(Oh \, thank you for participating \. Good bye for now \!))
-  ?e2 (^me say-bye-to.v ^you)
+  ?e1 (^me say-to.v ^you '(Oh \, thank you for the questions \. Good bye for now \!))
+  ?e2 (^me say-bye.v)
 )
 
-)) ; END say-bye.v
+)) ; END exchange-goodbyes.v

@@ -67,7 +67,7 @@
       
         ?e10 (^me paraphrase-to.v ^you '(I don\'t think I can handle this right now \. I need a break \.))
         ?e11 (^me say-to.v ^you '([NEUTRAL] Let\'s pause here for feedback on this conversation \.))
-        ?e12 (^me say-bye-to.v ^you))))
+        ?e12 (^me say-bye.v))))
 
 
   ; Once the user is empathetic, proceed (but make sure that the user has actually answered Sophie's question)
