@@ -994,7 +994,7 @@
 ;``````````````````````````````````````````````
 ; Finds the most recent turn in the conversation log from the given agent.
 ;
-  (car (remove-if (lambda (turn) (not (equal (dialogue-turn-agent turn) (string agent))))
+  (car (remove-if (lambda (turn) (not (equal (dialogue-turn-agent turn) agent)))
     (ds-conversation-log *ds*)))
 ) ; END find-prev-turn-of-agent
 

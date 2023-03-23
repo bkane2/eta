@@ -598,8 +598,7 @@
 ; TODO: ultimately, I think matching expectations in the plan
 ; and executing Eta actions should be separate tasks.
 ;
-  (let ((plan-node (ds-curr-plan *ds*)) curr-step ep-name wff subj certainty advance-plan?)
-    (setq curr-step (plan-node-step plan-node))
+  (let ((curr-step (plan-node-step (ds-curr-plan *ds*))) ep-name wff subj certainty advance-plan?)
     (setq ep-name (get-step-ep-name curr-step))
     (setq wff (get-step-wff curr-step))
 
@@ -614,16 +613,16 @@
       ; If keyword episode, execute step
       ((keywordp subj)
         (setq *output-listen-prompt* 0) ; stop listening for user audio
-        (setq advance-plan? (process-keyword-step plan-node)))
+        (setq advance-plan? (process-keyword-step curr-step)))
       ; If expected step by the user, process expectation
       ((equal subj '^you)
-        (setq advance-plan? (process-expected-step plan-node)))
+        (setq advance-plan? (process-expected-step curr-step)))
       ; If intended step by Eta, execute step if possible
       ((equal subj '^me)
         (setq *output-listen-prompt* 0) ; stop listening for user audio
-        (setq advance-plan? (process-intended-step plan-node)))
+        (setq advance-plan? (process-intended-step curr-step)))
       ; Otherwise, treat step as expectation
-      (t (setq advance-plan? (process-expected-step plan-node))))
+      (t (setq advance-plan? (process-expected-step curr-step))))
 
     ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
@@ -1929,10 +1928,12 @@
 
 
 
-(defun instantiate-plan-variable (plan-node val var) ; {@}
-;```````````````````````````````````````````````````````````
+(defun instantiate-plan-variable (val var &optional plan-node) ; {@}
+;```````````````````````````````````````````````````````````````
 ; Wrapper function to bind a variable to a value in the plan structure.
+; plan-node is assumed to be the current node if not given.
 ;
+  (if (null plan-node) (setq plan-node (ds-curr-plan *ds*)))
   (bind-variable-in-plan plan-node val var
     :plan-var-table (ds-plan-var-table *ds*)
     :schema-instances (ds-schema-instances *ds*))
@@ -1942,46 +1943,88 @@
 
 
 
-(defun instantiate-curr-step (plan-node) ; {@}
+(defun instantiate-superstep (plan-step) ; {@}
 ;``````````````````````````````````````````
-; Instantiates the current episode in the plan, destructively substituting
-; the skolemized episode wherever it occurs in the plan, as well as binding
+; Instantiates a given plan-step assumed to be a superstep of some other
+; step(s), provided all of the substeps have been fully instantiated. If
+; the step only has a single substep, it gets the same episode constant as
+; the substep; otherwise a new episode constant is created.
+;
+; TODO REFACTOR : in the case of multiple substeps, should we store something
+; like (E1 part-of E3) (E2 part-of E3) etc. in context?
+; 
+; TODO REFACTOR : should we do any failure detection here? E.g., if a substep
+; fails and is characterized by a ((no.d thing.n) happen.v) WFF, should the
+; superstep be instantiated just as it is, or inherit the failure characterization?
+; 
+  (let ((substeps (plan-step-substeps plan-step)) ep-var ep-name)
+    (setq ep-var (get-step-ep-name plan-step))
+
+    ; Check if all substeps have been instantiated
+    (when (and substeps (every (lambda (superstep)
+                            (not (variable? (plan-step-ep-name superstep))))
+                            substeps))
+      (cond
+        ; If one substep, use same episode constant
+        ((= (length substeps) 1)
+          (setq ep-name (plan-step-ep-name (car substeps)))
+          (instantiate-plan-variable ep-name ep-var))
+        ; Otherwise, create a new episode constant subsuming each subepisode
+        (t
+          (setq ep-name (episode-name))
+          (store-init-time-of-episode ep-name)
+          (instantiate-plan-variable ep-name ep-var))))
+
+    ; Recur for all supersteps
+    (mapcar #'instantiate-superstep (plan-step-supersteps plan-step))
+
+)) ; END instantiate-superstep
+
+
+
+
+
+(defun instantiate-plan-step (plan-step) ; {@}
+;``````````````````````````````````````````
+; Instantiates a given plan-step, destructively substituting the
+; skolemized episode wherever it occurs in the plan, as well as binding
 ; that episode variable in the schema.
 ;
-  (let ((curr-step (plan-node-step plan-node)) ep-var ep-name)
+  (let (ep-var ep-name)
+    (if (null plan-step) (return-from instantiate-plan-step nil))
 
-    ; If no curr-step, return nil
-    (if (null curr-step) (return-from instantiate-curr-step nil))
-    
     ; Get episode-var (if already instantiated, return nil)
-    (setq ep-var (get-step-ep-name curr-step))
-    (if (not (variable? ep-var)) (return-from instantiate-curr-step nil))
+    (setq ep-var (get-step-ep-name plan-step))
+    (if (not (variable? ep-var)) (return-from instantiate-plan-step nil))
 
     ; Generate a constant for the episode and destructively substitute in plan
     (setq ep-name (episode-name))
     ; TODO: use episode-relations formulas to assert relations in timegraph
     (store-init-time-of-episode ep-name)
-    (instantiate-plan-variable plan-node ep-name ep-var)
+    (instantiate-plan-variable ep-name ep-var)
+
+    ; Instantiate all supersteps of this step whose substeps are now fully completed
+    (mapcar #'instantiate-superstep (plan-step-supersteps plan-step))
 
     ;; (format t "action list after substituting ~a for ~a:~%" ep-name ep-var)
     ;; (print-current-plan-status plan-node) ; DEBUGGING
 
     ; TODO: should (wff ** ep-name) be stored in context at this point?
     ;       as well as instantiating the non-fluent variable, e.g. '!e1'?
-    
-)) ; END instantiate-curr-step
+
+)) ; END instantiate-plan-step
 
 
 
 
 
-(defun process-keyword-step (plan-node) ; {@}
+(defun process-keyword-step (plan-step) ; {@}
 ;```````````````````````````````````````````
 ; Checks whether to skip a keyword step depending on whether or not
 ; the conditions for expansion hold.
 ; Returns t if the step should be skipped; nil otherwise.
 ;
-  (let* ((plan-step (plan-node-step plan-node)) ep-name wff bindings expr advance-plan?)
+  (let (ep-name wff bindings expr advance-plan?)
     (setq ep-name (get-step-ep-name plan-step))
     (setq wff (get-step-wff plan-step))
   
@@ -2027,7 +2070,7 @@
       (t (format t "~%*** UNRECOGNIZABLE KEYWORD STEP ~a " wff) (setq advance-plan? t)))
 
     (when advance-plan?
-      (instantiate-curr-step plan-node))
+      (instantiate-plan-step plan-step))
     advance-plan?
 )) ; END process-keyword-step
 
@@ -2035,7 +2078,7 @@
 
 
 
-(defun process-intended-step (plan-node) ; {@}
+(defun process-intended-step (plan-step) ; {@}
 ;```````````````````````````````````````````
 ; Processes an intended plan step by attempting to execute the step
 ; with a primitive function. This may bind variables within the plan,
@@ -2045,7 +2088,7 @@
 ; that be handled in this task by returning nil, or should success verification
 ; be a separate task?
 ;
-  (let* ((plan-step (plan-node-step plan-node)) ep-name wff bindings expr expr1 var-bindings advance-plan?)
+  (let (ep-name wff bindings expr expr1 var-bindings advance-plan?)
     (setq ep-name (get-step-ep-name plan-step))
     (setq wff (get-step-wff plan-step))
 
@@ -2062,7 +2105,7 @@
       ; or nil, for non-match
       ((setq bindings (bindings-from-ttt-match '(^me say-to.v ^you _+) wff))
         (setq expr (eval-functions (get-single-binding bindings)))
-        (instantiate-curr-step plan-node)
+        (instantiate-plan-step plan-step)
         (setq var-bindings (execute-say-to plan-step expr))
         (setq advance-plan? t))
 
@@ -2074,7 +2117,7 @@
       ; exits the conversation, whereas say-bye-to.v might be used during the exchange of
       ; pleasantries and farewells at the end of a standard conversation.
       ((equal wff '(^me say-bye.v))
-        (instantiate-curr-step plan-node)
+        (instantiate-plan-step plan-step)
         (execute-say-bye)
         (setq advance-plan? t))
 
@@ -2087,7 +2130,7 @@
         (setq expr (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr1 (get-single-binding bindings))
-        (instantiate-curr-step plan-node)
+        (instantiate-plan-step plan-step)
         (setq var-bindings (execute-recall-answer plan-step expr expr1))
         (setq advance-plan? t))
 
@@ -2100,7 +2143,7 @@
         (setq expr (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr1 (get-single-binding bindings))
-        (instantiate-curr-step plan-node)
+        (instantiate-plan-step plan-step)
         (execute-seek-answer-from plan-step expr expr1)
         (setq advance-plan? t))
 
@@ -2114,7 +2157,7 @@
         (setq expr (get-single-binding bindings))
         (setq bindings (cdr bindings))
         (setq expr1 (get-single-binding bindings))
-        (instantiate-curr-step plan-node)
+        (instantiate-plan-step plan-step)
         (setq var-bindings (execute-receive-answer-from plan-step expr expr1))
         (setq advance-plan? t))
 
@@ -2125,7 +2168,7 @@
       ; expr yields e.g. ((_! (^you happy.a)))
       ((setq bindings (bindings-from-ttt-match '(^me commit-to-STM.v (that _!)) wff))
         (setq expr (get-single-binding bindings))
-        (instantiate-curr-step plan-node)
+        (instantiate-plan-step plan-step)
         (execute-commit-to-STM plan-step expr)
         (setq advance-plan? t))
 
@@ -2136,7 +2179,7 @@
       ; expr yields e.g. ((_! (some.d ?ka (:l (?x) (?x step1-toward.p ?goal-rep)))))
       ((setq bindings (bindings-from-ttt-match '(^me find4.v _!) wff))
         (setq expr (get-single-binding bindings))
-        (instantiate-curr-step plan-node)
+        (instantiate-plan-step plan-step)
         (setq var-bindings (execute-find plan-step expr))
         (setq advance-plan? t))
 
@@ -2147,7 +2190,7 @@
       ; expr yields e.g. ((_! (a.d ?c (random.a (:l (?x) (and (?x member-of.p ?cc) ...))))))
       ((setq bindings (bindings-from-ttt-match '(^me choose.v _!) wff))
         (setq expr (get-single-binding bindings))
-        (instantiate-curr-step plan-node)
+        (instantiate-plan-step plan-step)
         (setq var-bindings (execute-choose plan-step expr))
         (setq advance-plan? t))
 
@@ -2158,7 +2201,7 @@
       ; expr yields e.g. ((_! (a.d ?goal-rep ((most.mod-a simple.a) (:l (?x) (and (?x goal-schema1.n) ...))))))
       ((setq bindings (bindings-from-ttt-match '(^me form-spatial-representation.v _!) wff))
         (setq expr (get-single-binding bindings))
-        (instantiate-curr-step plan-node)
+        (instantiate-plan-step plan-step)
         (setq var-bindings (execute-form-spatial-representation plan-step expr))
         (setq advance-plan? t))
     )
@@ -2168,7 +2211,7 @@
 
     ; Make all variable substitutions in the plan
     (dolist (var-binding var-bindings)
-      (instantiate-plan-variable plan-node (second var-binding) (first var-binding)))
+      (instantiate-plan-variable (second var-binding) (first var-binding)))
 
     advance-plan?
 )) ; END process-intended-step
@@ -2177,14 +2220,14 @@
 
 
 
-(defun process-expected-step (plan-node) ; {@}
+(defun process-expected-step (plan-step) ; {@}
 ;```````````````````````````````````````````
 ; Processes an expected plan step by inquiring about the truth of the
 ; step in context. If the step times out (determined by the certainty
 ; of the step), fail the step and proceed with the plan.
 ; Returns t if the plan should be advanced; nil otherwise.
 ;
-  (let ((curr-step (plan-node-step plan-node)) certainty)
+  (let (certainty)
     ; Output prompt for external system to listen for user audio (but only once)
     (setq *output-listen-prompt* (if (= *output-listen-prompt* 0) 1 2))
 
@@ -2201,33 +2244,33 @@
       (write-output-buffer))
 
     ; Check certainty of expected plan step
-    (setq certainty (get-step-certainty curr-step))
+    (setq certainty (get-step-certainty plan-step))
 
     (cond
       ; If timer exceeds period (a function of certainty of step), instantiate a 'failed' episode
       ((>=inf (- (get-universal-time) *expected-step-failure-timer*) (certainty-to-period certainty)) 
-        (fail-curr-step plan-node))
+        (fail-curr-step plan-step))
 
       ; Otherwise, inquire self about the truth of the immediately pending episode. Plan is advanced
       ; (and appropriate substitutions made) if the expected episode is determined to be true.
-      (t (inquire-truth-of-curr-step plan-node)))
+      (t (inquire-truth-of-curr-step plan-step)))
 )) ; END process-expected-step
 
 
 
 
 
-(defun inquire-truth-of-curr-step (plan-node) ; {@}
+(defun inquire-truth-of-curr-step (plan-step) ; {@}
 ;``````````````````````````````````````````````
 ; Checks the truth of the immediately pending episode in the plan,
 ; through a process of "self-inquiry" (i.e. checking the system's
 ; context/memory, potentially with some level of inference (TBC) as well).
 ; 
-  (let ((curr-step (plan-node-step plan-node)) ep-var ep-name wff match)
+  (let (ep-var ep-name wff match)
   
     ; Get expected wff, and episode var
-    (setq ep-var (get-step-ep-name curr-step))
-    (setq wff (get-step-wff curr-step))
+    (setq ep-var (get-step-ep-name plan-step))
+    (setq wff (get-step-wff plan-step))
 
     ; Inquire about truth of wff in context; use first match
     (setq match (get-from-context wff))
@@ -2239,11 +2282,11 @@
       (setq ep-name (get-episode-from-contextual-fact match))
       
       ; Substitute that episode name for the episode variable in the plan
-      (instantiate-plan-variable plan-node ep-name ep-var)
+      (instantiate-plan-variable ep-name ep-var)
 
       ; Make all variable substitutions needed to unify wff and match
       (mapcar (lambda (x y) (if (and (variable? x) y)
-          (instantiate-plan-variable plan-node y x)))
+          (instantiate-plan-variable y x)))
         wff match)
 
       ; Remove the matched predicate from context if a telic predicate, i.e., assume
@@ -2261,7 +2304,7 @@
 
 
 
-(defun fail-curr-step (plan-node) ; {@}
+(defun fail-curr-step (plan-step) ; {@}
 ;```````````````````````````````````
 ; Determine that the immediately pending episode in the plan is a
 ; 'failed' episode; i.e. an expected episode which did not end up
@@ -2270,14 +2313,14 @@
 ; name characterized as a failure.
 ; Returns t after instantiating failed episode.
 ;
-  (let ((curr-step (plan-node-step plan-node)) ep-name wff)
+  (let (ep-name wff)
 
     ; Instantiate the episode variable of the new step and substitute
-    (instantiate-curr-step plan-node)
+    (instantiate-plan-step plan-step)
 
     ; Get expected wff and instantiated ep-name
-    (setq ep-name (get-step-ep-name curr-step))
-    (setq wff (get-step-wff curr-step))
+    (setq ep-name (get-step-ep-name plan-step))
+    (setq wff (get-step-wff plan-step))
 
     ; Add (^you do.v (no.d thing.n)) or ((no.d thing.n) happen.v) to context (depending on
     ; whether a user step or other expectation), characterizing <ep-name>. This is
