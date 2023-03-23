@@ -735,7 +735,7 @@
 
     ; Form a reaction to each gist clause in the buffer (removing nil gists, unless they are
     ; the only gist present, in which case it may be possible to form a reaction to that)
-    (setq poss-actions (mapcar #'suggest-reaction-to-input gists))
+    (setq poss-actions (remove nil (mapcar #'suggest-reaction-to-input gists)))
     (enqueue-in-buffer-ordered poss-actions (buffers-actions (ds-buffers *ds*)))
 
 )) ; END suggest-possible-actions-from-input
@@ -3172,6 +3172,7 @@
     (setq history-agents (reverse (mapcar #'dialogue-turn-agent (ds-conversation-log *ds*))))
     (setq history-utterances
       (reverse (mapcar #'untag-emotions (mapcar #'dialogue-turn-utterance (ds-conversation-log *ds*)))))
+    (setq history (mapcar (lambda (agent utterance) (list agent utterance)) history-agents history-utterances))
     (setq history-str
       (mapcar (lambda (agent utterance) (list (string agent) (words-to-str utterance)))
         history-agents history-utterances))
@@ -3190,7 +3191,7 @@
 
         ; Get previous user utterance
         (setq prev-utterance (second (car (last
-          (remove-if (lambda (turn) (equal (first turn) (string *^me*))) history)))))
+          (remove-if (lambda (turn) (equal (first turn) *^me*)) history)))))
         
         ; If no previous user utterance, create a generic one
         (when (null prev-utterance)
