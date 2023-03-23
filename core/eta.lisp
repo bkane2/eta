@@ -2348,7 +2348,7 @@
 
         ; Get previous user utterance
         (setq prev-utterance (second (car (last
-          (remove-if (lambda (turn) (equal (first turn) (string *^me*))) history)))))
+          (remove-if (lambda (turn) (equal (first turn) *^me*)) history)))))
         
         ; If no previous user utterance, create a generic one
         (when (null prev-utterance)
