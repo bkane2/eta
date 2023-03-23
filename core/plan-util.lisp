@@ -285,8 +285,10 @@
         plan-node-duplicates plan-node duplicates)
     (setq vars (get-all-variables episodes))
     (dolist (schema schemas)
-      (setq certainties (group-facts-in-schema-section (get-schema-section (gethash schema schema-instances) :certainties)))
-      (setq obligations (group-facts-in-schema-section (get-schema-section (gethash schema schema-instances) :obligations)))
+      (setq certainties (group-facts-in-schema-section
+        (get-schema-section (gethash schema schema-instances) :certainties :no-binding t)))
+      (setq obligations (group-facts-in-schema-section
+        (get-schema-section (gethash schema schema-instances) :obligations :no-binding t)))
       (when plan-var-table
         (dolist (var vars)
           (setq var-replacements (remove-if-not

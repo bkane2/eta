@@ -51,8 +51,12 @@
 
 )
 
+;; :certainties (
+;;   !c1 (!e4 0.1)
+;; )
+
 :obligations (
-  !o1 (?e3 obligates (?h exchange-goodbyes-to.v ?s))
+  !o1 (?e3 obligates (?h say-bye-to.v ?s))
 )
 
 )) ; END exchange-goodbyes.v

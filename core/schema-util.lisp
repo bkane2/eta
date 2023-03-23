@@ -347,30 +347,37 @@
 
 
 
-(defun get-schema-contents (schema)
-;``````````````````````````````````````
+(defun get-schema-contents (schema &key no-binding)
+;`````````````````````````````````````````````````````
 ; Gets the contents of a schema (substituting any bindings).
+; (if :no-binding t is given, do not substitute bindings)
 ;
-  (subst-binding-expr (schema-contents schema) schema)
+  (if no-binding
+    (schema-contents schema)
+    (subst-binding-expr (schema-contents schema) schema))
 ) ; END get-schema-contents
 
 
 
-(defun get-schema-section (schema section &key (type 'epi))
-;`````````````````````````````````````````````````````````````
+(defun get-schema-section (schema section &key (type 'epi) no-binding)
+;````````````````````````````````````````````````````````````````````````
 ; Gets a section of a schema by the given keyword (substituting any bindings).
+; (if :no-binding t is given, do not substitute bindings)
 ;
-  (subst-binding-expr (funcall (sym-join (list type 'schema section) #\-) schema) schema)
+  (if no-binding
+    (funcall (sym-join (list type 'schema section) #\-) schema)
+    (subst-binding-expr (funcall (sym-join (list type 'schema section) #\-) schema) schema))
 ) ; END get-schema-section
 
 
 
-(defun get-schema-section-wffs (schema section &key (type 'epi))
-;``````````````````````````````````````````````````````````````````
+(defun get-schema-section-wffs (schema section &key (type 'epi) no-binding)
+;``````````````````````````````````````````````````````````````````````````````
 ; Gets all wffs in a section of a schema by the given keyword (substituting any bindings).
+; (if :no-binding t is given, do not substitute bindings)
 ;
   (mapcar #'second (group-facts-in-schema-section
-    (get-schema-section schema section :type type)))
+    (get-schema-section schema section :type type :no-binding no-binding)))
 ) ; END get-schema-section-wffs
 
 
