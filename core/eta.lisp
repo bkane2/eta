@@ -1378,8 +1378,7 @@
 
 (defun plan-paraphrase-to (plan-step gist) ; {@}
 ;```````````````````````````````````````````
-  (let (ep-name wff ep-name1 prev-step prev-step-ep-name
-        user-gist-clauses utterance)
+  (let (ep-name wff prev-step prev-step-ep-name user-gist-clauses utterance)
     (setq ep-name (get-step-ep-name plan-step))
     (setq wff (get-step-wff plan-step))
 
@@ -1396,15 +1395,8 @@
       ((eq (car gist) 'quote)
         (setq gist (flatten (second gist)))
 
-        ; Store gist-clause that Eta is paraphrasing
+        ; Store gist-clause in KB
         (store-gist gist (get ep-name 'topic-keys) (ds-gist-kb-eta *ds*))
-        (store-gist-clause-characterizing-episode gist ep-name '^me '^you)
-
-        ; Inherit any semantics from parent episode, if any
-        (setq ep-name1 (get-parent-ep-name plan-step))
-        (when ep-name1
-          (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
-            (get-semantic-interpretations-characterizing-episode ep-name1)))
 
         ; Use previous user speech act as context for interpretation
         (setq prev-step (find-prev-turn-of-agent *^you*))
@@ -1512,9 +1504,8 @@
             (setq eta-gist (first (cdr choice)))
             (setq keys (second (cdr choice)))))
         ;; (format t "~%chosen Eta gist clause = ~a~%" eta-gist) ; DEBUGGING
-        ; Store Eta's gist clause under top-level episode
+        ; Store gist clause in KB
         (store-gist eta-gist keys (ds-gist-kb-eta *ds*))
-        (store-gist-clause-characterizing-episode eta-gist ep-name '^me '^you)
         ; Create paraphrase-to.v subplan
         (init-plan-from-episode-list
           (list :episodes (episode-var) `(^me paraphrase-to.v ^you (quote ,eta-gist)))))
@@ -1610,9 +1601,8 @@
             (setq eta-gist (first (cdr choice)))
             (setq keys (second (cdr choice)))))
         ;; (format t "~%chosen Eta gist clause = ~a~%" eta-gist) ; DEBUGGING
-        ; Store Eta's gist clause under top-level episode
+        ; Store gist clause in KB
         (store-gist eta-gist keys (ds-gist-kb-eta *ds*))
-        (store-gist-clause-characterizing-episode eta-gist ep-name '^me '^you)
         ; Add paraphrase-to.v subplan
         (init-plan-from-episode-list
           (list :episodes (episode-var) `(^me paraphrase-to.v ^you (quote ,eta-gist)))))
@@ -1784,12 +1774,12 @@
 
     (cond
       ((null (member '|Spatial-Reasoning-System| *registered-systems-specialist*))
-        (setq proposal-gist '(Could not create proposal \: |Spatial-Reasoning-System| not registered \.)))
-      (t (setq proposal-gist (generate-proposal action-kind))))
+        (setq correction-gist '(Could not create correction \: |Spatial-Reasoning-System| not registered \.)))
+      (t (setq correction-gist (generate-proposal action-kind))))
 
-    ;; (format t "proposal gist: ~a~%" proposal-gist) ; DEBUGGING
+    ;; (format t "correction gist: ~a~%" correction-gist) ; DEBUGGING
 
-    (store-gist-clause-characterizing-episode proposal-gist ep-name '^me '^you)
+    (store-gist-clause-characterizing-episode correction-gist ep-name '^me '^you)
 
     (if (null correction-gist)
       (return-from plan-correction nil))
@@ -1957,8 +1947,9 @@
 ; fails and is characterized by a ((no.d thing.n) happen.v) WFF, should the
 ; superstep be instantiated just as it is, or inherit the failure characterization?
 ; 
-  (let ((substeps (plan-step-substeps plan-step)) ep-var ep-name)
+  (let ((substeps (plan-step-substeps plan-step)) ep-var ep-name wff)
     (setq ep-var (get-step-ep-name plan-step))
+    (setq wff (get-step-wff plan-step))
 
     ; Check if all substeps have been instantiated
     (when (and substeps (every (lambda (superstep)
@@ -1967,13 +1958,15 @@
       (cond
         ; If one substep, use same episode constant
         ((= (length substeps) 1)
-          (setq ep-name (plan-step-ep-name (car substeps)))
-          (instantiate-plan-variable ep-name ep-var))
+          (setq ep-name (plan-step-ep-name (car substeps))))
         ; Otherwise, create a new episode constant subsuming each subepisode
         (t
           (setq ep-name (episode-name))
-          (store-init-time-of-episode ep-name)
-          (instantiate-plan-variable ep-name ep-var))))
+          (store-init-time-of-episode ep-name)))
+
+      ; Substitute in plan and store (wff ** ep-name) in context/memory
+      (instantiate-plan-variable ep-name ep-var)
+      (store-contextual-fact-characterizing-episode wff ep-name))
 
     ; Recur for all supersteps
     (mapcar #'instantiate-superstep (plan-step-supersteps plan-step))
@@ -1990,11 +1983,12 @@
 ; skolemized episode wherever it occurs in the plan, as well as binding
 ; that episode variable in the schema.
 ;
-  (let (ep-var ep-name)
+  (let (ep-var ep-name wff)
     (if (null plan-step) (return-from instantiate-plan-step nil))
 
     ; Get episode-var (if already instantiated, return nil)
     (setq ep-var (get-step-ep-name plan-step))
+    (setq wff (get-step-wff plan-step))
     (if (not (variable? ep-var)) (return-from instantiate-plan-step nil))
 
     ; Generate a constant for the episode and destructively substitute in plan
@@ -2002,6 +1996,9 @@
     ; TODO: use episode-relations formulas to assert relations in timegraph
     (store-init-time-of-episode ep-name)
     (instantiate-plan-variable ep-name ep-var)
+
+    ; Store (wff ** ep-name) in context/memory
+    (store-contextual-fact-characterizing-episode wff ep-name)
 
     ; Instantiate all supersteps of this step whose substeps are now fully completed
     (mapcar #'instantiate-superstep (plan-step-supersteps plan-step))
@@ -2404,6 +2401,8 @@
 ; we store the fact:
 ; ((^you reply-to.v E1) ** E2)
 ;
+; TODO REFACTOR : this function could be cleaned up a bit.
+;
   (let* (ep-name wff curr-step-wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gists
          user-gists user-semantics user-pragmatics eta-obligations goal-step ka try-success relative-ep-name
          user-gist-ep-names user-semantic-ep-names user-pragmatics-ep-names)
@@ -2435,9 +2434,6 @@
         (when prev-step
           (setq prev-step-ep-name (dialogue-turn-episode-name prev-step))
           (setq prev-step-gists (dialogue-turn-gists prev-step)))
-
-        ; Get gist-clauses corresponding to previous speech act
-        (setq prev-step-gists (get-gist-clauses-characterizing-episode prev-step-ep-name))
 
         ; If current plan step is a relative speech act with a past episode as an argument
         ; (e.g., (^you reply-to.v E1)), use the gist-clauses of that episode for interpretation as well
@@ -2586,8 +2582,8 @@
 ;````````````````````````````````````````
 ; Execute a primitive say-to step.
 ;
-  (let (ep-name wff var-bindings expr-new ep-name1 prev-step
-        prev-step-ep-name user-gists eta-gists user-obligations)
+  (let (ep-name wff var-bindings expr-new prev-step prev-step-ep-name
+        user-gists eta-gists user-obligations)
     (setq ep-name (get-step-ep-name plan-step))
     (setq wff (get-step-wff plan-step))
 
@@ -2605,14 +2601,6 @@
     (setf (ds-count *ds*) (1+ (ds-count *ds*)))
     (setq expr (tag-emotions expr))
 
-    ; Inherit any gists/semantics from parent episode, if any
-    (setq ep-name1 (get-parent-ep-name plan-step))
-    (when ep-name1
-      (mapcar (lambda (gist) (store-gist-clause-characterizing-episode gist ep-name '^me '^you))
-        (get-gist-clauses-characterizing-episode ep-name1))
-      (mapcar (lambda (ulf) (store-semantic-interpretation-characterizing-episode ulf ep-name '^me '^you))
-        (get-semantic-interpretations-characterizing-episode ep-name1)))
-
     ; If using GPT3 for gist clause interpretation, add any gists found by GPT3.
     (when (equal *gist-interpreter* 'GPT3)
       ; Use previous user speech act as context for interpretation
@@ -2622,12 +2610,11 @@
         (setq user-gists (dialogue-turn-gists prev-step)))
       ; Get Eta gist clauses
       (setq eta-gists (form-gist-clauses-using-language-model expr (car (last user-gists)) '^me))
-      (format t "~%  * Storing Eta gist clauses for episode ~a and ~a:~%   ~a ~%" ep-name ep-name1 eta-gists) ; DEBUGGING
+      (format t "~%  * Storing Eta gist clauses for episode ~a:~%   ~a ~%" ep-name eta-gists) ; DEBUGGING
       ; Store any gist clauses for episode and parent episode
       (mapcar (lambda (gist)
           (when (not (member 'nil gist))
-            (store-gist-clause-characterizing-episode gist ep-name '^me '^you)
-            (store-gist-clause-characterizing-episode gist ep-name1 '^me '^you)))
+            (store-gist-clause-characterizing-episode gist ep-name '^me '^you)))
         eta-gists))
 
     ; Get any obligations placed on the user from the schema that this episode is part of
