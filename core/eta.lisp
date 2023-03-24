@@ -1990,8 +1990,10 @@
           (store-init-time-of-episode ep-name)))
 
       ; Substitute in plan and store (wff ** ep-name) in context/memory
+      ; (if not keyword step)
       (instantiate-plan-variable ep-name ep-var)
-      (store-contextual-fact-characterizing-episode wff ep-name))
+      (when (not (keywordp (car wff)))
+        (store-contextual-fact-characterizing-episode wff ep-name)))
 
     ; Recur for all supersteps
     (mapcar #'instantiate-superstep (plan-step-supersteps plan-step))
@@ -2023,7 +2025,8 @@
     (instantiate-plan-variable ep-name ep-var)
 
     ; Store (wff ** ep-name) in context/memory
-    (store-contextual-fact-characterizing-episode wff ep-name)
+    (when (not (keywordp (car wff)))
+      (store-contextual-fact-characterizing-episode wff ep-name))
 
     ; Instantiate all supersteps of this step whose substeps are now fully completed
     (mapcar #'instantiate-superstep (plan-step-supersteps plan-step))
@@ -2766,12 +2769,8 @@
 ;```````````````````````````````````````````````
 ; Adds a given expression to short term memory (context).
 ;
-; TODO: currently this action takes a single (reified) fact, e.g.,
-; (^me commit-to-STM.v (that ((the.d (|Twitter| block.n)) blue.a))).
-; In the future, add support for conjunction of facts using 'and'.
-;
   ; Store formula in context
-  (store-new-contextual-facts (list expr))
+  (store-new-contextual-facts (extract-set expr))
 ) ; END execute-commit-to-STM
 
 

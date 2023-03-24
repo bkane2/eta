@@ -422,8 +422,6 @@
 ; variables for the loop 'yet to be unrolled'). These duplicate variables need to inherit the
 ; certainties and obligations of the original episode variables in the plan schema (if any).
 ;
-; TODO REFACTOR : Need to verify that this works in full execution
-;
   (let (duplicates episodes-embedded-cloned)
     (setq duplicates (duplicate-vars episodes-embedded))
     (setq episodes-embedded-cloned (first duplicates))
