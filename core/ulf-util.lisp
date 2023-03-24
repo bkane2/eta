@@ -1086,13 +1086,39 @@
 ) ; END remove-quan
 
 
-(defun make-set (list)
+(defun is-set? (list)
 ;``````````````````````
+; Checks if a given list is a set (i.e., either (SET-OF ...) or (... AND ...)).
+;
+  (if (and (listp list) (or (equal 'set-of (car list)) (member (second list) '(and.cc and)))) t nil)
+) ; END is-set?
+
+
+(defun make-set (list &key use-and)
+;````````````````````````````````````
 ; Makes a set ULF (SET-OF ...) of the elements of a list, if multiple elements.
 ; If list has only a single element, just return that element.
+; If :use-and t is given, use 'and' as the connective when list only has 2 items.
 ;
-  (if (<= (length list) 1) (car list) (cons 'SET-OF list))
+  (cond
+    ((atom list) list)
+    ((<= (length list) 1) (car list))
+    ((and use-and (= (length list) 2))
+      (list (first list) 'and (second list)))
+    (t (cons 'SET-OF list)))
 ) ; END make-set
+
+
+(defun extract-set (ulf)
+;````````````````````````
+; Given a ULF expected to be a set (i.e., either a (set-of ...) list, or a
+; (... and ...) list), return the elements of the set as a list. In the case
+; where ULF is an atom, return the ULF as a list.
+;
+  (if (is-set? ulf)
+    (remove-if (lambda (x) (member x '(set-of and and.cc))) ulf)
+    (list ulf))
+) ; END extract-set
 
 
 (defun make-conjunction (list &key (conj 'AND.CC))

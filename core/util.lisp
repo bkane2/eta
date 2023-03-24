@@ -860,7 +860,7 @@
 ;
   (and (= (length list) 3)
        (member (second list) *speech-acts*)
-       (symbolp (third list)))
+       (or (symbolp (third list)) (is-set? (third list))))
 ) ; END relative-speech-act?
 
 

@@ -129,13 +129,24 @@
 ; Given a plan node assumed to be the start node of a subplan, add the step of
 ; a given plan-node as a superstep of each node within the subplan.
 ;
-; TODO REFACTOR : should substep inherit schemas of superstep if it has none of its own?
-;
   (loop while (plan-node-next subplan-node-start) do
     (add-superstep-to-plan-step (plan-node-step plan-node) (plan-node-step subplan-node-start))
     (setq subplan-node-start (plan-node-next subplan-node-start)))
   (add-superstep-to-plan-step (plan-node-step plan-node) (plan-node-step subplan-node-start))
 ) ; END add-superstep-to-plan
+
+
+
+(defun add-supersteps-to-plan-node (subplan-node plan-node-start plan-node-end) ; {@}
+;``````````````````````````````````````````````````````````````````````````````````
+; Given a subplan node and a sequence of plan nodes bounded between a given start and end
+; node, add each plan node as a superstep of the given subplan node.
+;
+  (loop while (and (plan-node-next plan-node-start) (not (eq plan-node-start plan-node-end))) do
+    (add-superstep-to-plan-step (plan-node-step plan-node-start) (plan-node-step subplan-node))
+    (setq plan-node-start (plan-node-next plan-node-start)))
+  (add-superstep-to-plan-step (plan-node-step plan-node-start) (plan-node-step subplan-node))
+) ; END add-supersteps-to-plan-node
 
 
 
@@ -191,6 +202,24 @@
     (setf (plan-node-next new-plan-node-end) plan-node)
     new-plan-node-start
 )) ; END insert-before-plan-node
+
+
+
+(defun merge-plan-nodes (plan-node-start plan-node-end new-plan-node) ; {@}
+;```````````````````````````````````````````````````````````````````````
+; Merges a sequence of plan nodes (bounded between plan-node-start and plan-node-end)
+; into a given subplan node. Returns the new subplan node.
+; TODO: do we also need to deal with cases where the plan-nodes are discontiguous in the plan?
+;
+  (add-supersteps-to-plan-node new-plan-node plan-node-start plan-node-end)
+  (when (plan-node-prev plan-node-start)
+    (setf (plan-node-next (plan-node-prev plan-node-start)) new-plan-node)
+    (setf (plan-node-prev new-plan-node) (plan-node-prev plan-node-start)))
+  (when (plan-node-next plan-node-end)
+    (setf (plan-node-prev (plan-node-next plan-node-end)) new-plan-node)
+    (setf (plan-node-next new-plan-node) (plan-node-next plan-node-end)))
+  new-plan-node
+) ; END merge-plan-nodes
 
 
 

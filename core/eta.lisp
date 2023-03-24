@@ -842,10 +842,34 @@
 
 (defun merge-equivalent-plan-steps () ; {@}
 ;```````````````````````````````````````
-; TBC
+; Merge steps in the plan that are deemed to be equivalent, unifiable, or otherwise
+; able to be simultaneously instantiated by a single step.
+;
+; TODO: this currently only supports merging two subsequent (^you reply-to.v ?e) steps 
+; in the plan, but this needs to be made more general, and to make use of explicit
+; equivalence knowledge.
 ; 
-  nil
-) ; END merge-equivalent-plan-steps
+  (let ((curr-step (plan-node-step (ds-curr-plan *ds*))) next-step wff1 wff2
+        emb-ep-name1 emb-ep-name2 subj predicate subplan-node)
+    (setq wff1 (get-step-wff curr-step))
+    (when (plan-node-next (ds-curr-plan *ds*))
+      (setq next-step (plan-node-step (plan-node-next (ds-curr-plan *ds*))))
+      (setq wff2 (get-step-wff next-step))
+      ; Attempt to merge subsequent relative speech act steps
+      (when (and (relative-speech-act? wff1) (not (variable? (third wff1)))
+                 (relative-speech-act? wff2) (not (variable? (third wff2)))
+                 (equal (first wff1) (first wff2)) (equal (second wff1) (second wff2)))
+        (setq subj (first wff1))
+        (setq predicate (second wff1))
+        (setq emb-ep-name1 (third wff1))
+        (setq emb-ep-name2 (third wff2))
+        (setq subplan-node (init-plan-from-episode-list
+          (list :episodes (episode-var) `(,subj ,predicate (,emb-ep-name1 and ,emb-ep-name2))))))
+      ; If the steps are mergeable, merge into current plan
+      (when subplan-node
+        (setf (ds-curr-plan *ds*)
+          (merge-plan-nodes (ds-curr-plan *ds*) (plan-node-next (ds-curr-plan *ds*)) subplan-node))))
+)) ; END merge-equivalent-plan-steps
 
 
 
@@ -1214,10 +1238,7 @@
       ; Note that arg1 might be (set-of arg1a arg1b ...), in which case
       ; we add each sub-argument to the front of the list in order
       ((and (> (length wff) 1) (schema-predicate? (second wff)))
-        (if (and (listp (car wff)) (equal 'set-of (car (car wff))))
-          (setq args-list (cdr (car wff)))
-          (setq args-list (list (car wff))))
-        (setq args-list (append args-list (cddr wff)))
+        (setq args-list (append (extract-set (car wff)) (cddr wff)))
         (setq subplan-node (plan-subschema (second wff) args-list))))
     
     subplan-node
@@ -1459,10 +1480,12 @@
         (setq expr (flatten (second expr)))
         (setq user-gists (list expr))
         (setq user-semantics nil))
-      ; Otherwise, find gist clauses associated with episode Eta is replying to
+      ; Otherwise, find gist clauses associated with episode(s) Eta is replying to
       (t
-        (setq user-gists (get-gist-clauses-characterizing-episode expr))
-        (setq user-semantics (resolve-references (get-semantic-interpretations-characterizing-episode expr)))))
+        (setq expr (extract-set expr))
+        (setq user-gists (apply #'append (mapcar #'get-gist-clauses-characterizing-episode expr)))
+        (setq user-semantics (apply #'append (mapcar (lambda (e)
+          (resolve-references (get-semantic-interpretations-characterizing-episode e))) expr)))))
 
     (format t "~% ========== Eta Generation ==========") ; DEBUGGING
     ;; (format t "~% user gist clause (for ~a) is ~a" expr user-gists) ; DEBUGGING
@@ -1562,8 +1585,10 @@
         (setq user-semantics nil))
       ; Otherwise, find gist clauses associated with episode Eta is replying to
       (t
-        (setq user-gists (get-gist-clauses-characterizing-episode expr))
-        (setq user-semantics (resolve-references (get-semantic-interpretations-characterizing-episode expr)))))
+        (setq expr (extract-set expr))
+        (setq user-gists (apply #'append (mapcar #'get-gist-clauses-characterizing-episode expr)))
+        (setq user-semantics (apply #'append (mapcar (lambda (e)
+          (resolve-references (get-semantic-interpretations-characterizing-episode e))) expr)))))
 
     ;; (format t "~% user gist clause (for ~a) is ~a" expr user-gists) ; DEBUGGING
     ;; (format t "~% user semantics (for ~a) is ~a ~%" expr user-semantics) ; DEBUGGING
@@ -2404,7 +2429,7 @@
 ; TODO REFACTOR : this function could be cleaned up a bit.
 ;
   (let* (ep-name wff curr-step-wff expr bindings words prev-step prev-step-ep-name prev-step-wff prev-step-gists
-         user-gists user-semantics user-pragmatics eta-obligations goal-step ka try-success relative-ep-name
+         user-gists user-semantics user-pragmatics eta-obligations goal-step ka try-success relative-ep-names
          user-gist-ep-names user-semantic-ep-names user-pragmatics-ep-names)
 
     (setq ep-name (first fact))
@@ -2435,18 +2460,19 @@
           (setq prev-step-ep-name (dialogue-turn-episode-name prev-step))
           (setq prev-step-gists (dialogue-turn-gists prev-step)))
 
-        ; If current plan step is a relative speech act with a past episode as an argument
-        ; (e.g., (^you reply-to.v E1)), use the gist-clauses of that episode for interpretation as well
+        ; If current plan step is a relative speech act with past episode(s) as an argument
+        ; (e.g., (^you reply-to.v E1)), use the gist-clauses of those episode(s) for interpretation as well
         (when (and (relative-speech-act? curr-step-wff) (not (equal (third curr-step-wff) prev-step-ep-name)))
-          (setq relative-ep-name (third curr-step-wff))
-          (setq prev-step-gists (append prev-step-gists
-            (get-gist-clauses-characterizing-episode relative-ep-name))))
+          (setq relative-ep-names (extract-set (third curr-step-wff)))
+          (dolist (relative-ep-name relative-ep-names)
+            (setq prev-step-gists (append prev-step-gists
+              (get-gist-clauses-characterizing-episode relative-ep-name)))))
 
         (setq prev-step-gists (reverse (remove-duplicates prev-step-gists :test #'equal)))
 
         (format t "~% ========== User Interpretation ==========")
-        (format t "~%  * ETA gist clauses that the user is responding to (from episodes ~a and ~a)~%   = ~a "
-          prev-step-ep-name relative-ep-name prev-step-gists)
+        (format t "~%  * ETA gist clauses that the user is responding to (from episodes ~a)~%   = ~a "
+          (remove nil (cons prev-step-ep-name relative-ep-names)) prev-step-gists)
         (format t "~%  * Using gist clause for context:~%    ~a " (car (last prev-step-gists))) ; DEBUGGING
 
         ; Compute the "interpretation" (gist clauses) of the user input,
@@ -2456,6 +2482,8 @@
         ;
         ; TODO: In the future, we might instead of or in addition use the semantic
         ; interpretation of Eta's previous speech act.
+        ; TODO REFACTOR : now that a reply-to action can be relative to multiple episodes,
+        ; we should allow for the use of multiple gist clauses in interpretation.
         (setq user-gists
           (form-gist-clauses-from-input words (car (last prev-step-gists))))
 
@@ -2486,8 +2514,8 @@
           (store-contextual-fact-characterizing-episode `(^you reply-to.v ,prev-step-ep-name) ep-name))
 
         ; If current plan step is a relative speech act, add the fact (^you reply-to.v <rel-ep-name>) as well
-        (when (and (relative-speech-act? curr-step-wff) (not (equal (third curr-step-wff) prev-step-ep-name)))
-          (store-contextual-fact-characterizing-episode `(^you reply-to.v ,(third curr-step-wff)) ep-name))
+        (when relative-ep-names
+          (store-contextual-fact-characterizing-episode `(^you reply-to.v ,(make-set relative-ep-names :use-and t)) ep-name))
 
         ; Interpret any additional pragmatic facts from the gist-clause. For instance, the speech act
         ; (^you say-bye-to.v ^me) may be derived from the gist-clause (Goodbye \.).
@@ -3463,11 +3491,9 @@
   (let (wff pragmatics)
     (setq wff (choose-result-for clause '*clause-pragmatics-tree*))
     ; If sentential-level conjunction, split into multiple WFFs
-    (if (and (listp wff) (or (member 'and wff) (member 'and.cc wff)))
-      (setq pragmatics (remove 'and (remove 'and.cc wff)))
-      (setq pragmatics (list wff)))
-  pragmatics)
-) ; END form-pragmatics-from-gist-clause
+    (setq pragmatics (extract-set wff))
+  pragmatics
+)) ; END form-pragmatics-from-gist-clause
 
 
 
