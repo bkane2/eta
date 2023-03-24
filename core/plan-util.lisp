@@ -405,7 +405,7 @@
       (setq prev-node curr-node))
 
     ;; (format t "plan instantiated from episode list is:~%")
-    ;; (print-current-plan-status first-node) ; DEBUGGING
+    ;; (print-plan-status first-node) ; DEBUGGING
 
     (if return-duplicates
       (list first-node duplicates)
@@ -619,8 +619,8 @@
 
 
 
-(defun print-current-plan-status (node &key (before 3) (after 5) schema-instances) ; {@}
-;```````````````````````````````````````````````````````````````````````````````````
+(defun print-plan-status (node &key (before 3) (after 5) schema-instances) ; {@}
+;`````````````````````````````````````````````````````````````````````````````
 ; Prints the current plan status (i.e., steps that are currently in
 ; the surface plan, with a pointer to the currently due step). Allows
 ; the number of steps to be shown before and after this pointer to be
@@ -647,7 +647,7 @@
       (format t "   ~a~%" step-next))
     (if next (format t "   ...~%"))
     (format t " -----------------------------------~%")
-)) ; END print-current-plan-status
+)) ; END print-plan-status
 
 
 

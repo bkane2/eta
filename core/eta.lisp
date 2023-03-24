@@ -491,7 +491,7 @@
   ; Initiate the dialogue plan, beginning from the schema for have-eta-dialog.v
   (setf (ds-curr-plan *ds*) (plan-subschema 'have-eta-dialog.v nil))
 
-  ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+  ;; (print-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
   ; The interaction continues so long as the dialogue plan has a current step to execute
   (loop while (and (ds-curr-plan *ds*) (not *quit-conversation*)) do
@@ -624,14 +624,14 @@
       ; Otherwise, treat step as expectation
       (t (setq advance-plan? (process-expected-step curr-step))))
 
-    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+    ;; (print-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
     ; If plan is to be advanced, reset the timer for checking whether to fail a step, and update the plan
     (when advance-plan?
       (setq *expected-step-failure-timer* (get-universal-time))
       (advance-plan))
 
-    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+    ;; (print-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
 )) ; END execute-curr-step
 
@@ -809,7 +809,7 @@
   (let ((curr-step (plan-node-step (ds-curr-plan *ds*))) wff subplan-node)
 
     ;; (format t "~%steps of current plan are: ~%")
-    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+    ;; (print-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
     (setq wff (get-step-wff curr-step))
 
@@ -832,7 +832,7 @@
     ; If a new subplan was generated, use it to expand the current node
     (when subplan-node
       (setf (ds-curr-plan *ds*) (expand-plan-node (ds-curr-plan *ds*) subplan-node))
-      ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+      ;; (print-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
       t)
 )) ; END expand-abstract-plan-steps
 
@@ -1055,6 +1055,10 @@
       ; Write an error for any unrecognizable keyword step
       (t (format t "~%*** UNRECOGNIZABLE KEYWORD STEP ~a " wff)))
 
+    ; Expanding a keyword step is a successful instantiation of that step
+    (when subplan-node
+      (instantiate-plan-step plan-step))
+
     subplan-node
 )) ; END expand-keyword-step
 
@@ -1072,7 +1076,7 @@
     (setq wff (get-step-wff plan-step))
 
     ;; (format t "~%WFF = ~a,~% in the ETA action ~a being processed~%" wff ep-name) ; DEBUGGING
-    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+    ;; (print-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
     ; Determine the type of the current action, and form a subplan accordingly.
     (cond
@@ -1975,6 +1979,7 @@
   (let ((substeps (plan-step-substeps plan-step)) ep-var ep-name wff)
     (setq ep-var (get-step-ep-name plan-step))
     (setq wff (get-step-wff plan-step))
+    (if (not (variable? ep-var)) (return-from instantiate-superstep nil))
 
     ; Check if all substeps have been instantiated
     (when (and substeps (every (lambda (superstep)
@@ -2032,7 +2037,7 @@
     (mapcar #'instantiate-superstep (plan-step-supersteps plan-step))
 
     ;; (format t "action list after substituting ~a for ~a:~%" ep-name ep-var)
-    ;; (print-current-plan-status plan-node) ; DEBUGGING
+    ;; (print-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
     ; TODO: should (wff ** ep-name) be stored in context at this point?
     ;       as well as instantiating the non-fluent variable, e.g. '!e1'?
@@ -2094,8 +2099,10 @@
       ; Write an error for any unrecognizable keyword step
       (t (format t "~%*** UNRECOGNIZABLE KEYWORD STEP ~a " wff) (setq advance-plan? t)))
 
+    ; Advancing past a keyword step due to unsatisfied condition is a successful instantiation of that step
     (when advance-plan?
       (instantiate-plan-step plan-step))
+
     advance-plan?
 )) ; END process-keyword-step
 
@@ -2118,7 +2125,7 @@
     (setq wff (get-step-wff plan-step))
 
     ;; (format t "~%WFF = ~a,~% in the ETA action ~a being processed~%" wff ep-name) ; DEBUGGING
-    ;; (print-current-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+    ;; (print-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
     ; Determine the type of the current action, and execute accordingly.
     (cond
