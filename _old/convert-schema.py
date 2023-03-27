@@ -1,10 +1,10 @@
 import os
 import re
 
-PATH = "sophie-gpt/schemas/subdialogues/main/prognosis-explicit/"
+PATH = "lissa-gpt/schemas/subdialogues/main/"
 # RULE_FILE = "sophie/rules/eta-generation/reaction/rules-for-question-reaction.lisp"
 # RULE_FILE = "sophie/day1/rules/rules-for-statement-reaction-specific.lisp"
-RULE_FILE = "sophie-gpt/day4/rules/eta-reaction/rules-for-question-reaction.lisp"
+# RULE_FILE = "sophie-gpt/day4/rules/eta-reaction/rules-for-question-reaction.lisp"
 
 
 def convert_rules(fname):
@@ -36,8 +36,8 @@ def convert_schema(fname):
       f.write(contents)
 
 
-# for fname in os.listdir(PATH):
-#   if '.lisp' in fname:
-#     convert_schema(PATH+fname)
+for fname in os.listdir(PATH):
+  if '.lisp' in fname:
+    convert_schema(PATH+fname)
 
-convert_rules(RULE_FILE)
+# convert_rules(RULE_FILE)

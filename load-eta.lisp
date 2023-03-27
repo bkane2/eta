@@ -1,4 +1,6 @@
-(defvar *supported-dependencies* '("ttt" "ulf-lib" "ulf2english" "ulf-pragmatics" "timegraph" "gpt3-shell" "lenulf" "standardize-ulf"))
+(defvar *supported-dependencies*
+    '("ttt" "ulf-lib" "ulf2english" "ulf-pragmatics" "timegraph"
+      "gpt3-shell" "information-retrieval" "lenulf" "standardize-ulf"))
 
 ; For each supported dependency, if it's declared as a dependency in the config file, try to quickload
 ; the package. Otherwise, load the package from local packages (possibly just a stub to provide necessary symbols).

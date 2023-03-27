@@ -1,0 +1,7 @@
+(defun set-model (model-name) nil)
+(defun set-cross-encoder (cross-encoder-name) nil)
+(defun init (&key use-cross-encoder) nil)
+(defun embed-documents (documents &key filename append) nil)
+(defun retrieve (text &key (n 5) documents+embeddings documents filename) nil)
+(defun rerank (text documents &key (n 1)) nil)
+(defun retrieve+rerank (text &key (n-candidate 5) (n-result 1) documents+embeddings documents filename) nil)

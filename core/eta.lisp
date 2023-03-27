@@ -249,12 +249,21 @@
   ; Global stack of discourse states at each turn
   (defparameter *ds-stack* nil)
 
+  ; Set indexical variables
+  (defparameter *^me*
+    (if (and (boundp '*avatar-name*) *avatar-name*) (intern *avatar-name*) 'Eta))
+  (defparameter *^you*
+    (if (and (boundp '*user-name*) *user-name*) (intern *user-name*) '|John Doe|))
+
   ; Load object schemas
   (load-obj-schemas)
 
   ; Load initial knowledge (if any)
   (when (boundp '*init-knowledge*)
-    (mapcar #'store-in-kb *init-knowledge*))
+    (mapcar #'store-in-kb *init-knowledge*)
+    ; If config includes information-retrieval package, embed and dump initial knowledge
+    (when (member "information-retrieval" *dependencies* :test #'string-equal)
+      (precompute-knowledge-embeddings (mapcar #'expr-to-str *init-knowledge*))))
 
   ; Initialize time
   (setf (ds-time *ds*) 'NOW0)
@@ -335,12 +344,6 @@
   ; A list of any registered specialist subsystems that Eta can interact with.
   ; Currently only supports '|Spatial-Reasoning-System|.
   (defparameter *registered-systems-specialist* nil)
-
-  ; Set indexical variables
-  (defparameter *^me*
-    (if (and (boundp '*avatar-name*) *avatar-name*) (intern *avatar-name*) 'Eta))
-  (defparameter *^you*
-    (if (and (boundp '*user-name*) *user-name*) (intern *user-name*) '|John Doe|))
 
   ; Keep list of block coordinates mimicking actual BW system (for debugging purposes
   ; while not connected to the BW system).
@@ -430,25 +433,11 @@
 
 
 
-(defun eta (&key (subsystems-perception '(|Terminal| |Audio|)) (subsystems-specialist '())
-                 (dependencies nil) (response-generator 'RULE) (gist-interpreter 'RULE) (parser 'RULE)
-                 (emotions nil) (read-log nil)) ; {@}
-;``````````````````````````````````````````````````````````````````````````````````````````````````````````
-; Main program: Originally handled initial and final formalities,
-; (now largely commented out) and controls the loop for producing,
-; managing, and executing the dialog plan (mostly, reading & feature-
-; annotating inputs & producing outputs, but with some subplan
-; formation, gist clause formation, etc.).
+(defun validate-dependencies (parser response-generator gist-interpreter)
+;```````````````````````````````````````````````````````````````````````````
+; Validates that the dependencies given to Eta are correct, and initializes
+; some packages to prevent latency upon first invocation.
 ;
-  (setq *dependencies* dependencies)
-
-  (init)
-  (setq *read-log* read-log)
-  (setq *registered-systems-perception* subsystems-perception)
-  (setq *registered-systems-specialist* subsystems-specialist)
-  (setq *emotions* emotions)
-  (setf (ds-count *ds*) 0) ; Number of outputs so far
-
   (setq *parser*
     (if (member parser '(BLLIP RULE)) parser 'RULE))
   (setq *response-generator*
@@ -468,15 +457,45 @@
   ; Initialize gpt3-shell (if in GPT3 generation/interpretation mode and valid API key exists)
   ; NOTE: currently unused because the API key is passed as an argument to the generation function.
   ;; (when (or (equal *response-generator* 'GPT3) (equal *gist-interpreter* 'GPT3))
-  ;;   (gpt3-shell:init api-key))
+  ;;   (gpt3-shell:init (get-api-key "openai")))
+
+  ; Initialize information-retrieval if among dependencies (prevents delay on first invocation)
+  (when (member "information-retrieval" *dependencies* :test #'string-equal)
+    (information-retrieval:init))
 
   ; Initialize ulf2english if among dependencies (prevents delay on first invocation)
-  (when (member "ulf2english" *dependencies*)
+  (when (member "ulf2english" *dependencies* :test #'string-equal)
     (ulf2english:ulf2english '(this.pro ((pres be.v) (= (a.d (test.n |ULF|.n)))))))
 
   ; Initialize lenulf if among dependencies (prevents delay on first invocation)
   (when (equal *parser* 'BLLIP)
     (parse-str-to-ulf-bllip "This is a test sentence."))
+
+) ; END validate-dependencies
+
+
+
+
+
+(defun eta (&key (subsystems-perception '(|Terminal| |Audio|)) (subsystems-specialist '())
+                 (dependencies nil) (response-generator 'RULE) (gist-interpreter 'RULE) (parser 'RULE)
+                 (emotions nil) (read-log nil)) ; {@}
+;``````````````````````````````````````````````````````````````````````````````````````````````````````````
+; Main program: Originally handled initial and final formalities,
+; (now largely commented out) and controls the loop for producing,
+; managing, and executing the dialog plan (mostly, reading & feature-
+; annotating inputs & producing outputs, but with some subplan
+; formation, gist clause formation, etc.).
+;
+  (setq *dependencies* dependencies)
+  (validate-dependencies parser response-generator gist-interpreter)
+
+  (init)
+  (setq *read-log* read-log)
+  (setq *registered-systems-perception* subsystems-perception)
+  (setq *registered-systems-specialist* subsystems-specialist)
+  (setq *emotions* emotions)
+  (setf (ds-count *ds*) 0) ; Number of outputs so far
 
   (when *read-log*
     (setq *log-contents* (read-log-contents *read-log*))
@@ -3167,7 +3186,7 @@
   (let ((schemas (get-schema-instance-ids (ds-curr-plan *ds*))) schema-instance
         utterance rigid-conds static-conds preconds goals relevant-knowledge
         facts history history-agents history-utterances facts-str history-str
-        choice examples examples-str emotion prev-utterance)
+        choice examples examples-str emotion prev-utterance query-str)
 
     ; Split off emotion in given gist-clause (if any)
     (when gist-clause
@@ -3175,6 +3194,28 @@
       (if emotion (setq gist-clause (second (split-emotion-tag gist-clause)))))
 
     ;; (format t "~%  * Generating response using gist clause: ~a " gist-clause) ; DEBUGGING
+
+    ; Get history strings (removing any emotion tags)
+    (setq history-agents (reverse (mapcar #'dialogue-turn-agent (ds-conversation-log *ds*))))
+    (setq history-utterances
+      (reverse (mapcar #'untag-emotions (mapcar #'dialogue-turn-utterance (ds-conversation-log *ds*)))))
+    (setq history (mapcar (lambda (agent utterance) (list agent utterance)) history-agents history-utterances))
+    (setq history-str
+      (mapcar (lambda (agent utterance) (list (string agent) (words-to-str utterance)))
+        history-agents history-utterances))
+
+    ; Get previous user utterance
+    (setq prev-utterance (second (car (last
+      (remove-if (lambda (turn) (equal (first turn) *^me*)) history)))))
+    
+    ; If no previous user utterance, create a generic one
+    (when (null prev-utterance)
+      (setq prev-utterance '(Hello \.)))
+
+    (setq query-str (concatenate 'string
+      (words-to-str prev-utterance)
+      " "
+      (if gist-clause (words-to-str gist-clause))))
 
     ; Get conditions and goals of schema(s)
     ; TODO: add other relevant schema categories here in the future
@@ -3190,26 +3231,14 @@
         (string (schema-predicate (gethash schema (ds-schema-instances *ds*))))) schemas) #\,)) ; DEBUGGING
 
     ; Get relevant knowledge
-    ; TODO: replace the following once a more general retrieval method is used
-    (setq relevant-knowledge (reverse (get-all-from-kb)))
+    (setq relevant-knowledge (reverse (retrieve-relevant-knowledge-from-kb query-str)))
+
+    (format t "~%  * Generating response using retrieved facts~%      (from ~a):~%   ~a " query-str relevant-knowledge) ; DEBUGGING
 
     ; Combine facts and convert to strings
     (setq facts (remove-duplicates
       (append relevant-knowledge rigid-conds static-conds preconds goals) :test #'equal))
-    (setq facts-str (remove nil (mapcar (lambda (fact)
-      (if (sentence? fact)
-        (words-to-str fact)
-        (ulf-to-str fact)))
-      facts)))
-
-    ; Get history strings (removing any emotion tags)
-    (setq history-agents (reverse (mapcar #'dialogue-turn-agent (ds-conversation-log *ds*))))
-    (setq history-utterances
-      (reverse (mapcar #'untag-emotions (mapcar #'dialogue-turn-utterance (ds-conversation-log *ds*)))))
-    (setq history (mapcar (lambda (agent utterance) (list agent utterance)) history-agents history-utterances))
-    (setq history-str
-      (mapcar (lambda (agent utterance) (list (string agent) (words-to-str utterance)))
-        history-agents history-utterances))
+    (setq facts-str (remove nil (mapcar #'expr-to-str facts)))
 
     ; Generate response
     (cond
@@ -3222,14 +3251,6 @@
           (setq examples (cdr choice)))
         (setq examples-str
           (mapcar (lambda (example) (mapcar #'words-to-str example)) examples))
-
-        ; Get previous user utterance
-        (setq prev-utterance (second (car (last
-          (remove-if (lambda (turn) (equal (first turn) *^me*)) history)))))
-        
-        ; If no previous user utterance, create a generic one
-        (when (null prev-utterance)
-          (setq prev-utterance '(Hello \.)))
         
         ; Get utterance
         (setq utterance (get-gpt3-paraphrase facts-str examples-str

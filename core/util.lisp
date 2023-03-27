@@ -744,12 +744,12 @@
 
 (defun sentence? (list)
 ;```````````````````````````
-; A list is a sentence if it is a flat list of symbols
+; A list is a sentence if it is a flat list of atoms
 ; without any ULF type extensions.
 ;
   (if (and
         (listp list)
-        (every #'symbolp list)
+        (every #'atom list)
         (every (lambda (atm) (not (ulf-symbol? atm))) list)) t nil)
 ) ; END sentence?
 
@@ -2990,6 +2990,19 @@
 
 
 
+(defun expr-to-str (expr)
+;```````````````````````````
+; Converts an expression (which is either a
+; word list or ULF) to a string.
+; 
+  (cond
+    ((atom expr) (string expr))
+    ((sentence? expr) (words-to-str expr))
+    (t (ulf-to-str expr)))
+) ; END expr-to-str
+
+
+
 (defun words-to-str (wordlist)
 ;````````````````````````````````
 ; Converts a list of word symbols to a string.
@@ -2998,6 +3011,17 @@
     (setq ret (format nil "~{~a ~}" wordlist))
     (standardize-case+punctuation ret)
 )) ; END words-to-str
+
+
+
+(defun ulf-to-str (ulf)
+;```````````````````````````
+; Converts a ULF to a string, replacing indexical
+; pronouns and possessives.
+;
+  (if (member "ulf2english" *dependencies* :test #'equal)
+    (ulf2english:ulf2english (preprocess-ulf-pronouns-for-prompt1 ulf)))
+) ; END ulf-to-str
 
 
 
@@ -3106,17 +3130,6 @@
         ulf)
       me-pron you-pron)))
 ) ; END preprocess-ulf-pronouns-for-prompt
-
-
-
-(defun ulf-to-str (ulf)
-;```````````````````````````
-; Converts a ULF to a string, replacing indexical
-; pronouns and possessives.
-;
-  (if (member "ulf2english" *dependencies* :test #'equal)
-    (ulf2english:ulf2english (preprocess-ulf-pronouns-for-prompt1 ulf)))
-) ; END ulf-to-str
 
 
 
@@ -3425,6 +3438,39 @@
     (in-package :cl-user)
     ulf
 )) ; END parse-str-to-ulf-bllip
+
+
+
+;``````````````````````````````````````````````````````
+;
+; [*] INFORMATION RETRIEVAL UTIL
+;
+;``````````````````````````````````````````````````````
+
+
+
+(defun precompute-knowledge-embeddings (knowledge)
+;``````````````````````````````````````````````````````
+; Precomputes embeddings for a given list of knowledge strings,
+; and dumps the knowledge+embeddings into a CSV file for future use.
+;
+  (information-retrieval:embed-documents knowledge
+    :filename (get-io-path "knowledge_embedded.csv"))
+) ; END precompute-knowledge-embeddings
+
+
+
+(defun retrieve-relevant-knowledge-from-kb (text &optional (n 5))
+;``````````````````````````````````````````````````````````````````
+; Retrieves the n most relevant facts to an input text from the
+; knowledge base (assuming that the knowledge base has been
+; previously embedded and stored in a CSV file).
+;
+  (coerce
+    (information-retrieval:retrieve text
+      :filename (get-io-path "knowledge_embedded.csv"))
+    'list)
+) ; END retrieve-relevant-knowledge-from-kb
 
 
 
