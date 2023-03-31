@@ -2694,11 +2694,11 @@
   1 (0 .MODAL 4 .MORE-INFO 6 .PROGNOSIS-WORD 0)
     2 ((What is the prognosis that was given to me previously ?)) (0 :gist)
   ; What do you know/think about your options?
-  1 (0 how 4 you 3 .FEELING 0)
+  1 (0 how 4 you 3 .FEELING 3 TREATMENT-OPTION 0)
     2 ((How do you feel about your treatment options ?) (Options)) (0 :gist)
-  1 (0 .WH_ 4 you 3 .THINK-GEN 0)
+  1 (0 .WH_ 4 you 3 .THINK-GEN 3 TREATMENT-OPTION 0)
     2 ((How do you feel about your treatment options ?) (Options)) (0 :gist)
-  1 (0 .AUX-BASE 3 you 2 .UNDERSTAND-GEN 0)
+  1 (0 .AUX-BASE 3 you 2 .UNDERSTAND-GEN 3 TREATMENT-OPTION 0)
     2 ((What do I understand about my treatment options ?) (Treatment-option)) (0 :gist)
   ; Do you have any questions?
   1 (0 you 2 .HAVE 2 .QUESTION-WORD 0)

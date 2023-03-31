@@ -39,11 +39,12 @@
 ; will be overridden by the rule files defined within each session subdirectory.
 ;
 '(
-  1 (:or
-    (0 did my doctor .MENTION .CHEMOTHERAPY 0)
-    (0 what are my feelings about .CHEMOTHERAPY 0)
-    )
+  1 (0 what are my feelings about .CHEMOTHERAPY 0)
     2 *ask-if-need-chemotherapy* (100 :schema)
+
+  1 (0 did my doctor .MENTION .CHEMOTHERAPY 0)
+    2 *explain-how-doctor-mention-chemotherapy* (100 :schema)
+
   1 (:or
     (0 .DO I .UNDERSTAND how .CHEMOTHERAPY works 0)
     (0 what .CHEMOTHERAPY details are you .ASKING about 0)
@@ -241,16 +242,26 @@
     (0 .CAN I .TELL you about my .PAIN 1)
     (0 .WH_ 2 .PAIN feel like 0)
     (0 describe 2 .YOUR-REF 2 .PAIN 0)
-    (0 how .DO I rate my .PAIN 0)
-    (0 where is the .PAIN located 0)
-    (0 does it hurt to 0)
     (0 did my .PAIN .COME back 0)
     (0 has the .PAIN .BECOME worse 0)
-    (0 .DO you .HAVE the .PAIN .FREQUENTLY 0)
     (0 how has my condition gotten worse 0)
-    (0 what causes me to .BELIEVE that my cancer has gotten worse 0)
     )
     2 *say-pain-worse* (100 :schema)
+
+  1 (:or 
+    (0 does it hurt to 0)
+    (0 .DO you .HAVE the .PAIN .FREQUENTLY 0)
+    )
+    2 *say-when-have-pain* (100 :schema)
+
+  1 (0 how .DO I rate my .PAIN 0) 
+    2 *say-pain-rating* (100 :schema)
+
+  1 (0 what causes me to .BELIEVE that my cancer has gotten worse 0)
+    2 *say-reason-cancer-worse* (100 :schema)
+  
+  1 (0 where is the .PAIN located 0)
+    2 *say-pain-location* (100 :schema)
 
 ; ````````````````````       radiation       ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -317,14 +328,22 @@
 ; ``````````````````````````````````````````````````````````````````
 
   1 (:or
-    (0 .DO my .FAMILY .KNOW about my cancer 0)
-    (0 .DO I .WANT you to .BE present when I .TELL my .FAMILY about the prognosis 0)
     (0 how .MUCH .DO I .WANT my .FAMILY to .KNOW about the prognosis 0)
-    (0 who .IN my .FAMILY .DO I .WANT to .TELL about the prognosis 0)
-    (0 .DO I .WANT you to .CONTACT a .FAMILY member .NOW 0)
     (0 what .CAN you .DO to .HELP me break the news to my .FAMILY 0)
     )
     2 *ask-what-to-tell-family* (100 :schema)
+  
+  1 (0 .DO my .FAMILY .KNOW about my cancer 0)
+    2 *explain-family-understanding-of-prognosis* (100 :schema)
+
+  1 (0 who .IN my .FAMILY .DO I .WANT to .TELL about the prognosis 0)
+    2 *say-preference-for-tell-son-and-daughter* (100 :schema)
+  
+  1 (:or
+    (0 .DO I .WANT you to .BE present when I .TELL my .FAMILY about the prognosis 0)
+    (0 .DO I .WANT you to .CONTACT a .FAMILY member .NOW 0)
+    )
+    2 *say-preference-for-tell-family-alone* (100 :schema)
 
 ; ````````````````````     test-results      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -382,12 +401,18 @@
     2 *say-how-to-help* (100 :schema)
   1 (:or
     (0 .CAN you ask me some questions 0)
-    (0 how .MUCH information .DO I .WANT 0)
-    (0 how .DO I think this .CONVERSATION is going 0)
-    (0 am I following what you say 0)
     (0 you .HAVE a .QUESTION for me 0)
     )
     2 *ask-for-questions* (0 :schema)
+
+  1 (0 how .MUCH information .DO I .WANT 0)
+    2 *say-prefer-informal-language* (100 :schema)
+
+  1 (:or
+    (0 how .DO I think this .CONVERSATION is going 0)
+    (0 am I following what you say 0)
+    )
+    2 *state-understanding-conversation* (100 :schema)
 
   ;; TODO:
   ;; ; Questions about daughter

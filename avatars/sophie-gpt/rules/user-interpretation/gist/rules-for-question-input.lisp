@@ -661,9 +661,9 @@
   ; Do you understand your prognosis?
   1 (0 .AUX-BASE 3 you 2 .KNOW-GEN 6 .PROGNOSIS-WORD 0)
     2 ((Do I understand my prognosis ?)) (0 :gist)
-  1 (0 .AUX-BASE 3 you 2 .TELL 6 .PROGNOSIS-WORD 0)
+  1 (0 .AUX-BASE 3 you 2 .TELL 2 DOCTOR-PRON 4 .PROGNOSIS-WORD 0)
     2 ((Do I understand my prognosis ?)) (0 :gist)
-  1 (0 .TELL 4 .KNOW-GEN 6 .PROGNOSIS-WORD 0)
+  1 (0 .TELL 4 .WH_ 2 .KNOW-GEN 6 .PROGNOSIS-WORD 0)
     2 ((Do I understand my prognosis ?)) (0 :gist)
   ; Do you have any questions about your prognosis?
   1 (0 you 2 .HAVE 2 .QUESTION-WORD 0)
