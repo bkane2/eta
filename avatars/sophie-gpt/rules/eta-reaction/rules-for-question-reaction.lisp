@@ -41,6 +41,7 @@
 '(
   1 (0 what are my feelings about .CHEMOTHERAPY 0)
     2 *ask-if-need-chemotherapy* (100 :schema)
+    2 *say-preference-for-no-chemotherapy* (100 :schema)
 
   1 (0 did my doctor .MENTION .CHEMOTHERAPY 0)
     2 *explain-how-doctor-mention-chemotherapy* (100 :schema)
@@ -406,7 +407,7 @@
     2 *ask-for-questions* (0 :schema)
 
   1 (0 how .MUCH information .DO I .WANT 0)
-    2 *say-prefer-informal-language* (100 :schema)
+    2 *say-preference-for-informal-language* (100 :schema)
 
   1 (:or
     (0 how .DO I think this .CONVERSATION is going 0)

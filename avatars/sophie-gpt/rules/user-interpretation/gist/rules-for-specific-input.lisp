@@ -1765,7 +1765,7 @@
 )) ; END *prognosis-bargaining-input*
 
 
-(READRULES 'experimental-therapy-input*
+(READRULES '*experimental-therapy-input*
 ; (Do you think experimental therapies will help ?)
 '(
   ; Experimental treatments will/will not/might make my prognosis better.

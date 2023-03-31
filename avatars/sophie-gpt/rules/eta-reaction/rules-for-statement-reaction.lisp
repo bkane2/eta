@@ -43,13 +43,20 @@
   ;; 1 (0 you .DO not think I need .CHEMOTHERAPY 3)
   ;;  2 (I see \. I think it will be best to hold off on chemotherapy \, at least for now \.) (100 :out)
   ;;  2 (Ah \. In that case \, I may think about chemotherapy for a bit longer before I come to any decision \.) (0 :out)
-  1 (:or
-    (0 you think I need .CHEMOTHERAPY 0)
-    (0 a side .EFFECT of .CHEMOTHERAPY is 0)
-    )
+  1 (0 you think I need .CHEMOTHERAPY 0)
     2 *ask-about-chemotherapy-side-effects* (100 :schema)
     2 *ask-how-chemotherapy-works* (100 :schema)
+  1 (:or
+    (0 a side .EFFECT of .CHEMOTHERAPY .BE 2 .SIDE-EFFECTS-SIGNIFICANT 0)
+    (0 a side .EFFECT of .CHEMOTHERAPY .BE 2 .SIDE-EFFECTS-MODERATE 0)
+    (0 a side .EFFECT of .CHEMOTHERAPY .BE 2 .SIDE-EFFECTS-INSIGNIFICANT 0)
+    (.ONE way to get .CHEMOTHERAPY is 0)
+    )
+    2 *say-preference-for-no-chemotherapy* (100 :schema)
 
+  1 (0 You think we should .TALK to my oncologist about .CHEMOTHERAPY 0)
+    2 *ask-about-what-happens-without-chemotherapy* (100 :schema)
+  
 )) ; END *reaction-to-chemotherapy-statement*
 
 
@@ -102,6 +109,9 @@
   1 (0 .CHEMOTHERAPY is a .TREATMENT .OPTION 0)
     2 *ask-about-what-happens-without-chemotherapy* (100 :schema)
     2 *ask-about-will-chemotherapy-help* (100 :schema)
+
+  1 (0 Experimental treatments 3 make my prognosis better 0)
+    2 *ask-about-treatment-options* (100 :schema)
 
 )) ; END *reaction-to-treatment-options-statement*
 
@@ -264,6 +274,7 @@
   ;;     3 (That\'s interesting \. I had never heard that was a way to get chemotherapy \. But I think I understand \.) (0 :out)
   ;;   2 (If I do chemotherapy \, I would prefer a port or iv \. I don\'t like needles \.) (100 :out)
   ;;   2 (If I have to get chemotherapy \, I would probably use a port or iv \. I was never a fan of needles \.) (0 :out)
+  
 
 ; ````````````````````   diagnosis-details   ```````````````````````
 ; ``````````````````````````````````````````````````````````````````

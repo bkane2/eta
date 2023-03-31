@@ -1,13 +1,13 @@
-;; *say-prefer-informal-language*: development version 6
+;; *say-preference-for-informal-language*: development version 6
 ;;
 ;; 
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defparameter *say-prefer-informal-language*
+(defparameter *say-preference-for-informal-language*
 
-'(event-schema :header (((set-of ^me ^you) say-prefer-informal-language.v) ** ?e)
+'(event-schema :header (((set-of ^me ^you) say-preference-for-informal-language.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (
@@ -36,7 +36,7 @@
   ?g1 (^me ((pres want.v) (to (tell.v ((^me 's) family.n) (about.p-arg ((^me 's) prognosis.n)) alone.adv))))
 
   ; Sophie wants the doctor to not speak with technical language.
-  ?g1 (^me ((pres want.v) (^you (not (to (speak.v (to.p me.n) ({with}.p-args (technical.a language.n))))))))
+  ?g2 (^me ((pres want.v) (^you (not (to (speak.v (to.p me.n) ({with}.p-args (technical.a language.n))))))))
 )
 
 :episodes (
@@ -47,14 +47,14 @@
 
 )
 
-)) ; END defparameter *say-prefer-informal-language*
+)) ; END defparameter *say-preference-for-informal-language*
 
 
 
 ;````````````````````````````````````````````````````````
 ; Store schema variable name under header in *schemas*
 ;
-(store-schema-name 'say-prefer-informal-language.v '*say-prefer-informal-language*)
+(store-schema-name 'say-preference-for-informal-language.v '*say-preference-for-informal-language*)
 
 
 
@@ -62,9 +62,9 @@
 ; Create empty hash tables for semantics,
 ; gist-clauses, and topic-keys
 ;
-(setf (get '*say-prefer-informal-language* 'semantics) (make-hash-table))
-(setf (get '*say-prefer-informal-language* 'gist-clauses) (make-hash-table))
-(setf (get '*say-prefer-informal-language* 'topic-keys) (make-hash-table))
+(setf (get '*say-preference-for-informal-language* 'semantics) (make-hash-table))
+(setf (get '*say-preference-for-informal-language* 'gist-clauses) (make-hash-table))
+(setf (get '*say-preference-for-informal-language* 'topic-keys) (make-hash-table))
 
 
 
@@ -72,7 +72,7 @@
 ; EL Semantics - Not yet used
 ;
 (mapcar #'(lambda (x)
-      (store-output-semantics (first x) (second x) '*say-prefer-informal-language*))
+      (store-output-semantics (first x) (second x) '*say-preference-for-informal-language*))
   '()
 ) ; END mapcar #'store-output-semantics
 
@@ -82,7 +82,7 @@
 ; Gist clauses
 ;
 (mapcar #'(lambda (x) 
-      (store-output-gist-clauses (first x) (second x) '*say-prefer-informal-language*))
+      (store-output-gist-clauses (first x) (second x) '*say-preference-for-informal-language*))
   '()
 ) ; END mapcar #'store-output-gist-clauses
 
@@ -92,6 +92,6 @@
 ; Topic keys
 ;
 (mapcar #'(lambda (x) 
-      (store-topic-keys (first x) (second x) '*say-prefer-informal-language*))
+      (store-topic-keys (first x) (second x) '*say-preference-for-informal-language*))
   '()
 ) ; END mapcar #'store-topic-keys
