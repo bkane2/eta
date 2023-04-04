@@ -3233,7 +3233,7 @@
     ; Get relevant knowledge
     (setq relevant-knowledge (reverse (retrieve-relevant-knowledge-from-kb query-str)))
 
-    (format t "~%  * Generating response using retrieved facts~%      (from ~a):~%   ~a " query-str relevant-knowledge) ; DEBUGGING
+    (format t "~%  * Generating response using retrieved facts~%      (from \"~a\"):~%   ~a " query-str relevant-knowledge) ; DEBUGGING
 
     ; Combine facts and convert to strings
     (setq facts (remove-duplicates
