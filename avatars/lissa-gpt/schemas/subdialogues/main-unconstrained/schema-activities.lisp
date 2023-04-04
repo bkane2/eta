@@ -9,9 +9,9 @@
 ;; redundant.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(store-schema 'discuss-activities.v
+(store-schema 'discuss-activities-unconstrained.v
 
-'(event-schema :header (((set-of ^me ^you) discuss-activities.v) ** ?e)
+'(event-schema :header (((set-of ^me ^you) discuss-activities-unconstrained.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````
 ; LISSA introduces herself, sets the scene, asks about the user's 
 ; major, responds to the user's reply, and starts the "Rochester"
@@ -46,22 +46,22 @@
 
 :episodes (
 
-?e1 (^me paraphrase-to.v ^you '(Do you have any hobbies or anything in particular you like to do for fun ?))
+?e1 (^me say-to.v ^you ?words1)
  
 ?e2 (^you reply-to.v ?e1)
 
-?e4 (^me paraphrase-to.v ^you '(I love to read \. Do you like to read ?))
+?e4 (^me say-to.v ^you ?words2)
 
 ?e5 (^you reply-to.v ?e4)
 
-?e8 (^me paraphrase-to.v ^you '(How do you spend your days ?))
+?e8 (^me say-to.v ^you ?words3)
 
 ?e9 (^you reply-to.v ?e8)
 
-?e10 (^me paraphrase-to.v ^you '(What kind of things do you like to do in your neighborhood ?))
+?e10 (^me say-to.v ^you ?words4)
 
 ?e11 (^you reply-to.v ?e10)
 
 )
 
-)) ; END discuss-activities.v
+)) ; END discuss-activities-unconstrained.v
