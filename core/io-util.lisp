@@ -342,20 +342,6 @@
 
 
 
-(defun load-obj-schemas ()
-;```````````````````````````````````````````````
-; Load core object schemas
-; (in directory 'core/resources/obj-schemas')
-; NOTE: I don't like having this here (loaded during Eta's
-; 'init' function), but it's currently necessary since
-; the equality sets and context are only defined in 'init'.
-;
-(mapcar (lambda (file) (load file))
-    (directory "core/resources/obj-schemas/*.lisp"))
-) ; END load-obj-schemas
-
-
-
 (defun update-block-coordinates (moves)
 ;````````````````````````````````````````
 ; Given a list of moves (in sequential order), update *block-coordinates*. Return a list of

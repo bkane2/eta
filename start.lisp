@@ -125,6 +125,7 @@
     (load-files-recur (concatenate 'string "./avatars/" avatar-name "/schemas"))
     (load-files-recur (concatenate 'string "./avatars/" avatar-name "/rules"))
     (load-files-recur (concatenate 'string "./avatars/" avatar-name "/knowledge"))
+    (load-files-recur (concatenate 'string "./avatars/" avatar-name "/obj-schemas"))
     ; If a multi-session avatar, load all files specific to that day
     (when (and (boundp '*session-number*) (integerp *session-number*))
       (load-files-recur (concatenate 'string "./avatars/" avatar-name "/" (format nil "day~a" *session-number*)))))

@@ -787,11 +787,11 @@
 ; "?".
 ;
   (let (word)
-    ;; (format t "~% ****** quoted-question? first line = ~a **** ~%" (listp sentence))
-    ;; (format t "~% ****** quoted-question? third line = ~a **** ~%" sentence) ; DEBUGGING
+    ;; (format t "~% ****** question? first line = ~a **** ~%" (listp sentence))
+    ;; (format t "~% ****** question? third line = ~a **** ~%" sentence) ; DEBUGGING
     (if (and (listp sentence) (every #'atom sentence))
       (setq word (car (last sentence)))
-      (return-from quoted-question? nil))
+      (return-from question? nil))
     (or
       (eq word '?)
       (char-equal #\? (car (last (explode word))))))
@@ -1930,6 +1930,9 @@
 ;
 ;``````````````````````````````````````````````````````
 
+; Parameters for pre-loading aliases
+(defparameter *concept-aliases* nil)
+(defparameter *concept-sets* nil)
 
 
 (defun get-record-structure (canonical-name)
@@ -2075,6 +2078,15 @@
 
 
 
+(defun create-aliases-of-concept (concept-predicate canonical-name obj-type)
+;``````````````````````````````````````````````````````````````````````````````
+; Pre-load an alias set to be added to the agent's aliases upon initialization.
+;
+  (push (list concept-predicate canonical-name obj-type) *concept-aliases*)
+) ; END create-aliases-of-concept
+
+
+
 (defun store-aliases-of-concept (concept-predicate canonical-name obj-type)
 ;```````````````````````````````````````````````````````````````````````````
 ; Stores an object schema (record structure) as an alias of an associated
@@ -2088,6 +2100,15 @@
     (add-alias schema-record canonical-name)
     (store-in-context (list canonical-name obj-type))
 )) ; END store-aliases-of-concept
+
+
+
+(defun create-concept-set (set-type canonical-name concept-set)
+;`````````````````````````````````````````````````````````````````
+; Pre-load a concept set to be added to the agent's aliases upon initialization.
+;
+  (push (list set-type canonical-name concept-set) *concept-sets*)
+) ; END create-concept-set
 
 
 

@@ -88,12 +88,12 @@
 
 
 
-(store-aliases-of-concept 'BW-arch.n      '|BW-arch|      'BW-concept-structure.n)
-(store-aliases-of-concept 'BW-staircase.n '|BW-staircase| 'BW-concept-structure.n)
-(store-aliases-of-concept 'BW-wedge.n     '|BW-wedge|     'BW-concept-structure.n)
-(store-aliases-of-concept 'BW-pyramid.n   '|BW-pyramid|   'BW-concept-structure.n)
+(create-aliases-of-concept 'BW-arch.n      '|BW-arch|      'BW-concept-structure.n)
+(create-aliases-of-concept 'BW-staircase.n '|BW-staircase| 'BW-concept-structure.n)
+(create-aliases-of-concept 'BW-wedge.n     '|BW-wedge|     'BW-concept-structure.n)
+(create-aliases-of-concept 'BW-pyramid.n   '|BW-pyramid|   'BW-concept-structure.n)
 
 
 
-(store-concept-set '(plur BW-concept-structure.n) '|BW-concept-set1|
+(create-concept-set '(plur BW-concept-structure.n) '|BW-concept-set1|
   '(|BW-arch| |BW-staircase| |BW-wedge| |BW-pyramid|))

@@ -88,13 +88,13 @@
 
 
 
-(store-aliases-of-concept 'BW-block.n '|BW-block|    'BW-concept-primitive.n)
-(store-aliases-of-concept 'row-of.n   '|BW-row-of|   'BW-concept-primitive.n)
-(store-aliases-of-concept 'stack-of.n '|BW-stack-of| 'BW-concept-primitive.n)
-(store-aliases-of-concept 'BW-row.n   '|BW-row|      'BW-concept-primitive.n)
-(store-aliases-of-concept 'BW-stack.n '|BW-stack|    'BW-concept-primitive.n)
+(create-aliases-of-concept 'BW-block.n '|BW-block|    'BW-concept-primitive.n)
+(create-aliases-of-concept 'row-of.n   '|BW-row-of|   'BW-concept-primitive.n)
+(create-aliases-of-concept 'stack-of.n '|BW-stack-of| 'BW-concept-primitive.n)
+(create-aliases-of-concept 'BW-row.n   '|BW-row|      'BW-concept-primitive.n)
+(create-aliases-of-concept 'BW-stack.n '|BW-stack|    'BW-concept-primitive.n)
 
 
 
-(store-concept-set '(plur BW-concept-primitive.n) '|BW-concept-set2|
+(create-concept-set '(plur BW-concept-primitive.n) '|BW-concept-set2|
   '(|BW-block| |BW-row-of| |BW-stack-of| |BW-row| |BW-stack|))

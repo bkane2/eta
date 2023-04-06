@@ -255,8 +255,13 @@
   (defparameter *^you*
     (if (and (boundp '*user-name*) *user-name*) (intern *user-name*) '|John Doe|))
 
-  ; Load object schemas
-  (load-obj-schemas)
+  ; Process any pre-defined aliases and concept sets
+  (when (boundp '*concept-aliases*)
+    (mapcar (lambda (alias) (store-aliases-of-concept (first alias) (second alias) (third alias)))
+      *concept-aliases*))
+  (when (boundp '*concept-sets*)
+    (mapcar (lambda (set) (store-concept-set (first set) (second set) (third set)))
+      *concept-sets*))
 
   ; Load initial knowledge (if any)
   (when (boundp '*init-knowledge*)
