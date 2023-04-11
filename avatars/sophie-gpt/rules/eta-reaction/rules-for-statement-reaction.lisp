@@ -112,6 +112,11 @@
 
   1 (0 Experimental treatments 3 make my prognosis better 0)
     2 *ask-about-treatment-options* (100 :schema)
+  
+  1 (:or 
+    (0 .DOCTOR-PRON .WANT-GEN 1 give 1 .RECOMMENDATION 2 .YOUR-REF .TREATMENT-OPTION 0)
+    (0 empathize 2 how overwhelming .LEARN-GEN 3 .TREATMENT-OPTION .BE 0))
+    2 *ask-about-treatment-options* (100 :schema)
 
 )) ; END *reaction-to-treatment-options-statement*
 
@@ -262,7 +267,8 @@
 ; ````````````````````      appointment      ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-
+  1 (0 .THINK-GEN 1 should 1 .REVISIT 1 conversation .LATER-TIME 0)
+    2 *say-ready-to-resume-conversation-later* (100 :schema)
 
 ; ```````````````````` chemotherapy-details  ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -458,6 +464,7 @@
 ; ```````````````````` open-ended-statement  ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
 
-
+  1 (0 .DOCTOR-PRON 1 .ADMIRE 2 .HAVE 1 .PROGNOSIS-DEALING with 1 .CANCER-ILLNESS 0)
+    2 *say-appreciate-doctor-words* (100 :schema)
 
 )) ; END *reaction-to-statement*

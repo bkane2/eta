@@ -646,6 +646,20 @@
   1 (0 .ANYTHING 1 you 2 .WANT-GEN 2 .ASK-GEN 0)
     2 ((Do I have a question about chemotherapy ?) (Chemotherapy)) (0 :gist)
 
+  ; Asking about trade-offs
+  1 (0 .BE 2 .ALRIGHT 2 with .PAIN 3 .CANCER-LIVE 0)
+    2 ((Would I accept pain from chemotherapy to live longer ?) (Chemotherapy)) (0 :gist)
+  1 (0 accept 2 .PAIN 3 CANCER-LIVE 0)
+    2 ((Would I accept pain from chemotherapy to live longer ?) (Chemotherapy)) (0 :gist)
+  1 (0 .WANT-GEN 3 .AUX-BASE 1 .EVERYTHING 1 .POSSIBLE 4 .CANCER-LIVE 0) 
+    2 ((Would I accept pain from chemotherapy to live longer ?) (Chemotherapy)) (0 :gist)
+  1 (0 .READY 2 .BE 2 .PAINFUL 3 .CANCER-LIVE 0)
+    2 ((Would I accept pain from chemotherapy to live longer ?) (Chemotherapy)) (0 :gist)
+  1 (0 .READY 2 .AUX-BASE 2 .PAINFUL 3 .CANCER-LIVE 0)
+    2 ((Would I accept pain from chemotherapy to live longer ?) (Chemotherapy)) (0 :gist)
+  1 (0 .READY 2 .BE 3 hospital 3 .CANCER-LIVE 0)
+    2 ((Would I accept pain from chemotherapy to live longer ?) (Chemotherapy)) (0 :gist)
+
   ; If doctor mentions anything about goals
   1 (0 .CANCER-GOALS 0)
     2 ((What are my treatment goals ?) (Options)) (0 :gist)
@@ -731,8 +745,21 @@
     2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
   1 (0 .WH_ 4 you 3 .THINK-GEN 0)
     2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
+  1 (3 you 2 .WANT-GEN .COMFORT-CARE-WORD 0)
+    2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
+  1 (3 you 2 .WANT-GEN 2 .BE 1 out 2 hospital 0)
+    2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
+  1 (3 you 2 .WANT-GEN 2 .BE 1 at .HOME 0)
+    2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
+  1 (3 .DOCTOR-PRON 2 .CONCENTRATE 2 .EFFORT 2 on 1 health 0)
+    2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
+  1 (3 .DOCTOR-PRON 2 .CONCENTRATE 2 .EFFORT 2 on 1 well being 0)
+    2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
+  1 (3 .DOCTOR-PRON 2 .CONCENTRATE 2 .EFFORT 2 on 1 physical .STATE 0)
+    2 ((Have I considered comfort care ?) (Comfort-care)) (0 :gist)
   1 (0 .AUX-BASE 3 you 2 .UNDERSTAND-GEN 0)
     2 ((Do I understand how comfort care works ?) (Comfort-care)) (0 :gist)
+  
 
   ; If doctor mentions anything about goals
   1 (0 .CANCER-GOALS 0)
@@ -1291,6 +1318,42 @@
       3 ((Do I want anyone to be present when you tell me about the prognosis ?)) (0 :gist)
     2 (0 .PROVIDE 4 .INFORMATION-GEN 0)
       3 ((Do I want anyone to be present when you tell me about the prognosis ?)) (0 :gist)
+
+  ; Do you want me to concentrate on the facts or on your emotions ?
+  1 (0 .DOCTOR-PRON 2 .CAN 2 .CONCENTRATE on 1 .FACT 0)
+    2 ((Do you want me to concentrate on the prognosis or on your emotions ?)) (0 :gist)
+  1 (0 .WANT-GEN 2 .CONCENTRATE on 1 .FACT 0)
+    2 ((Do you want me to concentrate on the prognosis or on your emotions ?)) (0 :gist)
+
+  
+  ; Would you like to review your condition ?
+  1 (0 .REVISIT 2 .DIAGNOSIS-TESTS 0)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+  1 (0 review 2 .DIAGNOSIS-TESTS 0)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+  1 (0 go 1 back 1 over 2 .DIAGNOSIS-TESTS)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+
+  1 (0 .REVISIT 2 .CANCER-ILLNESS 0)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+  1 (0 review 2 .CANCER-ILLNESS 0)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+  1 (0 go 1 back 1 over 2 .CANCER-ILLNESS)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+
+  1 (0 .REVISIT 2 .PROGNOSIS-WORD 0)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+  1 (0 review 2 .PROGNOSIS-WORD 0)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+  1 (0 go 1 back 1 over 2 .PROGNOSIS-WORD)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+
+  1 (0 .REVISIT 2 .WH_ 2 we 2 .KNOW-GEN 0)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+  1 (0 review 2 .WH_ 2 we 2 .KNOW-GEN 0)
+    2 ((Would you like to review your condition ?)) (0 :gist)
+  1 (0 go 1 back 1 over 2 .WH_ 2 we 2 .KNOW-GEN)
+    2 ((Would you like to review your condition ?)) (0 :gist)
       
   ; You are sorry to inform me of a poor prognosis.
   1 (0 sorry 0)
@@ -2378,6 +2441,19 @@
       3 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
   1 (0 running 2 out 4 .TREATMENT-OPTION 0)
     2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
+  1 (0 .LUNG 3 .IRREPAIRABLE 0)
+    2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
+  1 (0 .LUNG 3 .SERIOUS 0)
+    2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
+  1 (0 have 3 .IRREPAIRABLE 3 .LUNG .DAMAGE 0)
+    2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
+  1 (0 have 3 .SERIOUS 3 .LUNG .DAMAGE 0)
+    2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
+  1 (0 have 3 .IRREPAIRABLE 3 .DAMAGE 2 .LUNG 0)
+    2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
+  1 (0 have 3 .SERIOUS 3 .DAMAGE 2 .LUNG 0)
+    2 ((The test results show that I cannot be cured \.) (Test-results)) (0 :gist)
+
   ; The radiation doesn't seem to be helping.
   1 (0 .RADIATION-TREATMENT 4 .NEG 2 .HAVE 2 .EFFECT 0)
     2 ((The test results show that the radiation is not working \.) (Test-results)) (0 :gist)
@@ -2453,6 +2529,10 @@
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   1 (0 .MOVE 2 .IN 4 .STAGE-FOUR .STAGE 0)
     2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
+  1 (0 you 1 .HAVE 1 .METASTATIC 3 cancer 0)
+    2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
+  1 (0 cancer 1 .BE 2 .METASTATIC 0)
+    2 ((The test results show that my cancer has spread \.) (Test-results)) (0 :gist)
   ; You have cancer.
   1 (0 you 1 .HAVE 1 cancer 0)
     2 ((The test results show that I have cancer \.) (Test-results)) (0 :gist)
@@ -2493,6 +2573,8 @@
       3 ((Do I want anyone to be present when you tell me about the test results ?) (Test-results)) (0 :gist)
     2 (0 .WANT-GEN 4 .SHARE 0)
       3 ((Do I want anyone to be present when you tell me about the test results ?) (Test-results)) (0 :gist)
+    2 (0 .WANT-GEN 4 .JOIN 0) 
+      3 (*test-results-question* (is there any person you want to be present when I tell you about the results ?)) (0 :subtree+clause)
   ; Do you understand your test results?
   1 (8 .AUX-BASE 2 you .UNDERSTAND-GEN 0)
     2 ((Do I know what the tests say ?) (Test-results)) (0 :gist)
@@ -2613,6 +2695,29 @@
   1 (0 .WANT-GEN 10 .QUESTION-WORD 0)
     2 ((You intend to explain my test results to me \.) (Test-results)) (0 :gist)
 
+  1 (0 .EXPLAIN 0)
+    2 (0 .EXPLAIN 2 .MY-REF 0)
+      3 (0 .MY-REF .OPINION-GEN 0)
+        4 ((You intend to explain my test results to me \.) (Test-results)) (0 :gist)
+      3 (0 .MY-REF .UNDERSTANDING-GEN 0)
+        4 ((You intend to explain my test results to me \.) (Test-results)) (0 :gist)
+    2 (0 .EXPLAIN 2 WH_ 0)
+      3 (0 .WH_ 2 .DOCTOR-PRON 2 .THINK-GEN 0)
+        4 ((You intend to explain my test results to me \.) (Test-results)) (0 :gist)
+      3 (0 .WH_ 2 .DOCTOR-PRON 2 .UNDERSTANDING-GEN 0)
+        4((You intend to explain my test results to me \.) (Test-results)) (0 :gist)
+  1 (0 .SHARE 0)
+    2 (0 .SHARE 2 .MY-REF 0)
+      3 (0 .MY-REF .OPINION-GEN 0)
+        4 ((You intend to explain my test results to me \.) (Test-results)) (0 :gist)
+      3 (0 .MY-REF .UNDERSTANDING-GEN 0)
+        4 ((You intend to explain my test results to me \.) (Test-results)) (0 :gist)
+    2 (0 .SHARE 2 WH_ 0)
+      3 (0 .WH_ 2 .DOCTOR-PRON 2 .THINK-GEN 0)
+        4 ((You intend to explain my test results to me \.) (Test-results)) (0 :gist)
+      3 (0 .WH_ 2 .DOCTOR-PRON 2 .UNDERSTANDING-GEN 0)
+        4((You intend to explain my test results to me \.) (Test-results)) (0 :gist)
+        
   ; How do you feel about your test results?
   1 (0 .WH_ 6 .BE 2 your 2 .OPINION-GEN 6 .DIAGNOSIS-TESTS 0)
     2 ((How do I feel about my test results ?) (Test-results)) (0 :gist)
@@ -2676,9 +2781,89 @@
     2 ((What are my treatment goals ?) (Options)) (0 :gist)
   1 (0 what\'s 3 .IMPORTANT 3 you 0)
     2 ((What are my treatment goals ?) (Options)) (0 :gist)
+  1 (0 .ALLOW 2 .EXPLORE 1 .YOUR-REF 2 .CANCER-GOALS 0)
+    2 ((What is the most important thing for my future ?)) (0 :gist)
+  ; Is there anything you want to avoid in your treatment ?
+  1 (0 .ANYTHING 2 .WANT-GEN 2 .AVOID 0)
+    2 ((What do you want to avoid in your treatment ?) (Options)) (0 :gist)
+  1 (0 .ANYTHING 2 .NEG .WANT-GEN 0)
+    2 ((What do you want to avoid in your treatment ?) (Options)) (0 :gist)
+  1 (0 things 2 .WANT-GEN 2 .AVOID 0)
+    2 ((What do you want to avoid in your treatment ?) (Options)) (0 :gist)
+  1 (0 things 2 .NEG .WANT-GEN 0)
+    2 ((What do you want to avoid in your treatment ?) (Options)) (0 :gist)
+  1 (0 .WH_ 2 .WANT-GEN 2 .AVOID 2 .TREATMENT-OPTION 0)
+    2 ((What do you want to avoid in your treatment ?) (Options)) (0 :gist)
+  1 (0 .WH_ 2 .NEG .WANT-GEN 2 .TREATMENT-OPTION 0)
+    2 ((What do you want to avoid in your treatment ?) (Options)) (0 :gist)
+  
   ; We need to get another study
   1 (0 .DIAGNOSIS-MORE 3 .DIAGNOSIS-TESTS 0)
     2 ((You need more tests before talking about treatment options \.) (Options)) (0 :gist)
+  ; Who is your support system ?
+  1 (0 .AUX 2 .HAVE 3 .SUPPORT 0)
+    2 ((Who is my support system ?) (Options)) (0 :gist)
+  1 (0 .WH_ 1 .BE 1 .YOUR-REF 1 .SUPPORT 0) 
+    2 ((Who is my support system ?) (Options)) (0 :gist)
+  1 (0 .HAVE 3 .SOMEONE 1 .HELP 0) 
+    2 ((Who is my support system ?) (Options)) (0 :gist)
+  1 (0 .HAVE .FAMILY 1 .HELP 0)
+    2 ((Who is my support system ?) (Options)) (0 :gist)
+  ; What feelings do you have about death?
+  1 (0 how .AUX 2 .THINK-GEN 2 .DEATH 0)
+    2 ((What feelings do you have about death ?) (Options)) (0 :gist)
+  1 (0 wh_ .AUX 2 .THINK-GEN 2 .DEATH 0)
+    2 ((What feelings do you have about death ?) (Options)) (0 :gist)
+  1 (0 wh_ .FEAR-WORDS 3 .DEATH 0) 
+    2 ((What feelings do you have about death ?) (Options)) (0 :gist)
+  1 (0 wh_ .AUX 3.FEAR-WORDS .DEATH 0)
+    2 ((What feelings do you have about death ?) (Options)) (0 :gist)
+  1 (0 when 2 .THINK-GEN 3 .DEATH 1 .WH_ .ANXIETY-WORD 0)
+    2 ((What feelings do you have about death ?) (Options)) (0 :gist)
+; What are your feelings about spirituality ?
+  1 (0 .AUX .HAVE 3 .RELIGION 0)
+    2 ((What are your feelings about spirituality ?) (Options)) (0 :gist)
+  1 (0 how 2 .THINK-GEN 3 .RELIGION 0)
+    2 ((What are your feelings about spirituality ?) (Options)) (0 :gist)
+  1 (0 wh_ 2 .THINK-GEN 3 .RElIGION 0)
+    2 ((What are your feelings about spirituality ?) (Options)) (0 :gist)
+  1 (0 .AUX .RELIGION 6 .PART 2 .LIFE 0)
+    2 ((What are your feelings about spirituality ?) (Options)) (0 :gist)
+  1 (0 .WH_ .PART 2 .RELIGION 4 .LIFE 0)
+    2 ((What are your feelings about spirituality ?) (Options)) (0 :gist)
+  1 (0 WH_ .AUX 2 .THINK-GEN 1 .HAPPEN 2 .DEATH 0)
+    2 ((What are your feelings about spirituality ?) (Options)) (0 :gist)
+  ; Would you want to be resuscitated?
+  1 (0 you 1 .WANT-GEN 1 to 1 be 1 .RESUSCITATE 0)
+    2 ((Would you want to be resuscitated ?) (Options)) (0 :gist)
+  1 (0 you 1 .WANT-GEN 1 to 1 be 1 brought back 0)
+    2 ((Would you want to be resuscitated ?) (Options)) (0 :gist)
+  1 (0 you 1 .WANT-GEN 1 to 1 be 1 .PUT 4 ventilator 0)
+    2 ((Would you want to be resuscitated ?) (Options)) (0 :gist)
+  1 (0 you 1 .WANT-GEN 1 to 1 be 1 .PUT 4 machine 0)
+    2 ((Would you want to be resuscitated ?) (Options)) (0 :gist)
+
+  1 (0 .WH_ 2 .YOUR-REF 1 .THINK-GEN 1 on 2 .RESUSCITATE 0)
+    2 ((Would you want to be resuscitated ?) (Options)) (0 :gist)
+  1 (0 .WH_ 1 .YOUR-REF 1 .THINK-GEN 1 on 2 brought back 0)
+    2 ((Would you want to be resuscitated ?) (Options)) (0 :gist)
+  1 (0 .WH_ 1 .YOUR-REF 1 .THINK-GEN 1 on 3 .PUT 3 ventilator 0)
+    2 ((Would you want to be resuscitated ?) (Options)) (0 :gist)
+  1 (0 .WH_ 1 .YOUR-REF 1 .THINK-GEN 1 on 3 .PUT 3 machine 0)
+    2 ((Would you want to be resuscitated ?) (Options)) (0 :gist)
+  ; I want to tell you advice on your treatment options.
+  1 (0 .CAN 2 .PROVIDE 3 .RECOMMENDATION 0)
+    2 ((I want to give you advice on your treatment options \.) (Options)) (0 :gist)
+  1 (0 may 2 .PROVIDE 3 .RECOMMENDATION 0)
+    2 ((I want to give you advice on your treatment options \.) (Options)) (0 :gist)
+  1 (0 may 2 .MADE 3 .RECOMMENDATION 0)
+    2 ((I want to give you advice on your treatment options \.) (Options)) (0 :gist)
+  1 (0 .CAN 2 .MADE 3 .RECOMMENDATION 0)
+    2 ((I want to give you advice on your treatment options \.) (Options)) (0 :gist)
+  1 (0 .WANT-GEN 2 .PROVIDE 3 .RECOMMENDATION 0)
+    2 ((I want to give you advice on your treatment options \.) (Options)) (0 :gist)
+  1 (0 .CAN 3 .MED-GIVE 0)
+    2 ((I want to give you advice on your treatment options \.) (Options)) (0 :gist)
   ; Prognosis related questions
   1 (0 you 2 .THINK-GEN 6 .PROGNOSIS-WORD 0)
     2 ((How do I feel about my prognosis ?)) (0 :gist)
@@ -2710,6 +2895,37 @@
     2 ((Do I have a question about my treatment options ?)) (0 :gist)
   1 (0 .ANYTHING 1 you 2 .WANT-GEN 2 .ASK-GEN 0)
     2 ((Do I have a question about my treatment options ?)) (0 :gist)
+
+  ; You empathize with how overwhelming learning about my treatment options is.
+  1 (0 .KNOW-GEN 4 .BE .DIFFICULT 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+  1 (0 .KNOW-GEN 4 .BE 2 lot 2 take in 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+  1 (0 .KNOW-GEN 4 .BE 2 overwhelming 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+
+  1 (0 .SHOULD 4 .BE .DIFFICULT 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+  1 (0 .SHOULD 4 .BE 2 lot 2 take in 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+  1 (0 .SHOULD 4 .BE 2 overwhelming 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+
+  1 (0 .CERTAIN 4 .BE .DIFFICULT 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+  1 (0 .CERTAIN 4 .BE 2 lot 2 take in 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+  1 (0 .CERTAIN 4 .BE 2 overwhelming 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+
+  1 (0 .DIFFICULT 2 to 2 take 1 in 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+  1 (0 .DIFFICULT 2 to 1 .HAVE 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+  
+  1 (0 .BE 2 between 1 rock 2 hard place 0)
+    2 ((You empathize with how overwhelming learning about my treatment options is \.)) (0 :gist)
+
 )) ; END *treatment-option-input*
 
 
@@ -2788,6 +3004,16 @@
     2 ((You wish that I do not have cancer \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .DOCTOR-PRON 4 wish 2 you 4 not 2 .SICK 0)
     2 ((You wish that I do not have cancer \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 .DOCTOR-PRON 4 wish 3 .HAVE 2 cure 0)
+    2 ((You wish that I do not have cancer \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 .DOCTOR-PRON 4 wish 3 .BE 2 cure 0)
+    2 ((You wish that I do not have cancer \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 .DOCTOR-PRON 4 wish 3 .HAVE 1 .TREATMENT-OPTION 2 .WORK 0)
+    2 ((You wish that I do not have cancer \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 .DOCTOR-PRON 4 wish 3 .BE 1 .TREATMENT-OPTION 2 .WORK 0)
+    2 ((You wish that I do not have cancer \.) (Reason-for-cancer)) (0 :gist)
+  
+
   ; My cancer is caused by my smoking.
   1 (0 .SMOKE 4 .GIVE 4 .CANCER-ILLNESS 0)
     2 ((My cancer is the result of my smoking \.) (Reason-for-cancer)) (0 :gist)
@@ -2949,10 +3175,13 @@
       3 ((You empathize with how hard it is to learn my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
     2 (0 .BE 2 .STARTLE-WORDS 0)
       3 ((You empathize with how hard it is to learn my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
+  
   ; You are going to help me cope with learning my cancer is terminal.
   1 (0 .NEG 2 .GIVE 2 up 0)
     2 ((You are going to help me cope with learning my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .BE 2 here 2 with 2 you 0)
+    2 ((You are going to help me cope with learning my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 .BE 2 with 2 you 0)
     2 ((You are going to help me cope with learning my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
   ; Having cancer changes life significantly.
   1 (0 .CHANGE 3 .LIFE 0)
@@ -3007,6 +3236,12 @@
     2 ((What are my treatment goals ?) (Reason-for-cancer)) (0 :gist)
   1 (0 .TREATMENT-OPTION 4 .MOVE 2 forward 0)
     2 ((What are my treatment goals ?) (Reason-for-cancer)) (0 :gist)
+
+  ;; Empathy but so general I thought I should stick it down here.
+  1 (0 .BE 1 .ACCURATE 0)
+    2 ((You empathize with how hard it is to learn my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
+  1 (0 .SUCKS 0)
+    2 ((You empathize with how hard it is to learn my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
 )) ; END *reason-for-cancer-input*
 
 

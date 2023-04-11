@@ -27,6 +27,8 @@
     (0 you 1 .UNDERSTAND-GEN 4 .DIFFICULT to 0)
     (0 you 1 .UNDERSTAND-GEN 8 .BE .DIFFICULT 0)
     (0 .WH_ 3 .FEELING 1 about 3 .DIAGNOSIS-TESTS 0)
+    ;;; Treatment Options
+    (0 empathize 2 how overwhelming .LEARN-GEN 3 .TREATMENT-OPTION .BE 0)
     ;;; Tell family
     (0 my .FAMILY 1 .BE 1 .IMPORTANT 0)
     (0 you .EMPATHIZE 2 .DIFFICULT 8 .TELL 1 .FAMILY 0)
@@ -40,6 +42,7 @@
     (0 my .FAMILY 1 .BE 1 .IMPORTANT 2 .UNDERSTAND-GEN 8 .PROGNOSIS-WORD 0)
     (0 .WH_ 5 .ANXIETY-WORD 5 .PROGNOSIS-WORD 0)
     (0 .WH_ 3 .FEELING 1 about 3 .PROGNOSIS-WORD 0)
+    (0 .AUX 2 .WANT-GEN .DOCTOR-PRON 1 .CONCENTRATE 2 .PROGNOSIS-WORD 2 or 2 .EMOTION ?)
     ;;; Pain
     (0 you 2 .BE 3 sorry 8 .PAIN 0)
     (0 you 2 .UNDERSTAND-GEN 8 .PAIN 0)
@@ -57,6 +60,7 @@
     (0 .BE 2 .FRIGHTENED 5 .APPOINTMENT 0)
     (0 you 2 .BE 3 .AVAILABLE 3 .HELP 0)
     (0 you .EMPATHIZE 1 with 0)
+    (0 .DOCTOR-PRON 1 .ADMIRE 2 .HAVE 1 .PROGNOSIS-DEALING with 1 .CANCER-ILLNESS 0)
   )
     2 (^you be.v empathetic.a) (0 :ulf)
 
@@ -144,6 +148,7 @@
     (0 .PROGNOSIS-WORD 3 .BE 3 .NEG)
     (0 .PROGNOSIS-WORD 3 .BE 2 terminal 0)
     (0 .PROGNOSIS-WORD 3 .BE 3 .DIE 0)
+    (0 .PROGNOSIS-WORD 3 .BE 3 unfavorable 0)
   )
     2 ((^you be.v explicit.a) and
        (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n))) and
@@ -181,6 +186,7 @@
     (0 .COMFORT-CARE-WORD 5 .BE 3 .TREATMENT-OPTION 0)
     (0 .TREATMENT-OPTION 2 .BE 3 .COMFORT-CARE-WORD 0)
     (0 .MODAL 2 .TRY 5 .COMFORT-CARE-WORD 0)
+    (0 .WANT-GEN 2 .PROVIDE 2 advice 3 .TREATMENT-OPTION 0)
     ;;; Comfort care
     (0 need 2 .COMFORT-CARE-WORD 0)
     (0 .COMFORT-CARE-WORD 5 .TIME-WORDS with 2 .FAMILY 0)
@@ -200,6 +206,7 @@
     (0 .DISCUSS 3 oncologist 3 .CHEMOTHERAPY 0)
     (0 .DISCUSS 3 .CHEMOTHERAPY 3 oncologist 0)
     (0 side effect 2 .CHEMOTHERAPY 2 .BE 0)
+    (0 .FUTURE-POSS 2 accept 2 .PAINFUL 2 .CHEMOTHERAPY 1 live longer 0)
     (0 .BE 3 side effect 2 .CHEMOTHERAPY 0)
     (0 One way to get chemotherapy is 0)
     (0 way 3 .MED-TAKE 2 .CHEMOTHERAPY 2 .BE 0)
@@ -213,12 +220,14 @@
     (0 .TREATMENT-OPTION 2 .BE 3 radiation 0)
     (0 .MODAL 2 .TRY 5 radiation 0)
     (0 need 2 radiation 0)
+    (0 .WANT-GEN 2 .BE .RESUSCITATE 0)
     ;;; Experimental therapy
     (0 .EXPERIMENTAL .TREATMENT 5 .BE 3 .TREATMENT-OPTION 0)
     (0 .TREATMENT-OPTION 2 .BE 3 .EXPERIMENTAL .TREATMENT 0)
     (0 .MODAL 2 .TRY 5 .EXPERIMENTAL .TREATMENT 0)
     (0 .EXPERIMENTAL .TREATMENT 4 .PROGNOSIS-WORD 2 .CHANGE-IMPROVE 0)
     (0 .EXPERIMENTAL .TREATMENT 4 .CHANGE-IMPROVE 2 .PROGNOSIS-WORD 0)
+    (0 .FUTURE-POSS 2 you .WANT-GEN 2 review 2 condition 0)
   )
     2 ((^you be.v explicit.a) and (^you tell.v ^me (about.p-arg ((^me 's) (plur option.n))))) (0 :ulf)
 
@@ -227,6 +236,9 @@
     (0 .MODAL 2 .REASSURE 2 .FAMILY 0)
     (0 .MODAL 2 .TELL 2 .FAMILY 3 .HONESTY-WORD 0)
     (0 .MODAL 2 .BE 3 .HONESTY-WORD 5 .FAMILY 0)
+    ;; Open-ended
+    (0 .THINK-GEN 2 .MODAL .REVISIT 2 conversation 1 .LATER-TIME 0)
+    (0 may .DOCTOR-PRON .SHARE .WH_ .DOCTOR-PRON .THINK-GEN 0)
     ;;; Energy
     (0 .MODAL 3 .MENT-TREATMENT 0)
   )
@@ -243,6 +255,11 @@
     (0 .WH_ 1 .BE 4 .CANCER-GOALS 0 ?)
     (0 .AUX-BASE 2 .SELF 3 .WANT-GEN 4 .CANCER-FIGHT 0 ?)
     (0 .WH_ 1 .BE 2 most 1 .IMPORTANT 0 ?)
+    (0 who 1 .BE .YOUR-REF 2 .SUPPORT 0 ?)
+    (0 .WH_ feelings .AUX you .HAVE about .DEATH 0 ?)
+    (0 .WH_ .BE 1 feelings 1 about .RELIGION 0 ?)
+    (0 .WH_ .AUX 1 .WANT-GEN 1 .AVOID 3 .TREATMENT-OPTION 0 ?)
+    (0 .DOCTOR-PRON .WANT-GEN 1 give 1 .RECOMMENDATION 2 .YOUR-REF .TREATMENT-OPTION 0)
     ;;; Test results
     (0 .AUX-BASE 2 .SELF 3 .WANT-GEN 3 .FAMILY 3 .AVAILABLE 8 .DIAGNOSIS-TESTS 0 ?)
     (0 .AUX-BASE 2 .SELF 3 .WANT-GEN 3 .SOMEONE 3 .AVAILABLE 8 .DIAGNOSIS-TESTS 0 ?)
@@ -288,6 +305,7 @@
     (0 .WH_ 2 .INFORMATION-GEN 3 .WANT-GEN 0 ?)
     (0 .WH_ 2 .BE 5 .IMPORTANT 5 future 0 ?)
     (0 .WH_ 3 .HELP .SELF 8 ?)
+    (0 .BE 2 following 1 WH_ .DOCTOR-PRON say 0)
   )
     2 (^you be.v empowering.a) (0 :ulf)
 

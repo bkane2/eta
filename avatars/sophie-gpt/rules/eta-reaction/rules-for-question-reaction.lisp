@@ -106,6 +106,8 @@
     )
     2 *request-all-of-information-about-prognosis* (100 :schema)
 
+  1 (0 .AUX 2 .WANT-GEN .DOCTOR-PRON 1 .CONCENTRATE 2 .PROGNOSIS-WORD 2 or 2 .EMOTION ?)
+    2 *say-preference-facts-over-emotions* (100 :schema)
   ;; TODO:
   ;; 1 (0 what scares me about my prognosis 0)
   ;;   2 *ask-about-prognosis* (100 :schema)
@@ -382,6 +384,22 @@
     2 *explain-treatment-goals* (100 :schema)
   1 (0 when does my .GRANDCHILD .GRAD-WORDS 0)
     2 *say-grandson-graduation* (100 :schema)
+  1 (0 who .BE my .SUPPORT system 0)
+    2 *explain-who-helps-with-medical-situation* (100 :schema)
+  1 (0 .WH_ feelings .AUX you .HAVE about .DEATH 0)
+    2 *explain-fears-about-death* (100 :schema)
+  1 (0 .WH_ .BE 1 feelings 1 about .RELIGION 0)
+    2 *explain-feelings-on-religion* (100 :schema)
+  1 (0 .WH_ .AUX 1 .WANT-GEN 1 .AVOID 3 .TREATMENT-OPTION 0 )
+    2 *say-preference-for-no-chemotherapy* (100 :schema)
+  1 (0 .FUTURE-POSS 2 accept 2 .PAIN 2 .CHEMOTHERAPY 1 live longer 0)
+    2 *say-preference-for-no-chemotherapy* (100 :schema)
+
+  1 (0 .FUTURE-POSS 2 .WANT-GEN 2 .BE 2 .RESUSCITATE 0)
+    2 *say-preference-for-resuscitation* (100 :schema)
+
+  1 (0 .FUTURE-POSS 2 you .WANT-GEN 2 review 2 condition 0)
+    2 *demonstrate-interest-in-reviewing-condition* (100 :schema)
 
 ; ````````````````````  open-ended-question  ```````````````````````
 ; ``````````````````````````````````````````````````````````````````
@@ -406,7 +424,10 @@
     )
     2 *ask-for-questions* (0 :schema)
 
-  1 (0 how .MUCH information .DO I .WANT 0)
+  1 (:or
+    (0 how .MUCH information .DO I .WANT 0)
+    (0 may .DOCTOR-PRON .SHARE .WH_ .DOCTOR-PRON .THINK-GEN 0)
+    )
     2 *say-preference-for-informal-language* (100 :schema)
 
   1 (:or
