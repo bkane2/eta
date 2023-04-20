@@ -3476,7 +3476,7 @@
       "Utterance:"
       "Rewritten:"))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
-    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq :model "text-davinci-003"))
     (setq generated (string-trim '(#\" #\ ) (trim-all-newlines generated)))
     ;; (format t "~%  gpt-3 gist:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (if (member (string-downcase generated) '("none" "nil") :test #'equal)
@@ -3486,12 +3486,15 @@
 
 
 
-(defun gpt3-generate (api-key prompt &key stop-seq)
+(defun gpt3-generate (api-key prompt &key stop-seq model)
 ;``````````````````````````````````````````````````````````
 ; A wrapper function for calling the gpt3-shell package.
 ; 
-  (gpt3-shell:generate-safe 'gpt3-shell:generate-with-key
-    (list (get-api-key "openai") prompt :stop-seq stop-seq))
+  (if model
+    (gpt3-shell:generate-safe 'gpt3-shell:generate-with-key
+      (list (get-api-key "openai") prompt :stop-seq stop-seq :model model))
+    (gpt3-shell:generate-safe 'gpt3-shell:generate-with-key
+      (list (get-api-key "openai") prompt :stop-seq stop-seq)))
 ) ; END gpt3-generate
 
 
