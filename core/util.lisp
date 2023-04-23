@@ -3399,7 +3399,7 @@
       (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
       (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
-    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq :model "text-davinci-003"))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (setq emotion (format nil "~:(~a~)" (string-trim " " (trim-all-newlines generated))))
     (if (member emotion emotions :test #'equal)
@@ -3425,7 +3425,7 @@
       "Person A"
       "Person B"))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
-    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq :model "text-davinci-003"))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     (parse-chars (coerce (trim-all-newlines generated) 'list))
 )) ; END get-gpt3-paraphrase
@@ -3446,7 +3446,7 @@
       (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
       (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
-    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
+    (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq :model "text-davinci-003"))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
     ; Hack to remove parentheticals that GPT-3 sometimes generates
     (setq generated
