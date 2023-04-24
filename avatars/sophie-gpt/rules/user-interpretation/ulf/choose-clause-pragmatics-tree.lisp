@@ -30,7 +30,7 @@
     ;;; Treatment Options
     (0 empathize 2 how overwhelming .LEARN-GEN 3 .TREATMENT-OPTION .BE 0)
     ;;; Tell family
-    (0 my .FAMILY 1 .BE 1 .IMPORTANT 0)
+    (3 my .FAMILY 1 .BE 1 .IMPORTANT 0)
     (0 you .EMPATHIZE 2 .DIFFICULT 8 .TELL 1 .FAMILY 0)
     (0 you .EMPATHIZE 2 .DIFFICULT 5 for 1 .FAMILY 0)
     (0 you 2 .BE .AVAILABLE 5 .FAMILY 0)
@@ -170,10 +170,10 @@
 
   ;;; Prognosis (level 4)
   1 (:or
-    (0 .CANCER-LIVE 2 .NUMBER-TOTAL 1 .ELAPSED-TIME 0)
-    (0 .CANCER-LIVE 2 several 1 .ELAPSED-TIME 0)
-    (0 .CANCER-LIVE 2 a 1 .ELAPSED-TIME 0)
-    (0 .CANCER-LIVE 2 some 1 .ELAPSED-TIME 0)
+    (0 .PROGNOSIS-LIVE 2 .NUMBER-TOTAL 3 .ELAPSED-TIME 0)
+    (0 .PROGNOSIS-LIVE 2 several 1 .ELAPSED-TIME 0)
+    (0 .PROGNOSIS-LIVE 2 a 1 .ELAPSED-TIME 0)
+    (0 .PROGNOSIS-LIVE 2 some 1 .ELAPSED-TIME 0)
   )
     2 ((^you be.v explicit.a) and
        (^you tell.v ^me (about.p-arg ((^me 's) prognosis.n))) and
@@ -304,6 +304,8 @@
     (0 .WH_ 1 .AUX-BASE 2 .SELF 3 .KNOW-GEN 0 ?)
     (0 .WH_ 2 .INFORMATION-GEN 3 .WANT-GEN 0 ?)
     (0 .WH_ 2 .BE 5 .IMPORTANT 5 future 0 ?)
+    (0 .WH_ 8 .BE 5 .IMPORTANT 2 .MY-REF 0 ?)
+    (0 .WH_ 8 .BE 5 .MEANS 1 most 2 .MY-REF 0 ?)
     (0 .WH_ 3 .HELP .SELF 8 ?)
     (0 .BE 2 following 1 WH_ .DOCTOR-PRON say 0)
   )

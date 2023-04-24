@@ -768,8 +768,8 @@
       3 ((You empathize with how hard it is to learn my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
 
     ;; Empathy
-  1 (0 .BE 1 .ACCURATE 0)
-    2 ((You empathize with how hard it is to learn my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
+  ;; 1 (0 .BE 1 .ACCURATE 0) ; "You're right..." ?
+  ;;   2 ((You empathize with how hard it is to learn my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
   1 (0 .SUCKS 0)
     2 ((You empathize with how hard it is to learn my cancer is terminal \.) (Reason-for-cancer)) (0 :gist)
 

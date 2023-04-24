@@ -1386,9 +1386,9 @@
     2 ((The prognosis is unfavorable to me \.)) (0 :gist)
   1 (0 .DIFFICULT 2 news 0)
     2 ((The prognosis is unfavorable to me \.)) (0 :gist)
-  1 (0 .NEG 3 .GOOD 0)
+  1 (4 .NEG 3 .GOOD 0)
     2 ((The prognosis is unfavorable to me \.)) (0 :gist)
-  1 (0 .BAD 0)
+  1 (4 .BAD 0)
     2 ((The prognosis is unfavorable to me \.)) (0 :gist)
 
   ; Mentions test results
@@ -1621,17 +1621,17 @@
     2 ((My prognosis might allow me to attend the graduation of my grandson \.)) (0 :gist)
 
   ; You should focus on spending time on your family.
-    2 (0 time 6 .NOW 0)
-      3 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-understanding)) (0 :gist)
-    2 (0 .NOW 1 time 0)
-      3 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-understanding)) (0 :gist)
-    2 (0 time 6 .CHILD 0)
-      3 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-understanding)) (0 :gist)
+  1 (0 .MODAL 5 time 6 .NOW 0)
+    2 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-understanding)) (0 :gist)
+  1 (0 .MODAL 5 .NOW 1 time 0)
+    2 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-understanding)) (0 :gist)
+  1 (0 .MODAL 5 time 6 .CHILD 0)
+    2 ((I should spend the time predicted by my prognosis with my family \.) (Prognosis-understanding)) (0 :gist)
  
   ; It's worth a shot.
   1 (0 worth 2 shot 0)
     2 ((My prognosis might allow me to attend the graduation of my grandson \.)) (0 :gist)
-  1 (0 .TRY 0)
+  1 (0 .WE-REF 3 .TRY 0)
     2 ((My prognosis might allow me to attend the graduation of my grandson \.)) (0 :gist)
   ; It's a long shot.
   1 (0 .LONG 2 shot 0)

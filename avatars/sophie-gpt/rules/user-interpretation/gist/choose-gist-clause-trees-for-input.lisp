@@ -227,6 +227,8 @@
     (0 .NEG way 2 .PROGNOSIS-WORD 2 .BE 1 .ACCURATE 0)
     (0 .SELF 2 .NEG 2 .TRUST 3 .PROGNOSIS-WORD 0)
     (0 .SELF 2 don\'t 2 .TRUST 3 .PROGNOSIS-WORD 0)
+    (0 .SELF 2 .NEG see 1 you 3 .KNOW 0)
+    (0 .SELF 2 don\'t see 1 you 3 .KNOW 0)
     (0 .NEG way 3 .CANCER-ILLNESS 2 .BE 1 terminal 0)
     (0 .SELF 1 .KNOW-GEN 4 .PROGNOSIS-MORE 1 .TIME-WORDS 0))
     2 (*prognosis-trust-input*

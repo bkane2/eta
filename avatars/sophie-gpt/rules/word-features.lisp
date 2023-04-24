@@ -176,6 +176,7 @@
   (PUT put place placed keep kept)
   (SUCK sucks stink stinks)
   (REFLECT reflect reflects reflected show shows showed shown demonstrate demonstrates demonstrated reveal reveals revealed display displays displayed express expresses expressed)
+  (MEANS mean)
   ; ASR errors
   (TALKING talkin)
   (ASKING askin)
@@ -243,7 +244,7 @@
   (SPECIFIC precise exact detailed)
   (PREDICTION predictions GUESS conjecture conjectures projection projections)
   (ALLOW let permit)
-  (IMPORTANT valuable precious dear)
+  (IMPORTANT valuable precious dear matter matters)
   (NORMAL natural understandable expected typical common)
   (EMOTION emotions reaction reactions FEELING)
   (CONTACT CALL notify phone SPEAK TALK)
@@ -252,6 +253,7 @@
   (FUTURE-POSS MIGHT will would)
   (YOUR-REF your the)
   (MY-REF me my the)
+  (WE-REF we you)
   (INSTEAD before)
   (RELATIONSHIP-DEVELOP develop developed developing form formed forming have having grow growing)
   (RELATIONSHIP relation relations relationship friend friends friendship close bond)
@@ -368,6 +370,7 @@
   (STAGE-FOUR FOUR fourth FINAL)
   (PROGNOSIS-WORD prognosis future forecast prediction projection expectation)
   (PROGNOSIS-DEALING dealing dealt talking thinking facing coping coped handling handled managing managed)
+  (PROGNOSIS-LIVE PROGNOSIS-WORD CANCER-LIVE)
   ; Prognosis Understanding
   (TREATMENT treatments DRUGS drug THERAPY therapies trials trial studies study)
   (EXPERIMENTAL clinical new)
