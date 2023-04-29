@@ -3029,6 +3029,8 @@
 ; Converts a list of word symbols to a string.
 ;
   (let (ret)
+    (setq wordlist
+      (mapcar (lambda (word) (if (equal word '^me) (shortname *^me*) word)) wordlist))
     (setq ret (format nil "~{~a ~}" wordlist))
     (standardize-case+punctuation ret)
 )) ; END words-to-str
