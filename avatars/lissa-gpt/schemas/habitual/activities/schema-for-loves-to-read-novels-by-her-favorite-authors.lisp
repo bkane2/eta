@@ -17,13 +17,13 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to be transported to a different world and be captivated by the story \.)
+  ?g1 (^me 's goal is to be transported to a different world and be captivated by the story \.)
 )
 
 :episodes (
   ?e1 (^me selects a novel written by her favorite author \.)
-  ?e2 (^me curls up on her couch with the novel, a warm cup of tea, and her imagination for company \.)
-  ?e3 (^me starts to read the novel, losing herself in the story \.)
+  ?e2 (^me curls up on her couch with the novel \, a warm cup of tea \, and her imagination for company \.)
+  ?e3 (^me starts to read the novel \, losing herself in the story \.)
   ?e4 (^me imagines herself as part of the story as she continues reading \.)
   ?e5 (^me finishes the novel and may feel satisfied or ready to read another \.)
 )

@@ -21,8 +21,8 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to preserve the world we live in \.)
-  ?g2 (Environmental organizations' goal is to receive volunteer work \.)
+  ?g1 (^me 's goal is to preserve the world we live in \.)
+  ?g2 (Environmental organizations ' goal is to receive volunteer work \.)
 )
 
 :episodes (

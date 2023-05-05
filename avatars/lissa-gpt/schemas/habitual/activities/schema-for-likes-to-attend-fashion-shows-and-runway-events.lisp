@@ -9,7 +9,7 @@
 )
 
 :static-conds (
-  ?s1 (^me has the means to attend the fashion show (transportation, ticket etc \.))
+  ?s1 (^me has the means to attend the fashion show (transportation \, ticket etc \.))
   ?s2 (^me has a basic understanding of fashion)
 )
 
@@ -20,11 +20,11 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to attend the fashion show \.)
-  ?g2 (^me's goal is to see the latest fashion trends and designs \.)
-  ?g3 (^me's goal is to take notes on the latest fashion trends \.)
-  ?g4 (^me's goal is to be surrounded by other fashion enthusiasts \.)
-  ?g5 (^me's goal is to inspire her own style \.)
+  ?g1 (^me 's goal is to attend the fashion show \.)
+  ?g2 (^me 's goal is to see the latest fashion trends and designs \.)
+  ?g3 (^me 's goal is to take notes on the latest fashion trends \.)
+  ?g4 (^me 's goal is to be surrounded by other fashion enthusiasts \.)
+  ?g5 (^me 's goal is to inspire her own style \.)
 )
 
 :episodes (
@@ -34,7 +34,7 @@
   ?e4 (^me mingles with other fashion enthusiasts \.)
   ?e5 (^me takes notes on the latest fashion trends \.)
   ?e6 (^me watches models walk the runway wearing the latest designs and clothing \.)
-  ?e7 (^me analyzes the colors, fabrics, and textures of the clothing \.)
+  ?e7 (^me analyzes the colors \, fabrics \, and textures of the clothing \.)
   ?e8 (^me leaves the event feeling inspired by the latest trends and ready to apply them to her own style \.)
 )
 

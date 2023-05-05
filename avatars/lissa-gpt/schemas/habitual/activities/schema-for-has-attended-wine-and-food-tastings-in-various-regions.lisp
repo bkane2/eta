@@ -13,14 +13,14 @@
 )
 
 :postconds (
-  ?po1 (^me has gained knowledge about a new region's wine and food \.)
+  ?po1 (^me has gained knowledge about a new region 's wine and food \.)
   ?po2 (^me has used her knowledge to appreciate food and wine even more \.)
 )
 
 :goals (
-  ?g1 (^me's goal is to attend tastings \.)
-  ?g2 (^me's goal is to discover new flavors \.)
-  ?g3 (^me's goal is to increase her knowledge of wine and culinary arts \.)
+  ?g1 (^me 's goal is to attend tastings \.)
+  ?g2 (^me 's goal is to discover new flavors \.)
+  ?g3 (^me 's goal is to increase her knowledge of wine and culinary arts \.)
 )
 
 :episodes (

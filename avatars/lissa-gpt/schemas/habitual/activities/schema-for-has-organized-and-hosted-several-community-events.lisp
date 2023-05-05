@@ -5,7 +5,7 @@
 
 :preconds (
   ?pr1 (^me has the ability to bring people together \.)
-  ?pr2 (^me has the skills to plan, organize and execute community events \.)
+  ?pr2 (^me has the skills to plan \, organize and execute community events \.)
 )
 
 :static-conds (
@@ -18,20 +18,20 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to create a successful community event that brings people together \.)
-  ?g2 (Attendees' goal is to participate in a community event and feel a sense of belonging \.)
+  ?g1 (^me 's goal is to create a successful community event that brings people together \.)
+  ?g2 (Attendees ' goal is to participate in a community event and feel a sense of belonging \.)
 )
 
 :episodes (
   ?e1 (^me creates a vision for the community event \.)
-  ?e2 (^me identifies the event's date, time, and location \.)
-  ?e3 (^me selects vendors or partners that complement the event's theme \.)
+  ?e2 (^me identifies the event 's date \, time \, and location \.)
+  ?e3 (^me selects vendors or partners that complement the event 's theme \.)
   ?e4 (^me works on a budget to cover the expenses for the event \.)
   ?e5 (^me creates a promotional campaign to spread the word about the event \.)
   ?e6 (^me finalizes the details and logistics of the event \.)
   ?e7 (^me oversees the execution of the event \.)
   ?e8 (Community members attend the event \.)
-  ?e9 (Attendees participate in the event's activities \.)
+  ?e9 (Attendees participate in the event 's activities \.)
   ?e10 (Attendees engage and connect with each other \.)
   ?e11 (Attendees gain a sense of being part of something bigger than themselves \.)
 )

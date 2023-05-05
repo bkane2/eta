@@ -17,7 +17,7 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to be entertained and have a good laugh \.)
+  ?g1 (^me 's goal is to be entertained and have a good laugh \.)
 )
 
 :episodes (

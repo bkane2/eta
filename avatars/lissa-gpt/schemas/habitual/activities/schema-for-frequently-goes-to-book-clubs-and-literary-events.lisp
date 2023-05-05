@@ -22,10 +22,10 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to gain knowledge about different literary worlds \.)
-  ?g2 (^me's goal is to engage in discussions and gain insights into the author's writing style, themes and characters \.)
-  ?g3 (^me's goal is to socialize with like-minded individuals \.)
-  ?g4 (^me's goal is to make new friends \.)
+  ?g1 (^me 's goal is to gain knowledge about different literary worlds \.)
+  ?g2 (^me 's goal is to engage in discussions and gain insights into the author 's writing style \, themes and characters \.)
+  ?g3 (^me 's goal is to socialize with like-minded individuals \.)
+  ?g4 (^me 's goal is to make new friends \.)
 )
 
 :episodes (
@@ -34,7 +34,7 @@
   ?e3 (^me arranges for transportation to attend the book club or literary event \.)
   ?e4 (^me arrives at the book club or literary event \.)
   ?e5 (^me engages in discussions with other readers \.)
-  ?e6 (^me gains insights into the author's writing style, themes and characters \.)
+  ?e6 (^me gains insights into the author 's writing style \, themes and characters \.)
   ?e7 (^me socializes with like-minded individuals \.)
   ?e8 (^me learns about new books and potentially makes new friends \.)
   ?e9 (The book club or literary event ends \.)

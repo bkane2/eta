@@ -4,7 +4,7 @@
 ;````````````````````````````````````````````````````````````````````````````````````````````````````
 
 :preconds (
-  ?pr1 (^me's mood is suitable for taking a walk \.)
+  ?pr1 (^me 's mood is suitable for taking a walk \.)
 )
 
 :static-conds (
@@ -14,13 +14,13 @@
 
 :postconds (
   ?po1 (^me has taken a walk in the park \.)
-  ?po2 (^me's mind has found peace \.)
+  ?po2 (^me 's mind has found peace \.)
 )
 
 :goals (
-  ?g1 (^me's goal is to take a walk in the park \.)
-  ?g2 (^me's goal is to forget all the stresses of the day \.)
-  ?g3 (^me's goal is to experience nature and its beauty \.)
+  ?g1 (^me 's goal is to take a walk in the park \.)
+  ?g2 (^me 's goal is to forget all the stresses of the day \.)
+  ?g3 (^me 's goal is to experience nature and its beauty \.)
 )
 
 :episodes (
@@ -31,7 +31,7 @@
   ?e5 (^me admires the colors of the flowers \.)
   ?e6 (^me experiences the sounds of birds chirping and leaves rustling \.)
   ?e7 (^me passes by other people in the park \.)
-  ?e8 (^me's mind finds peace \.)
+  ?e8 (^me 's mind finds peace \.)
   ?e9 (^me completes her walk in the park \.)
 )
 

@@ -19,15 +19,15 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to provide community service \.)
-  ?g2 (The community's goal is to receive ^me's community service \.)
+  ?g1 (^me 's goal is to provide community service \.)
+  ?g2 (The community 's goal is to receive ^me 's community service \.)
 )
 
 :episodes (
   ?e1 (A community service opportunity arises \.)
   ?e2 (^me learns about the community service opportunity \.)
   ?e3 (^me decides to participate in the community service project \.)
-  ?e4 (^me prepares for the community service project (e \.g \. research, getting supplies together) \.)
+  ?e4 (^me prepares for the community service project (e \.g \. research \, getting supplies together) \.)
   ?e5 (^me participates in the community service project \.)
   ?e6 (The community service project is completed \.)
   ?e7 (^me reflects on her experience and what she gained from the project \.)

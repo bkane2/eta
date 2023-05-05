@@ -20,8 +20,8 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to improve her writing skills \.)
-  ?g2 (^me's goal is to meet and develop relationships with other writers \.)
+  ?g1 (^me 's goal is to improve her writing skills \.)
+  ?g2 (^me 's goal is to meet and develop relationships with other writers \.)
   ?g3 (Organizers of the event want attendees to benefit from the event \.)
   ?g4 (Attendees want to learn and improve their writing skills \.)
 )

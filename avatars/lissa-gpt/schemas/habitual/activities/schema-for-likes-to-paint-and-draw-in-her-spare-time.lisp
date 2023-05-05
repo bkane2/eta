@@ -20,15 +20,15 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to create art \.)
-  ?g2 (^me's goal is to express herself through art \.)
+  ?g1 (^me 's goal is to create art \.)
+  ?g2 (^me 's goal is to express herself through art \.)
 )
 
 :episodes (
   ?e1 (^me gathers her art supplies \.)
   ?e2 (^me chooses the medium she wants to work with \.)
   ?e3 (^me sets up her workspace \.)
-  ?e4 (^me starts the creative process, either by sketching or painting \.)
+  ?e4 (^me starts the creative process \, either by sketching or painting \.)
   ?e5 (^me loses herself in the creative flow \.)
   ?e6 (^me experiments with new techniques and mediums \.)
   ?e7 (^me takes breaks when necessary and steps back to observe her art \.)

@@ -20,9 +20,9 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to have fun playing trivia and board games with friends \.)
-  ?g2 (^me's goal is to test her knowledge against others \.)
-  ?g3 (^me's goal is to win rounds of games such as Scrabble, Clue, and Uno \.)
+  ?g1 (^me 's goal is to have fun playing trivia and board games with friends \.)
+  ?g2 (^me 's goal is to test her knowledge against others \.)
+  ?g3 (^me 's goal is to win rounds of games such as Scrabble \, Clue \, and Uno \.)
 )
 
 :episodes (
@@ -32,7 +32,7 @@
   ?e4 (^me and her friends are assigned a table or board to play their chosen game \.)
   ?e5 (^me and her friends order drinks and food \.)
   ?e6 (^me and her friends play trivia and board games for a few hours \.)
-  ?e7 (^me answers questions related to trivia or wins rounds of board games such as Scrabble, Clue, and Uno \.)
+  ?e7 (^me answers questions related to trivia or wins rounds of board games such as Scrabble \, Clue \, and Uno \.)
   ?e8 (^me and her friends engage in friendly competition with other teams/players \.)
   ?e9 (^me and her friends socialize with other attendees and make new friends \.)
   ?e10 (^me and her friends settle the tab and say goodbye to the other attendees \.)

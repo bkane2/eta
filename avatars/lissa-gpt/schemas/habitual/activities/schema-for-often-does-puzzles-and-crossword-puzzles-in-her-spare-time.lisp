@@ -18,7 +18,7 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to solve the puzzle \.)
+  ?g1 (^me 's goal is to solve the puzzle \.)
 )
 
 :episodes (
@@ -26,9 +26,9 @@
   ?e2 (^me finds a puzzle to solve \.)
   ?e3 (^me sets up the puzzle-solving environment \.)
   ?e4 (^me examines the puzzle to identify its unique features and challenges \.)
-  ?e5 (^me begins solving the puzzle, often starting with the edge pieces \.)
-  ?e6 (^me continues solving the puzzle, piecing together the clues and riddles \.)
-  ?e7 (As ^me progresses, the puzzle begins to take shape \.)
+  ?e5 (^me begins solving the puzzle \, often starting with the edge pieces \.)
+  ?e6 (^me continues solving the puzzle \, piecing together the clues and riddles \.)
+  ?e7 (As ^me progresses \, the puzzle begins to take shape \.)
   ?e8 (^me completes the puzzle \.)
   ?e9 (^me takes time to admire the completed puzzle before putting it away \.)
 )

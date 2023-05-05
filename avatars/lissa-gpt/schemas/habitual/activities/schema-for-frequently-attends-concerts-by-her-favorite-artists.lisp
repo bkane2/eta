@@ -19,8 +19,8 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to attend the concert of her favorite artist \.)
-  ?g2 (The artist's goal is to perform their music for the audience \.)
+  ?g1 (^me 's goal is to attend the concert of her favorite artist \.)
+  ?g2 (The artist 's goal is to perform their music for the audience \.)
 )
 
 :episodes (
@@ -29,7 +29,7 @@
   ?e3 (^me arrives at the concert venue on time \.)
   ?e4 (^me finds her way to her seat or to the general front and center of the stage area \.)
   ?e5 (^me immerses herself in the music and atmosphere \.)
-  ?e6 (^me sings along with the lyrics of the artist's songs \.)
+  ?e6 (^me sings along with the lyrics of the artist 's songs \.)
   ?e7 (^me loses herself in the rhythm of the music \.)
   ?e8 (The artist lights up the stage and performs their music \.)
   ?e9 (The audience cheers and sings along with the artist \.)

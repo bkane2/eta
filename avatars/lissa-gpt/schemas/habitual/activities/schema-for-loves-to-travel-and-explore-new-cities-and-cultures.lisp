@@ -19,8 +19,8 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to travel to new destinations \.)
-  ?g2 (^me's goal is to learn about and experience new cultures \.)
+  ?g1 (^me 's goal is to travel to new destinations \.)
+  ?g2 (^me 's goal is to learn about and experience new cultures \.)
 )
 
 :episodes (

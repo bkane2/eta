@@ -21,13 +21,13 @@
 )
 
 :goals (
-  ?g1 (^me's goal is to learn and grow as a dancer \.)
-  ?g2 (^me's goal is to share her passion for dance with others \.)
-  ?g3 (^me's goal is to become a well-rounded dancer \.)
+  ?g1 (^me 's goal is to learn and grow as a dancer \.)
+  ?g2 (^me 's goal is to share her passion for dance with others \.)
+  ?g3 (^me 's goal is to become a well-rounded dancer \.)
 )
 
 :episodes (
-  ?e1 (^me takes dance classes in various styles (from ballet to tap, jazz to modern, and hip-hop to salsa) \.)
+  ?e1 (^me takes dance classes in various styles (from ballet to tap \, jazz to modern \, and hip-hop to salsa) \.)
   ?e2 (Each style presents ^me with unique challenges and learning opportunities \.)
   ?e3 (^me incorporates techniques and styles from each discipline into her own unique dance style \.)
   ?e4 (^me grows into a well-rounded dancer \.)
