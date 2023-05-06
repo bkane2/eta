@@ -2946,8 +2946,8 @@
 ; shortname is title + last name, otherwise shortname is first name).
 ; If :firstname t is given, return only first name.
 ;
-  (let ((parts (str-split name #\ )))
-    (cond
+  (let ((parts (str-split name #\ )) ret)
+    (setq ret (cond
       ; Includes title, first name, and last name
       ((and (>= (length parts) 3)
             (member #\. (explode (first parts))))
@@ -2960,7 +2960,11 @@
         (if firstname
           ""
           (concatenate 'string (first parts) " " (second parts))))
-      (t (first parts)))
+      (t (first parts))))
+    ; If string is all caps, need to add a space at the end so ULF2English works
+    (if (equal ret (string-upcase ret))
+      (concatenate 'string ret " ")
+      ret)
 )) ; END shortname
 
 
