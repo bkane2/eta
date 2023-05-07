@@ -2940,11 +2940,13 @@
 
 
 
-(defun shortname (name &key firstname)
-;``````````````````````````````````````
+(defun shortname (name &key firstname handle-acronyms)
+;````````````````````````````````````````````````````````````
 ; Gets the short version of a name string (if name includes a title,
 ; shortname is title + last name, otherwise shortname is first name).
 ; If :firstname t is given, return only first name.
+; if :handle-acronyms t is given, add a space after (all-cap) acronyms
+; to ensure correct processing by ULF2English.
 ;
   (let ((parts (str-split name #\ )) ret)
     (setq ret (cond
@@ -2962,7 +2964,7 @@
           (concatenate 'string (first parts) " " (second parts))))
       (t (first parts))))
     ; If string is all caps, need to add a space at the end so ULF2English works
-    (if (equal ret (string-upcase ret))
+    (if (and handle-acronyms (equal ret (string-upcase ret)))
       (concatenate 'string ret " ")
       ret)
 )) ; END shortname
@@ -3110,14 +3112,14 @@
     ((equal ulf '^me)
       (list (if me-pron
         (get-pron-case *^me* 'obj)
-        (intern (shortname *^me*)))
+        (intern (shortname *^me* :handle-acronyms t)))
       t you-pron))
     ; If ^you is encountered as an object (non-car of a list),
     ; replace with them/her/him (if anaphoric) or the value of ^you.
     ((equal ulf '^you)
       (list (if you-pron
         (get-pron-case *^you* 'obj)
-        (intern (shortname *^you*)))
+        (intern (shortname *^you* :handle-acronyms t)))
       me-pron t))
     ; Non-indexical atom.
     ((atom ulf)
@@ -3127,7 +3129,7 @@
     ((equal (car ulf) '^me)
       (list (cons (if me-pron
               (get-pron-case *^me* 'subj)
-              (intern (shortname *^me*)))
+              (intern (shortname *^me* :handle-acronyms t)))
         (first (preprocess-ulf-pronouns-for-prompt (cdr ulf) :me-pron t :you-pron you-pron)))
       t you-pron))
     ; If ^you is encountered as a subject (car of a list),
@@ -3135,7 +3137,7 @@
     ((equal (car ulf) '^you)
       (list (cons (if you-pron
               (get-pron-case *^you* 'subj)
-              (intern (shortname *^you*)))
+              (intern (shortname *^you* :handle-acronyms t)))
         (first (preprocess-ulf-pronouns-for-prompt (cdr ulf) :me-pron me-pron :you-pron t)))
       me-pron t))
     ; If possessive subject with ^me and anaphoric, replace with their/her/his.
@@ -3337,8 +3339,8 @@
     (setq prompt (generate-prompt-emotion utterance history emotions))
     ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq stop-seq (vector
-      (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
-      (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
+      (generate-prompt-turn-start (string *^you*))
+      (generate-prompt-turn-start (string *^me*))))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
     (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
@@ -3361,8 +3363,8 @@
     (setq prompt (generate-prompt-paraphrase facts examples prev-utterance gist-clause))
     ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq stop-seq (vector
-      (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
-      (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))
+      (generate-prompt-turn-start (string *^you*))
+      (generate-prompt-turn-start (string *^me*))
       "Person A"
       "Person B"))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
@@ -3384,8 +3386,8 @@
     (setq prompt (generate-prompt-unconstrained facts history))
     ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq stop-seq (vector
-      (generate-prompt-turn-start (format nil "~:(~a~)" *^you*))
-      (generate-prompt-turn-start (format nil "~:(~a~)" *^me*))))
+      (generate-prompt-turn-start (string *^you*))
+      (generate-prompt-turn-start (string *^me*))))
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
     (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
