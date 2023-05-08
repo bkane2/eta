@@ -1460,7 +1460,9 @@
         (cond
           ; Use GPT3-based paraphrase model if available
           ((equal *response-generator* 'GPT3)
-            (setq utterance (form-surface-utterance-using-language-model gist)))
+            (setq utterance (form-surface-utterance-using-language-model
+              (get-facts-for-generation :dialogue-schemas t)
+              gist)))
           
           ; Otherwise, use rule-based methods to select surface utterance
           (t
@@ -1543,7 +1545,8 @@
         (init-plan-from-episode-list
           (list :episodes (episode-var) (create-say-to-wff
             (if (equal *response-generator* 'GPT3)
-              (form-surface-utterance-using-language-model)
+              (form-surface-utterance-using-language-model
+                (get-facts-for-generation :dialogue-schemas t :epi-schemas t :memory t))
               nil)))))
 
       ; :gist directive
@@ -2654,7 +2657,8 @@
     (cond
       ((variable? expr)
         (setq expr-new (if (equal *response-generator* 'GPT3)
-          (form-surface-utterance-using-language-model)
+          (form-surface-utterance-using-language-model
+            (get-facts-for-generation :dialogue-schemas t :epi-schemas t :memory t))
           nil))
         (push (list expr `(quote ,expr-new)) var-bindings)
         (setq expr expr-new))
@@ -3169,12 +3173,97 @@
 
 
 
-(defun form-surface-utterance-using-language-model (&optional gist-clause) ; {@}
-;```````````````````````````````````````````````````````````````````````````````
+(defun get-history-for-generation () ; {@}
+;````````````````````````````````````````````
+; Gets the dialogue history for use in response generation.
+;
+  (let (history-agents history-utterances history)
+    (setq history-agents (reverse (mapcar #'dialogue-turn-agent (ds-conversation-log *ds*))))
+    (setq history-utterances
+      (reverse (mapcar #'untag-emotions (mapcar #'dialogue-turn-utterance (ds-conversation-log *ds*)))))
+    (setq history (mapcar (lambda (agent utterance) (list agent utterance)) history-agents history-utterances))
+    history
+)) ; END get-history-for-generation
+
+
+
+
+
+(defun get-prev-utterance-for-generation (history) ; {@}
+;`````````````````````````````````````````````````````
+; Gets the previous utterance for use in response generation (or creates a generic one
+; if no previous utterance exists).
+;
+  (let (prev-utterance)
+    (setq prev-utterance (second (car (last
+      (remove-if (lambda (turn) (equal (first turn) *^me*)) history)))))
+    (when (null prev-utterance)
+      (setq prev-utterance '(Hello \.)))
+    prev-utterance
+)) ; END get-history-for-generation
+
+
+
+
+
+(defun get-facts-for-generation (&key dialogue-schemas epi-schemas memory) ; {@}
+;`````````````````````````````````````````````````````````````````````````````
+; Retrieve facts for use in response generation. The type of facts to be used must be specified
+; using the following keyword arguments:
+; :dialogue-schemas t : use certain conditions and goals of the current dialogue schema(s).
+; :epi-schemas t      : use a subset of facts contained within a retrieved epi-schema (representing a
+;                       habitual event or generic event knowledge) based on similarity with previous turn.
+; :memory t           : use a subset of facts retrieved from memory based on similarity with previous turn.
+;
+  (let ((schemas (get-schema-instance-ids (ds-curr-plan *ds*))) schema-instance
+        rigid-conds static-conds preconds goals relevant-memory query-str facts)
+
+    ; Get query string for retrieval
+    (setq query-str (words-to-str (get-prev-utterance-for-generation (get-history-for-generation))))
+
+    ; Get relevant dialogue schema knowledge (conditions/goals/etc.)
+    (when dialogue-schemas
+      ; TODO: add other relevant schema categories here in the future
+      (dolist (schema schemas)
+        (setq schema-instance (gethash schema (ds-schema-instances *ds*)))
+        (setq rigid-conds (append rigid-conds (get-schema-section-wffs schema-instance :rigid-conds)))
+        (setq static-conds (append static-conds (get-schema-section-wffs schema-instance :static-conds)))
+        (setq preconds (append preconds (get-schema-section-wffs schema-instance :preconds)))
+        (setq goals (append goals (get-schema-section-wffs schema-instance :goals))))
+
+      (format t "~%  * Generating response using schemas: <~a> "
+        (str-join (mapcar (lambda (schema)
+          (string (schema-predicate (gethash schema (ds-schema-instances *ds*))))) schemas) #\,)) ; DEBUGGING
+    )
+
+    ; Get relevant habitual/event schema knowledge
+    (when epi-schemas
+      nil
+    )
+
+    ; Get relevant episodic memory
+    (when memory
+      (setq relevant-memory (reverse (retrieve-relevant-knowledge-from-kb query-str)))
+
+      (format t "~%  * Generating response using retrieved facts~%      (from \"~a\"):~%   ~a " query-str relevant-memory) ; DEBUGGING
+    )
+
+    ; Combine facts and convert to strings
+    (setq facts (remove-duplicates
+      (append relevant-memory rigid-conds static-conds preconds goals) :test #'equal))
+
+    facts
+)) ; END get-facts-for-generation
+
+
+
+
+
+(defun form-surface-utterance-using-language-model (facts &optional gist-clause) ; {@}
+;`````````````````````````````````````````````````````````````````````````````````
 ; Generate a surface utterance using a language model (currently, GPT-3).
 ;
-; This will automatically generate a prompt using the system's current schema
-; and some relevant pieces of knowledge.
+; This will automatically generate a prompt using the given facts.
 ;
 ; In the case where a particular Eta gist-clause is given as input, this will be
 ; treated as a paraphrasing task: the prompt will be followed by several examples
@@ -3188,10 +3277,7 @@
 ;
 ; USES TT
 ;
-  (let ((schemas (get-schema-instance-ids (ds-curr-plan *ds*))) schema-instance
-        utterance rigid-conds static-conds preconds goals relevant-knowledge
-        facts history history-agents history-utterances facts-str history-str
-        choice examples examples-str emotion prev-utterance query-str)
+  (let (utterance prev-utterance history facts-str history-str choice examples examples-str emotion)
 
     ; Split off emotion in given gist-clause (if any)
     (when gist-clause
@@ -3200,50 +3286,13 @@
 
     ;; (format t "~%  * Generating response using gist clause: ~a " gist-clause) ; DEBUGGING
 
-    ; Get history strings (removing any emotion tags)
-    (setq history-agents (reverse (mapcar #'dialogue-turn-agent (ds-conversation-log *ds*))))
-    (setq history-utterances
-      (reverse (mapcar #'untag-emotions (mapcar #'dialogue-turn-utterance (ds-conversation-log *ds*)))))
-    (setq history (mapcar (lambda (agent utterance) (list agent utterance)) history-agents history-utterances))
-    (setq history-str
-      (mapcar (lambda (agent utterance) (list (string agent) (words-to-str utterance)))
-        history-agents history-utterances))
+    ; Get history and previous utterance
+    (setq history (get-history-for-generation))
+    (setq prev-utterance (get-prev-utterance-for-generation history))
 
-    ; Get previous user utterance
-    (setq prev-utterance (second (car (last
-      (remove-if (lambda (turn) (equal (first turn) *^me*)) history)))))
-    
-    ; If no previous user utterance, create a generic one
-    (when (null prev-utterance)
-      (setq prev-utterance '(Hello \.)))
-
-    (setq query-str (concatenate 'string
-      (words-to-str prev-utterance)
-      " "
-      (if gist-clause (words-to-str gist-clause))))
-
-    ; Get conditions and goals of schema(s)
-    ; TODO: add other relevant schema categories here in the future
-    (dolist (schema schemas)
-      (setq schema-instance (gethash schema (ds-schema-instances *ds*)))
-      (setq rigid-conds (append rigid-conds (get-schema-section-wffs schema-instance :rigid-conds)))
-      (setq static-conds (append static-conds (get-schema-section-wffs schema-instance :static-conds)))
-      (setq preconds (append preconds (get-schema-section-wffs schema-instance :preconds)))
-      (setq goals (append goals (get-schema-section-wffs schema-instance :goals))))
-
-    (format t "~%  * Generating response using schemas: <~a> "
-      (str-join (mapcar (lambda (schema)
-        (string (schema-predicate (gethash schema (ds-schema-instances *ds*))))) schemas) #\,)) ; DEBUGGING
-
-    ; Get relevant knowledge
-    (setq relevant-knowledge (reverse (retrieve-relevant-knowledge-from-kb query-str)))
-
-    (format t "~%  * Generating response using retrieved facts~%      (from \"~a\"):~%   ~a " query-str relevant-knowledge) ; DEBUGGING
-
-    ; Combine facts and convert to strings
-    (setq facts (remove-duplicates
-      (append relevant-knowledge rigid-conds static-conds preconds goals) :test #'equal))
+    ; Convert facts and history to strings
     (setq facts-str (remove nil (mapcar #'expr-to-str facts)))
+    (setq history-str (mapcar (lambda (turn) (list (string (first turn)) (words-to-str (second turn)))) history))
 
     ; Generate response
     (cond
