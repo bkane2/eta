@@ -231,6 +231,7 @@
   (loop while (plan-node-next plan-node-start) do
     (push schema-id (plan-step-schemas (plan-node-step plan-node-start)))
     (setq plan-node-start (plan-node-next plan-node-start)))
+  (push schema-id (plan-step-schemas (plan-node-step plan-node-start)))
 ) ; END add-schema-to-plan
 
 
