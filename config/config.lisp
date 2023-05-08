@@ -60,7 +60,7 @@
 (defparameter *emotion-tags* T)
 (defparameter *dependencies* '("ttt" "ulf-lib" "gpt3-shell" "information-retrieval" "ulf2english"))
 (defparameter *generation-mode* 'GPT3)
-(defparameter *interpretation-mode* 'GPT3)
+(defparameter *interpretation-mode* 'RULE)
 (defparameter *parser-mode* 'RULE)
 (defparameter *safe-mode* NIL)
 (defparameter *debug-patterns-mode* NIL)
