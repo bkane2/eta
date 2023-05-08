@@ -30,4 +30,7 @@
   1 (1 until next time 2)
     2 ((Goodbye \.) (Exchange-goodbyes)) (0 :gist)
 
+  1 (0)
+    2 ((NIL Statement \.)) (0 :gist)
+
 )) ; END *statement-input*

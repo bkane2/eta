@@ -16,7 +16,7 @@
         ; 1
         ((It\'s nice to meet you \.)
          (What hobbies do you have ?)
-         (Great to meet you ! What kinds of things do you like to do for fun ? Personally\, I'm really into travelling and going on hikes outdoors \.))
+         (Great to meet you ! I really like to try out different kinds of activities \. What kinds of things do you like to do for fun ?))
       ;;   ; 2
       ;;   ((What are you taking for the pain ?)
       ;;    (I\'m taking Lortab \.)

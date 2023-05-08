@@ -31,15 +31,15 @@
 )
 
 :goals (
-  ; Lissa wants to respond to the user's statement to express interest
+  ; Lissa wants to react to the user's statement to express interest
   ?g1 (^me ((pres want.v) (to (respond.v (to.p-arg ((^you 's) statement.n)) (adv-a ({for}.p (to (express.v (k interest.n)))))))))
+  ; Lissa wants to avoid asking further questions
+  ?g2 (^me ((pres want.v) (to (avoid.v (ka (ask.v (further.a (plur question.n))))))))
 )
 
 :episodes (
 
 ?e1 (^me say-to.v ^you ?words)
-
-?e2 (^you reply-to.v ?e1)
 
 )
 
