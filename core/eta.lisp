@@ -3277,7 +3277,7 @@
 ;
 ; USES TT
 ;
-  (let (utterance prev-utterance history facts-str history-str choice examples examples-str emotion)
+  (let (utterance prev-utterance incomplete-utterances history facts-str history-str choice examples examples-str emotion)
 
     ; Split off emotion in given gist-clause (if any)
     (when gist-clause
@@ -3305,11 +3305,17 @@
           (setq examples (cdr choice)))
         (setq examples-str
           (mapcar (lambda (example) (mapcar #'words-to-str example)) examples))
+
+        ; Get any Eta utterances that came since the previous user utterance (if any)
+        (when (member *^you* history :key (lambda (x) (first x)))
+          (setq incomplete-utterances (mapcar #'second
+            (last history (position *^you* (reverse history) :key (lambda (x) (first x)))))))
         
         ; Get utterance
         (setq utterance (get-gpt3-paraphrase facts-str examples-str
           (words-to-str prev-utterance)
-          (words-to-str gist-clause))))
+          (words-to-str gist-clause)
+          :incomplete-utterance (str-join (mapcar #'words-to-str incomplete-utterances) #\ ))))
 
 
       ; No gist clause: Unconstrained generation task
