@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-options.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-options.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-options.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

@@ -7,7 +7,7 @@
 
 (store-schema 'supervise-BW-construction.v
 
-'(event-schema :header ((^me supervise-BW-construction.v ^you ?goal-rep) ** ?e)
+'(dial-schema :header ((^me supervise-BW-construction.v ^you ?goal-rep) ** ?e)
 ;```````````````````````````````````````````````````````````````````````````````
 ; Blocks world structure building supervision; such a session is expected to
 ; consist of the agent (given a goal representation) supervising the user building

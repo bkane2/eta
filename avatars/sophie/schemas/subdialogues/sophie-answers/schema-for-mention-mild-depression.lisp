@@ -7,7 +7,7 @@
 
 (store-schema 'mention-mild-depression.v
 
-'(event-schema :header (((set-of ^me ^you) mention-mild-depression.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-mild-depression.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

@@ -7,7 +7,7 @@
 
 (store-schema 'discuss-depression.v
 
-'(event-schema :header (((set-of ^me ^you) discuss-depression.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) discuss-depression.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

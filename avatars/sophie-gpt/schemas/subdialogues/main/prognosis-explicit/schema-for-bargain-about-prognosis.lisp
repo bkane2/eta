@@ -7,7 +7,7 @@
 
 (store-schema 'bargain-about-prognosis.v
 
-'(event-schema :header (((set-of ^me ^you) bargain-about-prognosis.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) bargain-about-prognosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

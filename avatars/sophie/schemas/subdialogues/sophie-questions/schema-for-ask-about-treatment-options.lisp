@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-treatment-options.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-treatment-options.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-treatment-options.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

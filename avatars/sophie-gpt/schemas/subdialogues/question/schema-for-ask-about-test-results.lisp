@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-test-results.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-test-results.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-test-results.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

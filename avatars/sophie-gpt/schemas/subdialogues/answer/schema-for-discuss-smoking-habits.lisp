@@ -7,7 +7,7 @@
 
 (store-schema 'discuss-smoking-habits.v
 
-'(event-schema :header (((set-of ^me ^you) discuss-smoking-habits.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) discuss-smoking-habits.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

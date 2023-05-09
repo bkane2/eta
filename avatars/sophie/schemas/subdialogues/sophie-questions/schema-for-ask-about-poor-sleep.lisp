@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-poor-sleep.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-poor-sleep.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-poor-sleep.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (

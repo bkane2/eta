@@ -7,7 +7,7 @@
 
 (store-schema 'mention-radiation-time.v
 
-'(event-schema :header (((set-of ^me ^you) mention-radiation-time.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-radiation-time.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-narcotic-addiction.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-narcotic-addiction.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-narcotic-addiction.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

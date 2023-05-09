@@ -7,7 +7,7 @@
 
 (store-schema 'mention-feeling-better-after-radiation.v
 
-'(event-schema :header (((set-of ^me ^you) mention-feeling-better-after-radiation.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-feeling-better-after-radiation.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

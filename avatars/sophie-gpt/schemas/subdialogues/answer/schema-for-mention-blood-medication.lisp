@@ -7,7 +7,7 @@
 
 (store-schema 'mention-blood-medication.v
 
-'(event-schema :header (((set-of ^me ^you) mention-blood-medication.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-blood-medication.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

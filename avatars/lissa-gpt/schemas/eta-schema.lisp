@@ -7,7 +7,7 @@
 
 (store-schema 'have-eta-dialog.v
 
-'(event-schema :header (((set-of ^me ^you) have-eta-dialog.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) have-eta-dialog.v) ** ?e)
 ;`````````````````````````````````````````````````````````````````````
 ; Lissa elderly dialogue
 

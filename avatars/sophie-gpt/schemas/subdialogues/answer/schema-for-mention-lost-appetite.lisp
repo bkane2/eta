@@ -7,7 +7,7 @@
 
 (store-schema 'mention-lost-appetite.v
 
-'(event-schema :header (((set-of ^me ^you) mention-lost-appetite.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-lost-appetite.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

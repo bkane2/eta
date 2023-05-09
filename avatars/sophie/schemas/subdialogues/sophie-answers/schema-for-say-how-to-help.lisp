@@ -7,7 +7,7 @@
 
 (store-schema 'say-how-to-help.v
 
-'(event-schema :header (((set-of ^me ^you) say-how-to-help.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) say-how-to-help.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

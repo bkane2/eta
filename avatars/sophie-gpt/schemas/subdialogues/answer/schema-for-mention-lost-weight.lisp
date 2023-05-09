@@ -7,7 +7,7 @@
 
 (store-schema 'mention-lost-weight.v
 
-'(event-schema :header (((set-of ^me ^you) mention-lost-weight.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-lost-weight.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

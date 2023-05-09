@@ -7,7 +7,7 @@
 
 (store-schema 'explain-future-goals.v
 
-'(event-schema :header (((set-of ^me ^you) explain-future-goals.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) explain-future-goals.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

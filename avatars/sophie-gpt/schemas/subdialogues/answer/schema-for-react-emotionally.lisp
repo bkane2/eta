@@ -7,7 +7,7 @@
 
 (store-schema 'react-emotionally.v
 
-'(event-schema :header (((set-of ^me ^you) react-emotionally.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) react-emotionally.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

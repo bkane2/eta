@@ -7,7 +7,7 @@
 
 (store-schema 'redirect-to-prognosis.v
 
-'(event-schema :header (((set-of ^me ^you) redirect-to-prognosis.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) redirect-to-prognosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

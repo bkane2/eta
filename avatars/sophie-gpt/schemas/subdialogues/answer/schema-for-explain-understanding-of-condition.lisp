@@ -7,7 +7,7 @@
 
 (store-schema 'explain-understanding-of-condition.v
 
-'(event-schema :header (((set-of ^me ^you) explain-understanding-of-condition.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) explain-understanding-of-condition.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

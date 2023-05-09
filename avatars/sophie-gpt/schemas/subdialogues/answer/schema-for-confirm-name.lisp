@@ -7,7 +7,7 @@
 
 (store-schema 'confirm-name.v
 
-'(event-schema :header (((set-of ^me ^you) confirm-name.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) confirm-name.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

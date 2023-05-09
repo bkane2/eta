@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-medication-before-therapy.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-medication-before-therapy.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-medication-before-therapy.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

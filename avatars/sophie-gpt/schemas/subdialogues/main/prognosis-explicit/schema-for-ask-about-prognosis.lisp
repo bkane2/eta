@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-prognosis.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-prognosis.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-prognosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

@@ -7,7 +7,7 @@
 
 (store-schema 'supervise-BW-action.v
 
-'(event-schema :header ((^me supervise-BW-action.v ^you ?ka1) ** ?e)
+'(dial-schema :header ((^me supervise-BW-action.v ^you ?ka1) ** ?e)
 ;`````````````````````````````````````````````````````````````````````````````
 ; Blocks world action supervision; consists of the BW agent listening for any
 ; questions (or other requests) by the user, watching them try to make a move

@@ -7,7 +7,7 @@
 
 (store-schema 'mention-taking-lortab.v
 
-'(event-schema :header (((set-of ^me ^you) mention-taking-lortab.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-taking-lortab.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

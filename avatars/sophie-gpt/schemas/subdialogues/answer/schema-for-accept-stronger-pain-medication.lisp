@@ -7,7 +7,7 @@
 
 (store-schema 'accept-stronger-pain-medication.v
 
-'(event-schema :header (((set-of ^me ^you) accept-stronger-pain-medication.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) accept-stronger-pain-medication.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

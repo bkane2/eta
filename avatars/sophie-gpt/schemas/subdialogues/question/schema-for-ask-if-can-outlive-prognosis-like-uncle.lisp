@@ -7,7 +7,7 @@
 
 (store-schema 'ask-if-can-outlive-prognosis-like-uncle.v
 
-'(event-schema :header (((set-of ^me ^you) ask-if-can-outlive-prognosis-like-uncle.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-if-can-outlive-prognosis-like-uncle.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

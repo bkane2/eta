@@ -8,7 +8,7 @@
 
 (store-schema 'react-to-spatial-explanation-request.v
 
-  '(event-schema :header ((^me react-to-spatial-explanation-request.v) ** ?e)
+  '(dial-schema :header ((^me react-to-spatial-explanation-request.v) ** ?e)
   ;`````````````````````````````````````````````````````````````````````````````````````````````
     :episodes (
               ?e1 (^you articulate2-to.v ^me ?ulf)

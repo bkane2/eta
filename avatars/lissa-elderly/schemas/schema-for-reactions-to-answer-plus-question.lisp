@@ -25,7 +25,7 @@
 
 (defparameter *reactions-to-answer+question*
 
-'(event-schema :header ((^me react-to-answer+question.v ?answer ?question) ** ?e)
+'(dial-schema :header ((^me react-to-answer+question.v ?answer ?question) ** ?e)
 ;``````````````````````````````````````````````````````````````````````````````````
 ; LISSA reacts to one or more answer gist clauses plus a question
 ; gist clause from the user (in response to a LISSA question).

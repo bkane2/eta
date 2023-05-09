@@ -7,7 +7,7 @@
 
 (store-schema 'discuss-radiation-symptoms.v
 
-'(event-schema :header (((set-of ^me ^you) discuss-radiation-symptoms.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) discuss-radiation-symptoms.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

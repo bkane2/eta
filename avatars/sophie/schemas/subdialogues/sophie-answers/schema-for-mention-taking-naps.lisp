@@ -7,7 +7,7 @@
 
 (store-schema 'mention-taking-naps.v
 
-'(event-schema :header (((set-of ^me ^you) mention-taking-naps.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-taking-naps.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

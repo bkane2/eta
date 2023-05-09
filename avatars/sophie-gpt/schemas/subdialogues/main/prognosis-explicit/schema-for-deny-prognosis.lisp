@@ -7,7 +7,7 @@
 
 (store-schema 'deny-prognosis.v
 
-'(event-schema :header (((set-of ^me ^you) deny-prognosis.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) deny-prognosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

@@ -7,7 +7,7 @@
 
 (store-schema 'discuss-drinking-habits.v
 
-'(event-schema :header (((set-of ^me ^you) discuss-drinking-habits.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) discuss-drinking-habits.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

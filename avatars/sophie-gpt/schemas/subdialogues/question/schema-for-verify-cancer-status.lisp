@@ -7,7 +7,7 @@
 
 (store-schema 'verify-cancer-status.v
 
-'(event-schema :header (((set-of ^me ^you) verify-cancer-status.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) verify-cancer-status.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

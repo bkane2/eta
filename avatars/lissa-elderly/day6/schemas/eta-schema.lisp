@@ -7,7 +7,7 @@
 
 (defparameter *eta-schema*
 
-'(event-schema :header (((set-of ^me ^you) have-eta-dialog.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) have-eta-dialog.v) ** ?e)
 ;``````````````````````````````````````````````````````````````````````
 ; Lissa elderly Day 6 dialogue
 

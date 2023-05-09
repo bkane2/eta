@@ -7,7 +7,7 @@
 
 (store-schema 'acknowledge-empathy.v
 
-'(event-schema :header (((set-of ^me ^you) acknowledge-empathy.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) acknowledge-empathy.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

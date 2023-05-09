@@ -7,7 +7,7 @@
 
 (store-schema 'ask-for-clarification.v
 
-'(event-schema :header (((set-of ^me ^you) ask-for-clarification.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-for-clarification.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

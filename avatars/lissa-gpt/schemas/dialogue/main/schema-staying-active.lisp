@@ -12,7 +12,7 @@
 
 (store-schema 'discuss-staying-active.v
 
-'(event-schema :header (((set-of ^me ^you) discuss-staying-active.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) discuss-staying-active.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 ; LISSA introduces herself, sets the scene, asks about the user's 
 ; major, responds to the user's reply, and starts the "Rochester"

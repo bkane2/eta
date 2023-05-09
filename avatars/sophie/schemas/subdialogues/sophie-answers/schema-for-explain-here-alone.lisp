@@ -7,7 +7,7 @@
 
 (store-schema 'explain-here-alone.v
 
-'(event-schema :header (((set-of ^me ^you) explain-here-alone.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) explain-here-alone.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

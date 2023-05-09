@@ -7,7 +7,7 @@
 
 (store-schema 'mention-trouble-concentrating.v
 
-'(event-schema :header (((set-of ^me ^you) mention-trouble-concentrating.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-trouble-concentrating.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

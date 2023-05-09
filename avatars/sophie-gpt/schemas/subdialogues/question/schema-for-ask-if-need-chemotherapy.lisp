@@ -7,7 +7,7 @@
 
 (store-schema 'ask-if-need-chemotherapy.v
 
-'(event-schema :header (((set-of ^me ^you) ask-if-need-chemotherapy.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-if-need-chemotherapy.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

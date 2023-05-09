@@ -12,7 +12,7 @@
 
 (defparameter *have-health-dialog*
 
-'(event-schema :header (((set-of ^me ^you) have-health-dialog.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) have-health-dialog.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````
 ; LISSA introduces herself, sets the scene, asks about the user's 
 ; major, responds to the user's reply, and starts the "Rochester"

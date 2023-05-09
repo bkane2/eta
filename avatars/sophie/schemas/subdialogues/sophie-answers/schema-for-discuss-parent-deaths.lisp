@@ -7,7 +7,7 @@
 
 (store-schema 'discuss-parent-deaths.v
 
-'(event-schema :header (((set-of ^me ^you) discuss-parent-deaths.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) discuss-parent-deaths.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

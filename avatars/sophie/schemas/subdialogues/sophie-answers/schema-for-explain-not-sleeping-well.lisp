@@ -7,7 +7,7 @@
 
 (store-schema 'explain-not-sleeping-well.v
 
-'(event-schema :header (((set-of ^me ^you) explain-not-sleeping-well.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) explain-not-sleeping-well.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

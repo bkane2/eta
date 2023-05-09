@@ -7,7 +7,7 @@
 
 (store-schema 'ask-why-have-cancer.v
 
-'(event-schema :header (((set-of ^me ^you) ask-why-have-cancer.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-why-have-cancer.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

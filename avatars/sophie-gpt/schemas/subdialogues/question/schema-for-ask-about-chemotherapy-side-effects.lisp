@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-chemotherapy-side-effects.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-chemotherapy-side-effects.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-chemotherapy-side-effects.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

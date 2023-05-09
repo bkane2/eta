@@ -7,7 +7,7 @@
 
 (store-schema 'say-reason-cancer-worse.v
 
-'(event-schema :header (((set-of ^me ^you) say-reason-cancer-worse.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) say-reason-cancer-worse.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

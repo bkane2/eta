@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-will-radiation-help.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-will-radiation-help.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-will-radiation-help.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

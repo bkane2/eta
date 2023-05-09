@@ -7,7 +7,7 @@
 
 (store-schema 'react-moderately-to-non-empathy.v
 
-'(event-schema :header (((set-of ^me ^you) react-moderately-to-non-empathy.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) react-moderately-to-non-empathy.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

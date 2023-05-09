@@ -7,7 +7,7 @@
 
 (store-schema 'have-question-answering-dialogue.v
 
-'(event-schema :header (((set-of ^me ^you) have-question-answering-dialogue.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) have-question-answering-dialogue.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````````
 ; Blocks world conversation. An expected blocks world dialogue consists
 ; of the agent repeatedly asking the user if they have a spatial question

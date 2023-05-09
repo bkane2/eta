@@ -11,7 +11,7 @@
 
 (store-schema 'discuss-employment.v
 
-'(event-schema :header (((set-of ^me ^you) discuss-employment.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) discuss-employment.v) ** ?e)
 ;```````````````````````````````````````````````````````````````````````````
 ; LISSA introduces herself, sets the scene, asks about the user's 
 ; major, responds to the user's reply, and starts the "Rochester"

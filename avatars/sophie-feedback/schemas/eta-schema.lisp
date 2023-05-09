@@ -7,7 +7,7 @@
 
 (store-schema 'have-eta-dialog.v
 
-'(event-schema :header (((set-of ^me ^you) have-eta-dialog.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) have-eta-dialog.v) ** ?e)
 ;`````````````````````````````````````````````````````````````````````
 ; An Eta dialogue where a "suggester" listens to patient-doctor utterance,
 ; and provides feedback/suggestions to the doctor.

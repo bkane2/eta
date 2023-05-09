@@ -7,7 +7,7 @@
 
 (store-schema 'ask-if-can-outlive-prognosis-health-now.v
 
-'(event-schema :header (((set-of ^me ^you) ask-if-can-outlive-prognosis-health-now.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-if-can-outlive-prognosis-health-now.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 

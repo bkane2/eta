@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-comfort-care.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-comfort-care.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-comfort-care.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

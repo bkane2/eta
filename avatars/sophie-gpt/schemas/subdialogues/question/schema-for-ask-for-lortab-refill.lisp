@@ -7,7 +7,7 @@
 
 (store-schema 'ask-for-lortab-refill.v
 
-'(event-schema :header (((set-of ^me ^you) ask-for-lortab-refill.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-for-lortab-refill.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

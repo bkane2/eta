@@ -7,7 +7,7 @@
 
 (store-schema 'ask-if-can-outlive-prognosis-quit-smoke.v
 
-'(event-schema :header (((set-of ^me ^you) ask-if-can-outlive-prognosis-quit-smoke.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-if-can-outlive-prognosis-quit-smoke.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

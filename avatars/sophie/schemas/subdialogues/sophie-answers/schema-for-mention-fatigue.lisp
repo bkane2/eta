@@ -7,7 +7,7 @@
 
 (store-schema 'mention-fatigue.v
 
-'(event-schema :header (((set-of ^me ^you) mention-fatigue.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-fatigue.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

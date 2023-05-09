@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-second-opinion.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-second-opinion.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-second-opinion.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

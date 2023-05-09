@@ -7,7 +7,7 @@
 
 (store-schema 'confirm-doctor-is-audible.v
 
-'(event-schema :header (((set-of ^me ^you) confirm-doctor-is-audible.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) confirm-doctor-is-audible.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

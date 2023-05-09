@@ -7,7 +7,7 @@
 
 (store-schema 'mention-anxiety.v
 
-'(event-schema :header (((set-of ^me ^you) mention-anxiety.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-anxiety.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

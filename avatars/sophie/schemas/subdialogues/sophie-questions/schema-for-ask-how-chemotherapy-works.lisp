@@ -7,7 +7,7 @@
 
 (store-schema 'ask-how-chemotherapy-works.v
 
-'(event-schema :header (((set-of ^me ^you) ask-how-chemotherapy-works.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-how-chemotherapy-works.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :goals (

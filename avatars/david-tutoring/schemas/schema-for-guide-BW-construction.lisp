@@ -7,7 +7,7 @@
 
 (store-schema 'guide-BW-construction.v
 
-'(event-schema :header ((^me guide-BW-construction.v ^you ?goal-rep) ** ?e)
+'(dial-schema :header ((^me guide-BW-construction.v ^you ?goal-rep) ** ?e)
 ;`````````````````````````````````````````````````````````````````````````````
 ; Blocks world structure building instruction; such a session is expected to
 ; consist of the agent (given a goal representation) instructing the user on

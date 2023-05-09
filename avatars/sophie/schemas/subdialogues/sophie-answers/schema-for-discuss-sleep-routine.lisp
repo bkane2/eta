@@ -7,7 +7,7 @@
 
 (store-schema 'discuss-sleep-routine.v
 
-'(event-schema :header (((set-of ^me ^you) discuss-sleep-routine.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) discuss-sleep-routine.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

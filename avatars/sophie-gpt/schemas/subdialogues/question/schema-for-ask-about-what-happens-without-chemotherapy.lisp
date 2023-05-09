@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-what-happens-without-chemotherapy.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-what-happens-without-chemotherapy.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-what-happens-without-chemotherapy.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

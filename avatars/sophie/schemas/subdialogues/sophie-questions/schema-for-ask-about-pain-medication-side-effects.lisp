@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-pain-medication-side-effects.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-pain-medication-side-effects.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-pain-medication-side-effects.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

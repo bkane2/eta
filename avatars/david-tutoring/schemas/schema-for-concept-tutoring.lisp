@@ -7,7 +7,7 @@
 
 (store-schema 'teach-BW-concept-to.v
 
-'(event-schema :header ((^me teach-BW-concept-to.v ^you) ** ?e)
+'(dial-schema :header ((^me teach-BW-concept-to.v ^you) ** ?e)
 ;``````````````````````````````````````````````````````````````````
 ; Blocks world concept tutoring session; such a session is expected to consist
 ; of the agent selecting a concept for which it has a concept schema, guiding 

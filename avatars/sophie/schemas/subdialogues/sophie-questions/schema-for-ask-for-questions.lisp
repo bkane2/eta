@@ -7,7 +7,7 @@
 
 (store-schema 'ask-for-questions.v
 
-'(event-schema :header (((set-of ^me ^you) ask-for-questions.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-for-questions.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

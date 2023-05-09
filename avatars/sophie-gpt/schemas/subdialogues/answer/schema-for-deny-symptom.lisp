@@ -7,7 +7,7 @@
 
 (store-schema 'deny-symptom.v
 
-'(event-schema :header (((set-of ^me ^you) deny-symptom.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) deny-symptom.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

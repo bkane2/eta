@@ -7,7 +7,7 @@
 
 (store-schema 'ask-if-cancer-worse.v
 
-'(event-schema :header (((set-of ^me ^you) ask-if-cancer-worse.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-if-cancer-worse.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

@@ -7,7 +7,7 @@
 
 (store-schema 'ask-why-pain-medication-not-working.v
 
-'(event-schema :header (((set-of ^me ^you) ask-why-pain-medication-not-working.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-why-pain-medication-not-working.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

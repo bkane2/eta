@@ -7,7 +7,7 @@
 
 (store-schema 'mention-lortab-frequency.v
 
-'(event-schema :header (((set-of ^me ^you) mention-lortab-frequency.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) mention-lortab-frequency.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

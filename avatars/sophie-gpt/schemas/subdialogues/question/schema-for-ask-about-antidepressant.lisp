@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-antidepressant.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-antidepressant.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-antidepressant.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

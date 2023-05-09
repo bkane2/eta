@@ -7,7 +7,7 @@
 
 (store-schema 'ask-how-long-to-know-pain-medication-working.v
 
-'(event-schema :header (((set-of ^me ^you) ask-how-long-to-know-pain-medication-working.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-how-long-to-know-pain-medication-working.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 ; TODO: although inquiring about a stronger pain medication might be the ultimate goal of the agent

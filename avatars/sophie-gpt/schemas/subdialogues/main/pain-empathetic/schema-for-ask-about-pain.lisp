@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-pain.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-pain.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-pain.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

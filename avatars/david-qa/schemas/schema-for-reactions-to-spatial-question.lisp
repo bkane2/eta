@@ -25,7 +25,7 @@
 
 (store-schema 'react-to-spatial-question.v
 
-  '(event-schema :header ((^me react-to-spatial-question.v) ** ?e)
+  '(dial-schema :header ((^me react-to-spatial-question.v) ** ?e)
   ;````````````````````````````````````````````````````````````````````````````````````
     :episodes (
               ;; ?e1 (^me perceive-world.v |Blocks-World-System| ?ulf ?perceptions)

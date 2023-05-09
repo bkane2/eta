@@ -7,7 +7,7 @@
 
 (store-schema 'ask-what-to-tell-family.v
 
-'(event-schema :header (((set-of ^me ^you) ask-what-to-tell-family.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-what-to-tell-family.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

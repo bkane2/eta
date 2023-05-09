@@ -7,7 +7,7 @@
 
 (store-schema 'confirm-no-comfort-care.v
 
-'(event-schema :header (((set-of ^me ^you) confirm-no-comfort-care.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) confirm-no-comfort-care.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

@@ -7,7 +7,7 @@
 
 (store-schema 'ask-if-stronger-medication-will-help-sleep.v
 
-'(event-schema :header (((set-of ^me ^you) ask-if-stronger-medication-will-help-sleep.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-if-stronger-medication-will-help-sleep.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 ; TODO: although inquiring about a stronger pain medication might be the ultimate goal of the agent

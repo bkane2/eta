@@ -7,7 +7,7 @@
 
 (store-schema 'explain-symptoms.v
 
-'(event-schema :header (((set-of ^me ^you) explain-symptoms.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) explain-symptoms.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

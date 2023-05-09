@@ -7,7 +7,7 @@
 
 (store-schema 'exchange-greetings.v
 
-'(event-schema :header ((?s exchange-greetings.v ?h) ** ?e)
+'(dial-schema :header ((?s exchange-greetings.v ?h) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

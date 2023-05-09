@@ -7,7 +7,7 @@
 
 (store-schema 'exchange-goodbyes.v
 
-'(event-schema :header (((set-of ^me ^you) exchange-goodbyes.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) exchange-goodbyes.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

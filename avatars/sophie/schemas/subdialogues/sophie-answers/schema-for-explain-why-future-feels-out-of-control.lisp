@@ -7,7 +7,7 @@
 
 (store-schema 'explain-why-future-feels-out-of-control.v
 
-'(event-schema :header (((set-of ^me ^you) explain-why-future-feels-out-of-control.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) explain-why-future-feels-out-of-control.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

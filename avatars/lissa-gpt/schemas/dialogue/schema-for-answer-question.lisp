@@ -7,7 +7,7 @@
 
 (store-schema 'answer-question.v
 
-'(event-schema :header (((set-of ^me ^you) answer-question.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) answer-question.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

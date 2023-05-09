@@ -7,7 +7,7 @@
 
 (store-schema 'ask-about-future.v
 
-'(event-schema :header (((set-of ^me ^you) ask-about-future.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-about-future.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

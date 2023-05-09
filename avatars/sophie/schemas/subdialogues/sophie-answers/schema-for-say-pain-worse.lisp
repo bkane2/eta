@@ -7,7 +7,7 @@
 
 (store-schema 'say-pain-worse.v
 
-'(event-schema :header (((set-of ^me ^you) say-pain-worse.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) say-pain-worse.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

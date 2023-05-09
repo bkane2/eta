@@ -7,7 +7,7 @@
 
 (store-schema 'discuss-history-mental-illness.v
 
-'(event-schema :header (((set-of ^me ^you) discuss-history-mental-illness.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) discuss-history-mental-illness.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

@@ -7,7 +7,7 @@
 
 (store-schema 'ask-if-can-trust-prognosis.v
 
-'(event-schema :header (((set-of ^me ^you) ask-if-can-trust-prognosis.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) ask-if-can-trust-prognosis.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (

@@ -7,7 +7,7 @@
 
 (store-schema 'pause-conversation.v
 
-'(event-schema :header (((set-of ^me ^you) pause-conversation.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) pause-conversation.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````
 ; The user and the agent suspend dialogue until the user says something
 ; interpreted as a resumption request.

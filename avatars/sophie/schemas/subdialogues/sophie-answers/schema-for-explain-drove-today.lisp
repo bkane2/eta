@@ -7,7 +7,7 @@
 
 (store-schema 'explain-drove-today.v
 
-'(event-schema :header (((set-of ^me ^you) explain-drove-today.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) explain-drove-today.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :episodes (

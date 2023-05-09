@@ -7,7 +7,7 @@
 
 (store-schema 'respond-to-statement.v
 
-'(event-schema :header (((set-of ^me ^you) respond-to-statement.v) ** ?e)
+'(dial-schema :header (((set-of ^me ^you) respond-to-statement.v) ** ?e)
 ;````````````````````````````````````````````````````````````````````````````````
 
 :types (
