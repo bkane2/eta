@@ -268,7 +268,8 @@
     (mapcar #'store-in-kb *init-knowledge*)
     ; If config includes information-retrieval package, embed and dump initial knowledge
     (when (member "information-retrieval" *dependencies* :test #'string-equal)
-      (precompute-knowledge-embeddings (mapcar #'expr-to-str *init-knowledge*))))
+      (precompute-knowledge-embeddings *init-knowledge*)
+      (precompute-schema-embeddings (get-schemas-of-type 'epi-schema))))
 
   ; Initialize time
   (setf (ds-time *ds*) 'NOW0)
@@ -1461,7 +1462,7 @@
           ; Use GPT3-based paraphrase model if available
           ((equal *response-generator* 'GPT3)
             (setq utterance (form-surface-utterance-using-language-model
-              (get-facts-for-generation :dialogue-schemas t)
+              (get-facts-for-generation :dial-schemas t)
               gist)))
           
           ; Otherwise, use rule-based methods to select surface utterance
@@ -1546,7 +1547,7 @@
           (list :episodes (episode-var) (create-say-to-wff
             (if (equal *response-generator* 'GPT3)
               (form-surface-utterance-using-language-model
-                (get-facts-for-generation :dialogue-schemas t :epi-schemas t :memory t))
+                (get-facts-for-generation :dial-schemas t :epi-schemas t :memory t))
               nil)))))
 
       ; :gist directive
@@ -2658,7 +2659,7 @@
       ((variable? expr)
         (setq expr-new (if (equal *response-generator* 'GPT3)
           (form-surface-utterance-using-language-model
-            (get-facts-for-generation :dialogue-schemas t :epi-schemas t :memory t))
+            (get-facts-for-generation :dial-schemas t :epi-schemas t :memory t))
           nil))
         (push (list expr `(quote ,expr-new)) var-bindings)
         (setq expr expr-new))
@@ -3206,23 +3207,24 @@
 
 
 
-(defun get-facts-for-generation (&key dialogue-schemas epi-schemas memory) ; {@}
+(defun get-facts-for-generation (&key dial-schemas epi-schemas memory) ; {@}
 ;`````````````````````````````````````````````````````````````````````````````
 ; Retrieve facts for use in response generation. The type of facts to be used must be specified
 ; using the following keyword arguments:
-; :dialogue-schemas t : use certain conditions and goals of the current dialogue schema(s).
-; :epi-schemas t      : use a subset of facts contained within a retrieved epi-schema (representing a
-;                       habitual event or generic event knowledge) based on similarity with previous turn.
-; :memory t           : use a subset of facts retrieved from memory based on similarity with previous turn.
+; :dial-schemas t : use certain conditions and goals of the current dialogue schema(s).
+; :epi-schemas t  : use a subset of facts contained within a retrieved epi-schema (representing a
+;                   habitual event or generic event knowledge) based on similarity with previous turn.
+; :memory t       : use a subset of facts retrieved from memory based on similarity with previous turn.
 ;
   (let ((schemas (get-schema-instance-ids (ds-curr-plan *ds*))) schema-instance
-        rigid-conds static-conds preconds goals relevant-memory query-str facts)
+        rigid-conds static-conds preconds goals relevant-memory query-str facts
+        relevant-epi-schemas relevant-epi-schema-knowledge)
 
     ; Get query string for retrieval
     (setq query-str (words-to-str (get-prev-utterance-for-generation (get-history-for-generation))))
 
     ; Get relevant dialogue schema knowledge (conditions/goals/etc.)
-    (when dialogue-schemas
+    (when dial-schemas
       ; TODO: add other relevant schema categories here in the future
       (dolist (schema schemas)
         (setq schema-instance (gethash schema (ds-schema-instances *ds*)))
@@ -3238,7 +3240,17 @@
 
     ; Get relevant habitual/event schema knowledge
     (when epi-schemas
-      nil
+      (setq relevant-epi-schemas (reverse (retrieve-relevant-epi-schemas query-str)))
+
+      (format t "~%  * Generating response using retrieved epi-schemas~%      (from \"~a\"):~%   <~a> "
+        query-str (str-join (mapcar (lambda (schema) (string (schema-predicate schema))) relevant-epi-schemas) #\,)) ; DEBUGGING
+
+      ; TODO: ensure that header precedes the facts for each schema
+      (setq relevant-epi-schema-knowledge (apply #'append (mapcar (lambda (schema)
+          (retrieve-relevant-schema-facts query-str schema))
+        relevant-epi-schemas)))
+
+      (format t "~%  * Using the following facts from the retrieved epi-schemas:~%   ~a " relevant-epi-schema-knowledge) ; DEBUGGING
     )
 
     ; Get relevant episodic memory
@@ -3250,7 +3262,7 @@
 
     ; Combine facts and convert to strings
     (setq facts (remove-duplicates
-      (append relevant-memory rigid-conds static-conds preconds goals) :test #'equal))
+      (append relevant-epi-schema-knowledge relevant-memory rigid-conds static-conds preconds goals) :test #'equal))
 
     facts
 )) ; END get-facts-for-generation

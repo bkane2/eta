@@ -257,13 +257,13 @@
 ;
   (let (schema-instance plan-node-duplicates plan-node duplicates)
     ; Return error if schema has no episodes
-    (when (null (epi-schema-episodes schema))
+    (when (null (dial-schema-episodes schema))
       (format t "*** Attempt to form plan from schema ~a with no episodes"
         (schema-predicate schema))
       (return-from init-plan-from-schema nil))
 
     ; Create copy of general schema to instantiate
-    (setq schema-instance (instantiate-epi-schema schema args))
+    (setq schema-instance (instantiate-dial-schema schema args))
     (when schema-instances
       (setf (gethash (schema-id schema-instance) schema-instances) schema-instance))
 
@@ -819,10 +819,10 @@
   (let* (
     (plan-var-table (make-hash-table))
     (schema-instances (make-hash-table))
-    (s1 (make-epi-schema :predicate 'schema1.v))
-    (s2 (make-epi-schema :predicate 'schema2.v))
-    (s3 (make-epi-schema :predicate 'schema3.v))
-    (s4 (make-epi-schema :predicate 'schema4.v))
+    (s1 (make-dial-schema :predicate 'schema1.v))
+    (s2 (make-dial-schema :predicate 'schema2.v))
+    (s3 (make-dial-schema :predicate 'schema3.v))
+    (s4 (make-dial-schema :predicate 'schema4.v))
     (sid1 (schema-id s1))
     (sid2 (schema-id s2))
     (sid3 (schema-id s3))
