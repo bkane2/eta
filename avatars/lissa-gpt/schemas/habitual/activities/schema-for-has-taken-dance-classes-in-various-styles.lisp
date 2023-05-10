@@ -21,9 +21,9 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to learn and grow as a dancer \.)
-  ?g2 (^me 's goal is to share her passion for dance with others \.)
-  ?g3 (^me 's goal is to become a well-rounded dancer \.)
+  ?g1 (^me \'s goal is to learn and grow as a dancer \.)
+  ?g2 (^me \'s goal is to share her passion for dance with others \.)
+  ?g3 (^me \'s goal is to become a well-rounded dancer \.)
 )
 
 :episodes (

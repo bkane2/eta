@@ -16,13 +16,13 @@
 :postconds (
   ?po1 (^me has camped in a national park \.)
   ?po2 (^me has experienced the beauty and wonder of nature \.)
-  ?po3 (^me 's appreciation for nature has increased \.)
+  ?po3 (^me \'s appreciation for nature has increased \.)
 )
 
 :goals (
-  ?g1 (^me 's goal is to explore the great outdoors by camping in various national parks \.)
-  ?g2 (^me 's goal is to experience the magic of nature firsthand \.)
-  ?g3 (^me 's goal is to feel rejuvenated and inspired after the camping trip \.)
+  ?g1 (^me \'s goal is to explore the great outdoors by camping in various national parks \.)
+  ?g2 (^me \'s goal is to experience the magic of nature firsthand \.)
+  ?g3 (^me \'s goal is to feel rejuvenated and inspired after the camping trip \.)
 )
 
 :episodes (

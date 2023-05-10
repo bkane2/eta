@@ -17,10 +17,10 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to go hiking in state parks \.)
-  ?g2 (^me 's goal is to escape the hustle and bustle of the city \.)
-  ?g3 (^me 's goal is to meander down a peaceful nature trail \.)
-  ?g4 (^me 's goal is to discover new pathways and hidden natural wonders \.)
+  ?g1 (^me \'s goal is to go hiking in state parks \.)
+  ?g2 (^me \'s goal is to escape the hustle and bustle of the city \.)
+  ?g3 (^me \'s goal is to meander down a peaceful nature trail \.)
+  ?g4 (^me \'s goal is to discover new pathways and hidden natural wonders \.)
 )
 
 :episodes (
@@ -28,7 +28,7 @@
   ?e2 (^me selects a hiking trail \.)
   ?e3 (^me spends time walking along the peaceful \, calming trail \.)
   ?e4 (^me discovers new pathways and hidden natural wonders \.)
-  ?e5 (^me 's worries fade away as she focuses on hiking \.)
+  ?e5 (^me \'s worries fade away as she focuses on hiking \.)
   ?e6 (^me takes in her surroundings and experiences a sense of joy and wonderment \.)
   ?e7 (^me completes the hike and returns home \.)
 )

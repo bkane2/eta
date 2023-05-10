@@ -5,7 +5,7 @@
 
 :preconds (
   ?pr1 (^me intends to visit a museum or art gallery \.)
-  ?pr2 (^me 's city has at least one museum or art gallery \.)
+  ?pr2 (^me \'s city has at least one museum or art gallery \.)
   ?pr3 (The museum or art gallery is open to the public \.)
 )
 
@@ -21,8 +21,8 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to visit the museum or art gallery \.)
-  ?g2 (^me 's goal is to learn something new about art and culture \.)
+  ?g1 (^me \'s goal is to visit the museum or art gallery \.)
+  ?g2 (^me \'s goal is to learn something new about art and culture \.)
 )
 
 :episodes (

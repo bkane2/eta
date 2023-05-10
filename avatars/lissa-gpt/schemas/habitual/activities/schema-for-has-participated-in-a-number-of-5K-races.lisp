@@ -14,11 +14,11 @@
 
 :postconds (
   ?po1 (^me has participated in a 5K race \.)
-  ?po2 (^me 's physical wellbeing is unaffected \, or has been improved \.)
+  ?po2 (^me \'s physical wellbeing is unaffected \, or has been improved \.)
 )
 
 :goals (
-  ?g1 (^me 's goal is to finish the race with a good time \.)
+  ?g1 (^me \'s goal is to finish the race with a good time \.)
   ?g2 (^me may aim to finish the race faster than her previous attempts \, or to achieve a personal best \.)
   ?g3 (^me may also aim to have fun and enjoy the experience of running with others \.)
 )

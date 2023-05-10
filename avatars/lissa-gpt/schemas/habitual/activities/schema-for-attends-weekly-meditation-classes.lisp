@@ -23,9 +23,9 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to attend the meditation class \.)
-  ?g2 (^me 's goal is to achieve inner peace and calmness \.)
-  ?g3 (^me 's goal is to feel rejuvenated and energized after the class \.)
+  ?g1 (^me \'s goal is to attend the meditation class \.)
+  ?g2 (^me \'s goal is to achieve inner peace and calmness \.)
+  ?g3 (^me \'s goal is to feel rejuvenated and energized after the class \.)
 )
 
 :episodes (

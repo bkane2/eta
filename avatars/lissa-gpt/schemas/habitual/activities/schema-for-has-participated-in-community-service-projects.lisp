@@ -19,8 +19,8 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to provide community service \.)
-  ?g2 (The community 's goal is to receive ^me 's community service \.)
+  ?g1 (^me \'s goal is to provide community service \.)
+  ?g2 (The community\'s goal is to receive ^me \'s community service \.)
 )
 
 :episodes (

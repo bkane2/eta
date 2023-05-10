@@ -18,7 +18,7 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to solve the puzzle \.)
+  ?g1 (^me \'s goal is to solve the puzzle \.)
 )
 
 :episodes (

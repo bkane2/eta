@@ -5,7 +5,7 @@
 
 :preconds (
   ?pr1 (There is a poetry reading or open-mic event happening \.)
-  ?pr2 (^me is aware of the event 's occurrence \.)
+  ?pr2 (^me is aware of the event\'s occurrence \.)
 )
 
 :static-conds (
@@ -17,10 +17,10 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to attend a poetry reading or open mic event \.)
-  ?g2 (^me 's goal is to share her work with other poets \.)
-  ?g3 (^me 's goal is to gain inspiration from other poets \.)
-  ?g4 (^me 's goal is to leave feeling uplifted and inspired \.)
+  ?g1 (^me \'s goal is to attend a poetry reading or open mic event \.)
+  ?g2 (^me \'s goal is to share her work with other poets \.)
+  ?g3 (^me \'s goal is to gain inspiration from other poets \.)
+  ?g4 (^me \'s goal is to leave feeling uplifted and inspired \.)
 )
 
 :episodes (

@@ -17,7 +17,7 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to be transported to a different world and be captivated by the story \.)
+  ?g1 (^me \'s goal is to be transported to a different world and be captivated by the story \.)
 )
 
 :episodes (

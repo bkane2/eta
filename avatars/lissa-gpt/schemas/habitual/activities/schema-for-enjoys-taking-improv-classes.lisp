@@ -17,15 +17,15 @@
 )
 
 :postconds (
-  ?po1 (^me 's improv skills have improved \.)
+  ?po1 (^me \'s improv skills have improved \.)
   ?po2 (^me has learned valuable life skills \.)
   ?po3 (^me has a heightened sense of self-confidence \.)
 )
 
 :goals (
-  ?g1 (^me 's goal is to improve her improv skills \.)
-  ?g2 (^me 's goal is to gain valuable life skills from improv classes \.)
-  ?g3 (^me 's goal is to become more confident in her abilities \.)
+  ?g1 (^me \'s goal is to improve her improv skills \.)
+  ?g2 (^me \'s goal is to gain valuable life skills from improv classes \.)
+  ?g3 (^me \'s goal is to become more confident in her abilities \.)
 )
 
 :episodes (

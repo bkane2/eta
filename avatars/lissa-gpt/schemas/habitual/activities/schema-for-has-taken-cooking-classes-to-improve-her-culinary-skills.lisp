@@ -21,8 +21,8 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to improve her culinary skills \.)
-  ?g2 (The cooking school 's goal is to teach students how to cook \.)
+  ?g1 (^me \'s goal is to improve her culinary skills \.)
+  ?g2 (The cooking school\'s goal is to teach students how to cook \.)
 )
 
 :episodes (

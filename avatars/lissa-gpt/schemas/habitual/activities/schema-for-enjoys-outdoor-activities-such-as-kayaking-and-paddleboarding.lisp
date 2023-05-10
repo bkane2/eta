@@ -22,9 +22,9 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to enjoy participating in outdoor activities \.)
-  ?g2 (^me 's goal is to gain a deeper appreciation for nature \.)
-  ?g3 (^me 's goal is to share the importance of preserving the environment and embracing an active lifestyle with others \.)
+  ?g1 (^me \'s goal is to enjoy participating in outdoor activities \.)
+  ?g2 (^me \'s goal is to gain a deeper appreciation for nature \.)
+  ?g3 (^me \'s goal is to share the importance of preserving the environment and embracing an active lifestyle with others \.)
 )
 
 :episodes (

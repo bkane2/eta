@@ -5,7 +5,7 @@
 
 :preconds (
   ?pr1 (^me has access to a bike \.)
-  ?pr2 (^me 's friends have access to bikes \.)
+  ?pr2 (^me \'s friends have access to bikes \.)
   ?pr3 (The weather is suitable for outdoor biking \.)
 )
 
@@ -21,9 +21,9 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to go on a bike ride with her friends \.)
-  ?g2 (^me 's friends ' goal is to have an enjoyable bike ride with ^me \.)
-  ?g3 (All riders ' goals are to exercise and enjoy the outdoors \.)
+  ?g1 (^me \'s goal is to go on a bike ride with her friends \.)
+  ?g2 (^me \'s friends\' goal is to have an enjoyable bike ride with ^me \.)
+  ?g3 (All riders\' goals are to exercise and enjoy the outdoors \.)
 )
 
 :episodes (

@@ -11,7 +11,7 @@
 
 :static-conds (
   ?s1 (^me knows how to drive a go-kart \.)
-  ?s2 (^me 's friends know how to drive go-karts \.)
+  ?s2 (^me \'s friends know how to drive go-karts \.)
 )
 
 :postconds (
@@ -20,8 +20,8 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to have an enjoyable racing experience with her friends \.)
-  ?g2 (^me 's friends ' goal is to have an enjoyable racing experience with ^me \.)
+  ?g1 (^me \'s goal is to have an enjoyable racing experience with her friends \.)
+  ?g2 (^me \'s friends\' goal is to have an enjoyable racing experience with ^me \.)
 )
 
 :episodes (

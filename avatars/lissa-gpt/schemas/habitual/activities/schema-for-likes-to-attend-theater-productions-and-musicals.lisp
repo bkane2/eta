@@ -17,7 +17,7 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to attend the theater production or musical \.)
+  ?g1 (^me \'s goal is to attend the theater production or musical \.)
 )
 
 :episodes (

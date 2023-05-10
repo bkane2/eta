@@ -21,7 +21,7 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to practice yoga to maintain physical and mental wellbeing and to improve energy \, focus \, and attitude towards life \.)
+  ?g1 (^me \'s goal is to practice yoga to maintain physical and mental wellbeing and to improve energy \, focus \, and attitude towards life \.)
 )
 
 :episodes (

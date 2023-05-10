@@ -20,11 +20,11 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to attend the fashion show \.)
-  ?g2 (^me 's goal is to see the latest fashion trends and designs \.)
-  ?g3 (^me 's goal is to take notes on the latest fashion trends \.)
-  ?g4 (^me 's goal is to be surrounded by other fashion enthusiasts \.)
-  ?g5 (^me 's goal is to inspire her own style \.)
+  ?g1 (^me \'s goal is to attend the fashion show \.)
+  ?g2 (^me \'s goal is to see the latest fashion trends and designs \.)
+  ?g3 (^me \'s goal is to take notes on the latest fashion trends \.)
+  ?g4 (^me \'s goal is to be surrounded by other fashion enthusiasts \.)
+  ?g5 (^me \'s goal is to inspire her own style \.)
 )
 
 :episodes (

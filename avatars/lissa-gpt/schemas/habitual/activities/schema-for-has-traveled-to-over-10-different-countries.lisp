@@ -21,8 +21,8 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to travel to different countries and immerse herself in new cultures \.)
-  ?g2 (^me 's goal is to broaden her knowledge and experiences \.)
+  ?g1 (^me \'s goal is to travel to different countries and immerse herself in new cultures \.)
+  ?g2 (^me \'s goal is to broaden her knowledge and experiences \.)
 )
 
 :episodes (
@@ -32,7 +32,7 @@
   ?e4 (^me goes to the airport or other transportation terminals \.)
   ?e5 (^me travels to the destination country \.)
   ?e6 (^me checks into the accommodation \.)
-  ?e7 (^me explores the country 's landmarks and attractions \.)
+  ?e7 (^me explores the country\'s landmarks and attractions \.)
   ?e8 (^me interacts with locals and learns about their culture and way of life \.)
   ?e9 (^me tries the local cuisine \.)
   ?e10 (^me engages in different activities \, such as hiking or water sports \.)

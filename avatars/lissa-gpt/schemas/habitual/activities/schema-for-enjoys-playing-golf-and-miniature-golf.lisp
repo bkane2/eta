@@ -18,11 +18,11 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to enjoy her time while playing golf or miniature golf \.)
-  ?g2 (^me 's goal is to hit good shots \.)
-  ?g3 (^me 's goal is to encourage others to try playing golf or miniature golf \.)
-  ?g4 (Other players ' goal is to enjoy their time playing with ^me \.)
-  ?g5 (Other players ' goal is to improve their skills \.)
+  ?g1 (^me \'s goal is to enjoy her time while playing golf or miniature golf \.)
+  ?g2 (^me \'s goal is to hit good shots \.)
+  ?g3 (^me \'s goal is to encourage others to try playing golf or miniature golf \.)
+  ?g4 (Other players\' goal is to enjoy their time playing with ^me \.)
+  ?g5 (Other players\' goal is to improve their skills \.)
 )
 
 :episodes (

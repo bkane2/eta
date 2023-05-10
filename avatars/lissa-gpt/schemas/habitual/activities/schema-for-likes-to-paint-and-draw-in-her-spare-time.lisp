@@ -20,8 +20,8 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to create art \.)
-  ?g2 (^me 's goal is to express herself through art \.)
+  ?g1 (^me \'s goal is to create art \.)
+  ?g2 (^me \'s goal is to express herself through art \.)
 )
 
 :episodes (

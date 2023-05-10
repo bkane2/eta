@@ -21,8 +21,8 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to attend a concert or live music event \.)
-  ?g2 (^me 's goal is to enjoy and immerse herself in the moment \.)
+  ?g1 (^me \'s goal is to attend a concert or live music event \.)
+  ?g2 (^me \'s goal is to enjoy and immerse herself in the moment \.)
 )
 
 :episodes (

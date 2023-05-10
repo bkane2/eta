@@ -20,7 +20,7 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to attend the music festival in various regions \.)
+  ?g1 (^me \'s goal is to attend the music festival in various regions \.)
 )
 
 :episodes (

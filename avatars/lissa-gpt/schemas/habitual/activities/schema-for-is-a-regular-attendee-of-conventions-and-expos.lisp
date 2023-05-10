@@ -18,10 +18,10 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to attend the convention/expo \.)
-  ?g2 (^me 's goal is to immerse herself in a world of like-minded individuals \.)
-  ?g3 (^me 's goal is to learn about the latest news and trends in her area of interest \.)
-  ?g4 (^me 's goal is to connect with people who share her passions \.)
+  ?g1 (^me \'s goal is to attend the convention/expo \.)
+  ?g2 (^me \'s goal is to immerse herself in a world of like-minded individuals \.)
+  ?g3 (^me \'s goal is to learn about the latest news and trends in her area of interest \.)
+  ?g4 (^me \'s goal is to connect with people who share her passions \.)
 )
 
 :episodes (

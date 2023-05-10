@@ -21,8 +21,8 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to try new foods and restaurants \.)
-  ?g2 (^me 's friends and family 's goal is to learn about new restaurants from ^me 's recommendations \.)
+  ?g1 (^me \'s goal is to try new foods and restaurants \.)
+  ?g2 (^me \'s friends and family\'s goal is to learn about new restaurants from ^me \'s recommendations \.)
 )
 
 :episodes (
@@ -32,7 +32,7 @@
   ?e4 (^me tastes the food and evaluates its quality \.)
   ?e5 (^me forms an opinion on the restaurant and the food \.)
   ?e6 (^me shares her opinion with friends and family \.)
-  ?e7 (^me 's friends and family ask for recommendations \.)
+  ?e7 (^me \'s friends and family ask for recommendations \.)
   ?e8 (^me suggests restaurants and foods that she has tried and liked \.)
 )
 

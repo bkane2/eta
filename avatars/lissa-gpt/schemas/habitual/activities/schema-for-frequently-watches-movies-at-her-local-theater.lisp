@@ -19,12 +19,12 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to watch a movie \.)
-  ?g2 (^me 's goal is to enjoy her movie experience \.)
+  ?g1 (^me \'s goal is to watch a movie \.)
+  ?g2 (^me \'s goal is to enjoy her movie experience \.)
 )
 
 :episodes (
-  ?e1 (^me checks the theater 's schedule for movie screenings \.)
+  ?e1 (^me checks the theater\'s schedule for movie screenings \.)
   ?e2 (^me finds a movie she wants to watch \.)
   ?e3 (^me purchases a ticket for the movie \.)
   ?e4 (^me enters the theater \.)

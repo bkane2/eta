@@ -21,10 +21,10 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to attend music and cultural festivals)
-  ?g2 (^me 's goal is to deepen her understanding of the world)
-  ?g3 (^me 's goal is to expand her horizons)
-  ?g4 (^me 's goal is to connect with like-minded individuals)
+  ?g1 (^me \'s goal is to attend music and cultural festivals)
+  ?g2 (^me \'s goal is to deepen her understanding of the world)
+  ?g3 (^me \'s goal is to expand her horizons)
+  ?g4 (^me \'s goal is to connect with like-minded individuals)
 )
 
 :episodes (

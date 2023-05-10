@@ -18,9 +18,9 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to hike in the mountains \.)
-  ?g2 (^me 's goal is to enjoy the trek and the beautiful scenery \.)
-  ?g3 (^me 's goal is to be physically and mentally rejuvenated by the hike \.)
+  ?g1 (^me \'s goal is to hike in the mountains \.)
+  ?g2 (^me \'s goal is to enjoy the trek and the beautiful scenery \.)
+  ?g3 (^me \'s goal is to be physically and mentally rejuvenated by the hike \.)
 )
 
 :episodes (

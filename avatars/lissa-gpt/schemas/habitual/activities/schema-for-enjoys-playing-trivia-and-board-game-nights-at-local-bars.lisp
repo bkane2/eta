@@ -20,9 +20,9 @@
 )
 
 :goals (
-  ?g1 (^me 's goal is to have fun playing trivia and board games with friends \.)
-  ?g2 (^me 's goal is to test her knowledge against others \.)
-  ?g3 (^me 's goal is to win rounds of games such as Scrabble \, Clue \, and Uno \.)
+  ?g1 (^me \'s goal is to have fun playing trivia and board games with friends \.)
+  ?g2 (^me \'s goal is to test her knowledge against others \.)
+  ?g3 (^me \'s goal is to win rounds of games such as Scrabble \, Clue \, and Uno \.)
 )
 
 :episodes (
