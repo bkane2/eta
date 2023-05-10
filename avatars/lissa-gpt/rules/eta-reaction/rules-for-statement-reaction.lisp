@@ -19,5 +19,6 @@
 
   1 (NIL Statement \.)
     2 respond-to-statement.v (0 :schema)
+    ;; 2 ask-question.v (0 :schema)
 
 )) ; END *reaction-to-statement*

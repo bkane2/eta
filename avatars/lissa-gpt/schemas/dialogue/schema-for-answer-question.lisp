@@ -37,9 +37,8 @@
 
 :episodes (
 
-?e1 (^me say-to.v ^you ?words)
-
-;; ?e2 (^you reply-to.v ?e1)
+;; ?e1 (^me say-to.v ^you ?words)
+?e1 (^me answer.v ^you ?some-answer)
 
 )
 
