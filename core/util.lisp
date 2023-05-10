@@ -799,6 +799,15 @@
 
 
 
+(defun statement? (sentence)
+;```````````````````````````````````````
+; A sentence is a statement if it is not a question.
+;
+  (and (sentence? sentence) (not (question? sentence)))
+) ; END statement?
+
+
+
 (defun quoted-question? (sentence)
 ;```````````````````````````````````````
 ; Is sentence of form (quote (<word> ... <word> ?)), or with the
@@ -3424,7 +3433,7 @@
     ;; (format t "~%  gpt-3 stop-seq: ~s~%" stop-seq) ; DEBUGGING
     (setq generated (gpt3-generate (get-api-key "openai") prompt :stop-seq stop-seq))
     ;; (format t "~%  gpt-3 response:~%-------------~%~a~%-------------~%" generated) ; DEBUGGING
-    (parse-chars (coerce (trim-all-newlines generated) 'list))
+    (postprocess-generation (parse-chars (coerce (trim-all-newlines generated) 'list)) mode)
 )) ; END get-gpt3-paraphrase
 
 
@@ -3454,7 +3463,7 @@
     ; Hack to remove parentheticals that GPT-3 sometimes generates
     (setq generated
       (str-replace (str-replace (str-replace (str-replace generated "* " "] ") "*" "[") "(" "[") ")" "]"))
-    (parse-chars (coerce (trim-all-newlines generated) 'list))
+    (postprocess-generation (parse-chars (coerce (trim-all-newlines generated) 'list)) mode)
 )) ; END get-gpt3-response
 
 
@@ -3496,6 +3505,21 @@
   (gpt3-shell:generate-safe 'gpt3-shell:generate-with-key
     (list (get-api-key "openai") prompt :stop-seq stop-seq))
 ) ; END gpt3-generate
+
+
+
+(defun postprocess-generation (generated mode)
+;``````````````````````````````````````````````````````````
+; Ensures that the generated utterance abides by the specified
+; mode (i.e., removing a question if 'mode' is 'statement).
+; 
+  (let (parts)
+    (setq parts (split-sentences generated))
+    (cond
+      ((equal mode 'statement)
+        (setq parts (reverse (member t (reverse parts) :key #'statement?)))))
+    (apply #'append parts)
+)) ; END postprocess-generation
 
 
 
@@ -3609,7 +3633,7 @@
 
 
 
-(defun retrieve-relevant-schema-facts (text schema &optional (n 5))
+(defun retrieve-relevant-schema-facts (text schema &optional (n 3))
 ;``````````````````````````````````````````````````````````````````
 ; Retrieves the n most relevant facts contained within a given schema
 ; to an input text (assuming that the schema contents have been previously

@@ -315,7 +315,7 @@
 
   ; The timer period (in seconds) that must be passed for Eta to flush context,
   ; removing "instantaneous" telic verbs from context.
-  (defparameter *flush-context-period* 5)
+  (defparameter *flush-context-period* 15)
 
   ; The certainty of an episode determines the timer period (in seconds) that must be
   ; passed for Eta to consider an expected episode failed and move on in the plan.
@@ -2689,6 +2689,8 @@
               :episode-name ep-name)
             (ds-conversation-log *ds*))))
 
+        ;; (print-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
+
       )
       ;````````````````````````````
       ; User: Moving -> Trying
@@ -2805,6 +2807,8 @@
           :obligations user-obligations
           :episode-name ep-name)
         (ds-conversation-log *ds*))))
+
+    ;; (print-plan-status (ds-curr-plan *ds*)) ; DEBUGGING
 
     ; Output words
     (if (member '|Audio| *registered-systems-perception*)
