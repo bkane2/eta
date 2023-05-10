@@ -3017,6 +3017,20 @@
 
 
 
+(defun expr-to-words (expr)
+;````````````````````````````
+; Converts an expression (which may already be
+; a quoted wordlist) to a quoted wordlist.
+; 
+  (cond
+    ((atom expr) (list expr))
+    ((quoted-sentence? expr) (second expr))
+    ((sentence? expr) expr)
+    (t (mapcar (lambda (word) (if (equal word '^me) (shortname *^me*) word)) wordlist)))
+) ; END expr-to-words
+
+
+
 (defun expr-to-str (expr)
 ;```````````````````````````
 ; Converts an expression (which is either a
@@ -3239,8 +3253,8 @@
 
 
 
-(defun generate-prompt-paraphrase (facts examples prev-utterance gist-clause incomplete-utterance)
-;````````````````````````````````````````````````````````````````````````````````````````````````````
+(defun generate-prompt-paraphrase (conds facts examples prev-utterance gist-clause incomplete-utterance mode)
+;```````````````````````````````````````````````````````````````````````````````````````````````````````````````
 ; Generates a GPT-3 prompt for paraphrasing from facts, which is a list of strings,
 ; a list of examples (3-tuples of strings), a previous utterance string, and a
 ; gist-clause string.
@@ -3249,11 +3263,25 @@
 ;
   (let (prompt)
     (setq prompt (format nil "~:(~a~) is having a conversation with ~:(~a~). " *^you* *^me*))
-    (setq prompt (concatenate 'string prompt (str-join facts " ")))
+    (setq prompt (concatenate 'string prompt (str-join conds " ")))
     (setq prompt (concatenate 'string prompt
-      (format nil "[N][N]Rewrite the following conversations as conversations between ~a and ~a:[N][N]"
+      (format nil "[N][N]Rewrite the following conversations as conversations between ~a and ~a:"
         (shortname (string *^you*)) (shortname (string *^me*)))))
+
+    (when facts
+      (setq prompt (concatenate 'string prompt
+        "[N][N]"
+        "Use the following facts in your rewritings:[N]"
+        (str-join (mapcar (lambda (fact) (format nil "* ~a" fact)) facts) "[N]"))))
+
+    (cond
+      ((equal mode 'statement)
+        (setq prompt (concatenate 'string prompt "[N][N]Do not ask a question in your rewritten responses.")))
+      ((equal mode 'question)
+        (setq prompt (concatenate 'string prompt "[N][N]Ask a question in your rewritten responses."))))
+
     (setq prompt (concatenate 'string prompt
+      "[N][N]"
       ; Add examples to prompt
       (generate-prompt-preprocess-paraphrase-examples examples)
       "[N][N]"
@@ -3273,15 +3301,29 @@
 
 
 
-(defun generate-prompt-unconstrained (facts history)
-;````````````````````````````````````````````````````````
-; Generates a GPT-3 prompt for unconstrained generation from facts,
-; which is a list of strings, and history, which is a list of
-; lists (agent turn) where agent and turn are both strings.
+(defun generate-prompt-unconstrained (conds facts history mode)
+;````````````````````````````````````````````````````````````````
+; Generates a GPT-3 prompt for unconstrained generation from conds,
+; which is a list of strings; facts, which is a list of strings;
+; and history, which is a list of lists (agent turn) where agent and
+; turn are both strings.
 ;
   (let (prompt)
     (setq prompt (format nil "Write a conversation between ~:(~a~) and ~:(~a~). " *^you* *^me*))
-    (setq prompt (concatenate 'string prompt (str-join facts " ")))
+    (setq prompt (concatenate 'string prompt (str-join conds " ")))
+
+    (when facts
+      (setq prompt (concatenate 'string prompt
+        "[N][N]"
+        "Use the following facts in your response:[N]"
+        (str-join (mapcar (lambda (fact) (format nil "* ~a" fact)) facts) "[N]"))))
+
+    (cond
+      ((equal mode 'statement)
+        (setq prompt (concatenate 'string prompt "[N][N]Do not ask a question in your response.")))
+      ((equal mode 'question)
+        (setq prompt (concatenate 'string prompt "[N][N]Ask a question in your response."))))
+
     (setq prompt (concatenate 'string prompt "[N]"
       ; Add initial greeting from user to prompt to calibrate GPT-3
       (format nil "~a Hi, ~a." (generate-prompt-turn-start (string *^you*)) (shortname (string *^me*)))
@@ -3356,17 +3398,23 @@
 
 
 
-(defun get-gpt3-paraphrase (facts examples prev-utterance gist-clause &key incomplete-utterance)
-;````````````````````````````````````````````````````````````````````````````````````````````````
-; Generates a GPT-3 paraphrase given a prompt containing facts, which is a list of
-; strings; examples, which is a list of 3-tuples of strings representing example
-; paraphrases; prev-utterance, which is a string, and gist-clause, which is a string.
+(defun get-gpt3-paraphrase (conds facts examples prev-utterance gist-clause &key incomplete-utterance mode)
+;```````````````````````````````````````````````````````````````````````````````````````````````````````````
+; Generates a GPT-3 paraphrase given a prompt containing conds, which is a list of strings to
+; use in conditioning the LLM; facts, which is a list of strings that the LLM is prompted to
+; use in response generation; examples, which is a list of 3-tuples of strings representing example
+; paraphrases; prev-utterance, which is a string; and gist-clause, which is a string.
 ; Returns a list of words.
+
 ; If a string is given for :incomplete-utterance, it is treated as a partially-generated
 ; response for GPT-3 to continue to fill in.
 ;
+; Optionally, :mode may be specified (either 'question or 'statement)
+; in order to prompt GPT-3 to specifically generate a question or statement
+; response type.
+;
   (let (prompt stop-seq generated)
-    (setq prompt (generate-prompt-paraphrase facts examples prev-utterance gist-clause incomplete-utterance))
+    (setq prompt (generate-prompt-paraphrase conds facts examples prev-utterance gist-clause incomplete-utterance mode))
     ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq stop-seq (vector
       (generate-prompt-turn-start (string *^you*))
@@ -3381,16 +3429,22 @@
 
 
 
-(defun get-gpt3-response (facts history)
-;``````````````````````````````````````````
-; Generates a GPT-3 response from facts, which is a list
-; of strings, and history, which is a list of lists (agent turn)
-; where agent and turn are both strings.
+(defun get-gpt3-response (conds facts history &key mode)
+;````````````````````````````````````````````````````````
+; Generates a GPT-3 response from conds, which is a list
+; of strings to use in conditioning the LLM; facts, which
+; is a list of strings that the LLM is prompted to use in
+; response generation; and history, which is a list of of
+; lists (agent turn) where agent and turn are both strings.
 ; Returns a list of words.
 ;
+; Optionally, :mode may be specified (either 'question or 'statement)
+; in order to prompt GPT-3 to specifically generate a question or statement
+; response type.
+;
   (let (prompt stop-seq generated)
-    (setq prompt (generate-prompt-unconstrained facts history))
-    (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
+    (setq prompt (generate-prompt-unconstrained conds facts history mode))
+    ;; (format t "~%  gpt-3 prompt:~%-------------~%~a~%-------------~%" prompt) ; DEBUGGING
     (setq stop-seq (vector
       (generate-prompt-turn-start (string *^you*))
       (generate-prompt-turn-start (string *^me*))))

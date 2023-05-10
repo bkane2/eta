@@ -1146,6 +1146,22 @@
         (setq subplan-node (plan-tell expr)))
 
       ;`````````````````````
+      ; Eta: Answering
+      ;`````````````````````
+      ; e.g., (^me answer.v ^you '(My name is Lissa \.))
+      ((setq bindings (bindings-from-ttt-match '(^me answer.v ^you _!) wff))
+        (setq expr (get-single-binding bindings))
+        (setq subplan-node (plan-answer expr)))
+
+      ;`````````````````````
+      ; Eta: Asking
+      ;`````````````````````
+      ; e.g., (^me ask.v ^you (wh ?x (^you have-as.v name.n ?x)))
+      ((setq bindings (bindings-from-ttt-match '(^me ask.v ^you _!) wff))
+        (setq expr (get-single-binding bindings))
+        (setq subplan-node (plan-ask expr)))
+
+      ;`````````````````````
       ; Eta: Describing
       ;`````````````````````
       ; e.g., (^me describe-to.v ^you (the.d image.n))
@@ -1462,8 +1478,8 @@
           ; Use GPT3-based paraphrase model if available
           ((equal *response-generator* 'GPT3)
             (setq utterance (form-surface-utterance-using-language-model
-              (get-facts-for-generation :dial-schemas t)
-              gist)))
+              :conds (get-facts-for-generation '(dial-schemas))
+              :gist gist)))
           
           ; Otherwise, use rule-based methods to select surface utterance
           (t
@@ -1547,7 +1563,8 @@
           (list :episodes (episode-var) (create-say-to-wff
             (if (equal *response-generator* 'GPT3)
               (form-surface-utterance-using-language-model
-                (get-facts-for-generation :dial-schemas t :epi-schemas t :memory t))
+                :conds (get-facts-for-generation '(dial-schemas))
+                :facts (get-facts-for-generation '(epi-schemas memory)))
               nil)))))
 
       ; :gist directive
@@ -1881,9 +1898,95 @@
 ; or (that (^me be.v ((attr autonomous.a) avatar.n))). The match variable
 ; info will have as a binding the (wh ...) expression.
 ;
-  (if (null info) (return-from plan-tell nil))
-  ; TBC
-) ; END plan-tell
+; If 'info' is a variable, instantiate the variable by using an LLM to
+; generate a response utterance, after retrieving relevant knowledge
+; from the system's epi-schemas and memory.
+;
+  (let (utterance)
+    (if (null info) (return-from plan-tell nil))
+
+    (format t "~% ========== Eta Generation ==========") ; DEBUGGING
+
+    (cond
+      ((variable? info)
+        (setq utterance (if (equal *response-generator* 'GPT3)
+          (form-surface-utterance-using-language-model
+            :conds (get-facts-for-generation '(dial-schemas))
+            :facts (get-facts-for-generation '(epi-schemas memory))
+            :mode 'statement)
+          nil)))
+      (t (setq utterance (expr-to-words info))))
+
+    (init-plan-from-episode-list
+      (list :episodes (episode-var) (create-say-to-wff utterance)))
+
+)) ; END plan-tell
+
+
+
+
+
+(defun plan-answer (info) ; {@}
+;`````````````````````````````
+; Return a plan for answering a question asked by the user with some
+; information, which may be a variable, some ULF, or a quoted wordlist.
+; 
+; If info is a variable, use an LLM to generate a response after
+; retrieving relevant knowledge.
+;
+; NOTE: this is currently identical to the case of plan-tell above.
+;
+  (let (utterance)
+    (if (null info) (return-from plan-answer nil))
+
+    (format t "~% ========== Eta Generation ==========") ; DEBUGGING
+
+    (cond
+      ((variable? info)
+        (setq utterance (if (equal *response-generator* 'GPT3)
+          (form-surface-utterance-using-language-model
+            :conds (get-facts-for-generation '(dial-schemas))
+            :facts (get-facts-for-generation '(epi-schemas memory))
+            :mode 'statement)
+          nil)))
+      (t (setq utterance (expr-to-words info))))
+
+    (init-plan-from-episode-list
+      (list :episodes (episode-var) (create-say-to-wff utterance)))
+
+)) ; END plan-answer
+
+
+
+
+
+(defun plan-ask (question) ; {@}
+;`````````````````````````````
+; Return a plan for asking the user a question, which may be a variable,
+; some ULF, or a quoted wordlist.
+; 
+; If question is a variable, use an LLM to generate a question after
+; retrieving relevant knowledge.
+;
+  (let (utterance)
+    (if (null question) (return-from plan-ask nil))
+
+    (format t "~% ========== Eta Generation ==========") ; DEBUGGING
+
+    (cond
+      ((variable? question)
+        (setq utterance (if (equal *response-generator* 'GPT3)
+          (form-surface-utterance-using-language-model
+            :conds (get-facts-for-generation '(dial-schemas))
+            :facts (get-facts-for-generation '(epi-schemas memory))
+            :mode 'question)
+          nil)))
+      (t (setq utterance (expr-to-words question))))
+
+    (init-plan-from-episode-list
+      (list :episodes (episode-var) (create-say-to-wff utterance)))
+
+)) ; END plan-ask
 
 
 
@@ -2659,7 +2762,8 @@
       ((variable? expr)
         (setq expr-new (if (equal *response-generator* 'GPT3)
           (form-surface-utterance-using-language-model
-            (get-facts-for-generation :dial-schemas t :epi-schemas t :memory t))
+            :conds (get-facts-for-generation '(dial-schemas))
+            :facts (get-facts-for-generation '(epi-schemas memory)))
           nil))
         (push (list expr `(quote ,expr-new)) var-bindings)
         (setq expr expr-new))
@@ -3207,14 +3311,14 @@
 
 
 
-(defun get-facts-for-generation (&key dial-schemas epi-schemas memory) ; {@}
-;`````````````````````````````````````````````````````````````````````````````
-; Retrieve facts for use in response generation. The type of facts to be used must be specified
-; using the following keyword arguments:
-; :dial-schemas t : use certain conditions and goals of the current dialogue schema(s).
-; :epi-schemas t  : use a subset of facts contained within a retrieved epi-schema (representing a
-;                   habitual event or generic event knowledge) based on similarity with previous turn.
-; :memory t       : use a subset of facts retrieved from memory based on similarity with previous turn.
+(defun get-facts-for-generation (types) ; {@}
+;````````````````````````````````````````
+; Retrieve facts for use in response generation. 
+; The type of facts to be used must be specified using the 'types' argument; either:
+; 'dial-schemas : use certain conditions and goals of the current dialogue schema(s).
+; 'epi-schemas  : use a subset of facts contained within a retrieved epi-schema (representing a
+; 'memory       : use a subset of facts retrieved from memory based on similarity with previous turn.
+; Or a list of any of these types.
 ;
   (let ((schemas (get-schema-instance-ids (ds-curr-plan *ds*))) schema-instance
         rigid-conds static-conds preconds goals relevant-memory query-str facts
@@ -3223,8 +3327,10 @@
     ; Get query string for retrieval
     (setq query-str (words-to-str (get-prev-utterance-for-generation (get-history-for-generation))))
 
+    (when (atom types) (setq types (list types)))
+
     ; Get relevant dialogue schema knowledge (conditions/goals/etc.)
-    (when dial-schemas
+    (when (member 'dial-schemas types)
       ; TODO: add other relevant schema categories here in the future
       (dolist (schema schemas)
         (setq schema-instance (gethash schema (ds-schema-instances *ds*)))
@@ -3239,7 +3345,7 @@
     )
 
     ; Get relevant habitual/event schema knowledge
-    (when epi-schemas
+    (when (member 'epi-schemas types)
       (setq relevant-epi-schemas (reverse (retrieve-relevant-epi-schemas query-str)))
 
       (format t "~%  * Generating response using retrieved epi-schemas~%      (from \"~a\"):~%   <~a> "
@@ -3254,7 +3360,7 @@
     )
 
     ; Get relevant episodic memory
-    (when memory
+    (when (member 'memory types)
       (setq relevant-memory (reverse (retrieve-relevant-knowledge-from-kb query-str)))
 
       (format t "~%  * Generating response using retrieved facts~%      (from \"~a\"):~%   ~a " query-str relevant-memory) ; DEBUGGING
@@ -3271,11 +3377,11 @@
 
 
 
-(defun form-surface-utterance-using-language-model (facts &optional gist-clause) ; {@}
-;`````````````````````````````````````````````````````````````````````````````````
+(defun form-surface-utterance-using-language-model (&key conds facts gist mode) ; {@}
+;````````````````````````````````````````````````````````````````````````````````
 ; Generate a surface utterance using a language model (currently, GPT-3).
 ;
-; This will automatically generate a prompt using the given facts.
+; This will automatically generate a prompt using the given conditions and facts.
 ;
 ; In the case where a particular Eta gist-clause is given as input, this will be
 ; treated as a paraphrasing task: the prompt will be followed by several examples
@@ -3287,32 +3393,38 @@
 ; generation: the prompt will be followed by the full dialogue hisory, and the
 ; model will be prompted to generate the next response.
 ;
+; :mode 'question or :mode 'statement can be provided as a keyword argument to condition
+; the LLM to generate either a question or statement, respectively (by default, the model
+; may generate either).
+;
 ; USES TT
 ;
-  (let (utterance prev-utterance incomplete-utterances history facts-str history-str choice examples examples-str emotion)
+  (let (utterance prev-utterance incomplete-utterances history conds-str facts-str
+        history-str choice examples examples-str emotion)
 
-    ; Split off emotion in given gist-clause (if any)
-    (when gist-clause
-      (setq emotion (first (split-emotion-tag gist-clause)))
-      (if emotion (setq gist-clause (second (split-emotion-tag gist-clause)))))
+    ; Split off emotion in given gist clause (if any)
+    (when gist
+      (setq emotion (first (split-emotion-tag gist)))
+      (if emotion (setq gist (second (split-emotion-tag gist)))))
 
-    ;; (format t "~%  * Generating response using gist clause: ~a " gist-clause) ; DEBUGGING
+    ;; (format t "~%  * Generating response using gist clause: ~a " gist) ; DEBUGGING
 
     ; Get history and previous utterance
     (setq history (get-history-for-generation))
     (setq prev-utterance (get-prev-utterance-for-generation history))
 
     ; Convert facts and history to strings
+    (setq conds-str (remove nil (mapcar #'expr-to-str conds)))
     (setq facts-str (remove nil (mapcar #'expr-to-str facts)))
     (setq history-str (mapcar (lambda (turn) (list (string (first turn)) (words-to-str (second turn)))) history))
 
     ; Generate response
     (cond
-      ; Gist-clause given: Paraphrase task
-      (gist-clause
+      ; Gist clause given: Paraphrase task
+      (gist
 
         ; Get example strings
-        (setq choice (choose-result-for gist-clause '*paraphrase-prompt-examples-tree*))
+        (setq choice (choose-result-for gist '*paraphrase-prompt-examples-tree*))
         (when (eq (car choice) :prompt-examples)
           (setq examples (cdr choice)))
         (setq examples-str
@@ -3324,22 +3436,23 @@
             (last history (position *^you* (reverse history) :key (lambda (x) (first x)))))))
         
         ; Get utterance
-        (setq utterance (get-gpt3-paraphrase facts-str examples-str
+        (setq utterance (get-gpt3-paraphrase conds-str facts-str examples-str
           (words-to-str prev-utterance)
-          (words-to-str gist-clause)
-          :incomplete-utterance (str-join (mapcar #'words-to-str incomplete-utterances) #\ ))))
+          (words-to-str gist)
+          :incomplete-utterance (str-join (mapcar #'words-to-str incomplete-utterances) #\ )
+          :mode mode)))
 
 
       ; No gist clause: Unconstrained generation task
       (t
 
         ; Get utterance
-        (setq utterance (get-gpt3-response facts-str history-str))))
+        (setq utterance (get-gpt3-response conds-str facts-str history-str :mode mode))))
 
     ;; (format t "~%  * Generated utterance = ~a" utterance) ; DEBUGGING   
 
     ; Generate emotion tag for utterance (if enabled)
-    ; If the gist-clause already had an emotion specified, use that instead of generating tag
+    ; If the gist clause already had an emotion specified, use that instead of generating tag
     (when *emotions*
       (if (null emotion)
         (setq emotion (get-gpt3-emotion (words-to-str utterance) (last history-str 3))))
